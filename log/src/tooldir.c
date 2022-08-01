@@ -46,37 +46,22 @@ extern Void Log_mygates_ascdisp();
 extern Void Log_mygates_asckbd();
 extern Void Log_mygates_sram8k();
 extern Void Log_nfet4_initlib_32();
-extern Void Log_nfet4_initlib_32();
-extern Void Log_NFET5_INITLIB_32();
 extern Void Log_NFET5_INITLIB_32();
 extern Void Log_NFET7F_INITLIB_32();
-extern Void Log_NFET7F_INITLIB_32();
-extern Void Log_NFET7T_INITLIB_32();
 extern Void Log_NFET7T_INITLIB_32();
 extern Void Log_NPN1_INITLIB_32();
-extern Void Log_NPN1_INITLIB_32();
 extern Void Log_NPN2_INITLIB_32();
-extern Void Log_NPN2_INITLIB_32();
-extern Void Log_NSPC1_INITLIB_32();
 extern Void Log_NSPC1_INITLIB_32();
 extern Void Log_numbers_initlib_32();
 extern Void Log_opamp_initlib_32();
 extern Void Log_pfet4_initlib_32();
-extern Void Log_pfet4_initlib_32();
-extern Void Log_PFET5_INITLIB_32();
 extern Void Log_PFET5_INITLIB_32();
 extern Void Log_PFET6_INITLIB_32();
-extern Void Log_PFET6_INITLIB_32();
 extern Void Log_PFET7F_INITLIB_32();
-extern Void Log_PFET7F_INITLIB_32();
-extern Void Log_PFET7T_INITLIB_32();
 extern Void Log_PFET7T_INITLIB_32();
 extern Void Log_PHYSICAL_initlib_32();
 extern Void Log_PNP1_INITLIB_32();
-extern Void Log_PNP1_INITLIB_32();
 extern Void Log_PNP2_INITLIB_32();
-extern Void Log_PNP2_INITLIB_32();
-extern Void Log_PSPC1_INITLIB_32();
 extern Void Log_PSPC1_INITLIB_32();
 extern Void Log_PWL_INITLIB_32();
 extern Void Log_resfloat_initlib_32();
@@ -132,37 +117,22 @@ struct ext_proc ext_proc_table[] = {
   "Log_mygates_asckbd", Log_mygates_asckbd,
   "Log_mygates_sram8k", Log_mygates_sram8k,
   "Log_nfet4_initlib_32", Log_nfet4_initlib_32,
-  "Log_nfet4_initlib_32", Log_nfet4_initlib_32,
-  "Log_NFET5_INITLIB_32", Log_NFET5_INITLIB_32,
   "Log_NFET5_INITLIB_32", Log_NFET5_INITLIB_32,
   "Log_NFET7F_INITLIB_32", Log_NFET7F_INITLIB_32,
-  "Log_NFET7F_INITLIB_32", Log_NFET7F_INITLIB_32,
-  "Log_NFET7T_INITLIB_32", Log_NFET7T_INITLIB_32,
   "Log_NFET7T_INITLIB_32", Log_NFET7T_INITLIB_32,
   "Log_NPN1_INITLIB_32", Log_NPN1_INITLIB_32,
-  "Log_NPN1_INITLIB_32", Log_NPN1_INITLIB_32,
   "Log_NPN2_INITLIB_32", Log_NPN2_INITLIB_32,
-  "Log_NPN2_INITLIB_32", Log_NPN2_INITLIB_32,
-  "Log_NSPC1_INITLIB_32", Log_NSPC1_INITLIB_32,
   "Log_NSPC1_INITLIB_32", Log_NSPC1_INITLIB_32,
   "Log_numbers_initlib_32", Log_numbers_initlib_32,
   "Log_opamp_initlib_32", Log_opamp_initlib_32,
   "Log_pfet4_initlib_32", Log_pfet4_initlib_32,
-  "Log_pfet4_initlib_32", Log_pfet4_initlib_32,
-  "Log_PFET5_INITLIB_32", Log_PFET5_INITLIB_32,
   "Log_PFET5_INITLIB_32", Log_PFET5_INITLIB_32,
   "Log_PFET6_INITLIB_32", Log_PFET6_INITLIB_32,
-  "Log_PFET6_INITLIB_32", Log_PFET6_INITLIB_32,
   "Log_PFET7F_INITLIB_32", Log_PFET7F_INITLIB_32,
-  "Log_PFET7F_INITLIB_32", Log_PFET7F_INITLIB_32,
-  "Log_PFET7T_INITLIB_32", Log_PFET7T_INITLIB_32,
   "Log_PFET7T_INITLIB_32", Log_PFET7T_INITLIB_32,
   "Log_PHYSICAL_initlib_32", Log_PHYSICAL_initlib_32,
   "Log_PNP1_INITLIB_32", Log_PNP1_INITLIB_32,
-  "Log_PNP1_INITLIB_32", Log_PNP1_INITLIB_32,
   "Log_PNP2_INITLIB_32", Log_PNP2_INITLIB_32,
-  "Log_PNP2_INITLIB_32", Log_PNP2_INITLIB_32,
-  "Log_PSPC1_INITLIB_32", Log_PSPC1_INITLIB_32,
   "Log_PSPC1_INITLIB_32", Log_PSPC1_INITLIB_32,
   "Log_PWL_INITLIB_32", Log_PWL_INITLIB_32,
   "Log_resfloat_initlib_32", Log_resfloat_initlib_32,

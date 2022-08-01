@@ -21,7 +21,7 @@
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-
+include ../../../Makefile.inc
 
 
 LOCINC = ../../../psys/include
@@ -63,7 +63,7 @@ XINCLUDEDIR = .
 ##
   
 
-CHIPMUNKCC = gcc -O3
+#CHIPMUNKCC = gcc -O3
 
 
 CC = $(CHIPMUNKCC) 
@@ -106,7 +106,7 @@ CC = $(CHIPMUNKCC)
 ##   -m68040              : for 68040 and 68060
 ## 
 
-CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 
+#CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 
 
 CFLAGS =  $(CHIPMUNKFLAGS) -I$(LOCINC) -I$(XINCLUDEDIR)
 

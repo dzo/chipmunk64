@@ -40,7 +40,6 @@ the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. */
 
 
 */
-#include <mcheck.h>
 
 
 #ifndef OS2
@@ -134,6 +133,7 @@ char *str, **ptr;
 #endif
 /* p2c: logfont.text, line 1: Warning: Expected MODULE, found a '*' [227] */
 /* p2c: log.text, line 52: Warning: Could not find module LOGFONT [271] */
+
 
 #include "logfont.h"
 #include "logstuff.h"
@@ -21951,7 +21951,6 @@ int main(int argc, Char * argv[])
 {
   long FORLIM;
   Char STR1[81];
-  mtrace();
   nc_text_in_window = 1;  
   PASCAL_MAIN(argc, argv);
   tracefile = NULL;

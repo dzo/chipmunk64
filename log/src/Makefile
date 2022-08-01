@@ -54,6 +54,7 @@
 ## CD = chdir
 ##
 ## or specify the complete command path.
+include ../../Makefile.inc
 
 CD = cd
 
@@ -139,7 +140,7 @@ OTHERLIBS= -lm
 ## For AmigaOS, ADE (Amiga Development Enviroment) with gcc is recommended.
 ##
   
-CHIPMUNKCC = gcc -O3
+#CHIPMUNKCC = gcc -O3
 
 CC = $(CHIPMUNKCC) 
 
@@ -181,7 +182,7 @@ CC = $(CHIPMUNKCC)
 ##   -m68040              : for 68040 and 68060
 ## 
 
-CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 
+#CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 
 
 CFLAGS =  $(CHIPMUNKFLAGS) -I$(LOCINC) -I$(XINCLUDEDIR) -DLOGLIB=\"$(LOGLIBDIR)\" -DF_OK=0
 

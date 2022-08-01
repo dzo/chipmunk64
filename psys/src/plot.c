@@ -195,7 +195,7 @@ Static Char fontfn[256], headerfn[256]=PSLIB"/texstuff.ps";
 Static boolean headerincflag;
 Static FILE **outf, **foutf;
 Static boolean foutfopen;
-Static double ps_linewidth = 7.0;
+Static double ps_linewidth = 2.0;
 
 
 /*$if false$

@@ -29,6 +29,7 @@
 ## comment blocks in this Makefile point to possible changes that need
 ## to be made for different systems. Its a good idea to look over each
 ## block and make necessary changes before doing a "make install"
+include ../../Makefile.inc
 
 LIBDIR = ../../lib
 BINDIR = ../../bin
@@ -89,7 +90,7 @@ XINCLUDEDIR = .
 ## For AmigaOS, ADE (Amiga Development Enviroment) with gcc is recommended.
 ##
 
-CHIPMUNKCC = gcc -O3
+#CHIPMUNKCC = gcc -O3
 
 OBJS = sysdevs.o \
        markrelease.o \
@@ -192,9 +193,10 @@ FONTS =
 ##   -m68040              : for 68040 and 68060
 ##
 
-CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0
+#CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0
 
-CFLAGS = $(CHIPMUNKFLAGS) $(FONTS) -I$(LOCINC) -I$(XINCLUDEDIR) -DCHIPLIB=\"`$(CD) $(LIBDIR); pwd`\"
+CFLAGS = $(CHIPMUNKFLAGS) $(FONTS) -I$(LOCINC) -I$(XINCLUDEDIR) -DCHIPLIB=\".\"
+#-DCHIPLIB=\"`$(CD) $(LIBDIR); pwd`\"
 
 P2CFLAGS = -DLOCAL_INIT=_local_p2c_init
 
