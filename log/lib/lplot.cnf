@@ -18,8 +18,8 @@ lplot: plotter     { 5 }              { HP-IB address of plotter }
 lplot: nodots      led           { Gates which don't form solder dots on pins }
 lplot: invisible   numbers time  { Gates which don't show up on the plot }
 lplot: invisible   digh
-lplot: labelfont   2             { Font number for labels }
-lplot: sigfont     2             { Font number for "TO/FROM" signal names }
+lplot: labelfont   0             { Font number for labels }
+lplot: sigfont     0             { Font number for "TO/FROM" signal names }
 
 lplot: color border  red
 lplot: color onled   red
