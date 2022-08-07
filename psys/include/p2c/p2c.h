@@ -402,7 +402,7 @@ typedef struct {
 #endif
 #else
 extern Anyptr __MallocTemp__;
-# define Malloc(n)  ((__MallocTemp__ = malloc((n) ? (n) : 1)) ? __MallocTemp__ : (Anyptr)(long long)_OutMem())
+# define Malloc(n)  ((__MallocTemp__ = malloc((n) ? (n) : 1)) ? __MallocTemp__ : (Anyptr)(int64_t)_OutMem())
 #endif
 #define FreeR(p)    (free((Anyptr)(p)))    /* used if arg is an rvalue */
 #define Free(p)     (free((Anyptr)(p)), (p)=NULL)

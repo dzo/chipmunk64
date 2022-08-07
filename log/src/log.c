@@ -151,7 +151,6 @@ char *str, **ptr;
 #include <p2c/newcrt.h>
 #endif
 
-
 extern char *GetChipmunkPath();
 char *my_strdup();
 #undef strdup

@@ -1452,7 +1452,7 @@ Local long setbytes(bits, LINK)
 long bits;
 struct LOC_compilepage *LINK;
 {
-  return ((bits + 63) / 32 * 4);
+  return ((bits + 63) / 32 * 8);
 }
 
 /* Local variables for parsegates: */
