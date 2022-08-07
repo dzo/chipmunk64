@@ -71,6 +71,7 @@
 #include <p2c/mylib.h>
 #endif
 
+#include <p2c/newcrt.h>
 
 #define scale_          200
 
@@ -2566,8 +2567,10 @@ Char *msg;
 {
   puts(msg);
   printf("\007Press return to continue.\n");
-  scanf("%*[^\n]");
-  getchar();
+  char b[256];
+  nc_gets(b);
+  //scanf("%*[^\n]");
+  //getchar();
 }
 
 
@@ -2651,7 +2654,6 @@ long *which_;
   Char STR4[256];
   point *pp1;
   chardesc *cd1;
-
   P_setcpy(which, which_);
   f = NULL;
   all = (*which == 0L);
@@ -2772,6 +2774,7 @@ long *which_;
 	  fread(&(fft[i].attr),1,1,f);
 	  fread(&(fft[i].numchrs),1,1,f);
 	}
+  
       }
     for (i = 0; i < nf; i++) {
       if (all || P_inset(fft[i].num, which)) {
@@ -2952,9 +2955,9 @@ Char *pref, *chrs_;
 Void plot_selfont(num)
 long num;
 {
+  if(num==0) num=2;
   plot_fontrec *ft;
   long SET[257];
-
   plot_loadfonts(P_addset(P_expset(SET, 0L), (int)num));
   ft = plot_fontbase;
   while (ft != NULL && ft->num != num)

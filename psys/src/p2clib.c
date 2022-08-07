@@ -546,7 +546,6 @@ register long *d, *s1, *s2;
     return dbase;
 }
 
-
 long *P_setint(d, s1, s2)           /* d := s1 * s2 */
 register long *d, *s1, *s2;
 {
