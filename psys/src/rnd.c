@@ -23,7 +23,7 @@ long limit;
   srand48(*seed);
   *seed = lrand48();
   if (limit != 0)
-    return(abs(*seed % limit)); /* I know, I know.  This skews probabilities */
+    return(labs(*seed % limit)); /* I know, I know.  This skews probabilities */
 			        /* slightly toward low numbers unless limit  */
 			        /* is a divisor of 2^32.  Tough.             */
   else

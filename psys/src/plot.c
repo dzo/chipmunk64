@@ -122,7 +122,7 @@ typedef union swap2 {
 } swap2;
 
 typedef union swap4 {
-        long ival;
+        int ival;
         unsigned char c[4];
 } swap4;
 
@@ -2572,14 +2572,14 @@ Char *msg;
 
 
 typedef struct _REC_findexarr {
-  long ptr;
+  int ptr;
   short siz;
 } _REC_findexarr;
 
 typedef _REC_findexarr findexarr[1000000L];
 
 typedef struct fontdesc {
-  long ptr;
+  int ptr;
   uchar num, height, attr, numchrs;
 } fontdesc;
 
@@ -2700,13 +2700,13 @@ long *which_;
       continue;
 /* p2c: plot.text, line 2344: Note: Can't interpret size in NA_NEW [174] */
     loadme = (chardesc *)Malloc(4L);   /*dummy address*/
-    fread(STR1, sizeof(long), 1, f);
+    fread(STR1, sizeof(int), 1, f);
     ver = (long)getintsw(STR1);
-    fread(STR1, sizeof(long), 1, f);
+    fread(STR1, sizeof(int), 1, f);
     ixp = (long)getintsw(STR1);
-    fread(STR1, sizeof(long), 1, f);
+    fread(STR1, sizeof(int), 1, f);
     nmp = (long)getintsw(STR1);
-    fread(STR1, sizeof(long), 1, f);
+    fread(STR1, sizeof(int), 1, f);
     ftp = (long)getintsw(STR1);
     if (ver != 1) {
       printf("Font file %s is incorrect version\n", fn2);
@@ -3487,10 +3487,10 @@ Char *orient_, *s_;
   y = (y - orgy) * csd;
   if (strcmp(orient, "ll")) {
     stringlen(&x1, &y1, s);
-    if (orient[0] == 'u') {
+    if (orient[0] == 'u' && curft!=NULL) {
       x -= curft->height * csnyx;
       y -= curft->height * csnyy;
-    } else if (orient[0] == 'c') {
+    } else if (orient[0] == 'c' && curft!=NULL) {
       x -= curft->height * csnyx / 2;
       y -= curft->height * csnyy / 2;
     }

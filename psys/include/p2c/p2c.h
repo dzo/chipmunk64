@@ -157,8 +157,8 @@ typedef struct __p2c_jmp_buf {
 #endif
 
 #ifndef LONG_MAX
-# define LONG_MAX   ((long)(((unsigned long) -1) >> 1))
-# define LONG_MIN   (~LONG_MAX)
+# define LONG_MAX   ((long)(((unsigned long) (1<<24)-1) >> 1))
+# define LONG_MIN   (-LONG_MAX)
 #endif
 
 #ifndef SEEK_SET

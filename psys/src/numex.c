@@ -1644,7 +1644,7 @@ struct LOC_expr *LINK;
       kind = l1->kind;
       value = l1->value;
     } else {
-      kind = 255;
+      kind = -1;
 /* p2c: numex.text, line 1448: Note: Character >= 128 encountered [281] */
     }
     switch (kind) {

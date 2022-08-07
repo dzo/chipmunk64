@@ -502,7 +502,7 @@ log_action *act_;
 	  } else
 	    timeinfo[i].y = -1;
 	}
-	WITH->actgate->vars = (na_long)(V.y * 2);
+	WITH->actgate->vars = (na_long)(long)(V.y * 2);
       }
       V.x = 0;
       V.y = 0;
