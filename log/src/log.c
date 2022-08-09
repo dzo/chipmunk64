@@ -20123,7 +20123,7 @@ Static Void initcolors()
       /* Color of scroll feedback */
   getcolor("SIGNAL", &gg.color.signal, log_pink);
       /* Color of TO/FROM node name */
-  getcolor("LABELTEXT", &gg.color.labeltext, log_dyellow);
+  getcolor("LABELTEXT", &gg.color.labeltext, log_white);
       /* Color of text labels */
   getcolor("DASHBOX", &gg.color.dashbox, log_dyellow);
       /* Color of dashed boxes */
