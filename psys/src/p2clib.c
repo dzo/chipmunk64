@@ -17,7 +17,7 @@
 #endif
 
 #include <p2c/p2c.h>
-
+#include <libgen.h>
 
 #define Isspace(c)  isspace(c)      /* or "((c) == ' ')" if preferred */
 
@@ -975,14 +975,19 @@ char *s;
 }
 #endif
 
+char ChipmunkPath[256];
+
 char *GetChipmunkPath(ev, deft)
 char *ev, *deft;
 {
-    char *s;
+    int r=readlink("/proc/self/exe", ChipmunkPath, 256);
+ //   printf("Path %s %s\n",ChipmunkPath,dirname(ChipmunkPath));
+    if(r<=0) return deft;
+    return dirname(ChipmunkPath);
 
-    if ((s= getenv(ev)) != (char *) NULL)
-        return(s);
-    else return(deft);
+//    if ((s= getenv(ev)) != (char *) NULL)
+//        return(s);
+//    else return(deft);
 }
 
 /* the following are two different ways to implement the microsleep    */

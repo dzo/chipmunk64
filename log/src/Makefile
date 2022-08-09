@@ -58,8 +58,8 @@ include ../../Makefile.inc
 
 CD = cd
 
-LOGLIBDIR = `$(CD) ../../log/lib; pwd`
-LIBDIR = `$(CD) ../../lib; pwd`
+LOGLIBDIR = `~/log`
+LIBDIR = `~/log`
 
 LOCINC = ../../psys/include
 

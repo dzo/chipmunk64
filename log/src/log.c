@@ -21475,11 +21475,11 @@ Static Void initialize()
   gg.homedirname = (Char *)Malloc(256);
   if (swtab[5].used > 0) {
     if (*swtab[5].UU.s == '\0')
-      sethomedirname("", &V);
+      sethomedirname(GetChipmunkPath("", ""), &V);
     else
       sethomedirname(swtab[5].UU.s, &V);
   } else
-    sethomedirname("~/log", &V);
+    sethomedirname(GetChipmunkPath("", ""), &V);
   cursorhide = false;
   initmenus();
   gg.funcarg = (Char *)Malloc(256);
