@@ -2,8 +2,10 @@
 #ifndef MYLIB_H
 #define MYLIB_H
 
-#include <X11/Xlib.h>
-
+//#include <X11/Xlib.h>
+#include <SDL2/SDL.h>
+#define False 0
+#define True 1
 #ifdef MYLIB_G
 # define vextern
 #else
@@ -126,15 +128,16 @@ vextern long m_hitcount, m_across, m_down;
 #define m_machine "X"
 /*   vextern uchar m_machine[20];  */
 vextern long m_maxcolor, m_scanmask;
-vextern Display *m_display;
-vextern Window m_window;
+//vextern Display *m_display;
+vextern SDL_Window *m_window;
+vextern SDL_Renderer *m_renderer;
 vextern int m_initialized;
 vextern int BlackAndWhite;
 vextern int screennum;
 
 #define ColorsInSet           16
 #define ColorSets              4
-extern XColor m_colors[ColorSets+1][ColorsInSet];
+extern SDL_Color m_colors[ColorSets+1][ColorsInSet];
 
 /* Added X display name support.  stafford 7/17/91 */
 extern void m_set_display_name(char* display_name);
