@@ -3709,41 +3709,8 @@ void m_displaytext(str)
 char *str;
 {
   int dir, desc, len;
-  XCharStruct size;
+  m_drawstr(curx,cury,"",str);
 
-  Mfprintf(stderr, "m_displaytext(%s)\n", str);
-
-  len = strlen(str);
-
-  if (currentmode == m_hitdet) {
-    XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
-    m_hitcount += hitdet_fillrect(curx, cury,
-				  curx + size.width, cury + fontasc + desc);
-    curx += size.width;
-    return;
-  }
-
-#ifdef SAVECURSOR
-  if (cursor_is_on)
-    turncursoroff();
-#endif
-
-  Xfprintf(stderr, "XTextExtents()\n");
-  XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
-
-  Xfprintf(stderr, "XDrawStrings()\n");
-  XDrawString(m_display, m_window, gc[currentcolor], curx, cury+fontasc-1, str, len);
-
-  if (nocache) {
-    Ffprintf(stderr, "XFlush()\n");
-    XFlush(m_display);
-  }
-  curx += size.width;
-
-#ifdef SAVECURSOR
-  if (cursor_is_on)
-    turncursoron();
-#endif
 }
 
 void m_drawstr(x, y, f, str)
@@ -3751,7 +3718,8 @@ int x, y;
 char *f, *str;
 {
   int dir, desc, len;
-  XCharStruct size;
+  stringRGBA(m_renderer,x,y,str,m_colors[ColorSets][currentcolor].r,
+    m_colors[ColorSets][currentcolor].g,m_colors[ColorSets][currentcolor].b,255);
 
   Mfprintf(stderr, "m_drawstr(%d, %d, f, %s)\n", x, y, str);
 
@@ -3760,10 +3728,10 @@ char *f, *str;
   len = strlen(str);
 
   if (currentmode == m_hitdet) {
-    XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
-    m_hitcount += hitdet_fillrect(x, y,
-				  x + size.width, y + fontasc + desc);
-    return;
+  //  XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
+  //  m_hitcount += hitdet_fillrect(x, y,
+	//			  x + size.width, y + fontasc + desc);
+  //  return;
   }
 
 #ifdef SAVECURSOR
@@ -3771,8 +3739,9 @@ char *f, *str;
     turncursoroff();
 #endif
 
-  Xfprintf(stderr, "XDrawString()\n");
-  XDrawString(m_display, m_window, gc[currentcolor], x, y+fontasc-1, str, len);
+ // Xfprintf(stderr, "XDrawString()\n");
+ // XDrawString(m_display, m_window, gc[currentcolor], x, y+fontasc-1, str, len);
+
 
 #ifdef SAVECURSOR
   if (cursor_is_on)
@@ -3781,7 +3750,7 @@ char *f, *str;
 
   if (nocache) {
     Ffprintf(stderr, "XFlush()\n");
-    XFlush(m_display);
+ //   XFlush(m_display);
   }
 }
 
@@ -3789,91 +3758,21 @@ void m_centerstr(x, y, f, str)
 int x, y;
 char *f, *str;
 {
-  int dir, desc, len;
-  XCharStruct size;
+  m_drawstr(x-strlen(str)*6/2,y,f,str);
 
-  Mfprintf(stderr, "m_centerstr(%d, %d, f, %s)\n", x, y, str);
-
-  TRNSFRM(x, y);
-
-  len = strlen(str);
-
-  if (currentmode == m_hitdet) {
-    XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
-    m_hitcount += hitdet_fillrect(x - size.width/2, y,
-				  x + size.width/2, y + fontasc + desc);
-    return;
-  }
-
-#ifdef SAVECURSOR
-  if (cursor_is_on)
-    turncursoroff();
-#endif
-
-  Xfprintf(stderr, "XTextExtents()\n");
-  XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
-  Xfprintf(stderr, "XDrawString()\n");
-  XDrawString(m_display, m_window, gc[currentcolor], x-size.width/2, y+fontasc-1, str, len);
-
-#ifdef SAVECURSOR
-  if (cursor_is_on)
-    turncursoron();
-#endif
-
-  if (nocache) {
-    Ffprintf(stderr, "XFlush()\n");
-    XFlush(m_display);
-  }
 }
 
 void m_rightstr(x, y, f, str)
 int x, y;
 char *f, *str;
 {
-  int dir, desc, len;
-  XCharStruct size;
-
-  Mfprintf(stderr, "m_rightstr(%d, %d, f, %s)\n", x, y, str);
-
-  TRNSFRM(x, y);
-
-  len = strlen(str);
-
-  if (currentmode == m_hitdet) {
-    XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
-    m_hitcount += hitdet_fillrect(x - size.width, y,
-				  x, y + fontasc + desc);
-    return;
-  }
-
-#ifdef SAVECURSOR
-  if (cursor_is_on)
-    turncursoroff();
-#endif
-
-  Xfprintf(stderr, "XTextExtents()\n");
-  XTextExtents(currentfont, str, len, &dir, &fontasc, &desc, &size);
-  Xfprintf(stderr, "XDrawString()\n");
-  XDrawString(m_display, m_window, gc[currentcolor], x-size.width, y+fontasc-1, str, len);
-
-#ifdef SAVECURSOR
-  if (cursor_is_on)
-    turncursoron();
-#endif
-
-  if (nocache) {
-    Ffprintf(stderr, "XFlush()\n");
-    XFlush(m_display);
-  }
+  m_drawstr(x-strlen(str)*6,y,f,str); 
 }
 
 long m_strwidth(f, str)      /* daveg, 10/6/89 */
 char *f, *str;
 {
-  Mfprintf(stderr, "m_strwidth(f, %s)\n", str);
-
-  Xfprintf(stderr, "XTextWidth()\n");
-  return XTextWidth(currentfont, str, strlen(str));
+  return strlen(str)*6;
 }
 
 /*
@@ -3893,16 +3792,6 @@ m_picturevar *p;
 
 void m_graphics_on()
 {
-  XWindowChanges  changes;
-
-  if (m_autoraise)
-    {
-      changes.sibling     = nc_window;
-      changes.stack_mode  = Above;
-
-      XConfigureWindow(m_display, m_window, CWStackMode, &changes);
-    }
-  return;
 }
 
 
@@ -3910,94 +3799,98 @@ void m_graphics_on()
 
 void m_alpha_on()
 {
-  XWindowChanges  changes;
+}
 
-  if (m_autoraise)
+SDL_Event event;
+int nevents=0;
+int keybuf[256];
+unsigned char keynext=0,keyfirst=0;
+#define thekey (keyfirst!=keynext)?keybuf[keyfirst++]:0;
+int thex,they;
+int theflags;
+int thebuttons;
+
+void addkey(int n) {
+   if(keynext<256)
+      keybuf[keynext++]=n;
+}
+
+void handle_events() {
+  nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
+  if(nevents==1) {
+    switch (event.type)
     {
-      changes.sibling     = m_window;
-      changes.stack_mode  = Above;
-      
-      XConfigureWindow(m_display, nc_window, CWStackMode, &changes);
+    case SDL_MOUSEBUTTONDOWN:
+      /* code */
+      break;
+    case SDL_MOUSEBUTTONUP:
+      /* code */
+      break;
+    case SDL_MOUSEMOTION:
+      break;
+    case SDL_KEYDOWN:
+      addkey(event.key.keysym.scancode);
+      break;
+    case SDL_KEYUP:
+      break;
+    default:
+      break;
     }
-  return;
+  }
 }
 
 
 void m_readpen(pen)
 m_tablet_info *pen;
 {
-  XEvent event;
-  int newx, newy;
   int gotevent, found = 0, giveup = 0;
 
-  Pfprintf(stderr, "m_readpen(pen)\n");
-
-#ifdef EXTRA_BUFFERING
-  flush_buffers();
-#endif /* EXTRA_BUFFERING */
-  while (1) {
-    Xfprintf(stderr, "XCheckMaskEvent()\n");
-    gotevent = XCheckMaskEvent(m_display, ButtonPressMask | PointerMotionMask |
-			                  ButtonReleaseMask, &event);
-    if (gotevent) {
-      m_events_received++;
-      found = 1;
-      mouse.inalpha = (nc_initialized && event.xany.window == nc_window);
-      if (event.type != MotionNotify)
-	break;
-    } else
-      break;
-  }
-
-  if (found) {
-    if (event.type == ButtonPress) {
-      pen->dn = (event.xbutton.button == Button1);
-      pen->depressed = (event.xbutton.state & Button1Mask) || pen->dn;
+  handle_events();
+/* TODO
+  Pfprintf(stderr, "m_readpen(pen) flags=%x, x=%d, y=%d\n", theflags,thex,they);
+   if(nevents==1) { 
+    if (event.type == SDL_MOUSEBUTTONDOWN) {
+      if(event.button.button==SDL_BUTTON_LEFT) {
+      pen->dn = 1;
+      pen->depressed = ((thebuttons & Button1Mask)!=0) || pen->dn;
       pen->up = 0;
-      pen->near_ = ! (event.xbutton.state & Button3Mask) &&
-    	          ! (event.xbutton.button == Button3);
-    } else if (event.type == ButtonRelease) {
+      pen->near_ = ! (thebuttons & Button3Mask) &&
+                  ! (theflags & GR_M_RIGHT_DOWN);
+      
+    } else if (event.type == SDL_MOUSEBUTTONUP) {
       pen->dn = 0;
-      pen->up = (event.xbutton.button == Button1);
-      pen->depressed = (event.xbutton.state & Button1Mask) && (! pen->up);
-      pen->near_ = ! (event.xbutton.state & Button3Mask) ||
-    	          (event.xbutton.button == Button3);
+      pen->up = (theflags & GR_M_LEFT_UP)!=0;
+      pen->depressed = ((thebuttons & Button1Mask)!=0) && (! pen->up);
+      pen->near_ = ! (thebuttons & Button3Mask) ||
+                  (theflags & GR_M_RIGHT_UP);
+      
     } else {
       pen->dn = 0;
       pen->up = 0;
-      pen->depressed = ((event.xmotion.state & Button1Mask) != 0);
-      pen->near_ = ! (event.xmotion.state & Button3Mask);
+      pen->depressed = ((thebuttons & Button1Mask) != 0);
+      pen->near_ = ! (thebuttons & Button3Mask);
     }
 
-    if (event.xany.window == m_window) {
-      newx = (int) event.xbutton.x;
-      newy = (int) event.xbutton.y;
-      pen->ax = mouse.ax;
-      pen->ay = mouse.ay;
-      UNTRNSFRM(newx, newy);
-      pen->x = (long) newx;
-      pen->y = (long) newy;
-    } else if (event.xany.window == nc_window) {
-      pen->x = mouse.x;
-      pen->y = mouse.y;
-      pen->ax = event.xbutton.x / nc_fontwidth;
-      pen->ay = event.xbutton.y / nc_fontheight;
-    } else {
-      pen->x = mouse.x;
-      pen->y = mouse.y;
-      pen->ax = mouse.ax;
-      pen->ay = mouse.ay;
-    }    
-  } else {
-    pen->dn = 0;
-    pen->up = 0;
-    pen->depressed = mouse.depressed;
-    pen->near_ = mouse.near_;
-    pen->x = mouse.x;
-    pen->y = mouse.y;
-    pen->ax = mouse.ax;
-    pen->ay = mouse.ay;
-  }
+   if(theflags & GR_M_MOTION) m_cursor(thex,they);
+
+      pen->x = thex;
+      pen->y = they;
+      pen->ax = (thex-WinX)/nc_fontwidth;
+      pen->ay = (they-WinY)/nc_fontheight;
+      UNTRNSFRM(pen->x, pen->y);
+     } 
+     else
+      {pen->dn=pen->up=0;
+      pen->depressed=mouse.depressed;
+      pen->near_=mouse.near_;
+      pen->x=mouse.x;
+      pen->y=mouse.y;
+      pen->ax=mouse.ax;
+      pen->ay=mouse.ay;
+      }
+      
+      theflags=0;
+
 
   pen->moving = pen->x != mouse.x || pen->y != mouse.y ||
                 pen->depressed != mouse.depressed || pen->near_ != mouse.near_;
@@ -4009,6 +3902,8 @@ m_tablet_info *pen;
   mouse.ay = pen->ay;
   mouse.depressed = pen->depressed;
   mouse.near_ = pen->near_;
+*/
+
 }
 
 void m_trackpen(pen)
@@ -4025,368 +3920,54 @@ m_tablet_info *pen;
 void m_trackpen2(pen)
 m_tablet_info *pen;
 {
-  XEvent event;
-  int found = 0, giveup = 0;
 
-  Window root = 0, parent, child, *childlist;
-  int rootx, rooty, x, y, mx, my, nx, ny, dx, dy;
-  unsigned int w, h, bw, d, nchild, mask;
-  int newx, newy;
-
-  Pfprintf(stderr, "m_trackpen2(pen)\n");
-
-#ifdef EXTRA_BUFFERING
-  flush_buffers();
-#endif /* EXTRA_BUFFERING */
-  while (1) {
-    Xfprintf(stderr, "XCheckMaskEvent()  (m_trackpen2())\n");
-    found = XCheckMaskEvent(m_display, ButtonPressMask | PointerMotionMask,
-			    &event);
-    if (found) {
-      if (event.type == ButtonPress) 
-	break;
-    } else
-      break;
-  }
-
-  if (found) {
-    pen->dn = (event.xbutton.button == Button1);
-    pen->depressed = (event.xbutton.state & Button1Mask) || pen->dn;
-    pen->up = 0;
-    pen->near_ = ! (event.xbutton.state & Button3Mask) &&
-                ! (event.xbutton.button == Button3);
-    
-    if (nc_initialized) {
-      if (event.xany.window == m_window) {
-	parent = nc_window;
-	nx = ny = 0;
-	while (parent != root) {
-	  Xfprintf(stderr, "XGetGeometry()\n");
-	  XGetGeometry(m_display, parent, &root, &dx, &dy, &w, &h, &bw, &d);
-	  nx += dx+bw;
-	  ny += dy+bw;
-	  Xfprintf(stderr, "XQueryTree()\n");
-	  XQueryTree(m_display, parent, &root, &parent, &childlist, &nchild);
-	}
-	pen->x = event.xbutton.x;
-	pen->y = event.xbutton.y;
-	pen->ax = (event.xbutton.x_root - nx) / nc_fontwidth;
-	pen->ay = (event.xbutton.y_root - ny) / nc_fontheight;
-      } else {
-	parent = m_window;
-	mx = my = 0;
-	while (parent != root) {
-	  Xfprintf(stderr, "XGetGeometry()\n");
-	  XGetGeometry(m_display, parent, &root, &dx, &dy, &w, &h, &bw, &d);
-	  mx += dx+bw;
-	  my += dy+bw;
-	  Xfprintf(stderr, "XQueryTree()\n");
-	  XQueryTree(m_display, parent, &root, &parent, &childlist, &nchild);
-	}
-	pen->x = event.xbutton.x_root - mx;
-	pen->y = event.xbutton.y_root - my;
-	pen->ax = event.xbutton.x / nc_fontwidth;
-	pen->ay = event.xbutton.y / nc_fontheight;
-      }
-    }
-    newx = pen->x;
-    newy = pen->y;
-    UNTRNSFRM(newx, newy);
-    pen->x = newx;
-    pen->y = newy;
-  } else {
-    Xfprintf(stderr, "XQueryPointer()\n");
-    XQueryPointer(m_display, m_window, &root, &child, &rootx, &rooty,
-		  &x, &y, &mask);
-    if (nc_initialized) {
-      parent = m_window;
-      mx = my = 0;
-      while (parent != root) {
-	Xfprintf(stderr, "XGetGeometry()\n");
-	XGetGeometry(m_display, parent, &root, &dx, &dy, &w, &h, &bw, &d);
-	mx += dx+bw;
-	my += dy+bw;
-	Xfprintf(stderr, "XQueryTree()\n");
-	XQueryTree(m_display, parent, &root, &parent, &childlist, &nchild);
-      }
-      parent = nc_window;
-      nx = ny = 0;
-      while (parent != root) {
-	Xfprintf(stderr, "XGetGeometry()\n");
-	XGetGeometry(m_display, parent, &root, &dx, &dy, &w, &h, &bw, &d);
-	nx += dx+bw;
-	ny += dy+bw;
-	Xfprintf(stderr, "XQueryTree()\n");
-	XQueryTree(m_display, parent, &root, &parent, &childlist, &nchild);
-      }
-      pen->ax = (x + mx - nx) / nc_fontwidth;
-      pen->ay = (y + my - ny) / nc_fontheight;
-    }
-    if ((x >= 0) && (x <= m_across) && (y >= 0) && (y <= m_down)) {
-      pen->depressed = ((mask & Button1Mask) != 0);
-      pen->near_ = ! (mask & Button3Mask);
-      pen->up = 0;
-      pen->dn = 0;
-    } else {
-      if (mouse.depressed)
-	pen->depressed = ((mask & Button1Mask) != 0);
-      else
-	pen->depressed = 0;
-      pen->near_ = mouse.near_ || ! (mask & Button3Mask);
-      pen->dn = 0;
-      pen->up = (mouse.depressed && ! pen->depressed);
-    }
-    UNTRNSFRM(x, y);
-    pen->x = x;
-    pen->y = y;
-  }
-
-  pen->moving = pen->x != mouse.x || pen->y != mouse.y ||
-                pen->depressed != mouse.depressed || pen->near_ != mouse.near_;
-
-  mouse.x = pen->x;
-  mouse.y = pen->y;
-  mouse.depressed = pen->depressed;
-  mouse.near_ = pen->near_;
-
-/*  fprintf(stderr, "m_cursor(%d, %d)   from m_trackpen2\n", pen->x, pen->y);  */
-  m_cursor(pen->x, pen->y);
 }
 
 
 void m_waitpen(pen)
 m_tablet_info *pen;
 {
-  XEvent event;
-  int x, y;
-  x = cursx;
-  y = cursy;
 
-  UNTRNSFRM(x, y);
-
-  if (!cursor_is_on)
-    m_cursor(x, y);
-
-  /* wait whilst event queue is empty. */
-  while (1) {
-    XMaskEvent(m_display, ButtonPressMask | ButtonReleaseMask
-                      | PointerMotionMask | KeyPressMask
-                      | ExposureMask | StructureNotifyMask
-                      | LeaveWindowMask, &event);
-    if (event.type != LeaveNotify)
-      break;
-    m_nocursor();
-  }
-
-  XPutBackEvent(m_display, &event);
-  m_trackpen(pen);
 }
 
 
 boolean m_pollkbd()
 {
-  XEvent event;
-  char buf[10];
-  KeySym sym;
-
-  Kfprintf(stderr, "m_pollkbd()\n");
-  
-#ifdef EXTRA_BUFFERING
-  flush_buffers();
-#endif /* EXTRA_BUFFERING */
-  for (;;) {
-    Xfprintf(stderr, "XCheckMaskEvent()\n");
-    if (! XCheckMaskEvent(m_display, KeyPressMask |
-                                     ExposureMask |
-                                     StructureNotifyMask, &event))
-      return(0); /* sleep(1) could be added here for load-average problem */
-                 /* but may be too drastic (MDG)                          */
-    switch (event.type) {
-    case KeyPress: 
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL)) {
-	Xfprintf(stderr, "XPutBackEvent()  (m_pollkbd() Key event)\n");
-	XPutBackEvent(m_display, &event);
-	return(1);
-      }
-      break;
-    case Expose:
-      if ((event.xexpose.window == m_window) && (event.xexpose.count == 0)) {
-	Xfprintf(stderr, "XPutBackEvent()  (m_pollkbd() Expose event)\n");
-	XPutBackEvent(m_display, &event);
-	return(1);
-      } else if ((event.type == Expose) && nc_initialized &&
-		 (event.xexpose.window == nc_window) &&
-		 (event.xexpose.count == 0)) {
-	if (nc_initialized)
-	  nc_refreshScreen();
-      }
-      break;
-    case ConfigureNotify:
-      if ((event.xconfigure.window == m_window) &&
-	  ((event.xconfigure.width != m_across+1) ||
-	   (event.xconfigure.height != m_down+1))) {
-	Xfprintf(stderr, "XPutBackEvent()  (m_pollkbd() resize event)\n");
-	XPutBackEvent(m_display, &event);
-	return(1);
-      }
-      break;
-    case DestroyNotify:
-      fprintf(stderr, "Mylib panic:  DestroyNotify event detected\n");
-      exit(1);
-      break;
-    case CirculateNotify:
-    case GravityNotify:
-    case MapNotify:
-    case ReparentNotify:
-    case UnmapNotify:
-    case ClientMessage:
-    case MappingNotify:
-    case SelectionClear:
-    case SelectionNotify:
-    case SelectionRequest:
-    case GraphicsExpose:
-    case NoExpose:
-      break;
-    default:
-      fprintf(stderr, "Unknown event (type = %d) detected\n", event.type);
-      break;
-    }
-  }
+  handle_events();
+  return(keyfirst!=keynext);
 }
 
 uchar m_inkey()
 {
-  XEvent event;
-  char buf[10];
-  KeySym sym;
+  int k;
+nc_cursor_on();
+do {
+handle_events(); 
+k=thekey;
+}while(!k);
+nc_cursor_off();
+Kfprintf(stderr,"m_inkey %d\n",k);    
+return k;
 
-  Kfprintf(stderr, "m_inkey()\n");
-
-#ifdef EXTRA_BUFFERING
-  flush_buffers();
-#endif /* EXTRA_BUFFERING */
-  for (;;) {
-    Xfprintf(stderr, "XMaskEvent()  (m_inkey())\n");
-    nc_cursor_on();
-    XMaskEvent(m_display, KeyPressMask |
-	                  ExposureMask |
-                          StructureNotifyMask, &event);
-    nc_cursor_off();
-    if (event.type == KeyPress) {
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL))
-	return(buf[0]);
-    } else if ((event.type == Expose) && (event.xexpose.window == m_window) &&
-	       (event.xexpose.count == 0)) {
-#ifdef SHOW_EXPOSE_EVENTS
-      fprintf(stderr, "m_inkey(): Expose event detected\n");
-#endif/*  SHOW_EXPOSE_EVENTS */
-      return((uchar) 250);
-    } else if ((event.type == Expose) && nc_initialized &&
-	       (event.xexpose.window == nc_window) &&
-	       (event.xexpose.count == 0)) {
-      if (nc_initialized)
-	nc_refreshScreen();
-    } else if ((event.type == ConfigureNotify) &&
-	       (event.xconfigure.window == m_window) &&
-	       ((event.xconfigure.width != m_across+1) ||
-		(event.xconfigure.height != m_down+1))) {
-#ifdef SHOW_CONFIGURE_EVENTS
-      fprintf(stderr, "m_inkey(): ConfigureNotify event detected\n");
-#endif /*SHOW_CONFIGURE_EVENTS*/
-      m_across = event.xconfigure.width - 1;
-      m_down = event.xconfigure.height - 1;
-      return((uchar) 251);
-    }
-  }
 }
 
 uchar m_inkeyn()
 {
-  XEvent event;
-  char buf[10];
-  KeySym sym;
+  int k;
+Kfprintf(stderr,"m_inkeyn %d\n",keybuf[keyfirst]);    
+handle_events(); 
+k=thekey;
+return k;
 
-  Kfprintf(stderr, "m_inkeyn()\n");
-
-#ifdef EXTRA_BUFFERING
-  flush_buffers();
-#endif /* EXTRA_BUFFERING */
-  for (;;) {
-    Xfprintf(stderr, "XCheckMaskEvent()  (m_inkeyn())\n");
-    if (! XCheckMaskEvent(m_display, KeyPressMask |
-	                             ExposureMask |
-                                     StructureNotifyMask, &event))
-      return(0);
-    else {
-      if (event.type == KeyPress) {
-	if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL)) {
-	  Xfprintf(stderr, "XPutBackEvent()  (m_inkeyn() Key event)\n");
-	  XPutBackEvent(m_display, &event);
-	  return(buf[0]);
-	  }
-      } else if ((event.type == Expose) && 
-		 (event.xexpose.window == m_window) &&
-		 (event.xexpose.count == 0)) {
-	Xfprintf(stderr, "XPutBackEvent()  (m_inkeyn() expose event)\n");
-	XPutBackEvent(m_display, &event);
-	return((uchar) 250);
-      } else if ((event.type == ConfigureNotify) &&
-		 (event.xconfigure.window == m_window) &&
-		 ((event.xconfigure.width != m_across+1) ||
-		  (event.xconfigure.height != m_down+1))) {
-	m_across = event.xconfigure.width - 1;
-	m_down = event.xconfigure.height - 1;
-	Xfprintf(stderr, "XPutBackEvent()  (m_inkeyn() resize event)\n");
-	XPutBackEvent(m_display, &event);
-	return((uchar) 251);
-      }
-    }
-  }
 }
 
 uchar m_testkey()
 {
-  XEvent event;
-  char buf[10];
-  KeySym sym;
+  handle_events();                      
+Kfprintf(stderr,"m_testkey %d\n",keybuf[keyfirst]);    
+if(keyfirst!=keynext) return keybuf[keyfirst];
+return 0;
 
-  Kfprintf(stderr, "m_testkey()\n");
-
-#ifdef EXTRA_BUFFERING
-  flush_buffers();
-#endif /* EXTRA_BUFFERING */
-  for (;;) {
-    Xfprintf(stderr, "XCheckMaskEvent()  (m_testkey())\n");
-    if (! XCheckMaskEvent(m_display, KeyPressMask |
-                                     ExposureMask |
-                                     StructureNotifyMask, &event))
-      return(0);
-    if (event.type == KeyPress) {
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL)) {
-	Xfprintf(stderr, "XPutBackEvent()  (m_testkey() key event)\n");
-	XPutBackEvent(m_display, &event);
-	return(buf[0]);
-      }
-    } else if ((event.type == Expose) &&
-	       (event.xexpose.window == m_window) &&
-	       (event.xexpose.count == 0)) {
-      Xfprintf(stderr, "XPutBackEvent()  (m_testkey() expose event)\n");
-      XPutBackEvent(m_display, &event);
-      return((uchar) 250);
-    } else if ((event.type == ConfigureNotify) &&
-	       (event.xconfigure.window == m_window) &&
-	       ((event.xconfigure.width != m_across+1) ||
-		(event.xconfigure.height != m_down+1))) {
-#ifdef SHOW_CONFIGURE_EVENTS
-      fprintf(stderr, "m_testkey(): ConfigureNotify event detected\n");
-#endif/* SHOW_CONFIGURE_EVENTS*/
-      m_across = event.xconfigure.width - 1;
-      m_down = event.xconfigure.height - 1;
-      Xfprintf(stderr, "XPutBackEvent()  (m_testkey() resize event)\n");
-      XPutBackEvent(m_display, &event);
-      return((uchar) 251);
-    }
-  }
 }
 
 
@@ -4402,202 +3983,7 @@ uchar m_testkey()
 boolean m_yes_or_no(prompt)
 Char *prompt;
 {
-  Window root, popup, yesbutton, nobutton;
-  char buf[10];
-  KeySym sym;
-  XEvent event;
-  XSizeHints hints;
-  GC tempgc;
-  int done = 0, return_value = 0;
-  int inyes = 0, inno = 0, yesactive = 0, noactive = 0;
 
-  Mfprintf(stderr, "m_yes_or_no(%s)\n", prompt);
-
-#ifdef EXTRA_BUFFERING
-  flush_buffers();
-#endif /* EXTRA_BUFFERING */
-
-  root = DefaultRootWindow(m_display);
-
-  Xfprintf(stderr, "XCreateSimpleWindow()\n");
-  popup = XCreateSimpleWindow(m_display, root, 0, 0, popupw, popuph, 2,
-			      m_colors[0][m_red].pixel,
-			      m_colors[0][m_black].pixel);
-  Xfprintf(stderr, "XCreateSimpleWindow()\n");
-  yesbutton = XCreateSimpleWindow(m_display, popup, yesbuttonx, buttony,
-				  buttonw, buttonh, 1,
-				  m_colors[0][m_white].pixel,
-				  m_colors[0][m_black].pixel);
-  Xfprintf(stderr, "XCreateSimpleWindow()\n");
-  nobutton = XCreateSimpleWindow(m_display, popup, nobuttonx, buttony,
-				 buttonw, buttonh, 1,
-				 m_colors[0][m_white].pixel,
-				 m_colors[0][m_black].pixel);
-
-  Xfprintf(stderr, "tempgc = XCreateGC()\n");
-  tempgc = XCreateGC(m_display, popup, 0, NULL);
-  Xfprintf(stderr, "XSetForeground(m_display, tempgc)\n");
-  XSetForeground(m_display, tempgc, m_colors[0][m_white].pixel);
-
-  hints.flags = PMinSize | PMaxSize;
-  hints.min_width = hints.max_width = popupw;
-  hints.min_height = hints.max_height = popuph;
-  Xfprintf(stderr, "XSetStandardProperties(m_display, popup)\n");
-  XSetStandardProperties(m_display, popup, "YesNo", "YesNo", None, NULL, 0, &hints);
-
-  Xfprintf(stderr, "XSelectInput(m_display, popup)\n");
-  XSelectInput(m_display, popup, KeyPressMask);
-  Xfprintf(stderr, "XSelectInput(m_display, yesbutton)\n");
-  XSelectInput(m_display, yesbutton, KeyPressMask | ButtonPressMask |
-                                     ButtonReleaseMask |
-	                             EnterWindowMask | LeaveWindowMask);
-  Xfprintf(stderr, "XSelectInput(m_display, nobutton)\n");
-  XSelectInput(m_display, nobutton, KeyPressMask | ButtonPressMask |
-                                    ButtonReleaseMask |
-                                    EnterWindowMask | LeaveWindowMask);
-
-  Xfprintf(stderr, "XMapWindow(m_display, yesbutton)\n");
-  XMapWindow(m_display, yesbutton);
-  Xfprintf(stderr, "XMapWindow(m_display, nobutton)\n");
-  XMapWindow(m_display, nobutton);
-  Xfprintf(stderr, "XMapWindow(m_display, popup)\n");
-  XMapWindow(m_display, popup);
-
-  do {
-    Xfprintf(stderr, "XMaskEvent()\n");
-    XMaskEvent(m_display, KeyPressMask | ButtonPressMask | ButtonReleaseMask |
-	                  EnterWindowMask | LeaveWindowMask, &event);
-    switch (event.type) {
-    case KeyPress:
-/*      fprintf(stderr, "KeyPress event received");
-      if (event.xany.window == yesbutton)
-	fprintf(stderr, " in yes button window\n");
-      else if (event.xany.window == nobutton)
-	fprintf(stderr, " in no button window\n");
-      else if (event.xany.window == popup)
-        fprintf(stderr, " in popup window\n");
-      else
-	fprintf(stderr, " in window %d\n", event.xany.window);   */
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL))
-	{
-	  if ((buf[0] == 'y') || (buf[0] == 'Y')) 
-	    {
-	      done = 1;
-	      return_value = 1;
-	    } 
-	  else 
-	    if ((buf[0] == 'n') || (buf[0] == 'N')) 
-	      {
-		done = 1;
-		return_value = 0;
-	      }
-	}
-      break;
-    case ButtonPress:
-/*      fprintf(stderr, "ButtonPress event received");
-      if (event.xany.window == yesbutton)
-	fprintf(stderr, " in yes button window\n");
-      else if (event.xany.window == nobutton)
-	fprintf(stderr, " in no button window\n");
-      else if (event.xany.window == popup)
-        fprintf(stderr, " in popup window\n");
-      else
-	fprintf(stderr, " in window %d\n", event.xany.window);   */
-      if (event.xany.window == yesbutton) {
-	Xfprintf(stderr, "XFillRectangle()\n");
-	XFillRectangle(m_display, yesbutton, tempgc, 0, 0, buttonw, buttonh);
-	yesactive = 1;
-      } else if (event.xany.window == nobutton) {
-	Xfprintf(stderr, "XFillRectangle()\n");
-	XFillRectangle(m_display, nobutton, tempgc, 0, 0, buttonw, buttonh);
-	noactive = 1;
-      }
-      break;
-    case ButtonRelease:
-/*      fprintf(stderr, "ButtonRelease event received");
-      if (event.xany.window == yesbutton)
-	fprintf(stderr, " in yes button window\n");
-      else if (event.xany.window == nobutton)
-	fprintf(stderr, " in no button window\n");
-      else if (event.xany.window == popup)
-        fprintf(stderr, " in popup window\n");
-      else
-	fprintf(stderr, " in window %d\n", event.xany.window);   */
-      if (inyes && yesactive) {
-	done = 1;
-	return_value = 1;
-      } else if (inno && noactive) {
-	done = 1;
-	return_value = 0;
-      }
-      break;
-    case EnterNotify:
-/*      fprintf(stderr, "EnterNotify event received");
-      if (event.xany.window == yesbutton)
-	fprintf(stderr, " in yes button window\n");
-      else if (event.xany.window == nobutton)
-	fprintf(stderr, " in no button window\n");
-      else if (event.xany.window == popup)
-        fprintf(stderr, " in popup window\n");
-      else
-	fprintf(stderr, " in window %d\n", event.xany.window);   */
-      if (event.xany.window == yesbutton) {
-	inyes = 1;
-	if (yesactive && (event.xcrossing.state &
-			  (Button1Mask | Button2Mask | Button3Mask))) {
-	  Xfprintf(stderr, "XFillRectangle()\n");
-	  XFillRectangle(m_display, yesbutton, tempgc, 0, 0, buttonw, buttonh);
-	} else
-	  yesactive = 0;
-      } else if (event.xany.window == nobutton) {
-	inno = 1;
-	if (noactive && (event.xcrossing.state &
-			 (Button1Mask | Button2Mask | Button3Mask))) {
-	  Xfprintf(stderr, "XFillRectangle()\n");
-	  XFillRectangle(m_display, nobutton, tempgc, 0, 0, buttonw, buttonh);
-	} else
-	  noactive = 0;
-      }
-      break;
-    case LeaveNotify:
-/*      fprintf(stderr, "LeaveNotify event received");
-      if (event.xany.window == yesbutton)
-	fprintf(stderr, " in yes button window\n");
-      else if (event.xany.window == nobutton)
-	fprintf(stderr, " in no button window\n");
-      else if (event.xany.window == popup)
-        fprintf(stderr, " in popup window\n");
-      else
-	fprintf(stderr, " in window %d\n", event.xany.window);  */
-      if (event.xany.window == yesbutton) {
-	inyes = 0;
-	if (yesactive) {
-	  Xfprintf(stderr, "XClearWindow(m_display, yesbutton)\n");
-	  XClearWindow(m_display, yesbutton);
-	}
-      } else if (event.xany.window == nobutton) {
-	inno = 0;
-	if (noactive) {
-	  Xfprintf(stderr, "XClearWindow(m_display, nobutton)\n");
-	  XClearWindow(m_display, nobutton);
-	}
-      }
-      break;
-/*    default:
-      fprintf(stderr, "Other event received");
-      if (event.xany.window == yesbutton)
-	fprintf(stderr, " in yes button window\n");
-      else if (event.xany.window == nobutton)
-	fprintf(stderr, " in no button window\n");
-      else if (event.xany.window == popup)
-        fprintf(stderr, " in popup window\n");
-      else
-	fprintf(stderr, " in window %d\n", event.xany.window);  */
-    }
-  } while (! done);
-  Xfprintf(stderr, "XDestroyWindow(m_display, popup)\n");
-  XDestroyWindow(m_display, popup);
-  return(return_value);
 }
 
 
