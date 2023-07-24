@@ -927,7 +927,7 @@ struct LOC_Log_lplot_proc *LINK;
   else
     m_color((long)lp_gg->color.menuword);
   drawstr2(plotpos, (long)LINK->menuy1, "Plot", LINK);
-  XFlush(m_display);
+ // XFlush(m_display);
 }
 
 Local Void refrfile(high, LINK)
@@ -939,7 +939,7 @@ struct LOC_Log_lplot_proc *LINK;
   else
     m_color((long)lp_gg->color.menuword);
   drawstr2(filepos, (long)LINK->menuy1, "File", LINK);
-  XFlush(m_display);
+ // XFlush(m_display);
 }
 
 /* Local variables for doplotfile: */

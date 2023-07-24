@@ -21791,7 +21791,7 @@ Static Void initialize()
   }
   WITH->matrix[46 - nk_keylow][-nk_keymodlow].c = 7;
   WITH->matrix[46 - nk_keylow][-nk_keymodlow].k = nk_kknormal;
-  XRebindKeysym(m_display, XStringToKeysym("BackSpace"), NULL, 0, (unsigned char * )"\007", 1);
+  //XRebindKeysym(m_display, XStringToKeysym("BackSpace"), NULL, 0, (unsigned char * )"\007", 1);
   gg.refrflag = true;
   gg.markers = false;
   gg.numpages = 1;

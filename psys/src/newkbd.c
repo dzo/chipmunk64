@@ -14,8 +14,6 @@
 #include <p2c/mylib.h>
 #endif
 
-#include <X11/Xlib.h>
-
 static char *KeyNames[] = {
   "0",
   "1",
@@ -201,24 +199,14 @@ nk_userkeyrec *ukr;
 extern void nk_ungetkey(c)
 uchar c;
 {
-  XEvent event;
-  char buf[2];
 
-  event.type = KeyPress;
-  event.xkey.display = m_display;
-  event.xkey.window = m_window;
-  buf[0] = c;
-  buf[1] = '\0';
-  event.xkey.keycode = XKeysymToKeycode(m_display, XStringToKeysym(buf));
-  XPutBackEvent(m_display, &event);
 }
 
 extern void nk_keybufclear()
 {
   XEvent event;
 
-  while (XCheckTypedEvent(m_display, KeyPress, &event))
-    ;
+ 
 }
 	 
 

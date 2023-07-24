@@ -1,6 +1,10 @@
 #define NEWCRT_G
 #define HIRES
 
+static long currentcolor=0xffff;
+extern long cols[256];
+static long bgc=0;
+
 #include <stdio.h>
 #ifdef VARARGS
 #include <varargs.h>
@@ -19,13 +23,15 @@
 #ifndef SYSDEVS_H
 #include <p2c/sysdevs.h>
 #endif
-
-#include <X11/X.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_video.h>
+#include <SDL2/SDL2_gfxPrimitives.h> 
+//#include <X11/X.h>
 #ifdef OS2
 #include <X11/Xlib.h>
 #endif  /* OS2 */
-#include <X11/Xutil.h>
-#include <X11/cursorfont.h>
+//#include <X11/Xutil.h>
+//#include <X11/cursorfont.h>
 
 #define TextW            80
 #define TextH            24
@@ -76,28 +82,6 @@ static XSetWindowAttributes WinAttr = {
   None,				      /*  cursor                 */
 };
 
-static XWMHints WinWMHints = {
-  InputHint,                          /*  flags                  */
-  True,                               /*  input                  */
-  NormalState,                        /*  initial_state          */
-  None,                               /*  icon_pixmap            */
-  None,                               /*  icon_window            */
-  0, 0,                               /*  icon_x, icon_y         */
-  None,                               /*  icon_mask              */
-  None,                               /*  window_group           */
-};
-
-static XSizeHints WinSizeHints = {
-  USSize|PMinSize|PMaxSize,           /*  flags                  */
-  0, 0,                               /*  x, y                   */
-  WinW, WinH,                         /*  width, height          */
-  WinW, WinH,                         /*  min_width, min_height  */
-  WinW, WinH,                         /*  max_width, max_height  */
-  0, 0,                               /*  width_inc, height_inc  */
-  { 0, 0 },                           /*  min_aspect             */
-  { 0, 0 },                           /*  max_aspect             */
-};
-
 static char *progname = "newcrt";
 
 static nc_windowRec __nc_curWindow = {
@@ -122,7 +106,7 @@ nc_windowRec *nc_lastLineWindow = &__nc_mainWindow;
 nc_windowRec *nc_statusWindow = &__nc_mainWindow;
 nc_windowRec *nc_defaultWindow = &__nc_mainWindow;
 
-extern XColor m_colors[ColorSets+1][ColorsInSet];    /*   From mylib   */
+extern SDL_Color m_colors[ColorSets+1][ColorsInSet];    /*   From mylib   */
 static int colortrans[8] = {
   m_green, m_yellow, m_black, m_red, m_cyan, m_white, m_blue, m_purple,
 };
@@ -139,73 +123,7 @@ char * nc_usrfont;
 
 static void WindowInitialize()
 {
-  Window root;
-  XEvent event;
-  int screennum;
-  Cursor newcursor;
-
-  screennum = DefaultScreen(m_display);
-  root = DefaultRootWindow(m_display);
-  
-  if (BlackAndWhite) {
-    WinAttr.background_pixel = BlackPixel(m_display, DefaultScreen(m_display));
-    WinAttr.border_pixel = WhitePixel(m_display, DefaultScreen(m_display));
-  } else {
-    WinAttr.background_pixel = m_colors[0][m_black].pixel;
-    WinAttr.border_pixel = m_colors[0][m_black].pixel;
-  }
-#if 0   /* simple cleanup ***mdg*** */
-  WinAttr.background_pixel = m_colors[0][m_black].pixel;
-  WinAttr.border_pixel = m_colors[m_black]->pixel;
-#endif
-  WinAttr.event_mask = WindowEventMask;
-  WinAttr.cursor = XCreateFontCursor(m_display, XC_tcross);
-  XRecolorCursor(m_display, WinAttr.cursor, &m_colors[0][15], 
-		                            &m_colors[0][m_black]);
-  WinSizeHints.max_width = XDisplayWidth(m_display, screennum);
-  WinSizeHints.max_height = XDisplayHeight(m_display, screennum);
-
-  if (!(nc_usrfont = XGetDefault (m_display, "newcrt", "font")))
-    nc_usrfont = strdup(DefaultFont);
-
-  /* This next section allows entries in .Xdefaults to set initial
-     size and position of the newcrt window. 
-     Jim Clark 7/13/92 */
-
-  usrgeo = XGetDefault(m_display, "newcrt", "geometry");
-   
-  if (usrgeo == NULL)
-    WinSizeHints.flags |= PPosition;
-  else
-    WinSizeHints.flags |= USPosition;
-
-  x_pad = 0;
-  y_pad = 0;
-
-
-  XGeometry(m_display,screennum, usrgeo, defgeo, WinBorder, nc_fontwidth,
-	    nc_fontheight, x_pad, y_pad, &jc_winX, &jc_winY,
-	    &jc_winW, &jc_winH);
-
-  nc_window = XCreateWindow(m_display, root, jc_winX, jc_winY,
-			    jc_winW, jc_winH, WinBorder,
-			    CopyFromParent, InputOutput, 
-			    DefaultVisual(m_display, screennum),
-			    WinAttrMask, &WinAttr);
  
-  /* End of revised section. */
-
-  XStoreName(m_display, nc_window, "newcrt");
-  XSetIconName(m_display, nc_window, "newcrt");
-  XSetCommand(m_display, nc_window, &progname, 1);
-  XSetWMHints(m_display, nc_window, &WinWMHints);
-  XSetNormalHints(m_display, nc_window, &WinSizeHints);
-
-  XMapWindow(m_display, nc_window);
-
-/*  nc_gc = XCreateGC(m_display, nc_window, 0, NULL);  */
-
-  XWindowEvent(m_display, nc_window, ExposureMask, &event);
 }
 
 void nc_makeWindow(w, ptop, pheight, pleft, pwidth)
@@ -244,38 +162,7 @@ void nc_initialize()
 
   if (! m_initialized)
     m_init_graphics();
-  WindowInitialize();
-  nc_gc = XCreateGC(m_display, nc_window, 0, NULL);
-
-  if (BlackAndWhite) {
-    XSetForeground(m_display, nc_gc,
-		   WhitePixel(m_display, screennum));
-    XSetBackground(m_display, nc_gc, BlackPixel(m_display, screennum));
-  } else {
-    XSetForeground(m_display, nc_gc,
-		   m_colors[0][colortrans[nc_green/4096]].pixel);
-    XSetBackground(m_display, nc_gc, m_colors[0][m_black].pixel);
-  }
-  nc_highlight = nc_green;
-  fontnum = XLoadFont(m_display, nc_usrfont);
-  XSetFont(m_display, nc_gc, fontnum);
-  nc_cursorgc = XCreateGC(m_display, nc_window, 0, NULL);
-
-  if (BlackAndWhite) {
-    XSetForeground(m_display, nc_cursorgc,
-		   WhitePixel(m_display, screennum));
-    XSetBackground(m_display, nc_cursorgc, BlackPixel(m_display, screennum));
-  } else {
-    XSetForeground(m_display, nc_cursorgc,
-		   m_colors[0][colortrans[nc_green/4096]].pixel);
-    XSetBackground(m_display, nc_cursorgc, m_colors[0][m_black].pixel);
-  }
-
-  XSetFunction(m_display, nc_cursorgc, GXxor);
-  cursor_flag = 0;
-
-  XQueryTextExtents(m_display, fontnum, "X", 1, &dir, &ascent, &des, &cs);
-
+ 
   nc_screen = (nc_crtword *) malloc(TextW * TextH * sizeof(nc_crtword));
   for (i = 0; i < TextW * TextH; i++)
     NC_SCREEN(i).i = 32;
@@ -296,24 +183,7 @@ void nc_putChar(x, y, c)
 int x, y;
 uchar c;
 {
-  if (! nc_initialized) 
-    nc_initialize();
-  CheckRefresh();
-  if (x >= 0 && x < nc_curWindow->width &&
-      y >= 0 && y < nc_curWindow->height) {
-    NC_SCREEN(y*TextW+x).i = nc_highlight + c;
-    XDrawImageString(m_display, nc_window, nc_gc, 
- 		     nc_curWindow->gleft+x*nc_fontwidth, 
-		     nc_curWindow->top+y*nc_fontheight + ascent, 
-		     (char *)&c, 1);
-    if (nc_highlight & nc_under) {
-      XDrawLine(m_display, nc_window, nc_gc,
- 		nc_curWindow->gleft+x*nc_fontwidth, 
-		nc_curWindow->top+y*nc_fontheight + ascent + 1, 
- 		nc_curWindow->gleft+(x+1)*nc_fontwidth-1, 
-		nc_curWindow->top+y*nc_fontheight + ascent + 1);
-    }
-  }
+  characterRGBA(m_renderer,x,y,c,255,255,255,255);
 }
 
 
@@ -358,12 +228,12 @@ char *cp;
     int i;
     for (i = 0; i < len; i++)
       NC_SCREEN(y*TextW+x+i).i = nc_highlight + cp[i];
-    XDrawImageString(m_display, nc_window, nc_gc, 
-		     nc_curWindow->gleft+x*nc_fontwidth, 
+    stringRGBA(m_renderer, nc_curWindow->gleft+x*nc_fontwidth, 
 		     nc_curWindow->top+y*nc_fontheight + ascent, 
-		     cp, len);
+		     cp, 255,255,255,255);
+
     if (nc_highlight & nc_under) {
-      XDrawLine(m_display, nc_window, nc_gc, 
+      SDL_RenderDrawLine(m_renderer,
 		nc_curWindow->gleft+x*nc_fontwidth, 
 		nc_curWindow->top+y*nc_fontheight + ascent + 1, 
 		nc_curWindow->gleft+x*nc_fontwidth + len*nc_fontwidth - 1, 
@@ -394,11 +264,11 @@ int x1, y1, x2, y2;
 	    for (len = 0; len+i <= x2 && p[len].U1.c == p->U1.c; len++)
 	      linebuf[len] = p[len].U1.h;
 	  }
-	XDrawImageString(m_display, nc_window, nc_gc,
+	stringRGBA(m_renderer,
 			 i * nc_fontwidth,
-			 j * nc_fontheight + ascent, linebuf, len);
+			 j * nc_fontheight + ascent, linebuf, 255,255,255,255);
 	if (nc_highlight & nc_under) {
-	  XDrawLine(m_display, nc_window, nc_gc, 
+	  SDL_RenderDrawLine(m_renderer,
 		    i*nc_fontwidth,
 		    j*nc_fontheight + ascent + 1, 
 		    i*nc_fontwidth + len*nc_fontwidth - 1, 
@@ -411,48 +281,13 @@ int x1, y1, x2, y2;
 
 void nc_refreshScreen()
 {
-  XEvent event;
-#if 0
-  nc_crtword *p;
-  int i, done = 1;
-  short savehighlight = nc_highlight;
-#endif
-
   if (nc_initialized) {
-    while (XCheckTypedWindowEvent(m_display, nc_window, Expose, &event))
-      ;
     refresh_area(0, 0, TextW-1, TextH-1);
-#if 0
-    for (i = 0, p = nc_screen; i < TextW * TextH; i++, p++)
-      if (bigendian)
-	{
-	  if (p->U1.c != ' ') {
-	    nc_setHighlight(p->i & ~0377);
-	    XDrawImageString(m_display, nc_window, nc_gc,
-			     i%TextW * nc_fontwidth,
-			     i/TextW * nc_fontheight + ascent, &p->U1.c, 1);
-	  }
-	}
-      else
-	{
-	  if (p->U1.h != ' ') {
-	    nc_setHighlight(p->i & ~0377);
-	    XDrawImageString(m_display, nc_window, nc_gc,
-			     i%TextW * nc_fontwidth,
-			     i/TextW * nc_fontheight + ascent, &p->U1.h, 1);
-	  }
-	}
-    nc_setHighlight(savehighlight);
-#endif
   }
 }
     
 void CheckRefresh()
 {
-  XEvent event;
-
-  if (XCheckTypedWindowEvent(m_display, nc_window, Expose, &event))
-    nc_refreshScreen();
 }
 
 void nc_setWindow_(w)
@@ -470,77 +305,26 @@ nc_windowRec *w;
 void nc_setHighlight(newhighlight)
 int newhighlight;
 {
-  if (! nc_text_in_window) {
-    return;
-  }
-  if (! nc_initialized)
-    nc_initialize();
-  if (newhighlight == nc_highlight)
-    return;
-  CheckRefresh();
+  //fprintf(stderr,"sethighlight %d\n",newhighlight);
   if (newhighlight & nc_inv) {
-    if (BlackAndWhite) {
-      XSetForeground(m_display, nc_gc, BlackPixel(m_display, screennum));
-      XSetBackground(m_display, nc_gc,
-		     WhitePixel(m_display, screennum));
-    }  else {
-      XSetForeground(m_display, nc_gc, m_colors[0][m_black].pixel);
-      XSetBackground(m_display, nc_gc,
-		     m_colors[0][colortrans[(newhighlight & colormask)
-					    /4096]].pixel);
-    }
+      currentcolor=cols[0];
+      bgc=colortrans[(newhighlight & colormask)/4096];
+               
+    
   } else {
-
-    if (BlackAndWhite) {
-      XSetBackground(m_display, nc_gc, BlackPixel(m_display, screennum));
-      XSetForeground(m_display, nc_gc,
-		     WhitePixel(m_display, screennum));
-    } else {
-      XSetForeground(m_display, nc_gc,
-		     m_colors[0][colortrans[(newhighlight & colormask)
-					    /4096]].pixel);
-      XSetBackground(m_display, nc_gc, m_colors[0][m_black].pixel);
-    }
+      currentcolor=cols[colortrans[(newhighlight & colormask)/4096]];
+      bgc=0;
   }
-  nc_highlight = newhighlight;
+//  if (newhighlight==0)
+//  currentcolor=nc_green;
+  nc_highlight=newhighlight;
 }
 
 void nc_putStr(x, y, str)
 int x, y;
 Char *str;
 {
-  if (! nc_text_in_window) {
-    fprintf(stderr, "Warning!  nc_putStr(%d,%d,'", x, y);
-    show_string(str);
-    fprintf(stderr, "') called\n");
-    return;
-  }
-  if (! nc_initialized)
-    nc_initialize();
-  if (x >= 0 && x < nc_curWindow->width &&
-      y >= 0 && y < nc_curWindow->height)
-    while (*str != '\0') {
-      if (x == nc_curWindow->width) {
-	x = 0;
-	if (++y == nc_curWindow->height)
-	  break;
-      }
-      NC_SCREEN(y*TextW+x).i = nc_highlight + *str;
-      XDrawImageString(m_display, nc_window, nc_gc,
-		       nc_curWindow->gleft+nc_fontwidth*x,
-		       nc_curWindow->gtop+nc_fontheight*y + ascent,
-		       str++, 1);
-      if (nc_highlight & nc_under) {
-	XDrawLine(m_display, nc_window, nc_gc, 
-		  nc_curWindow->gleft+x*nc_fontwidth, 
-		  nc_curWindow->top+y*nc_fontheight + ascent + 1, 
-		  nc_curWindow->gleft+x*nc_fontwidth + nc_fontwidth - 1, 
-		  nc_curWindow->top+y*nc_fontheight + ascent + 1);
-      }
-      x++;
-    }
-  XFlush(m_display);
-  CheckRefresh();
+  stringColor(m_renderer,x,y,str,currentcolor);
 }
 
 
@@ -681,12 +465,13 @@ Char *str_;
 	len++;
       } while (str[len] >= ' ' && str[len] < 128 &&
 	       XPOS + len < nc_curWindow->width);
-      XDrawImageString(m_display, nc_window, nc_gc,
+      stringColor(m_renderer,  
 		       nc_curWindow->gleft+nc_fontwidth*XPOS,
 		       nc_curWindow->gtop+nc_fontheight*YPOS + ascent,
-		       (char *)str, len);
+		       (char *)str, currentcolor);
+         
       if (nc_highlight & nc_under) {
-	XDrawLine(m_display, nc_window, nc_gc, 
+  	SDL_RenderDrawLine(m_renderer,
 		  nc_curWindow->gleft+XPOS*nc_fontwidth, 
 		  nc_curWindow->top+YPOS*nc_fontheight + ascent + 1, 
 		  nc_curWindow->gleft+XPOS*nc_fontwidth + len*nc_fontwidth-1, 
@@ -703,65 +488,18 @@ Char *str_;
       }
     }
   }
-  XFlush(m_display);
   CheckRefresh();
 /*  fprintf(stderr, "nc_writeStr exits, cursor at (%d,%d)\n", XPOS, YPOS);  */
 }
 
 static void Handle_Graphics_Exposures()
 {
-  XEvent event;
-  XGraphicsExposeEvent *gx;
-
-  while (1) {
-    XWindowEvent(m_display, nc_window, ExposureMask, &event);
-    if (event.type == NoExpose)
-      return;
-    if (event.type == GraphicsExpose) {
-      gx = &(event.xgraphicsexpose);
-      while (event.type == GraphicsExpose) {
-	refresh_area(gx->x / nc_fontwidth,
-		     gx->y / nc_fontheight,
-		     (gx->x + gx->width) / nc_fontwidth,
-		     (gx->y + gx->height) / nc_fontheight);
-	if (gx->count)
-	  XWindowEvent(m_display, nc_window, ExposureMask, &event);
-	else
-	  return;
-      }
-    } else {
-      XPutBackEvent(m_display, &event);
-      return;
-    }
-  }
+ 
 }
 
 void nc_scrollUp()
 {
-  int i;
-
-  if (! nc_text_in_window) {
-    return;
-  }
-  if (nc_initialized) {
-/*    fprintf(stdout, "nc_scrollUp()\n");
-    getchar();    */
-    XCopyArea(m_display, nc_window, nc_window, nc_gc,
-	      nc_curWindow->gleft, nc_curWindow->gtop+nc_fontheight,
-	      nc_curWindow->gwidth, nc_curWindow->gheight-nc_fontheight,
-	      nc_curWindow->gleft, nc_curWindow->gtop);
-    XClearArea(m_display, nc_window, nc_curWindow->gleft,
-                                     nc_curWindow->gheight-nc_fontheight,
-	                             nc_curWindow->gwidth, nc_fontheight, False);
-    memcpy((char *) nc_screen, (char *) &NC_SCREEN(TextW), TextW*(TextH-1)*2);
-    for (i = TextW*(TextH-1); i < TextW * TextH; i++)
-      NC_SCREEN(i).i = 32;
-    Handle_Graphics_Exposures();
-/*    getchar();
-    XNoOp(m_display);
-    XFlush(m_display);  */
-    CheckRefresh();
-  }
+ 
 }
 
 void nc_clearXY(x, y, dx, dy)
@@ -776,10 +514,11 @@ int x, y, dx, dy;
 /*    fprintf(stdout, "nc_clearXY(%d, %d, %d, %d)\n", x, y, dx, dy);  
     getchar();    */
     if ((dx > 0) && (dy > 0)) {
-      XClearArea(m_display, nc_window, nc_curWindow->gleft+nc_fontwidth*x,
+      SDL_Rect r={nc_curWindow->gleft+nc_fontwidth*x,
 		                       nc_curWindow->gtop+nc_fontheight*y,
-                                       nc_fontwidth*dx, nc_fontheight*dy, False);
-      XFlush(m_display);
+                                       nc_fontwidth*dx, nc_fontheight*dy};
+      SDL_SetRenderDrawColor(m_renderer,0,0,0,255);                        
+      SDL_RenderFillRect(m_renderer, &r);
       for (j = y; j < y + dy; j++)
 	for (i = x; i < x + dx; i++)
 	  NC_SCREEN(j * TextW + i).i = 32;
@@ -1087,18 +826,6 @@ void nc_togglecursor()
   if (! nc_initialized)
     return;
   cursor_flag = ! cursor_flag;
-  if (BlackAndWhite)
-    XSetForeground(m_display, nc_cursorgc,
-		   WhitePixel(m_display, screennum)
-		   ^ m_colors[0][m_black].pixel);
-  else
-    XSetForeground(m_display, nc_cursorgc,
-		   m_colors[0][colortrans[(nc_highlight & colormask)
-		   /4096]].pixel ^ m_colors[0][m_black].pixel);
-  XFillRectangle(m_display, nc_window, nc_cursorgc,
-		 nc_curWindow->gleft+nc_fontwidth*XPOS,
-		 nc_curWindow->gtop+nc_fontheight*YPOS,
-		 nc_fontwidth, nc_fontheight);
 }
 
 void nc_cursor_on()

@@ -4,7 +4,7 @@
 #define MYLIB_G
 #define XK_MISCELLANY
 
-/* #define ENABLE_DEBUGGING */
+#define ENABLE_DEBUGGING 1
 typedef struct {int x;int y; } XPoint;
 
 /* Trying to speed up graphics */
@@ -46,7 +46,6 @@ typedef struct {int x;int y; } XPoint;
 
 #include <p2c/p2c.h>
 #include <p2c/mylib.h>
-#include <SDL2/SDL_ttf.h>
 
 #ifdef HIRES
 
@@ -75,6 +74,9 @@ unsigned long grPixels[256];
 #define XK_BackTab              0x1000FF74  /* HP */
 #define XK_KP_BackTab           0x1000FF75  /* HP */
 #endif
+
+SDL_Color m_colors[ColorSets+1][ColorsInSet];
+long cols[256];
 
 
 /* daveg, 10/6/89:  Just to improve readability of the rest of the code! */
@@ -244,7 +246,7 @@ static Pixmap UnderCursor;
 static int currentcolor = -1;
 static int currentmode = 0;
 //static Font fontnum;
-static TTF_Font *currentfont;
+static int currentfont;
 static int fontasc;
 
 static int RealWinDepth = WinDepth;
@@ -692,10 +694,10 @@ fprintf(stderr, "plane_mask %x, notAllPlanes %x\n", plane_mask, notAllPlanes);
   //m_usrfont = strdup(DefaultFont);
   //Xfprintf(stderr, "fontnum = XLoadFont()\n");
   //fontnum = XLoadFont(m_display, m_usrfont);
-  currentfont = TTF_OpenFont(DefaultFont,10);
+  currentfont = 0;
   //Xfprintf(stderr, "currentfont = XQueryFont()\n");
   //currentfont = XQueryFont(m_display, fontnum);
-  fontasc = TTF_FontHeight(currentfont) ;//->max_bounds.ascent;
+  fontasc = 8;//TTF_FontHeight(currentfont) ;//->max_bounds.ascent;
 }
 
 /* These are WOL-versions of function-keys */
@@ -1067,7 +1069,9 @@ void WindowInitialize()
   Xfprintf(stderr, "XWindowevent(m_display, m_window, ExposureMask)\n");
   XWindowEvent(m_display, m_window, ExposureMask, &event);
 #endif
+  SDL_Init(SDL_INIT_VIDEO);
   SDL_CreateWindowAndRenderer(512,390, 0, &m_window, &m_renderer);
+
 }
 
  
@@ -1258,6 +1262,7 @@ int full;
   XSetForeground(m_display, oldgrid->gc2, m_colors[0][i].pixel);
   XSetBackground(m_display, oldgrid->gc2, BlackPixel(m_display,screennum));
   #endif
+  m_maxcolor=16;
   m_color(m_red);
   m_choosecursor(0);
 
@@ -1372,10 +1377,11 @@ int flag;
 
 static SDL_Point pointbuf[16][BUF_SIZE];
 static int pointbuf_size[16];
+
 void set_color(int color) {
-  SDL_SetRenderDrawColor(m_renderer,
-                   (color & 0xc)<<4, (color & 0x2)<<6, (color & 0x1)<<7,
-                   SDL_ALPHA_OPAQUE);
+//  SDL_SetRenderDrawColor(m_renderer,
+//                   (color & 0xc)<<4, (color & 0x2)<<6, (color & 0x1)<<7,
+//                   SDL_ALPHA_OPAQUE);
 }
 static void buffer_point(color, x, y)
 int color, x, y;
@@ -1996,17 +2002,20 @@ void m_color(newcolor)
 int newcolor;
 {
   Mfprintf(stderr, "m_color(%d)\n", newcolor);
-
-  if (newcolor != currentcolor) {
-    if (newcolor != m_trans) {
-      if (newcolor > m_maxcolor)
-	newcolor = m_maxcolor;
+  if (newcolor > m_maxcolor)
+        newcolor = m_maxcolor;
       else if (newcolor < 0)
-	newcolor = 0;
-    }
-    currentcolor = newcolor;
+        newcolor = 0;
+    if(currentmode==m_erase) currentcolor = 0; 
+    else
+    currentcolor = (currentcolor & 0xff000000) | cols[newcolor];
+    //colindex=newcolor;
+    //if(newcolor<16) {
+    // SelectObject(hdc,pens[newcolor]);
+    SDL_SetRenderDrawColor(m_renderer,(currentcolor>>16)&255,(currentcolor>>8)&255,currentcolor&255,255);   
   }
-}
+
+
 
 long m_curcolor()
 {
@@ -2025,13 +2034,14 @@ long m_curcolormode()
 void m_setcolor(c, r, g, b)
 int c, r, g, b;
 {
+  Mfprintf(stderr, "m_setcolor(%d, %d, %d, %d)\n", c, r, g, b);
 if(r>0) r=r*16+15;
 if(g>0) g=g*16+15;
 if(b>0) b=b*16+15;
-m_colors[ColorSets][c].r=r;
-m_colors[ColorSets][c].g=g;
-m_colors[ColorSets][c].b=b;
-
+//m_colors[ColorSets][c].r=r;
+//m_colors[ColorSets][c].g=g;
+//m_colors[ColorSets][c].b=b;
+cols[c]=0xff000000 | (r<<16) | (g<<8) | b;
 #if 0
   unsigned char *d;
 #ifdef HIRES
@@ -2225,9 +2235,9 @@ m_vcolorarray r, g, b;
   for (i = first; i <= m_maxcolor && i < first+num; i++) {
 
 
-    m_colors[ColorSets][i].r = r[i-first]*257;
-    m_colors[ColorSets][i].g = g[i-first]*257;
-    m_colors[ColorSets][i].b = b[i-first]*257;
+    m_colors[ColorSets][i].r = r[i-first];
+    m_colors[ColorSets][i].g = g[i-first];
+    m_colors[ColorSets][i].b = b[i-first];
 
   }
 
@@ -2893,8 +2903,7 @@ int x, y, r;
 #endif
 
   Xfprintf(stderr, "XDrawArc()\n");
-  arcRGBA(m_renderer,x, y, r, 0, 360,m_colors[ColorSets][currentcolor].r,
-    m_colors[ColorSets][currentcolor].g,m_colors[ColorSets][currentcolor].b,255);
+  arcColor(m_renderer,x, y, r, 0, 360,currentcolor);
 
 #ifdef SAVECURSOR
   if (cursor_is_on)
@@ -2930,14 +2939,12 @@ int x, y, rx, ry, c;
   if (currentcolor != m_trans) {
     Xfprintf(stderr, "XFillArc()\n");
    // XFillArc(m_display, m_window, gc[currentcolor], x-rx, y-ry, rx*2, ry*2, 0, 360*64);
-    ellipseRGBA(m_renderer,x, y, rx, ry,m_colors[ColorSets][currentcolor].r,
-    m_colors[ColorSets][currentcolor].g,m_colors[ColorSets][currentcolor].b,255);
+    ellipseColor(m_renderer,x, y, rx, ry,currentcolor);
   }
 
   if (c != m_trans) {
     Xfprintf(stderr, "XDrawArc()\n");
-    ellipseRGBA(m_renderer,x, y, rx, ry,m_colors[ColorSets][c].r,
-    m_colors[ColorSets][c].g,m_colors[ColorSets][c].b,255);
+    ellipseColor(m_renderer,x, y, rx, ry,currentcolor);
   }
 
 #ifdef SAVECURSOR
@@ -3718,8 +3725,7 @@ int x, y;
 char *f, *str;
 {
   int dir, desc, len;
-  stringRGBA(m_renderer,x,y,str,m_colors[ColorSets][currentcolor].r,
-    m_colors[ColorSets][currentcolor].g,m_colors[ColorSets][currentcolor].b,255);
+  stringColor(m_renderer,x,y,str,currentcolor);
 
   Mfprintf(stderr, "m_drawstr(%d, %d, f, %s)\n", x, y, str);
 
@@ -3816,12 +3822,14 @@ void addkey(int n) {
 }
 
 void handle_events() {
+  SDL_PumpEvents();
   nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
+  printf("event %d %d\n",nevents,event.type);
   if(nevents==1) {
     switch (event.type)
     {
     case SDL_MOUSEBUTTONDOWN:
-      /* code */
+      
       break;
     case SDL_MOUSEBUTTONUP:
       /* code */
@@ -3829,9 +3837,12 @@ void handle_events() {
     case SDL_MOUSEMOTION:
       break;
     case SDL_KEYDOWN:
-      addkey(event.key.keysym.scancode);
+      addkey(event.key.keysym.sym);
       break;
     case SDL_KEYUP:
+      break;
+    case SDL_QUIT:
+      exit(0);
       break;
     default:
       break;
@@ -3844,54 +3855,39 @@ void m_readpen(pen)
 m_tablet_info *pen;
 {
   int gotevent, found = 0, giveup = 0;
+ // printf("m_readpen\n");
 
   handle_events();
-/* TODO
+  SDL_RenderPresent(m_renderer);
   Pfprintf(stderr, "m_readpen(pen) flags=%x, x=%d, y=%d\n", theflags,thex,they);
    if(nevents==1) { 
     if (event.type == SDL_MOUSEBUTTONDOWN) {
       if(event.button.button==SDL_BUTTON_LEFT) {
-      pen->dn = 1;
-      pen->depressed = ((thebuttons & Button1Mask)!=0) || pen->dn;
-      pen->up = 0;
-      pen->near_ = ! (thebuttons & Button3Mask) &&
-                  ! (theflags & GR_M_RIGHT_DOWN);
-      
-    } else if (event.type == SDL_MOUSEBUTTONUP) {
-      pen->dn = 0;
-      pen->up = (theflags & GR_M_LEFT_UP)!=0;
-      pen->depressed = ((thebuttons & Button1Mask)!=0) && (! pen->up);
-      pen->near_ = ! (thebuttons & Button3Mask) ||
-                  (theflags & GR_M_RIGHT_UP);
-      
-    } else {
-      pen->dn = 0;
-      pen->up = 0;
-      pen->depressed = ((thebuttons & Button1Mask) != 0);
-      pen->near_ = ! (thebuttons & Button3Mask);
-    }
-
-   if(theflags & GR_M_MOTION) m_cursor(thex,they);
-
-      pen->x = thex;
-      pen->y = they;
-      pen->ax = (thex-WinX)/nc_fontwidth;
-      pen->ay = (they-WinY)/nc_fontheight;
-      UNTRNSFRM(pen->x, pen->y);
-     } 
-     else
-      {pen->dn=pen->up=0;
-      pen->depressed=mouse.depressed;
-      pen->near_=mouse.near_;
-      pen->x=mouse.x;
-      pen->y=mouse.y;
-      pen->ax=mouse.ax;
-      pen->ay=mouse.ay;
+        pen->dn = 1;
+        pen->depressed = 1;
+        pen->up = 0;
       }
-      
-      theflags=0;
-
-
+      if(event.button.button==SDL_BUTTON_RIGHT) {
+        pen->near_ = 1;
+      }
+    } else if (event.type == SDL_MOUSEBUTTONUP) {
+      if(event.button.button==SDL_BUTTON_LEFT) {
+        pen->dn = 0;
+        pen->up = 1;
+        pen->depressed = 0;
+      }
+      if(event.button.button==SDL_BUTTON_RIGHT) {
+        pen->near_ = 0;
+      }
+    }
+    if (event.type == SDL_MOUSEMOTION) {
+      pen->x = event.motion.x;
+      pen->y = event.motion.y;
+      pen->ax = (pen->x)/nc_fontwidth;
+      pen->ay = (pen->y)/nc_fontheight;
+    }
+   }
+  
   pen->moving = pen->x != mouse.x || pen->y != mouse.y ||
                 pen->depressed != mouse.depressed || pen->near_ != mouse.near_;
   pen->inalpha = mouse.inalpha;
@@ -3902,7 +3898,7 @@ m_tablet_info *pen;
   mouse.ay = pen->ay;
   mouse.depressed = pen->depressed;
   mouse.near_ = pen->near_;
-*/
+
 
 }
 

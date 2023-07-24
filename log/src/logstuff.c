@@ -37,38 +37,9 @@ the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. */
 #include "logcurs_prb.h"
 #include "logcurs_box.h"
 
-Cursor arrow_cursor, copy_cursor, delete_cursor;
-Cursor probe_cursor, box_cursor;
-
 void setup_log_cursors()
 {
-  Pixmap pix;
-
-  pix = XCreateBitmapFromData(m_display, m_window, logcurs_arr_bits,
-			      logcurs_arr_width, logcurs_arr_height);
-  arrow_cursor = XCreatePixmapCursor(m_display, pix, pix,
-				     &m_colors[0][0], &m_colors[0][0],
-				     logcurs_arr_x_hot, logcurs_arr_y_hot);
-  pix = XCreateBitmapFromData(m_display, m_window, logcurs_cpy_bits,
-			      logcurs_cpy_width, logcurs_cpy_height);
-  copy_cursor = XCreatePixmapCursor(m_display, pix, pix,
-				    &m_colors[0][0], &m_colors[0][0],
-				    logcurs_cpy_x_hot, logcurs_cpy_y_hot);
-  pix = XCreateBitmapFromData(m_display, m_window, logcurs_del_bits,
-			      logcurs_del_width, logcurs_del_height);
-  delete_cursor = XCreatePixmapCursor(m_display, pix, pix,
-				      &m_colors[0][0], &m_colors[0][0],
-				      logcurs_del_x_hot, logcurs_del_y_hot);
-  pix = XCreateBitmapFromData(m_display, m_window, logcurs_prb_bits,
-			      logcurs_prb_width, logcurs_prb_height);
-  probe_cursor = XCreatePixmapCursor(m_display, pix, pix,
-				     &m_colors[0][0], &m_colors[0][0],
-				     logcurs_prb_x_hot, logcurs_prb_y_hot);
-  pix = XCreateBitmapFromData(m_display, m_window, logcurs_box_bits,
-			      logcurs_box_width, logcurs_box_height);
-  box_cursor = XCreatePixmapCursor(m_display, pix, pix,
-				   &m_colors[0][0], &m_colors[0][0],
-				   logcurs_box_x_hot, logcurs_box_y_hot);
+ 
 }
 
 
@@ -77,23 +48,7 @@ static int cursor_color = -1;
 void recolor_log_cursors(int color, int force)
 
 {
-  if (color == cursor_color && !force)
-    return;
-  cursor_color = color;
-/*  printf("Called recolor_log_cursors with %d (%d,%d,%d)\n",
-	 color, m_colors[ColorSets][color].red,
-	 m_colors[ColorSets][color].green,
-	 m_colors[ColorSets][color].blue);   */
-  XRecolorCursor(m_display, arrow_cursor,
-		 &m_colors[ColorSets][color], &m_colors[ColorSets][0]);
-  XRecolorCursor(m_display, copy_cursor,
-		 &m_colors[ColorSets][color], &m_colors[ColorSets][0]);
-  XRecolorCursor(m_display, delete_cursor,
-		 &m_colors[ColorSets][color], &m_colors[ColorSets][0]);
-  XRecolorCursor(m_display, probe_cursor,
-		 &m_colors[ColorSets][color], &m_colors[ColorSets][0]);
-  XRecolorCursor(m_display, box_cursor,
-		 &m_colors[ColorSets][color], &m_colors[ColorSets][0]);
+
 }
 
 
@@ -102,26 +57,8 @@ static int cursor_shape = -1;
 void choose_log_cursor(int curs)
 
 {
-  if (curs == cursor_shape)
-    return;
-  cursor_shape = curs;
-  switch (curs) {
-  case 0:
-    XDefineCursor(m_display, m_window, arrow_cursor);
-    break;
-  case 1:
-    XDefineCursor(m_display, m_window, copy_cursor);
-    break;
-  case 2:
-    XDefineCursor(m_display, m_window, delete_cursor);
-    break;
-  case 3:
-    XDefineCursor(m_display, m_window, probe_cursor);
-    break;
-  case 4:
-    XDefineCursor(m_display, m_window, box_cursor);
-    break;
-  }
+  m_choosecursor(curs);
+
 }
 
 
@@ -191,7 +128,7 @@ void m_drawarrow(long x1, long y1, long x2, long y2, long a, long b)
 
 void BEEPER(int x, int y)
 {
-  XBell(m_display, 0);
+ // XBell(m_display, 0);
 }
 
 

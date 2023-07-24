@@ -87,7 +87,7 @@ extern char *strdup(const char *);
 #endif
 
 #if (!defined(BSD) && !defined(__sgi) && !defined(__alpha__)) 
-# define log1p(X) log(1+(X))
+//# define log1p(X) log(1+(X))
 #endif
 
 #if defined(rs6000) || defined(ultrix)
