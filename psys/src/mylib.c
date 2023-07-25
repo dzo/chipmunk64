@@ -243,7 +243,8 @@ static GC gc[ColorsInSet];
 static GC CursorGC, CursorGC2, CursorGC3;
 static Pixmap UnderCursor;
 */
-static int currentcolor = -1;
+static int currentcolor = 0;
+static int currentcolorindex = 0;
 static int currentmode = 0;
 //static Font fontnum;
 static int currentfont;
@@ -1379,9 +1380,8 @@ static SDL_Point pointbuf[16][BUF_SIZE];
 static int pointbuf_size[16];
 
 void set_color(int color) {
-//  SDL_SetRenderDrawColor(m_renderer,
-//                   (color & 0xc)<<4, (color & 0x2)<<6, (color & 0x1)<<7,
-//                   SDL_ALPHA_OPAQUE);
+  SDL_SetRenderDrawColor(m_renderer,cols[color]&255,(cols[color]>>8)&255, (cols[color]>>16)&255,
+                   SDL_ALPHA_OPAQUE);
 }
 static void buffer_point(color, x, y)
 int color, x, y;
@@ -2009,10 +2009,11 @@ int newcolor;
     if(currentmode==m_erase) currentcolor = 0; 
     else
     currentcolor = (currentcolor & 0xff000000) | cols[newcolor];
+    currentcolorindex=newcolor;
     //colindex=newcolor;
     //if(newcolor<16) {
     // SelectObject(hdc,pens[newcolor]);
-    SDL_SetRenderDrawColor(m_renderer,(currentcolor>>16)&255,(currentcolor>>8)&255,currentcolor&255,255);   
+    SDL_SetRenderDrawColor(m_renderer,(currentcolor)&255,(currentcolor>>8)&255,(currentcolor>>16)&255,255);   
   }
 
 
@@ -2021,7 +2022,7 @@ long m_curcolor()
 {
   Mfprintf(stderr, "m_curcolor() = %d\n", currentcolor);
 
-  return(currentcolor);
+  return(currentcolorindex);
 }
 
 long m_curcolormode()
@@ -2041,7 +2042,7 @@ if(b>0) b=b*16+15;
 //m_colors[ColorSets][c].r=r;
 //m_colors[ColorSets][c].g=g;
 //m_colors[ColorSets][c].b=b;
-cols[c]=0xff000000 | (r<<16) | (g<<8) | b;
+cols[c]=0xff000000 | (b<<16) | (g<<8) | r;
 #if 0
   unsigned char *d;
 #ifdef HIRES
@@ -2448,7 +2449,7 @@ int x, y;
 #else
   Xfprintf(stderr, "XDrawLine()\n");
   //XDrawLine(m_display, m_window, gc[currentcolor], curx, cury, x, y);
-  set_color(currentcolor);
+  //set_color(currentcolorindex);
   SDL_RenderDrawLine(m_renderer,curx, cury, x, y);
 #endif /* EXTRA_BUFFERING */
   curx = x;
@@ -2489,7 +2490,7 @@ int dx, dy;
 #else
   Xfprintf(stderr, "XDrawLine()\n");
  // XDrawLine(m_display, m_window, gc[currentcolor], curx, cury, curx+dx, cury+dy);
-  set_color(currentcolor);
+  //set_color(currentcolor);
   SDL_RenderDrawLine(m_renderer,curx, cury, curx+dx, cury+dy);
 #endif /* EXTRA_BUFFERING */
   curx += dx;
@@ -2569,7 +2570,7 @@ int x1, y1, x2, y2;
     buffer_line(currentcolor, x1, y1, x2, y2);
 #else
   Xfprintf(stderr, "XDrawLine()\n");
-  set_color(currentcolor);
+  //set_color(currentcolor);
   if ((x1 == x2) && (y1 == y2))
 //    XDrawPoint(m_display, m_window, gc[currentcolor], x1, y1);
       SDL_RenderDrawPoint(m_renderer,x1,y1);
@@ -2641,7 +2642,7 @@ int x1, y1, x2, y2;
       buffer_rect(currentcolor, x, y, x1+x2-x-x, y1+y2-y-y);
 #else
   Xfprintf(stderr, "XDrawRectangle()\n");
-  set_color(currentcolor);
+  //set_color(currentcolor);
   if (x1 == x2)
     if (y1 == y2)
       SDL_RenderDrawPoint(m_renderer,x1,y1);
@@ -2716,7 +2717,7 @@ int x1, y1, x2, y2;
       buffer_fillrect(currentcolor, x, y, x1+x2-x-x+1, y1+y2-y-y+1);
 #else
   Xfprintf(stderr, "XFillRectangle()\n");
-    set_color(currentcolor);
+  //  set_color(currentcolor);
   if (x1 == x2)
     if (y1 == y2)
       SDL_RenderDrawPoint(m_renderer,x1,y1);
@@ -2794,7 +2795,7 @@ int x, y;
   buffer_point(currentcolor, x, y);
 #else
   Xfprintf(stderr, "XDrawPoint()\n");
-  set_color(currentcolor);
+  //set_color(currentcolor);
   SDL_RenderDrawPoint(m_renderer,x,y);
 #endif /* EXTRA_BUFFERING */
 
@@ -2903,7 +2904,7 @@ int x, y, r;
 #endif
 
   Xfprintf(stderr, "XDrawArc()\n");
-  arcColor(m_renderer,x, y, r, 0, 360,currentcolor);
+  arcColor(m_renderer,x, y, r, 0, 360, currentcolor);
 
 #ifdef SAVECURSOR
   if (cursor_is_on)
@@ -3230,6 +3231,7 @@ static int bezbufp;
 static int bezthresh;
 
 int hitdet_bezier(x1, y1, x2, y2, x3, y3, x4, y4)
+int x1, y1, x2, y2, x3, y3, x4, y4;
 {
   int minx, maxx, miny, maxy;
 
@@ -3274,7 +3276,7 @@ int x1, y1, x2, y2, x3, y3, x4, y4, fx, fy;
     if (x4==fx && y4==fy) {
       Xfprintf(stderr, "XDrawLines()\n");
     //  XDrawLines(m_display, m_window, gc[currentcolor], bezbuf, bezbufp, CoordModeOrigin);
-      set_color(currentcolor);
+     // set_color(currentcolor);
       SDL_RenderDrawLines(m_renderer, bezbuf, bezbufp);
     }
   } else {
@@ -3725,7 +3727,7 @@ int x, y;
 char *f, *str;
 {
   int dir, desc, len;
-  stringColor(m_renderer,x,y,str,currentcolor);
+  
 
   Mfprintf(stderr, "m_drawstr(%d, %d, f, %s)\n", x, y, str);
 
@@ -3747,7 +3749,7 @@ char *f, *str;
 
  // Xfprintf(stderr, "XDrawString()\n");
  // XDrawString(m_display, m_window, gc[currentcolor], x, y+fontasc-1, str, len);
-
+  stringColor(m_renderer,x,y,str,currentcolor);
 
 #ifdef SAVECURSOR
   if (cursor_is_on)
@@ -3823,8 +3825,9 @@ void addkey(int n) {
 
 void handle_events() {
   SDL_PumpEvents();
+  int k,sc;
   nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
-  printf("event %d %d\n",nevents,event.type);
+  //printf("event %d %d\n",nevents,event.type);
   if(nevents==1) {
     switch (event.type)
     {
@@ -3837,13 +3840,20 @@ void handle_events() {
     case SDL_MOUSEMOTION:
       break;
     case SDL_KEYDOWN:
-      addkey(event.key.keysym.sym);
+      sc=event.key.keysym.scancode;
+      if(sc==SDL_SCANCODE_LEFT) addkey('\034');
+      if(sc==SDL_SCANCODE_RIGHT) addkey('\b');
+      if (sc==SDL_SCANCODE_UP) addkey('\037');
+      if (sc==SDL_SCANCODE_DOWN) addkey('\n');
       break;
     case SDL_KEYUP:
       break;
     case SDL_QUIT:
       exit(0);
       break;
+    case SDL_TEXTINPUT:
+      printf("%d %d\n",event.text.text[0],event.text.text[1]);
+      addkey(event.text.text[0]);
     default:
       break;
     }
@@ -3929,7 +3939,7 @@ m_tablet_info *pen;
 
 boolean m_pollkbd()
 {
-  handle_events();
+ // handle_events();
   return(keyfirst!=keynext);
 }
 
@@ -3938,7 +3948,7 @@ uchar m_inkey()
   int k;
 nc_cursor_on();
 do {
-handle_events(); 
+//handle_events(); 
 k=thekey;
 }while(!k);
 nc_cursor_off();
@@ -3951,7 +3961,7 @@ uchar m_inkeyn()
 {
   int k;
 Kfprintf(stderr,"m_inkeyn %d\n",keybuf[keyfirst]);    
-handle_events(); 
+//handle_events(); 
 k=thekey;
 return k;
 
@@ -3959,7 +3969,7 @@ return k;
 
 uchar m_testkey()
 {
-  handle_events();                      
+  //handle_events();                      
 Kfprintf(stderr,"m_testkey %d\n",keybuf[keyfirst]);    
 if(keyfirst!=keynext) return keybuf[keyfirst];
 return 0;

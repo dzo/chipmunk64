@@ -3956,7 +3956,7 @@ struct LOC_compilepage *LINK;
   Char STR2[256];
 
   fprintf(f, "%sDump of %s on %s by %s\n",
-	  pref, LINK->hdef->name, strdate(STR2, "$X"), cuserid(NULL));
+	  pref, LINK->hdef->name, strdate(STR2, "$X"), "martin");
   fprintf(f, "%sLOG digital hierarchy compiler version of %s\n\n",
 	  pref, lastmoddate);
   fprintf(f, "%sCompilation time:     %1.2f sec\n",

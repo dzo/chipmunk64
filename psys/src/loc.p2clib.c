@@ -48,7 +48,7 @@ void _local_p2c_init()
 #else
     char *getlogin();
     P_citinfo = &citinfo;
-    cuserid(P_citinfo->username);
+//    cuserid(P_citinfo->username);
 
 #ifdef OS2
     if( getenv("HOME") != NULL)

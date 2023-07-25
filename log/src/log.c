@@ -762,7 +762,7 @@ Static Void initscreen()
   m_setlinestyle(2L, 0xaaaaL);
 /* p2c: log.text, line 662:
  * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-  m_setfont(logfont_lfont);
+  //m_setfont(logfont_lfont);
   init_X_screen();
   onescreen = nc_alphashared();
   eightcolors = (m_maxcolor <= 7);
@@ -4785,7 +4785,7 @@ Char *msg;
       do {
 	sprintf(tracefname, "/tmp/%.10s%03ld",
         /* P_citinfo->username, P_rand(&gg.rndseed, 1000L)); */
-      	cuserid(NULL), P_rand(&gg.rndseed, 1000L)); 
+      	"martin", P_rand(&gg.rndseed, 1000L)); 
 
       } while (access(tracefname, F_OK) == 0);
     }

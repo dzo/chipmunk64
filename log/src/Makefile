@@ -239,6 +239,9 @@ log: $(LOGOBJ) tooldir.o $(LIBP2C) makeana
 	$(CC) $(CFLAGS) tooldir.o $(LOGOBJ) $(LIBP2C) $(LIBX11)  \
 	$(OTHERLIBS) -o log
 
+log.html: $(LOGOBJ) tooldir.o $(LIBP2C) makeana
+	$(CC) $(CFLAGS) tooldir.o $(LOGOBJ) $(LIBP2C) $(LIBX11)  \
+	$(OTHERLIBS) -o log.html --embed-file log.gate --embed-file log.cnf
 ## The following permits you to link properly with AmigaOS and 
 ## X shared libraries used in ADE
  

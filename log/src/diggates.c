@@ -651,7 +651,7 @@ log_16_action *act_;
     m_seefont(&savef);
     m_choosefont(0L);
     m_seefont(&crtfont);
-    m_setfont(savef);
+    //m_setfont(savef);
     V.dip = (dispinfo *)Malloc(sizeof(dispinfo));
     WITH2->info = (Anyptr)V.dip;
     cleardisp(&V);
