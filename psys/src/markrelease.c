@@ -4,11 +4,7 @@
 #include <p2c/p2c.h>
 #include <p2c/markrelease.h>
 
-struct record {
-  struct record *prev;
-} *mark_first_mallocced_info;
-
-char *fakemalloc(size)
+char *fakemalloc(size) 
 long size;
 {
   struct record *retval;
@@ -23,7 +19,7 @@ long size;
   return ((char *)(retval) + sizeof(struct record) / sizeof(char));
 }
 
-void mark(state)
+void mark(state) 
 struct record **state;
 {
   *state = mark_first_mallocced_info;

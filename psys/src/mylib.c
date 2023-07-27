@@ -1,6 +1,9 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL2_gfxPrimitives.h> 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 #define MYLIB_G
 #define XK_MISCELLANY
 
@@ -1070,7 +1073,10 @@ void WindowInitialize()
   Xfprintf(stderr, "XWindowevent(m_display, m_window, ExposureMask)\n");
   XWindowEvent(m_display, m_window, ExposureMask, &event);
 #endif
-  SDL_Init(SDL_INIT_VIDEO);
+ // SDL_Init(SDL_INIT_VIDEO);
+ // SDL_SetHint(SDL_HINT_EMSCRIPTEN_ASYNCIFY, "1");
+//...
+  SDL_Init(SDL_INIT_EVERYTHING);
   SDL_CreateWindowAndRenderer(512,390, 0, &m_window, &m_renderer);
 
 }
@@ -3858,6 +3864,7 @@ void handle_events() {
       break;
     }
   }
+
 }
 
 
@@ -3869,6 +3876,9 @@ m_tablet_info *pen;
 
   handle_events();
   SDL_RenderPresent(m_renderer);
+#ifdef __EMSCRIPTEN__
+emscripten_sleep(10);
+#endif
   Pfprintf(stderr, "m_readpen(pen) flags=%x, x=%d, y=%d\n", theflags,thex,they);
    if(nevents==1) { 
     if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -3939,16 +3949,18 @@ m_tablet_info *pen;
 
 boolean m_pollkbd()
 {
- // handle_events();
   return(keyfirst!=keynext);
 }
 
 uchar m_inkey()
 {
+
   int k;
 nc_cursor_on();
+
 do {
-//handle_events(); 
+  handle_events();
+  emscripten_sleep(10);
 k=thekey;
 }while(!k);
 nc_cursor_off();

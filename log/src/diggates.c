@@ -648,9 +648,9 @@ log_16_action *act_;
 
   case act_16_new:
     (*WITH1->hook.getcolor)("CRT", &crtcolor, log_green);
-    m_seefont(&savef);
+   // m_seefont(&savef);
     m_choosefont(0L);
-    m_seefont(&crtfont);
+   // m_seefont(&crtfont);
     //m_setfont(savef);
     V.dip = (dispinfo *)Malloc(sizeof(dispinfo));
     WITH2->info = (Anyptr)V.dip;

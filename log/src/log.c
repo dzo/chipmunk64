@@ -3146,7 +3146,9 @@ Char ch;
 Static Void waitforkey()
 {
   Char ch;
-
+#ifdef __EMSCRIPTEN__
+return;
+#endif
   while (pollkbd2())
     ch = inkey2();
   do {
@@ -21946,41 +21948,18 @@ Static Void shownews()
 /*=                                              =*/
 /*================================================*/
 
-int main(int argc, Char * argv[])
-{
-  long FORLIM;
-  Char STR1[81];
-  nc_text_in_window = 1;  
-  PASCAL_MAIN(argc, argv);
-  tracefile = NULL;
-  dumpfile = NULL;
-  newci_markprogram(&programmark);   /*NEWCI*/
-  gg.initdone = false;
-  entrycapslock = nk_capslock;
-  nk_settransarray(nk_ktcurrent, &curkeytrans);
-  gg.traceopen = false;
-  gg.dumpopen = false;
-  gg.runstamp = timers_sysclock();
-  excpline = -1;
-  for (temp1 = 1; temp1 <= maxgatesfiles; temp1++)
-    libf1[temp1 - 1] = NULL;
-  TRY(try40);
-    initialize();
-#define HCL_KLUDGE
-#ifdef HCL_KLUDGE
-    printf("\210\f Starting\201\210 LOG\f\200");
-#endif  /* HCL_KLUDGE */
-    do {
-      gg.initdone = true;
-      gg.fastspeed = gg.fastmin;
-      TRY(try41);
-	do {
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+void mainloop() {
+       
 	  excpline = -1;
 	  tempverbose = false;
 	  suppressdots = false;
 	  if (justonecommand && thingstodo == NULL) {
 	    P_escapecode = 20;
-	    goto _Ltry41;
+	   // goto _Ltry41;
+     return;
 	  }
 	  if (gg.showpage <= 0)
 	    refrscreen();
@@ -22148,8 +22127,42 @@ int main(int argc, Char * argv[])
 	    gg.startpoint = false;
 	  }
 /*        sleep(2);zfprintf(stdout, "z"); fflush(stdout);  **MDG** test */
-	} while (!pigsfly);
-      RECOVER2(try41,_Ltry41);
+//	} while (!pigsfly);
+    //  RECOVER2(try41,_Ltry41);
+}
+
+int main(int argc, Char * argv[])
+{
+  long FORLIM;
+  Char STR1[81];
+  nc_text_in_window = 1;  
+  PASCAL_MAIN(argc, argv);
+  tracefile = NULL;
+  dumpfile = NULL;
+  newci_markprogram(&programmark);   /*NEWCI*/
+  gg.initdone = false;
+  entrycapslock = nk_capslock;
+  nk_settransarray(nk_ktcurrent, &curkeytrans);
+  gg.traceopen = false;
+  gg.dumpopen = false;
+  gg.runstamp = timers_sysclock();
+  excpline = -1;
+  for (temp1 = 1; temp1 <= maxgatesfiles; temp1++)
+    libf1[temp1 - 1] = NULL;
+  TRY(try40);
+    initialize();
+#define HCL_KLUDGE
+#ifdef HCL_KLUDGE
+    printf("\210\f Starting\201\210 LOG\f\200");
+#endif  /* HCL_KLUDGE */
+    do {
+      gg.initdone = true;
+      gg.fastspeed = gg.fastmin;
+//#ifdef __EMSCRIPTEN__
+//  emscripten_set_main_loop(mainloop, 10, 1);
+//#endif
+      while(1) mainloop();
+
 	gg.curpage = realcurpage;
 	*gg.func = '\0';
 	if (excpline == -1)
@@ -22169,7 +22182,7 @@ int main(int argc, Char * argv[])
 	waitforkey();
 	m_graphics_on();
 	clearalpha();
-      ENDTRY(try41);
+    //  ENDTRY(try41);
       refrscreen();
     } while (!pigsfly);
   RECOVER2(try40,_Ltry40);
