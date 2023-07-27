@@ -162,8 +162,7 @@ extern struct ext_proc ext_proc_table[];
 boolean findprocedure(char *name, Void (**proc)())
 {
   int i;
-
-  if (*name) {
+  if (*name!=0) {
     for (i = 0; ext_proc_table[i].name; i++) {
       if (strciends(name, ext_proc_table[i].name) ||
 	  strciends(ext_proc_table[i].name, name)) {

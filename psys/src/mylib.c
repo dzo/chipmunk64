@@ -263,14 +263,14 @@ static int planeCount;
 #endif  /* HIRES */
 
 static unsigned long notAllPlanes;
-
+/*
 static struct grid {
   int dx, dy, ax, ay;
   unsigned long color;
 } grid1 = { -1, -1, -1, -1, 0, 0, 0, 0, 0 },
   grid2 = { -1, -1, -1, -1, 0, 0, 0, 0, 0 },
   *newgrid, *oldgrid;
-
+*/
 static char *progname = "mylib";
 
 void GeneralTransform(x, y)
@@ -3830,7 +3830,11 @@ void addkey(int n) {
 }
 
 void handle_events() {
+  SDL_RenderPresent(m_renderer);
   SDL_PumpEvents();
+  #ifdef __EMSCRIPTEN__
+  emscripten_sleep(10);
+  #endif
   int k,sc;
   nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
   //printf("event %d %d\n",nevents,event.type);
@@ -3875,10 +3879,8 @@ m_tablet_info *pen;
  // printf("m_readpen\n");
 
   handle_events();
-  SDL_RenderPresent(m_renderer);
-#ifdef __EMSCRIPTEN__
-emscripten_sleep(10);
-#endif
+  
+
   Pfprintf(stderr, "m_readpen(pen) flags=%x, x=%d, y=%d\n", theflags,thex,they);
    if(nevents==1) { 
     if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -3960,7 +3962,9 @@ nc_cursor_on();
 
 do {
   handle_events();
+  #ifdef __EMSCRIPTEN__
   emscripten_sleep(10);
+  #endif
 k=thekey;
 }while(!k);
 nc_cursor_off();

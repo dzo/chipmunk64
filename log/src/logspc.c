@@ -137,7 +137,8 @@ char	pre_file[256] = "", post_file[256] = ""; /* for #include-esque stuff */
 #define LOGSPC_G
 #include "logspc.h"
 
-extern double AnaVdd;
+//extern double AnaVdd;
+double AnaVdd=1.0;
 
 char *my_strdup();
 #undef strdup

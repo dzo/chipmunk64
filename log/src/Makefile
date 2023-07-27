@@ -188,16 +188,16 @@ CFLAGS =  $(CHIPMUNKFLAGS) -I$(LOCINC) -I$(XINCLUDEDIR) -DLOGLIB=\"$(LOGLIBDIR)\
 
 DIGOBJ = logsim.o logdig.o logsimasm.o logsimed.o diggates.o \
          loghier.o logsimh.o swap.o
-ANAOBJ = ana/globals.o ana/nsolver.o ana/main.o ana/inter.o \
-         ana/numbers.o ana/mmeter.o ana/iscope.o ana/devtechp.o\
-	 ana/vdiff.o ana/vswitch.o ana/stairs.o ana/runspec.o \
-	 ana/idiff.o ana/iswitch1.o ana/iswitch2.o ana/devtechn.o \
-	 ana/resfloat.o ana/capfloat.o ana/nfet4.o ana/pfet4.o \
-	 ana/nfet5.o ana/pfet5.o ana/pfet6.o ana/pspc1.o ana/nspc1.o\
-	 ana/nfet7t.o ana/nfet7f.o ana/pfet7t.o ana/pfet7f.o ana/thermal.o\
-	 ana/tc.o ana/moscap.o ana/ganglion.o ana/hres.o ana/physical.o\
-	 ana/npn1.o ana/pnp1.o ana/npn2.o ana/pnp2.o ana/diode1.o\
-	 ana/pwl.o ana/rtd.o
+#ANAOBJ = ana/globals.o ana/nsolver.o ana/main.o ana/inter.o \
+#         ana/numbers.o ana/mmeter.o ana/iscope.o ana/devtechp.o
+#	 ana/vdiff.o ana/vswitch.o ana/stairs.o ana/runspec.o \
+#	 ana/idiff.o ana/iswitch1.o ana/iswitch2.o ana/devtechn.o \
+#	 ana/resfloat.o ana/capfloat.o ana/nfet4.o ana/pfet4.o \
+#	 ana/nfet5.o ana/pfet5.o ana/pfet6.o ana/pspc1.o ana/nspc1.o\
+#	 ana/nfet7t.o ana/nfet7f.o ana/pfet7t.o ana/pfet7f.o ana/thermal.o\
+#	 ana/tc.o ana/moscap.o ana/ganglion.o ana/hres.o ana/physical.o\
+#	 ana/npn1.o ana/pnp1.o ana/npn2.o ana/pnp2.o ana/diode1.o\
+#	 ana/pwl.o ana/rtd.o
 
 SIMOBJ = logcom.o $(DIGOBJ) $(ANAOBJ)
 TOOLOBJ = $(SIMOBJ) lplot.o logspc.o logntk.o

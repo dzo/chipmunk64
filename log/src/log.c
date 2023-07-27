@@ -2457,6 +2457,8 @@ Char *name_;
   Void (*proc) PP((log_action *act));
   boolean ready;
   cnfrec *cnfp;
+//  gg.traceflag=true;
+//  tracefile=stderr;
 
   strcpy(name, name_);
   strcpy(savefunc, gg.func);
@@ -3146,9 +3148,6 @@ Char ch;
 Static Void waitforkey()
 {
   Char ch;
-#ifdef __EMSCRIPTEN__
-return;
-#endif
   while (pollkbd2())
     ch = inkey2();
   do {
