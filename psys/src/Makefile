@@ -226,14 +226,14 @@ setup:
 
 install: setup all
 	cp libp2c.a $(LIB)
-	-ranlib $(CHIPMUNKRANFLAGS) -t $(LIB)
+	$(RANLIB) $(CHIPMUNKRANFLAGS) -t $(LIB)
 	cp $(LIBSTUFF) $(LIBDIR)
 	-if [ ! -d $(BINDIR) ] ; then mkdir $(BINDIR) ; fi
 
 libp2c.a: $(OBJS)
 	-rm -f libp2c.a
-	ar r libp2c.a $(OBJS)
-	-ranlib $(CHIPMUNKRANFLAGS) libp2c.a
+	$(AR) r libp2c.a $(OBJS)
+	$(RANLIB) $(CHIPMUNKRANFLAGS) libp2c.a
 
 p2clib.o: p2clib.c
 	$(CC) -c $(CFLAGS) $(P2CFLAGS) p2clib.c

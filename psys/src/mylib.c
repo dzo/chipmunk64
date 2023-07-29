@@ -1,6 +1,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL2_gfxPrimitives.h> 
+#include <GL/gl.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -81,6 +82,7 @@ unsigned long grPixels[256];
 SDL_Color m_colors[ColorSets+1][ColorsInSet];
 long cols[256];
 
+int WindowWidth=800,WindowHeight=600;
 
 /* daveg, 10/6/89:  Just to improve readability of the rest of the code! */
 
@@ -1077,7 +1079,7 @@ void WindowInitialize()
  // SDL_SetHint(SDL_HINT_EMSCRIPTEN_ASYNCIFY, "1");
 //...
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_CreateWindowAndRenderer(512,390, 0, &m_window, &m_renderer);
+  SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer);
 
 }
 
@@ -1113,13 +1115,13 @@ static unsigned char *FigureOutBWLine(r, g, b)
     return NULL;
 }
 
-
+extern int WindowWidth,WindowHeight;
 static void do_init_screen(full)
 int full;
 {
   //Window root;
   int i, x, y;
-  unsigned int w, h, bw, d;
+  int w, h, bw, d;
 
   init_debug_flags();
 
@@ -1135,8 +1137,8 @@ int full;
   Xfprintf(stderr, "XGetGeometry()\n");
   SDL_GetWindowSize(m_window, &w, &h);
   //XGetGeometry(m_display, m_window, &root, &x, &y, &w, &h, &bw, &d);
-  m_across = w;
-  m_down = h;
+  m_across = WindowWidth;
+  m_down = WindowHeight;
   RealWinDepth = d;
   m_across--;
   m_down--;
@@ -1871,12 +1873,50 @@ int n;
   }
 }
 
+
 void m_colormode(c)
 int c;
 {
   int i;
+  SDL_BlendMode invmode=SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR, SDL_BLENDFACTOR_ZERO,
+													SDL_BLENDOPERATION_ADD, SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA,
+													SDL_BLENDFACTOR_ZERO, SDL_BLENDOPERATION_ADD);
+                          
+                          /*SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ZERO,
+    SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,SDL_BLENDOPERATION_SUBTRACT,
+    SDL_BLENDFACTOR_ZERO,
+    SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,SDL_BLENDOPERATION_ADD);
+*/
+
 
   Mfprintf(stderr, "m_colormode(%d)\n", c);
+  currentmode=c;
+switch(c) {
+case m_xor:
+//currentcolor |= GrXOR;
+//glLogicOp(GL_XOR);
+//m_clear();
+//refresh();
+//SDL_SetRenderDrawBlendMode(m_renderer,invmode);
+//SDL_SetRenderDrawColor(m_renderer, 128, 128, 128, 128);
+//currentcolor=0xffffffff;
+//SetROP2(hdc,R2_XORPEN);
+break;
+//case m_over:
+//currentcolor |= GrOR; 
+//break;
+case m_erase:
+currentcolor = cols[0];
+break;
+
+case m_normal:
+//SetROP2(hdc,R2_COPYPEN);
+//glLogicOp(GL_COPY);
+SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
+//currentcolor &= 0xffffff;             
+break;
+}
+
 #if 0
   if (c != currentmode) {
 #ifdef EXTRA_BUFFERING
@@ -3493,7 +3533,7 @@ double x0, y0, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5;
 
 int hitdet_drawpoly(n, points)
 int n;
-XPoint *points;
+SDL_Point *points;
 {
   int i;
 
@@ -3522,10 +3562,10 @@ int n, x[], y[];
 
 int hitdet_fillpoly(n, points)
 int n;
-XPoint *points;
+SDL_Point *points;
 {
   int i, y1, y2, count;
-  XPoint *pt1, *pt2;
+  SDL_Point *pt1, *pt2;
 
   if (hitdet_drawpoly(n, points))
     return 1;
@@ -3685,7 +3725,7 @@ int n, x[], y[];
 
   Mfprintf(stderr, "m_fillpoly(%d, x, y)\n", n);
 
-  pointlist = (XPoint *) calloc(n, sizeof(XPoint));
+  pointlist = (SDL_Point *) calloc(n, sizeof(SDL_Point));
 
   for (i = 0; i < n; i++) {
     newx = x[i];
@@ -3824,9 +3864,10 @@ int thex,they;
 int theflags;
 int thebuttons;
 
-void addkey(int n) {
-   if(keynext<256)
-      keybuf[keynext++]=n;
+
+void addkey(int n) { 
+  if(keyfirst!=(keynext+1))
+    keybuf[keynext++]=n;
 }
 
 void handle_events() {
@@ -3842,19 +3883,37 @@ void handle_events() {
     switch (event.type)
     {
     case SDL_MOUSEBUTTONDOWN:
-      
+      if(event.button.button==SDL_BUTTON_LEFT) {
+        thebuttons |= 2;
+        theflags=2;
+      }
+      if(event.button.button==SDL_BUTTON_RIGHT) {
+        thebuttons |= 1;
+        theflags=1;
+      }
       break;
     case SDL_MOUSEBUTTONUP:
-      /* code */
+      if(event.button.button==SDL_BUTTON_LEFT) {
+        thebuttons &= ~2;
+        theflags=8;
+      }
+      if(event.button.button==SDL_BUTTON_RIGHT) {
+        thebuttons &= ~1;
+        theflags=4;
+      }
       break;
     case SDL_MOUSEMOTION:
+      theflags |= 16;
+      thex=event.motion.x;
+      they=event.motion.y;
       break;
     case SDL_KEYDOWN:
       sc=event.key.keysym.scancode;
-      if(sc==SDL_SCANCODE_LEFT) addkey('\034');
-      if(sc==SDL_SCANCODE_RIGHT) addkey('\b');
+      if(sc==SDL_SCANCODE_LEFT) addkey('\b');
+      if(sc==SDL_SCANCODE_RIGHT) addkey('\34');
       if (sc==SDL_SCANCODE_UP) addkey('\037');
       if (sc==SDL_SCANCODE_DOWN) addkey('\n');
+      if (sc==SDL_SCANCODE_RETURN) addkey(13);
       break;
     case SDL_KEYUP:
       break;
@@ -3862,15 +3921,35 @@ void handle_events() {
       exit(0);
       break;
     case SDL_TEXTINPUT:
-      printf("%d %d\n",event.text.text[0],event.text.text[1]);
-      addkey(event.text.text[0]);
+      k=event.text.text[0];
+      if(k==8) k=7;
+      printf("%d\n",k);
+      addkey(k);
+      break;
+    case SDL_WINDOWEVENT:
+      if(event.window.event==SDL_WINDOWEVENT_SIZE_CHANGED) {
+        WindowWidth=event.window.data1;
+        WindowHeight = event.window.data2;
+        printf("resize %d %d\n",WindowWidth,WindowHeight);
+        if ( m_initialized)
+          resize_screen();
+      }
+      break;
     default:
       break;
     }
   }
 
 }
-
+#define Button1Mask 2
+#define Button3Mask 1
+#define GR_M_RIGHT_DOWN 1
+#define GR_M_LEFT_DOWN 2
+#define GR_M_RIGHT_UP 4
+#define GR_M_LEFT_UP 8
+#define GR_M_MOTION 16
+#define GR_M_BUTTON_UP 12
+#define GR_M_BUTTON_DOWN 3
 
 void m_readpen(pen)
 m_tablet_info *pen;
@@ -3882,6 +3961,48 @@ m_tablet_info *pen;
   
 
   Pfprintf(stderr, "m_readpen(pen) flags=%x, x=%d, y=%d\n", theflags,thex,they);
+    if(theflags) { 
+    if (theflags & GR_M_BUTTON_DOWN) {
+      pen->dn = (theflags & GR_M_LEFT_DOWN)!=0;
+      pen->depressed = ((thebuttons & Button1Mask)!=0) || pen->dn;
+      pen->up = 0;
+      pen->near_ = ! (thebuttons & Button3Mask) &&
+                  ! (theflags & GR_M_RIGHT_DOWN);
+      
+    } else if (theflags & GR_M_BUTTON_UP) {
+      pen->dn = 0;
+      pen->up = (theflags & GR_M_LEFT_UP)!=0;
+      pen->depressed = ((thebuttons & Button1Mask)!=0) && (! pen->up);
+      pen->near_ = ! (thebuttons & Button3Mask) ||
+                  (theflags & GR_M_RIGHT_UP);
+      
+    } else {
+      pen->dn = 0;
+      pen->up = 0;
+      pen->depressed = ((thebuttons & Button1Mask) != 0);
+      pen->near_ = ! (thebuttons & Button3Mask);
+    }
+
+   if(theflags & GR_M_MOTION) m_cursor(thex,they);
+
+      pen->x = thex;
+      pen->y = they;
+      pen->ax = (thex)/nc_fontwidth;
+      pen->ay = (they)/nc_fontheight;
+     // UNTRNSFRM(pen->x, pen->y);
+     } 
+     else
+      {pen->dn=pen->up=0;
+      pen->depressed=mouse.depressed;
+      pen->near_=mouse.near_;
+      pen->x=mouse.x;
+      pen->y=mouse.y;
+      pen->ax=mouse.ax;
+      pen->ay=mouse.ay;
+      }
+      
+      theflags=0;
+      /*
    if(nevents==1) { 
     if (event.type == SDL_MOUSEBUTTONDOWN) {
       if(event.button.button==SDL_BUTTON_LEFT) {
@@ -3909,7 +4030,7 @@ m_tablet_info *pen;
       pen->ay = (pen->y)/nc_fontheight;
     }
    }
-  
+  */
   pen->moving = pen->x != mouse.x || pen->y != mouse.y ||
                 pen->depressed != mouse.depressed || pen->near_ != mouse.near_;
   pen->inalpha = mouse.inalpha;
@@ -4005,7 +4126,7 @@ return 0;
 boolean m_yes_or_no(prompt)
 Char *prompt;
 {
-
+return true;
 }
 
 

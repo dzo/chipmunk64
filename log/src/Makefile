@@ -58,8 +58,8 @@ include ../../Makefile.inc
 
 CD = cd
 
-LOGLIBDIR = `~/log`
-LIBDIR = `~/log`
+LOGLIBDIR = ~/log
+LIBDIR = ~/log
 
 LOCINC = ../../psys/include
 
@@ -113,7 +113,7 @@ LIBP2C = ../../psys/src/libp2c.a
 ## LIBX11= -lX11 -s
 ##
 
-LIBX11 =  -lSDL2 -lSDL2_gfx 
+LIBX11 =  -lSDL2 -lSDL2_gfx -lGL
 
 ##
 ## (2) Library additions
@@ -219,15 +219,15 @@ install: all
 	cp log $(BINDIR)/diglog
 	-rm -f $(BINDIR)/analog
 	-(cd $(BINDIR); ln -s diglog analog)
-	cp loged $(BINDIR)/loged
+#	cp loged $(BINDIR)/loged
 	cp fixfet7 $(BINDIR)/fixfet7
 
 clean:
 	-rm -f *.o ana/*.o ana/logdef.h log loged
 
-all:  makeana main
+all:  main
 
-main: log loged
+main: log 
 
 makeana:
 	($(CD) ana; make $(MFLAGS) grab all)
@@ -235,13 +235,15 @@ makeana:
 
 LOGOBJ = log.o $(TOOLOBJ) logstuff.o logdef.o
 
-log: $(LOGOBJ) tooldir.o $(LIBP2C) makeana
+log: $(LOGOBJ) tooldir.o $(LIBP2C)
 	$(CC) $(CFLAGS) tooldir.o $(LOGOBJ) $(LIBP2C) $(LIBX11)  \
 	$(OTHERLIBS) -o log
 
-diglog.html: $(LOGOBJ) tooldir.o $(LIBP2C) makeana
+diglog.html: $(LOGOBJ) tooldir.o $(LIBP2C)
 	$(CC) $(CFLAGS) tooldir.o $(LOGOBJ) $(LIBP2C) $(LIBX11)  \
-	$(OTHERLIBS) -o diglog.html --embed-file log.gate --embed-file log.cnf --embed-file lognews.text --embed-file diglog.cnf --embed-file genlog.cnf --embed-file ana.gate --embed-file actel.gate --embed-file cpu.gate
+	$(OTHERLIBS) -o diglog.html --bind -sUSE_SDL=2  -sUSE_SDL_GFX=2 -sASYNCIFY -s ASYNCIFY_STACK_SIZE=51200 \
+	--embed-file log.gate --embed-file log.cnf --embed-file lognews.text --embed-file diglog.cnf \
+	--embed-file genlog.cnf --embed-file ana.gate --embed-file actel.gate --embed-file cpu.gate --embed-file  pipefwdcpuwithrd.lgf
 ## The following permits you to link properly with AmigaOS and 
 ## X shared libraries used in ADE
  

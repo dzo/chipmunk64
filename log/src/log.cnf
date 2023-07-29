@@ -7,6 +7,7 @@ include diglog.cnf
 gates   log.gate
 gates   ana.gate
 gates   actel.gate
+gates   cpu.gate
 
 
 menu    switch led and or nand nor inv

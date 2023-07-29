@@ -404,9 +404,16 @@ typedef struct baseptrs {
   boolean valid;
 } baseptrs;
 
+/*
+Static Void refresh();
 
-
-
+void m_colormode(int c) {
+  if(c==m_xor) {
+    m_clear();
+    refresh();
+  }
+}
+*/
 
 
 
@@ -2457,8 +2464,6 @@ Char *name_;
   Void (*proc) PP((log_action *act));
   boolean ready;
   cnfrec *cnfp;
-//  gg.traceflag=true;
-//  tracefile=stderr;
 
   strcpy(name, name_);
   strcpy(savefunc, gg.func);
@@ -5038,6 +5043,7 @@ Static Void refrscreen()
 {
   gg.showpage = gg.curpage;
   bottomcount = 0;
+  m_clear();
   m_colormode((long)m_normal);
   m_noclip();
   fixcolormap();
@@ -5049,7 +5055,7 @@ Static Void refrscreen()
 
 
 
-Static Void resize_screen()
+Void resize_screen()
 {
   initscreen2();
   refrscreen();
@@ -5289,7 +5295,6 @@ Static Void pass()
   log_hwrec *WITH1;
   log_vwrec *WITH2;
   log_srec *WITH3;
-
   watchdog = timers_sysclock();
   gg.busyflag = false;
   gg.oldsimstate = gg.simstate;
@@ -10266,16 +10271,19 @@ log_gattrrec *attrs;
 	gg.posx = gg.gridx;
 	gg.posy = gg.gridy;
 	oo = gg.t.off;
+  refrscreen();
 	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
 	do {
 	  pass();
 	  trykbd();
 	  pen();
+    
 	} while (gg.gridx == gg.posx && gg.gridy == gg.posy &&
 		 gg.t.depressed && strcmp(gg.func, "REFR"));
-	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
+//	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
 	scroll();
       } while (gg.t.depressed);
+      refrscreen();
       if (!oo && !gg.t.off) {
 	if (gg.t.y < baseline) {
 	  addgate2(gg.posx, gg.posy, gtype, sig, attrs);
@@ -10892,6 +10900,7 @@ Static Void moveobject()
       drawmarkersc(gg.color.marker);
       m_colormode((long)m_normal);
       do {
+        
 	pass();
 	trykbd();
 	pen();
@@ -11097,6 +11106,7 @@ Static Void moveobject()
       gg.posx = gg.gridx;
       gg.posy = gg.gridy;
       oo = gg.t.off;
+      refrscreen();
       movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
       do {
 	pass();
@@ -11104,9 +11114,10 @@ Static Void moveobject()
 	pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
 	       strcmp(gg.func, "REFR"));
-      movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
+    //  movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
       scroll();
     } while (gg.t.depressed);
+    refrscreen();
     remcursor();
     if (gg.incircuit && !oo && !gg.t.off) {
       gg.posx += x1;
@@ -21951,183 +21962,175 @@ Static Void shownews()
 #include <emscripten.h>
 #endif
 void mainloop() {
-       
-	  excpline = -1;
-	  tempverbose = false;
-	  suppressdots = false;
-	  if (justonecommand && thingstodo == NULL) {
-	    P_escapecode = 20;
-	   // goto _Ltry41;
-     return;
-	  }
-	  if (gg.showpage <= 0)
-	    refrscreen();
-	  m_graphics_on();
-	  nc_cursor_off();
-	  while (messages != NULL) {
-	    switch ((long)messages->value) {
+  excpline = -1;
+  tempverbose = false;
+  suppressdots = false;
 
-	    case 0:
-	      message(messages->s);
-	      break;
+  if (justonecommand && thingstodo == NULL) {
+      P_escapecode = 20;
+      // goto _Ltry41;
+      return;
+  }
 
-	    case 1:
-	      vmessage(messages->s);
-	      break;
-	    }
-	    strlist_delete(&messages, messages);
-	  }
-	  if (gg.startpoint)
-	    crosshair(gg.posx, gg.posy);
-	  else
-	    nocrosshair();
-	  gg.stillnear = true;
-	  rabtime = timers_sysclock();
-	  if (displaynews)
-	    shownews();
-	  if (*gg.func == '\0') {
-	    do {
-	      if (refrtimer == 0 && !gg.startpoint) {
-		refresh();
-		gg.refrflag = true;
-	      }
-	      if (refrtimer > 0) {
-		if (gg.t.moving)
-		  refrtimer = refrtimer0;
-		else
-		  refrtimer--;
-	      }
-	      pass();
-	      trykbdscroll();
-	      pen();
-	      if (!gg.stillnear) {
-		gg.startpoint = false;
-		gg.stillnear = true;
-		nocrosshair();
-	      }
-	      if (gg.t.near_) {
-		if (rabflag)
-		  norabbits();
-		rabtime = timers_sysclock();
-	      }
-	      if (timers_sysclock() - rabtime > rabdelay && !avoidrabbits)
-		addrabbit();
-	    } while (!(gg.t.dn || *gg.func != '\0'));
-	  }
-	  if (displaynews) {
-	    clearalpha();
-	    displaynews = false;
-	  }
-	  if (rabflag)
-	    norabbits();
-	  nocrosshair();
-	  clipoff();
-	  if (*gg.func != '\0') {
-	    commandfound = false;
-	    dofunction();
-	    if (!commandfound) {
-	      beginerror();
-	      printf("Can't understand function %s\n", gg.func);
-	      enderror();
-	      clearfunc();
-	    }
-	  } else if (gg.incircuit) {
-	    pass();
-	    clipoff();
-	    gg.oldx = gg.posx;
-	    gg.oldy = gg.posy;
-	    ospointflag = gg.startpoint;
-	    gg.posx = gg.gridx;
-	    gg.posy = gg.gridy;
-	    gg.startpoint = true;
-	    if (!ospointflag && !justtap() && !gg.invisible && !gg.showconflicts) {
-	      if (gg.probemode)
-		yardstick();
-	      else {
-		moveobject();
-		gg.movinghw = NULL;
-		gg.movingvw = NULL;
-	      }
-	    } else {
-	      closergate(gg.posx, gg.posy);
-	      if (gg.nearlabel != NULL && !gg.invisible && !gg.textinvisible) {
-		editlabel(gg.nearlabel);
-		gg.startpoint = false;
-	      } else if (!ospointflag && gg.neargate != NULL) {
-		if (gg.probemode) {
-		  configgate(gg.neargate);
-		  gg.startpoint = false;
-		} else {
-		  touchgate(gg.neargate);
-		  gg.startpoint = false;
-		}
-	      } else if (!ospointflag) {
-		closerwire(gg.posx, gg.posy);
-		if (gg.probemode) {
-		  if (gg.nearhw != NULL)
-		    confignode(gg.nearhw->node, "(Node)");
-		  else if (gg.nearvw != NULL)
-		    confignode(gg.nearvw->node, "(Node)");
-		  gg.startpoint = false;
-		} else if (gg.nearhw != NULL && gg.nearvw != NULL &&
-			   gg.nearhw->x1 != gg.posx &&
-			   gg.nearhw->x2 != gg.posx &&
-			   gg.nearvw->y1 != gg.posy &&
-			   gg.nearvw->y2 != gg.posy) {
-		  if (findsolder(gg.posx, gg.posy) != NULL) {
-		    unsoldernear();
-		    pen();   /* Restore cursor */
-		    gg.startpoint = false;
-		  } else if (!vlsi || gg.nearhw->wcolr == log_wcol_blue ||
-			     gg.nearvw->wcolr == log_wcol_blue) {
-		    soldernear();
-		    gg.startpoint = false;
-		  }
-		}
-	      } else {
-		if (hvline(gg.oldx, gg.oldy, &gg.posx, &gg.posy)) {
-		  if (gg.posx != gg.oldx)
-		    addhwire(gg.posx, gg.oldx, gg.posy, curwcolor);
-		  if (gg.posy != gg.oldy)
-		    addvwire(gg.posx, gg.oldy, gg.posy, curwcolor);
-		}
-	      }
-	      if (gg.invisible || gg.probemode || gg.showconflicts)
-		gg.startpoint = false;
-	    }
-	  } else if (inbox((int)(menux1 - 4), line1 - 5, 34, 20))
-	    popupmenu(1);
-	  else if (inbox((int)(menux1 - 4), line2 - 5, 34, 20))
-	    assertfunc("HELP");
-	  else if (inbox((int)(menux2 - 4), line1 - 5, 34, 20))
-	    popupmenu(2);
-	  else if (inbox((int)(menux2 - 4), line2 - 5, 34, 20))
-	    assertfunc("CAT");
-	  else if (inbox((int)(across + menux3 - 4), line1 - 5, 34, 20))
-	    popupmenu(3);
-	  else if (inbox((int)(across + menux4 - 4), line1 - 5, 34, 20))
-	    popupmenu(4);
-	  else if (inbox((int)(across + menux4 - 4), line2 - 5, 34, 20))
-	    assertfunc("TAPMODE");
-	  else {
-	    if (kindgroupleft <= gg.t.x && gg.t.x < kindgroupright &&
-		gg.t.y < down) {
-	      temp1 = (gg.t.x - kindgroupleft) / kindgroupspacing + 1;
-	      if (gg.probemode)
-		configkind((int)temp1);
-	      else if (justtap())
-		flipkind();
-	      else if (!gg.invisible && !gg.probemode && !gg.showconflicts) {
-		if (addgate(kindgroup[temp1 - 1], kindsig[temp1 - 1],
-			    kindattr[temp1 - 1]))
-		  nextkindsig((int)temp1);
-	      }
-	    }
-	    gg.startpoint = false;
-	  }
-/*        sleep(2);zfprintf(stdout, "z"); fflush(stdout);  **MDG** test */
-//	} while (!pigsfly);
-    //  RECOVER2(try41,_Ltry41);
+  if (gg.showpage <= 0) refrscreen();
+  m_graphics_on();
+  nc_cursor_off();
+  while (messages != NULL) {
+      switch ((long)messages->value) {
+      case 0:
+        message(messages->s);
+        break;
+
+      case 1:
+        vmessage(messages->s);
+        break;
+      }
+      strlist_delete(&messages, messages);
+  }
+  if (gg.startpoint)
+      crosshair(gg.posx, gg.posy);
+  else
+      nocrosshair();
+  gg.stillnear = true;
+  rabtime = timers_sysclock();
+  if (displaynews) shownews();
+  if (*gg.func == '\0') {
+      do {
+      if (refrtimer == 0 && !gg.startpoint) {
+        refresh();
+        gg.refrflag = true;
+      }
+      if (refrtimer > 0) {
+        if (gg.t.moving)
+            refrtimer = refrtimer0;
+        else
+            refrtimer--;
+      }
+      pass();
+      trykbdscroll();
+      pen();
+      if (!gg.stillnear) {
+        gg.startpoint = false;
+        gg.stillnear = true;
+        nocrosshair();
+      }
+      if (gg.t.near_) {
+        if (rabflag) norabbits();
+        rabtime = timers_sysclock();
+      }
+      if (timers_sysclock() - rabtime > rabdelay && !avoidrabbits) addrabbit();
+      } while (!(gg.t.dn || *gg.func != '\0'));
+  }
+  if (displaynews) {
+      clearalpha();
+      displaynews = false;
+  }
+  if (rabflag) norabbits();
+  nocrosshair();
+  clipoff();
+  if (*gg.func != '\0') {
+      commandfound = false;
+      dofunction();
+      if (!commandfound) {
+      beginerror();
+      printf("Can't understand function %s\n", gg.func);
+      enderror();
+      clearfunc();
+      }
+  } else if (gg.incircuit) {
+      pass();
+      clipoff();
+      gg.oldx = gg.posx;
+      gg.oldy = gg.posy;
+      ospointflag = gg.startpoint;
+      gg.posx = gg.gridx;
+      gg.posy = gg.gridy;
+      gg.startpoint = true;
+      if (!ospointflag && !justtap() && !gg.invisible && !gg.showconflicts) {
+      if (gg.probemode)
+        yardstick();
+      else {
+        moveobject();
+        gg.movinghw = NULL;
+        gg.movingvw = NULL;
+      }
+      } else {
+      closergate(gg.posx, gg.posy);
+      if (gg.nearlabel != NULL && !gg.invisible && !gg.textinvisible) {
+        editlabel(gg.nearlabel);
+        gg.startpoint = false;
+      } else if (!ospointflag && gg.neargate != NULL) {
+        if (gg.probemode) {
+            configgate(gg.neargate);
+            gg.startpoint = false;
+        } else {
+            touchgate(gg.neargate);
+            gg.startpoint = false;
+        }
+      } else if (!ospointflag) {
+        closerwire(gg.posx, gg.posy);
+        if (gg.probemode) {
+            if (gg.nearhw != NULL)
+              confignode(gg.nearhw->node, "(Node)");
+            else if (gg.nearvw != NULL)
+              confignode(gg.nearvw->node, "(Node)");
+            gg.startpoint = false;
+        } else if (gg.nearhw != NULL && gg.nearvw != NULL &&
+                   gg.nearhw->x1 != gg.posx && gg.nearhw->x2 != gg.posx &&
+                   gg.nearvw->y1 != gg.posy && gg.nearvw->y2 != gg.posy) {
+            if (findsolder(gg.posx, gg.posy) != NULL) {
+              unsoldernear();
+              pen(); /* Restore cursor */
+              gg.startpoint = false;
+            } else if (!vlsi || gg.nearhw->wcolr == log_wcol_blue ||
+                       gg.nearvw->wcolr == log_wcol_blue) {
+              soldernear();
+              gg.startpoint = false;
+            }
+        }
+      } else {
+        if (hvline(gg.oldx, gg.oldy, &gg.posx, &gg.posy)) {
+            if (gg.posx != gg.oldx)
+              addhwire(gg.posx, gg.oldx, gg.posy, curwcolor);
+            if (gg.posy != gg.oldy)
+              addvwire(gg.posx, gg.oldy, gg.posy, curwcolor);
+        }
+      }
+      if (gg.invisible || gg.probemode || gg.showconflicts)
+        gg.startpoint = false;
+      }
+  } else if (inbox((int)(menux1 - 4), line1 - 5, 34, 20))
+      popupmenu(1);
+  else if (inbox((int)(menux1 - 4), line2 - 5, 34, 20))
+      assertfunc("HELP");
+  else if (inbox((int)(menux2 - 4), line1 - 5, 34, 20))
+      popupmenu(2);
+  else if (inbox((int)(menux2 - 4), line2 - 5, 34, 20))
+      assertfunc("CAT");
+  else if (inbox((int)(across + menux3 - 4), line1 - 5, 34, 20))
+      popupmenu(3);
+  else if (inbox((int)(across + menux4 - 4), line1 - 5, 34, 20))
+      popupmenu(4);
+  else if (inbox((int)(across + menux4 - 4), line2 - 5, 34, 20))
+      assertfunc("TAPMODE");
+  else {
+      if (kindgroupleft <= gg.t.x && gg.t.x < kindgroupright && gg.t.y < down) {
+      temp1 = (gg.t.x - kindgroupleft) / kindgroupspacing + 1;
+      if (gg.probemode)
+        configkind((int)temp1);
+      else if (justtap())
+        flipkind();
+      else if (!gg.invisible && !gg.probemode && !gg.showconflicts) {
+        if (addgate(kindgroup[temp1 - 1], kindsig[temp1 - 1],
+                    kindattr[temp1 - 1]))
+            nextkindsig((int)temp1);
+      }
+      }
+      gg.startpoint = false;
+  }
+  /*        sleep(2);zfprintf(stdout, "z"); fflush(stdout);  **MDG** test */
+  //	} while (!pigsfly);
+  //  RECOVER2(try41,_Ltry41);
 }
 
 int main(int argc, Char * argv[])
