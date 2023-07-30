@@ -1,4 +1,3 @@
-
 # "PSYS", p-system emulation libraries for the Caltech tools,
 #
 #   Copyright (C) 1983, 1990, 1993 California Institute of Technology.
@@ -117,6 +116,8 @@ OBJS = sysdevs.o \
        regex.o \
        numex.o \
        p2clib.o \
+       font6x10.o \
+       font8x13.o \
        loc.p2clib.o
 
 LIBSTUFF = texstuff.ps untilstuff.ps plot.font

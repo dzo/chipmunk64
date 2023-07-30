@@ -1019,12 +1019,15 @@ long usec;                     /* delay in microseconds */
     delay.tv_sec = usec / 1000000L;
     delay.tv_usec = usec % 1000000L;
 
+#ifdef __EMSCRIPTEN__
+return select( 0, (int *)0, (int *)0, (int *)0, (struct timeval *)&delay );
+#else
 #if defined( linux ) || defined( __osf__ )
     return select( 0, (fd_set *)0, (fd_set *)0, (fd_set *)0, (struct timeval *)&delay );
 #else
     return select( 0, (int *)0, (int *)0, (int *)0, (struct timeval *)&delay );
 #endif
-
+#endif
 }
 
 #endif

@@ -1078,9 +1078,16 @@ void WindowInitialize()
  // SDL_Init(SDL_INIT_VIDEO);
  // SDL_SetHint(SDL_HINT_EMSCRIPTEN_ASYNCIFY, "1");
 //...
-  SDL_Init(SDL_INIT_EVERYTHING);
+  SDL_Init(SDL_INIT_VIDEO);
+  
   SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer);
 
+
+//  m_window=SDL_CreateWindow("log",0,0,WindowWidth,WindowHeight,SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+//  m_renderer=SDL_CreateRenderer(m_window,-1,SDL_RENDERER_ACCELERATED);
+ // SDL_RendererInfo info;
+ // SDL_GetRendererInfo(m_renderer,&info);
+ // printf("Renderer %x\n",info.flags);
 }
 
  
@@ -2082,9 +2089,13 @@ void m_setcolor(c, r, g, b)
 int c, r, g, b;
 {
   Mfprintf(stderr, "m_setcolor(%d, %d, %d, %d)\n", c, r, g, b);
-if(r>0) r=r*16+15;
-if(g>0) g=g*16+15;
-if(b>0) b=b*16+15;
+if(r>0) r=r*16;
+if(g>0) g=g*16;
+if(b>0) b=b*16;
+if(r==0xf0) r=255;
+if(g==0xf0) g=255;
+if(b==0xf0) b=255;
+
 //m_colors[ColorSets][c].r=r;
 //m_colors[ColorSets][c].g=g;
 //m_colors[ColorSets][c].b=b;
@@ -2950,8 +2961,8 @@ int x, y, r;
 #endif
 
   Xfprintf(stderr, "XDrawArc()\n");
-  arcColor(m_renderer,x, y, r, 0, 360, currentcolor);
-
+  circleColor(m_renderer,x, y, r, currentcolor);
+  
 #ifdef SAVECURSOR
   if (cursor_is_on)
     turncursoron();
@@ -2982,11 +2993,11 @@ int x, y, rx, ry, c;
   if (cursor_is_on)
     turncursoroff();
 #endif
-
+  m_color(c);
   if (currentcolor != m_trans) {
     Xfprintf(stderr, "XFillArc()\n");
    // XFillArc(m_display, m_window, gc[currentcolor], x-rx, y-ry, rx*2, ry*2, 0, 360*64);
-    ellipseColor(m_renderer,x, y, rx, ry,currentcolor);
+    ellipseColor(m_renderer,x, y, rx, ry,ColorSets);
   }
 
   if (c != m_trans) {
@@ -3767,7 +3778,7 @@ char *str;
   m_drawstr(curx,cury,"",str);
 
 }
-
+extern unsigned char * font6x10;
 void m_drawstr(x, y, f, str)
 int x, y;
 char *f, *str;
@@ -3795,6 +3806,7 @@ char *f, *str;
 
  // Xfprintf(stderr, "XDrawString()\n");
  // XDrawString(m_display, m_window, gc[currentcolor], x, y+fontasc-1, str, len);
+  gfxPrimitivesSetFont(&font6x10,6,10);
   stringColor(m_renderer,x,y,str,currentcolor);
 
 #ifdef SAVECURSOR
@@ -3870,15 +3882,31 @@ void addkey(int n) {
     keybuf[keynext++]=n;
 }
 
+long time_ms() {
+  struct timeval time;
+  struct timezone tz;
+
+  gettimeofday(&time, &tz);
+
+  return((time.tv_sec % 86400) * 1000 + time.tv_usec / 1000);
+}
+void resize_screen();
+long lasttime=0;
+
 void handle_events() {
-  SDL_RenderPresent(m_renderer);
-  SDL_PumpEvents();
+  long time=time_ms();
+  if(time-lasttime>15) {
+   SDL_RenderPresent(m_renderer);
+   lasttime=time;
+  }
+ // SDL_PumpEvents();
   #ifdef __EMSCRIPTEN__
-  emscripten_sleep(10);
+  emscripten_sleep(0);
   #endif
   int k,sc;
-  nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
+ // nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
   //printf("event %d %d\n",nevents,event.type);
+  nevents=SDL_PollEvent(&event);
   if(nevents==1) {
     switch (event.type)
     {
@@ -4083,9 +4111,9 @@ nc_cursor_on();
 
 do {
   handle_events();
-  #ifdef __EMSCRIPTEN__
-  emscripten_sleep(10);
-  #endif
+  //#ifdef __EMSCRIPTEN__
+ // emscripten_sleep(0);
+ // #endif
 k=thekey;
 }while(!k);
 nc_cursor_off();

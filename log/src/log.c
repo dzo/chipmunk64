@@ -1637,7 +1637,6 @@ short x, y;
 /*=  Take the cursor off the screen.             =*/
 /*=                                              =*/
 /*================================================*/
-
 Static Void remcursor()
 {
   prevcursorflag = cursorflag;
@@ -7310,6 +7309,7 @@ Static Void scroll()
 {
   Char ch, TEMP;
 
+  //refrscreen();
   if (strcmp(gg.func, "REFR"))
     return;
   remcursor();
@@ -11114,7 +11114,7 @@ Static Void moveobject()
 	pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
 	       strcmp(gg.func, "REFR"));
-    //  movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
+      movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
       scroll();
     } while (gg.t.depressed);
     refrscreen();
@@ -13400,7 +13400,7 @@ boolean librmode;
       m_color((long)gg.color.selword);
       drawstr2(10, down - 27, "LIBR");
       drawstr2(across - 32, down - 27, "LIBR");
-      clearalpha();
+      //clearalpha();
       pen();
       do {
 	ch = '\0';

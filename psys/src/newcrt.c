@@ -308,7 +308,7 @@ int newhighlight;
   //fprintf(stderr,"sethighlight %d\n",newhighlight);
   if (newhighlight & nc_inv) {
       currentcolor=cols[0];
-      bgc=colortrans[(newhighlight & colormask)/4096];
+      bgc=cols[colortrans[(newhighlight & colormask)/4096]];
                
     
   } else {
@@ -319,12 +319,18 @@ int newhighlight;
 //  currentcolor=nc_green;
   nc_highlight=newhighlight;
 }
-
+extern unsigned char * font8x13;
 void nc_putStr(x, y, str)
 int x, y;
 Char *str;
 {
-  stringColor(m_renderer,x,y,str,currentcolor);
+  fprintf(stderr,"put %d %d %s %x\n",x,y,str,font8x13);
+  fflush(stdout);
+  SDL_Rect r={x*nc_fontwidth,y*nc_fontheight,strlen(str)*nc_fontwidth,nc_fontheight};
+  SDL_SetRenderDrawColor(m_renderer,(bgc)&255,(bgc>>8)&255,(bgc>>16)&255,255);
+  SDL_RenderFillRect(m_renderer,&r);
+  gfxPrimitivesSetFont(&font8x13,8,13);
+  stringColor(m_renderer,x*nc_fontwidth,y*nc_fontheight,str,currentcolor);
 }
 
 
@@ -465,10 +471,14 @@ Char *str_;
 	len++;
       } while (str[len] >= ' ' && str[len] < 128 &&
 	       XPOS + len < nc_curWindow->width);
-      stringColor(m_renderer,  
-		       nc_curWindow->gleft+nc_fontwidth*XPOS,
-		       nc_curWindow->gtop+nc_fontheight*YPOS + ascent,
-		       (char *)str, currentcolor);
+         unsigned char c=str[len];
+      str[len]=0;
+         nc_putStr(XPOS,YPOS,(char *)str);
+         str[len]=c;
+     // stringColor(m_renderer,  
+		  //     nc_curWindow->gleft+nc_fontwidth*XPOS,
+		  //     nc_curWindow->gtop+nc_fontheight*YPOS + ascent,
+		  //     (char *)str, currentcolor);
          
       if (nc_highlight & nc_under) {
   	SDL_RenderDrawLine(m_renderer,
