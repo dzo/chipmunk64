@@ -243,7 +243,7 @@ diglog.html: $(LOGOBJ) tooldir.o $(LIBP2C)
 	$(CC) $(CFLAGS) tooldir.o $(LOGOBJ) $(LIBP2C) $(LIBX11)  \
 	$(OTHERLIBS) -o diglog.html --bind -sUSE_SDL=2  -sUSE_SDL_GFX=2 -sASYNCIFY -s ASYNCIFY_STACK_SIZE=51200 \
 	--embed-file log.gate --embed-file log.cnf --embed-file lognews.text --embed-file diglog.cnf \
-	--embed-file genlog.cnf --embed-file ana.gate --embed-file actel.gate --embed-file cpu.gate --embed-file  pipefwdcpuwithrd.lgf
+	--embed-file genlog.cnf --embed-file ana.gate --embed-file actel.gate --embed-file cpu.gate --embed-file  pipefwdcpu.lgf
 ## The following permits you to link properly with AmigaOS and 
 ## X shared libraries used in ADE
  

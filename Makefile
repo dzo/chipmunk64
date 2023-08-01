@@ -1,7 +1,9 @@
 all:
 	$(MAKE) -C psys/src
 	$(MAKE) -C log/src
-# diglog.html
+wasm:
+	$(MAKE) -C psys/src WASM=1
+	$(MAKE) -C log/src diglog.html WASM=1
 clean:
 	$(MAKE) -C psys/src clean
 	$(MAKE) -C log/src clean

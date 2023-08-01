@@ -324,8 +324,6 @@ void nc_putStr(x, y, str)
 int x, y;
 Char *str;
 {
-  fprintf(stderr,"put %d %d %s %x\n",x,y,str,font8x13);
-  fflush(stdout);
   SDL_Rect r={x*nc_fontwidth,y*nc_fontheight,strlen(str)*nc_fontwidth,nc_fontheight};
   SDL_SetRenderDrawColor(m_renderer,(bgc)&255,(bgc>>8)&255,(bgc>>16)&255,255);
   SDL_RenderFillRect(m_renderer,&r);
@@ -958,6 +956,6 @@ short nc_gType()
 
 boolean nc_alphashared()
 {
-  return false;
+  return true;
 }
 

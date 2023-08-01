@@ -741,9 +741,76 @@ void mapkey()
 #endif
 */
  }
+unsigned curxor[5][32]={{0xf0,
+                     0xc0,
+                     0xa0,
+                     0x90,
+                     0x08,
+                     0x04,
+                     0x02,
+                     0x01,
+                     0,0,0,0,0,0,0,0,
+                     0,0,0,0,0,0,0,0,
+                     0,0,0,0,0,0,0,0},
+                     {0xf0,
+                     0xc0,
+                     0xa0,
+                     0x90,
+                     0x08,
+                     0x04,
+                     0x02,
+                     0x01,
+                     0x8000,0x4000,0x2000,0x1000,0,0,0,0,
+                     0,0,0,0,0,0,0,0,
+                     0,0,0,0,0,0,0,0},
+                     {0x10,
+                     0x08,
+                     0x08,
+                     0x84,
+                     0x64,
+                     0x1e,
+                     0x06,
+                     0xc01,
+                     0xb200,0x7200,0xce00,0xc000,0x2001,0x2001,0xe000,0,
+                     0,0,0,0,0,0,0,0,
+                     0,0,0,0,0,0,0,0},
+{0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,0xe0ffff,0x4000,0x4000,0x4000,0x4000,0x4000,0x4000,
+                     0x4000,0x4000,0x4000,0,0,0,0,0,
+                     0,0,0,0,0,0,0,0},
+                     {0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,
+                     0x4000,0xe0ffff,0x4000,0x4000,0x4000,0x4000,0x4000,0x4000,
+                     0x4000,0x4000,0x4000,0,0,0,0,0,
+                     0,0,0,0,0,0,0,0}};
+SDL_Cursor *cursors[32];
+unsigned curand[32]={-1,-1,-1,-1,-1,-1,-1,-1,
+                  -1,-1,-1,-1,-1,-1,-1,-1,
+                   -1,-1,-1,-1,-1,-1,-1,-1,
+                -1,-1,-1,-1,-1,-1,-1,-1};
+  int curpos[5]={0,0,6,9,9};     
+  unsigned curzero[32]={0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,0,0,0,
+                   0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,};         
 
+SDL_Texture *buffer;
 void WindowInitialize()
 {
+  
   #if 0
   Window root;
   int i, x, y;
@@ -1081,7 +1148,12 @@ void WindowInitialize()
   SDL_Init(SDL_INIT_VIDEO);
   
   SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer);
+  buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
+                                        SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
+   SDL_SetRenderTarget(m_renderer, buffer);                                      
 
+  for(int i=0;i<5;i++)
+     cursors[i]=SDL_CreateCursor(curzero,curxor[i],32,32,curpos[i],curpos[i]);
 
 //  m_window=SDL_CreateWindow("log",0,0,WindowWidth,WindowHeight,SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 //  m_renderer=SDL_CreateRenderer(m_window,-1,SDL_RENDERER_ACCELERATED);
@@ -1878,6 +1950,8 @@ int n;
     Ffprintf(stderr, "XFlush()\n");
   //  XFlush(m_display);
   }
+  SDL_SetCursor(cursors[n]);
+  SDL_ShowCursor(1);
 }
 
 
@@ -1885,11 +1959,12 @@ void m_colormode(c)
 int c;
 {
   int i;
-  SDL_BlendMode invmode=SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR, SDL_BLENDFACTOR_ZERO,
-													SDL_BLENDOPERATION_ADD, SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA,
-													SDL_BLENDFACTOR_ZERO, SDL_BLENDOPERATION_ADD);
+  /*
+  SDL_BlendMode invmode=SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ZERO, SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,
+													SDL_BLENDOPERATION_ADD, SDL_BLENDFACTOR_ZERO,
+													SDL_BLENDFACTOR_DST_ALPHA, SDL_BLENDOPERATION_ADD);
                           
-                          /*SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ZERO,
+                          SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ZERO,
     SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,SDL_BLENDOPERATION_SUBTRACT,
     SDL_BLENDFACTOR_ZERO,
     SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,SDL_BLENDOPERATION_ADD);
@@ -2073,7 +2148,7 @@ int newcolor;
 
 long m_curcolor()
 {
-  Mfprintf(stderr, "m_curcolor() = %d\n", currentcolor);
+  Mfprintf(stderr, "m_curcolor() = %d\n", currentcolorindex);
 
   return(currentcolorindex);
 }
@@ -2787,8 +2862,8 @@ int x1, y1, x2, y2;
       SDL_Rect r;
       r.x=x;
       r.y=y;
-      r.w=x1+x2-x-x;
-      r.h=y1+y2-y-y;
+      r.w=x1+x2-x-x+1;
+      r.h=y1+y2-y-y+1;
       SDL_RenderFillRect(m_renderer, &r);
     }
 #endif /* EXTRA_BUFFERING */
@@ -3882,7 +3957,7 @@ void addkey(int n) {
     keybuf[keynext++]=n;
 }
 
-long time_ms() {
+uint64_t time_ms() {
   struct timeval time;
   struct timezone tz;
 
@@ -3891,17 +3966,21 @@ long time_ms() {
   return((time.tv_sec % 86400) * 1000 + time.tv_usec / 1000);
 }
 void resize_screen();
-long lasttime=0;
+uint64_t lasttime=0;
 
 void handle_events() {
-  long time=time_ms();
+  uint64_t time=time_ms();
   if(time-lasttime>15) {
+   SDL_SetRenderTarget(m_renderer, NULL);
+   SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
    SDL_RenderPresent(m_renderer);
+   SDL_SetRenderTarget(m_renderer, buffer);
+   //SDL_RenderClear(m_renderer);
    lasttime=time;
-  }
+  
  // SDL_PumpEvents();
   #ifdef __EMSCRIPTEN__
-  emscripten_sleep(0);
+  emscripten_sleep(1);
   #endif
   int k,sc;
  // nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
@@ -3966,6 +4045,7 @@ void handle_events() {
     default:
       break;
     }
+  }
   }
 
 }
