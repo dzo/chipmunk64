@@ -1,6 +1,5 @@
 #ifndef LOADER_H
 #define LOADER_H
-#include <X11/Xlib.h>
 
 
 #ifdef LOADER_G

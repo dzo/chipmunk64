@@ -1,6 +1,7 @@
 ifndef WASM
 CHIPMUNKCC = clang -O3
-CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0
+CHIPMUNKCC = x86_64-w64-mingw32-gcc  -Os -fomit-frame-pointer -DF_OK=0 -DLACK_GETPWNAM -D__GCC__ -I../../SDL2-2.28.1/x86_64-w64-mingw32/include/
+#CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0
 AR=llvm-ar
 RANLIB=llvm-ranlib
 else

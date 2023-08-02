@@ -204,7 +204,7 @@ uchar c;
 
 extern void nk_keybufclear()
 {
-  XEvent event;
+  //XEvent event;
 
  
 }

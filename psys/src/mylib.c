@@ -1147,11 +1147,12 @@ void WindowInitialize()
 //...
   SDL_Init(SDL_INIT_VIDEO);
   
+  SDL_SetHint (SDL_HINT_RENDER_DRIVER, "opengl") ;
   SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer);
-  buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
-                                        SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
-   SDL_SetRenderTarget(m_renderer, buffer);                                      
-
+ // buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
+ //                                       SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
+ //  SDL_SetRenderTarget(m_renderer, buffer);                                      
+  //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,31);
   for(int i=0;i<5;i++)
      cursors[i]=SDL_CreateCursor(curzero,curxor[i],32,32,curpos[i],curpos[i]);
 
@@ -1976,7 +1977,8 @@ int c;
 switch(c) {
 case m_xor:
 //currentcolor |= GrXOR;
-//glLogicOp(GL_XOR);
+glEnable (GL_COLOR_LOGIC_OP) ;
+glLogicOp(GL_XOR);
 //m_clear();
 //refresh();
 //SDL_SetRenderDrawBlendMode(m_renderer,invmode);
@@ -1994,7 +1996,8 @@ break;
 case m_normal:
 //SetROP2(hdc,R2_COPYPEN);
 //glLogicOp(GL_COPY);
-SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
+glDisable (GL_COLOR_LOGIC_OP) ;
+//SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
 //currentcolor &= 0xffffff;             
 break;
 }
@@ -3967,25 +3970,40 @@ uint64_t time_ms() {
 }
 void resize_screen();
 uint64_t lasttime=0;
+uint64_t keydowntime=0;
+uint64_t keyrepeattime=0;
+int keydown=0;
+
+void addsc(int sc) {
+  if(sc==SDL_SCANCODE_LEFT) addkey('\b');
+  if(sc==SDL_SCANCODE_RIGHT) addkey('\34');
+  if (sc==SDL_SCANCODE_UP) addkey('\037');
+  if (sc==SDL_SCANCODE_DOWN) addkey('\n');
+  if (sc==SDL_SCANCODE_RETURN) addkey(13);
+  if (sc==SDL_SCANCODE_DELETE) addkey(127);
+  if (sc==SDL_SCANCODE_BACKSPACE) addkey(7);
+}
 
 void handle_events() {
   uint64_t time=time_ms();
-  if(time-lasttime>15) {
-   SDL_SetRenderTarget(m_renderer, NULL);
-   SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
+  if(time-lasttime>=15) {
+   //SDL_SetRenderTarget(m_renderer, NULL);
+   //SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
    SDL_RenderPresent(m_renderer);
-   SDL_SetRenderTarget(m_renderer, buffer);
+   //SDL_SetRenderTarget(m_renderer, buffer);
    //SDL_RenderClear(m_renderer);
    lasttime=time;
-  
+  }
  // SDL_PumpEvents();
   #ifdef __EMSCRIPTEN__
   emscripten_sleep(1);
   #endif
+  
   int k,sc;
  // nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
   //printf("event %d %d\n",nevents,event.type);
-  nevents=SDL_PollEvent(&event);
+  do {
+    nevents=SDL_PollEvent(&event);
   if(nevents==1) {
     switch (event.type)
     {
@@ -4015,14 +4033,18 @@ void handle_events() {
       they=event.motion.y;
       break;
     case SDL_KEYDOWN:
+      printf("D: %d\n",event.key.keysym.scancode);
       sc=event.key.keysym.scancode;
-      if(sc==SDL_SCANCODE_LEFT) addkey('\b');
-      if(sc==SDL_SCANCODE_RIGHT) addkey('\34');
-      if (sc==SDL_SCANCODE_UP) addkey('\037');
-      if (sc==SDL_SCANCODE_DOWN) addkey('\n');
-      if (sc==SDL_SCANCODE_RETURN) addkey(13);
+      if(sc==SDL_SCANCODE_LEFT || sc==SDL_SCANCODE_RIGHT || sc==SDL_SCANCODE_UP || sc==SDL_SCANCODE_DOWN || sc==SDL_SCANCODE_RETURN)
+      {
+        if(keydown==0) keyrepeattime=time+330;
+        keydown=sc;
+      }
+      addsc(sc);
       break;
     case SDL_KEYUP:
+      printf("U: %d\n",event.key.keysym.scancode);
+      keydown=0;
       break;
     case SDL_QUIT:
       exit(0);
@@ -4046,7 +4068,12 @@ void handle_events() {
       break;
     }
   }
+  } while(nevents);
+  if(keydown && keyrepeattime<=time) {
+    addsc(keydown);
+    keyrepeattime=time+33;
   }
+ // }
 
 }
 #define Button1Mask 2
@@ -4157,7 +4184,7 @@ void m_trackpen(pen)
 m_tablet_info *pen;
 {
   Pfprintf(stderr, "m_trackpen(pen)\n");
-
+  handle_events();
   m_readpen(pen);
 
 /*  fprintf(stderr, "m_cursor(%d, %d)   from m_trackpen\n", pen->x, pen->y);  */
@@ -4180,6 +4207,7 @@ m_tablet_info *pen;
 
 boolean m_pollkbd()
 {
+  handle_events();
   return(keyfirst!=keynext);
 }
 
@@ -4206,7 +4234,7 @@ uchar m_inkeyn()
 {
   int k;
 Kfprintf(stderr,"m_inkeyn %d\n",keybuf[keyfirst]);    
-//handle_events(); 
+handle_events(); 
 k=thekey;
 return k;
 
@@ -4214,7 +4242,7 @@ return k;
 
 uchar m_testkey()
 {
-  //handle_events();                      
+handle_events();                      
 Kfprintf(stderr,"m_testkey %d\n",keybuf[keyfirst]);    
 if(keyfirst!=keynext) return keybuf[keyfirst];
 return 0;

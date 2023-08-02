@@ -5042,7 +5042,7 @@ Static Void refrscreen()
 {
   gg.showpage = gg.curpage;
   bottomcount = 0;
-  m_clear();
+  //m_clear();
   m_colormode((long)m_normal);
   m_noclip();
   fixcolormap();
@@ -9851,7 +9851,6 @@ boolean first;
     pen();
     *x2 = gg.gridx;
     *y2 = gg.gridy;
-    refrscreen();
     m_colormode((long)m_xor);
     m_color((long)gg.color.select);
     flag = gg.incircuit;
@@ -9864,16 +9863,15 @@ boolean first;
       pen();
     } while (gg.gridx == *x2 && gg.gridy == *y2 && gg.t.depressed &&
 	     *gg.func == '\0');
-//    m_colormode((long)m_xor);
-//    m_color((long)gg.color.select);
-//    if (flag)
-//      rect(*x1, *y1, *x2, *y2);
-//    m_colormode((long)m_normal);
+    m_colormode((long)m_xor);
+    m_color((long)gg.color.select);
+    if (flag)
+      rect(*x1, *y1, *x2, *y2);
+    m_colormode((long)m_normal);
     scroll();
     gg.stillnear = true;
     checkabort();
   } while (gg.t.depressed);
-  refrscreen();
   remcursor();
   if (!gg.incircuit)
     _Escape(5);
@@ -10273,7 +10271,6 @@ log_gattrrec *attrs;
 	gg.posx = gg.gridx;
 	gg.posy = gg.gridy;
 	oo = gg.t.off;
-  refrscreen();
 	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
 	do {
 	  pass();
@@ -10282,10 +10279,9 @@ log_gattrrec *attrs;
     
 	} while (gg.gridx == gg.posx && gg.gridy == gg.posy &&
 		 gg.t.depressed && strcmp(gg.func, "REFR"));
-//	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
+	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
 	scroll();
       } while (gg.t.depressed);
-      refrscreen();
       if (!oo && !gg.t.off) {
 	if (gg.t.y < baseline) {
 	  addgate2(gg.posx, gg.posy, gtype, sig, attrs);
@@ -10580,7 +10576,6 @@ long movemode;
 	pen();
 	checkabort();
 	if (!gg.t.dn) {
-    refrscreen();
 	  xororiginal();
 	  gg.posx = gg.gridx;
 	  gg.posy = gg.gridy;
@@ -10593,11 +10588,10 @@ long movemode;
 	    trykbd();
 	    pen();
 	  }
-	  //xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
-	  //xororiginal();
+	  xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
+	  xororiginal();
 	}
       } else {
-        refrscreen();
 	xororiginal();
 	time = timers_sysclock();
 	do {
@@ -10610,11 +10604,10 @@ long movemode;
 	    time = timers_sysclock();
 	} while (!(timers_sysclock() - time > 25 || smallbuf || gg.t.dn) &&
 		 gg.stillnear && *gg.func == '\0');
-//	xororiginal();
+	xororiginal();
 	scroll();
 	checkabort();
 	if (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn) {
-    refrscreen();
 	  xororiginal();
 	  max = LONG_MAX;
 	  xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
@@ -10624,14 +10617,13 @@ long movemode;
 	    trykbd();
 	    pen();
 	  }
-	 // xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
-	 // xororiginal();
+	 xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
+	 xororiginal();
 	}
       }
       scroll();
       checkabort();
     } while (!gg.t.dn);
-    refrscreen();
     remcursor();
     if (movemode >= 1) {
       if (gg.posx != copybuf.x1copy || gg.posy != copybuf.y1copy ||
@@ -10903,7 +10895,6 @@ Static Void moveobject()
     do {
       gg.posx = gg.gridx;
       gg.posy = gg.gridy;
-      refrscreen();
       m_colormode((long)m_xor);
       drawmarkersc(gg.color.marker);
       m_colormode((long)m_normal);
@@ -10914,9 +10905,9 @@ Static Void moveobject()
 	pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
 	       strcmp(gg.func, "REFR"));
- //     m_colormode((long)m_xor);
- //     drawmarkersc(gg.color.marker);
- //     m_colormode((long)m_normal);
+      m_colormode((long)m_xor);
+      drawmarkersc(gg.color.marker);
+      m_colormode((long)m_normal);
       if (gg.posx == gg.markerx1 && gg.posy == gg.markery1 &&
 	  gg.gridx < gg.markerx2 && gg.gridy < gg.markery2 && gg.incircuit) {
 	gg.markerx1 = gg.gridx;
@@ -10929,7 +10920,6 @@ Static Void moveobject()
       }
       scroll();
     } while (gg.t.depressed);
-    refrscreen();
     stamp(&gg.markerstamp);
     gg.markers = true;
     remcursor();
@@ -10955,7 +10945,6 @@ Static Void moveobject()
       gg.posx = gg.gridx;
       gg.posy = gg.gridy;
       oo = gg.t.off;
-      refrscreen();
       clipon();
       xorlabel(gg.posx + x1, gg.posy + y1, gg.nearlabel);
       clipoff();
@@ -10966,7 +10955,7 @@ Static Void moveobject()
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
 	       strcmp(gg.func, "REFR"));
       clipon();
-     // xorlabel(gg.posx + x1, gg.posy + y1, gg.nearlabel);
+      xorlabel(gg.posx + x1, gg.posy + y1, gg.nearlabel);
       clipoff();
       if (!strcmp(gg.func, "REFR")) {
 	scroll();
@@ -10975,7 +10964,6 @@ Static Void moveobject()
 	clipoff();
       }
     } while (gg.t.depressed);
-    refrscreen();
     remcursor();
     chpageplace(oldpg, oldx1, oldy1, oldx2, oldy2);
     if (gg.incircuit && !oo && !gg.t.off) {
@@ -11029,7 +11017,6 @@ Static Void moveobject()
       gg.posx = gg.gridx;
       gg.posy = gg.gridy;
       oo = gg.t.off;
-      refrscreen();
       clipon();
       m_colormode((long)m_xor);
       drawboxc0(hx1, vy1, hx2, vy2, gg.color.dashbox);
@@ -11043,7 +11030,7 @@ Static Void moveobject()
 	       strcmp(gg.func, "REFR"));
       clipon();
       m_colormode((long)m_xor);
-   //   drawboxc0(hx1, vy1, hx2, vy2, gg.color.dashbox);
+      drawboxc0(hx1, vy1, hx2, vy2, gg.color.dashbox);
       m_colormode((long)m_normal);
       clipoff();
       if (near_(gg.posx, hx1) && near_(gg.posy, vy1)) {
@@ -11071,7 +11058,6 @@ Static Void moveobject()
 	clipoff();
       }
     } while (gg.t.depressed);
-    refrscreen();
     remcursor();
     sortshints(&hx1, &hx2);
     sortshints(&vy1, &vy2);
@@ -11119,7 +11105,6 @@ Static Void moveobject()
       gg.posx = gg.gridx;
       gg.posy = gg.gridy;
       oo = gg.t.off;
-      refrscreen();
       movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
       do {
 	pass();
@@ -11127,10 +11112,9 @@ Static Void moveobject()
 	pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
 	       strcmp(gg.func, "REFR"));
-    //  movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
+      movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
       scroll();
     } while (gg.t.depressed);
-    refrscreen();
     remcursor();
     if (gg.incircuit && !oo && !gg.t.off) {
       gg.posx += x1;
@@ -11208,7 +11192,6 @@ Static Void moveobject()
     gg.posx = gg.gridx;
     gg.posy = gg.gridy;
     oo = gg.t.off;
-    refrscreen();
     clipon();
     m_colormode((long)m_xor);
     if (gg.nearhw != NULL) {
@@ -11255,7 +11238,7 @@ Static Void moveobject()
 	     strcmp(gg.func, "REFR"));
     clipon();
     m_colormode((long)m_xor);
-    /*
+    
     if (gg.nearhw != NULL) {
       m_color((long)gg.color.wire[gg.nearhw->wcolr - log_wcol_normal]);
       hline(hx1, hx2, hy);
@@ -11264,12 +11247,10 @@ Static Void moveobject()
       m_color((long)gg.color.wire[gg.nearvw->wcolr - log_wcol_normal]);
       vline(vx, vy1, vy2);
     }
-    */
     m_colormode((long)m_normal);
     clipoff();
     scroll();
   } while (gg.t.depressed);
-  refrscreen();  
   working();
   gg.movinghw = NULL;
   gg.movingvw = NULL;
@@ -13417,7 +13398,7 @@ boolean librmode;
       m_color((long)gg.color.selword);
       drawstr2(10, down - 27, "LIBR");
       drawstr2(across - 32, down - 27, "LIBR");
-      //clearalpha();
+      clearalpha();
       pen();
       do {
 	ch = '\0';

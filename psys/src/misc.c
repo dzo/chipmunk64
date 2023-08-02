@@ -55,7 +55,7 @@ char *s;
    }
    return strncpy(s != NULL ? s : sbuf, sp, L_cuserid);
 }
-
+/*
 long lrand48()
 {
    return rand();
@@ -95,7 +95,7 @@ char ch;
    printf("Call to _flsbuf.\n");
    return;
 }
-
+*/
 #endif /* OS/2 */
 
 #ifdef __bsdi__

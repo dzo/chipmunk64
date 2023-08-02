@@ -28,7 +28,7 @@ static long bgc=0;
 #include <SDL2/SDL2_gfxPrimitives.h> 
 //#include <X11/X.h>
 #ifdef OS2
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 #endif  /* OS2 */
 //#include <X11/Xutil.h>
 //#include <X11/cursorfont.h>
@@ -59,6 +59,7 @@ static long bgc=0;
 #define NC_SCREEN(i)  (nc_screen[i])
 #endif
 
+#if 0
 static long WindowEventMask = ExposureMask | KeyPressMask |
                               ButtonPressMask | ButtonReleaseMask | 
                               PointerMotionMask | StructureNotifyMask;
@@ -81,7 +82,7 @@ static XSetWindowAttributes WinAttr = {
   CopyFromParent,		      /*  colormap               */
   None,				      /*  cursor                 */
 };
-
+#endif
 static char *progname = "newcrt";
 
 static nc_windowRec __nc_curWindow = {
@@ -112,7 +113,7 @@ static int colortrans[8] = {
 };
 static int ascent;
 
-static GC nc_cursorgc;
+//static GC nc_cursorgc;
 static int cursor_flag;
 
 char *usrgeo, *defgeo = {"640x312+60+20"};
@@ -157,8 +158,8 @@ int ptop, pheight, pleft, pwidth;
 void nc_initialize()
 {
   int i, dir, des;
-  XCharStruct cs;
-  Font fontnum;
+//  XCharStruct cs;
+//  Font fontnum;
 
   if (! m_initialized)
     m_init_graphics();
