@@ -113,7 +113,7 @@ LIBP2C = ../../psys/src/libp2c.a
 ## LIBX11= -lX11 -s
 ##
 
-LIBX11 =  -lSDL2 -lSDL2_gfx -lGL
+#LIBX11 =  -lSDL2 -lSDL2_gfx -lGL
 
 ##
 ## (2) Library additions

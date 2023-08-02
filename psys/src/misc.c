@@ -55,7 +55,7 @@ char *s;
    }
    return strncpy(s != NULL ? s : sbuf, sp, L_cuserid);
 }
-/*
+
 long lrand48()
 {
    return rand();
@@ -88,6 +88,13 @@ int fork()
    printf("Call to fork.\n");
    return 0;
 }
+
+int wait()
+{
+   printf("Call to wait.\n");
+   return 0;
+}
+/*
 void _flsbuf(ptr, ch)
 char *ptr;
 char ch;
@@ -96,6 +103,7 @@ char ch;
    return;
 }
 */
+
 #endif /* OS/2 */
 
 #ifdef __bsdi__

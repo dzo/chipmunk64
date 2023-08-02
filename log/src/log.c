@@ -21959,6 +21959,7 @@ Static Void shownews()
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
+
 void mainloop() {
   excpline = -1;
   tempverbose = false;
@@ -22133,6 +22134,7 @@ void mainloop() {
 
 int main(int argc, Char * argv[])
 {
+  printf("Hello world\n");
   long FORLIM;
   Char STR1[81];
   nc_text_in_window = 1;  
@@ -22310,7 +22312,12 @@ int main(int argc, Char * argv[])
 
 
 
-
+void WinMain() {
+  int argc=1;
+  
+  Char * argv[]={"log.exe"};
+ main(argc, argv); 
+}
 
 
 

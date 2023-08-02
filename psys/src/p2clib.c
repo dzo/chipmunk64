@@ -980,10 +980,14 @@ char ChipmunkPath[256];
 char *GetChipmunkPath(ev, deft)
 char *ev, *deft;
 {
+    #ifdef OS2
+    return deft;
+    #endif
     int r=readlink("/proc/self/exe", ChipmunkPath, 256);
  //   printf("Path %s %s\n",ChipmunkPath,dirname(ChipmunkPath));
-    if(r<=0) return deft;
-    return dirname(ChipmunkPath);
+    
+   if(r<=0) return deft;
+   return dirname(ChipmunkPath);
 
 //    if ((s= getenv(ev)) != (char *) NULL)
 //        return(s);
@@ -1025,7 +1029,12 @@ return select( 0, (int *)0, (int *)0, (int *)0, (struct timeval *)&delay );
 #if defined( linux ) || defined( __osf__ )
     return select( 0, (fd_set *)0, (fd_set *)0, (fd_set *)0, (struct timeval *)&delay );
 #else
+#if defined(OS2) 
+_sleep(usec/1000);
+return 0;
+#else
     return select( 0, (int *)0, (int *)0, (int *)0, (struct timeval *)&delay );
+#endif
 #endif
 #endif
 }

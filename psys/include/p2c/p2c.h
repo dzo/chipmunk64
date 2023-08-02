@@ -396,7 +396,7 @@ typedef struct {
 /* Memory allocation */
 #ifdef __GCC__
 #ifdef __alpha__
-# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(long)_OutMem())
+# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(long long)_OutMem())
 #else
 # define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(long long)_OutMem())
 #endif
