@@ -1167,6 +1167,11 @@ void WindowInitialize()
   SDL_RendererInfo info;
   SDL_GetRendererInfo(m_renderer,&info);
   printf("Renderer %x\n",info.flags);
+  #ifdef __EMSCRIPTEN__
+  buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
+                                        SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
+  SDL_SetRenderTarget(m_renderer, buffer);
+  #endif
 }
 
  
@@ -1983,8 +1988,10 @@ int c;
 switch(c) {
 case m_xor:
 //currentcolor |= GrXOR;
+#ifndef __EMSCRIPTEN__
 glEnable (GL_COLOR_LOGIC_OP) ;
 glLogicOp(GL_XOR);
+#endif
 //m_clear();
 //refresh();
 //SDL_SetRenderDrawBlendMode(m_renderer,invmode);
@@ -2002,7 +2009,10 @@ break;
 case m_normal:
 //SetROP2(hdc,R2_COPYPEN);
 //glLogicOp(GL_COPY);
+
+#ifndef __EMSCRIPTEN__
 glDisable (GL_COLOR_LOGIC_OP) ;
+#endif
 //SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
 //currentcolor &= 0xffffff;             
 break;
@@ -3993,16 +4003,21 @@ void addsc(int sc) {
 void handle_events() {
   uint64_t time=time_ms();
   if(time-lasttime>=15) {
-   //SDL_SetRenderTarget(m_renderer, NULL);
-   //SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
-   SDL_RenderPresent(m_renderer);
-   //SDL_SetRenderTarget(m_renderer, buffer);
-   //SDL_RenderClear(m_renderer);
-   lasttime=time;
+  #ifdef __EMSCRIPTEN__
+    SDL_SetRenderTarget(m_renderer, NULL);
+    SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
+    SDL_RenderDrawLine(m_renderer,0,0,10,10);
+    SDL_RenderPresent(m_renderer);
+    SDL_SetRenderTarget(m_renderer, buffer);
+    //SDL_RenderClear(m_renderer);
+  #else
+    SDL_RenderPresent(m_renderer);
+  #endif
+    lasttime=time;
   }
  // SDL_PumpEvents();
   #ifdef __EMSCRIPTEN__
-  emscripten_sleep(1);
+  //emscripten_sleep(1);
   #endif
   
   int k,sc;
