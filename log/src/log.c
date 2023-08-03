@@ -22312,11 +22312,12 @@ int main(int argc, Char * argv[])
 
 
 
-void WinMain() {
-  int argc=1;
+void WinMain(void * hinstance, void *hp, char *args, int cmd) {
+  int argc=2;
   
-  Char * argv[]={"log.exe"};
- main(argc, argv); 
+  Char * argv[]={"log.exe",args};
+  if(strcmp(args,"")==0) argc=1;
+  main(argc, argv); 
 }
 
 
