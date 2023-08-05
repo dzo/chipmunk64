@@ -4006,10 +4006,11 @@ void handle_events() {
   #ifdef __EMSCRIPTEN__
     SDL_SetRenderTarget(m_renderer, NULL);
     SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
-    SDL_RenderDrawLine(m_renderer,0,0,10,10);
+    //SDL_RenderDrawLine(m_renderer,0,0,10,10);
     SDL_RenderPresent(m_renderer);
     SDL_SetRenderTarget(m_renderer, buffer);
     //SDL_RenderClear(m_renderer);
+    //emscripten_sleep(-1);
   #else
     SDL_RenderPresent(m_renderer);
   #endif
@@ -4054,7 +4055,7 @@ void handle_events() {
       they=event.motion.y;
       break;
     case SDL_KEYDOWN:
-      printf("D: %d\n",event.key.keysym.scancode);
+      //printf("D: %d\n",event.key.keysym.scancode);
       sc=event.key.keysym.scancode;
       if(sc==SDL_SCANCODE_LEFT || sc==SDL_SCANCODE_RIGHT || sc==SDL_SCANCODE_UP || sc==SDL_SCANCODE_DOWN || sc==SDL_SCANCODE_RETURN)
       {
@@ -4064,7 +4065,7 @@ void handle_events() {
       addsc(sc);
       break;
     case SDL_KEYUP:
-      printf("U: %d\n",event.key.keysym.scancode);
+      //printf("U: %d\n",event.key.keysym.scancode);
       keydown=0;
       break;
     case SDL_QUIT:
@@ -4073,7 +4074,7 @@ void handle_events() {
     case SDL_TEXTINPUT:
       k=event.text.text[0];
       if(k==8) k=7;
-      printf("%d\n",k);
+      //printf("%d\n",k);
       addkey(k);
       break;
     case SDL_WINDOWEVENT:
