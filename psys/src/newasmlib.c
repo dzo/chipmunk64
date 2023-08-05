@@ -1816,7 +1816,7 @@ register long i, w;
 Char *strdate(res, opts)    /* ignore opts for now */
 Char *res, *opts;
 {
-    time_t t = time((long *)0);
+    time_t t = time((time_t *)0);
     strcpy(res, (char *) ctime(&t));
     res[strlen(res)-1] = 0;    /* eat the \n */
     return res;

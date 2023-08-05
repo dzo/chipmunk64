@@ -12,8 +12,8 @@
 #include <p2c/sysglobals.h>
 
 
-
-Void lunix_intToDate (long idate, daterec *date, timerec *time)
+/*
+Void lunix_intToDate (long long idate, daterec *date, timerec *time)
 {
   struct tm *temp_tm;
 
@@ -26,3 +26,4 @@ Void lunix_intToDate (long idate, daterec *date, timerec *time)
   time->centisecond = temp_tm->tm_sec * 100;
 }
 
+*/

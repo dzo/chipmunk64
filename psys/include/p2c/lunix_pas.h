@@ -70,7 +70,7 @@ extern Void lunix_dologerr PP((Char *s));
 extern Char *lunix_spoolname PP((Char *lunix_Result, Char *directory,
 				 Char *extension));
 extern long lunix_datetoint PP((daterec date, timerec time));
-extern Void lunix_intToDate (long idate, daterec *date, timerec *time);
+//extern Void lunix_intToDate (long long idate, daterec *date, timerec *time);
 extern Void lunix_fasttime PP((lunix_fasttimerec *f));
 extern Void lunix_datetostr PP((datetimerec datetime, Char *s));
 extern Void lunix_qsort PP((Char *a, int n, int es, _PROCEDURE fc));
