@@ -1971,11 +1971,11 @@ void m_colormode(c)
 int c;
 {
   int i;
-  /*
-  SDL_BlendMode invmode=SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ZERO, SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,
+  
+  SDL_BlendMode invmode=SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR, SDL_BLENDFACTOR_ZERO ,
 													SDL_BLENDOPERATION_ADD, SDL_BLENDFACTOR_ZERO,
 													SDL_BLENDFACTOR_DST_ALPHA, SDL_BLENDOPERATION_ADD);
-                          
+                 /*         
                           SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ZERO,
     SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,SDL_BLENDOPERATION_SUBTRACT,
     SDL_BLENDFACTOR_ZERO,
@@ -1988,13 +1988,18 @@ int c;
 switch(c) {
 case m_xor:
 //currentcolor |= GrXOR;
-#ifndef __EMSCRIPTEN__
-glEnable (GL_COLOR_LOGIC_OP) ;
-glLogicOp(GL_XOR);
-#endif
+//#ifndef __EMSCRIPTEN__
+//glEnable (GL_COLOR_LOGIC_OP) ;
+//glLogicOp(GL_XOR);
+SDL_SetRenderDrawColor(m_renderer, 255,255,255,255);
+//glEnable (GL_BLEND) ;
+//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO );
+//#else
+
+//#endif
 //m_clear();
 //refresh();
-//SDL_SetRenderDrawBlendMode(m_renderer,invmode);
+SDL_SetRenderDrawBlendMode(m_renderer,invmode);
 //SDL_SetRenderDrawColor(m_renderer, 128, 128, 128, 128);
 //currentcolor=0xffffffff;
 //SetROP2(hdc,R2_XORPEN);
@@ -2010,10 +2015,11 @@ case m_normal:
 //SetROP2(hdc,R2_COPYPEN);
 //glLogicOp(GL_COPY);
 
-#ifndef __EMSCRIPTEN__
-glDisable (GL_COLOR_LOGIC_OP) ;
-#endif
-//SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
+//#ifndef __EMSCRIPTEN__
+//glDisable (GL_COLOR_LOGIC_OP) ;
+//glDisable (GL_BLEND) ;
+//#endif
+SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
 //currentcolor &= 0xffffff;             
 break;
 }
@@ -2154,6 +2160,7 @@ int newcolor;
       else if (newcolor < 0)
         newcolor = 0;
     if(currentmode==m_erase) currentcolor = 0; 
+    if(currentmode==m_xor) currentcolor = -1; 
     else
     currentcolor = (currentcolor & 0xff000000) | cols[newcolor];
     currentcolorindex=newcolor;
@@ -4004,11 +4011,15 @@ void handle_events() {
   uint64_t time=time_ms();
   if(time-lasttime>=15) {
   #ifdef __EMSCRIPTEN__
+    SDL_Rect r;
+    SDL_RenderGetClipRect(m_renderer,&r);
     SDL_SetRenderTarget(m_renderer, NULL);
     SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
     //SDL_RenderDrawLine(m_renderer,0,0,10,10);
     SDL_RenderPresent(m_renderer);
     SDL_SetRenderTarget(m_renderer, buffer);
+    if(r.w!=0)
+      SDL_RenderSetClipRect(m_renderer,&r);
     //SDL_RenderClear(m_renderer);
     //emscripten_sleep(-1);
   #else
