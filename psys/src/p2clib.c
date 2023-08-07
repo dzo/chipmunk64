@@ -1013,6 +1013,8 @@ int microsleep( usec )         /* returns 0 if ok, else -1 */
 long usec;                     /* delay in microseconds */
 {
 
+usleep(usec);
+return 0;
     static struct              /* `timeval' */
       {
          long  tv_sec;         /* seconds */
