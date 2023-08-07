@@ -250,7 +250,7 @@ static Pixmap UnderCursor;
 */
 static int currentcolor = 0;
 static int currentcolorindex = 0;
-static int currentmode = 0;
+int currentmode = 0;
 //static Font fontnum;
 static int currentfont;
 static int fontasc;
@@ -3095,16 +3095,16 @@ int x, y, rx, ry, c;
     turncursoroff();
 #endif
   m_color(c);
-  if (currentcolor != m_trans) {
-    Xfprintf(stderr, "XFillArc()\n");
+//  if (currentcolor != m_trans) {
+ //   Xfprintf(stderr, "XFillArc()\n");
    // XFillArc(m_display, m_window, gc[currentcolor], x-rx, y-ry, rx*2, ry*2, 0, 360*64);
-    ellipseColor(m_renderer,x, y, rx, ry,ColorSets);
-  }
+ //   ellipseColor(m_renderer,x, y, rx, ry,ColorSets);
+ // }
 
-  if (c != m_trans) {
-    Xfprintf(stderr, "XDrawArc()\n");
+ // if (c != m_trans) {
+ //   Xfprintf(stderr, "XDrawArc()\n");
     ellipseColor(m_renderer,x, y, rx, ry,currentcolor);
-  }
+ // }
 
 #ifdef SAVECURSOR
   if (cursor_is_on)
