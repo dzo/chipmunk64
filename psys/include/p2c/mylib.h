@@ -65,6 +65,8 @@ typedef struct m_tablet_info {
 /* p2c: Note: Must assume this bit field is signed (from mylib.imp, line 53) */
     unsigned menu : 8, depressed : 1, near_ : 1, dn : 1, up : 1, off : 1, clip : 1,
              moving : 1, inalpha : 1;
+    unsigned char middle;
+    int relx,rely;
 } m_tablet_info;
 
 

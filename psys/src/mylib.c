@@ -1167,11 +1167,11 @@ void WindowInitialize()
   SDL_RendererInfo info;
   SDL_GetRendererInfo(m_renderer,&info);
   printf("Renderer %x\n",info.flags);
-  #ifdef __EMSCRIPTEN__
+  //#ifdef __EMSCRIPTEN__
   buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
                                         SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
   SDL_SetRenderTarget(m_renderer, buffer);
-  #endif
+  //#endif
 }
 
  
@@ -3974,6 +3974,7 @@ int keybuf[256];
 unsigned char keynext=0,keyfirst=0;
 #define thekey (keyfirst!=keynext)?keybuf[keyfirst++]:0;
 int thex,they;
+int relx,rely;
 int theflags;
 int thebuttons;
 
@@ -4010,36 +4011,24 @@ void addsc(int sc) {
 void handle_events() {
   uint64_t time=time_ms();
   if(time-lasttime>=15) {
-  #ifdef __EMSCRIPTEN__
     SDL_Rect r;
     SDL_RenderGetClipRect(m_renderer,&r);
     SDL_SetRenderTarget(m_renderer, NULL);
     SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
-    //SDL_RenderDrawLine(m_renderer,0,0,10,10);
     SDL_RenderPresent(m_renderer);
     SDL_SetRenderTarget(m_renderer, buffer);
     if(r.w!=0)
       SDL_RenderSetClipRect(m_renderer,&r);
-    //SDL_RenderClear(m_renderer);
-    //emscripten_sleep(-1);
-  #else
-    SDL_RenderPresent(m_renderer);
-  #endif
     lasttime=time;
   }
- // SDL_PumpEvents();
-  #ifdef __EMSCRIPTEN__
-  //emscripten_sleep(1);
-  #endif
   
   int k,sc;
- // nevents=SDL_PeepEvents(&event, 1,SDL_GETEVENT,SDL_FIRSTEVENT,SDL_LASTEVENT);
-  //printf("event %d %d\n",nevents,event.type);
   do {
     nevents=SDL_PollEvent(&event);
   if(nevents==1) {
     switch (event.type)
     {
+      relx=0;rely=0;
     case SDL_MOUSEBUTTONDOWN:
       if(event.button.button==SDL_BUTTON_LEFT) {
         thebuttons |= 2;
@@ -4048,6 +4037,9 @@ void handle_events() {
       if(event.button.button==SDL_BUTTON_RIGHT) {
         thebuttons |= 1;
         theflags=1;
+      }
+      if(event.button.button==SDL_BUTTON_MIDDLE) {
+        thebuttons |= 4;
       }
       break;
     case SDL_MOUSEBUTTONUP:
@@ -4059,14 +4051,24 @@ void handle_events() {
         thebuttons &= ~1;
         theflags=4;
       }
+      if(event.button.button==SDL_BUTTON_MIDDLE) {
+        thebuttons &= ~4;
+      }
       break;
     case SDL_MOUSEMOTION:
       theflags |= 16;
       thex=event.motion.x;
       they=event.motion.y;
+      relx=event.motion.xrel;
+      rely=event.motion.yrel;
+      break;
+    case SDL_MOUSEWHEEL:
+      if(event.wheel.y > 0)
+        addkey('<');
+      if(event.wheel.y < 0)
+        addkey('>');
       break;
     case SDL_KEYDOWN:
-      //printf("D: %d\n",event.key.keysym.scancode);
       sc=event.key.keysym.scancode;
       if(sc==SDL_SCANCODE_LEFT || sc==SDL_SCANCODE_RIGHT || sc==SDL_SCANCODE_UP || sc==SDL_SCANCODE_DOWN || sc==SDL_SCANCODE_RETURN)
       {
@@ -4076,7 +4078,6 @@ void handle_events() {
       addsc(sc);
       break;
     case SDL_KEYUP:
-      //printf("U: %d\n",event.key.keysym.scancode);
       keydown=0;
       break;
     case SDL_QUIT:
@@ -4085,16 +4086,19 @@ void handle_events() {
     case SDL_TEXTINPUT:
       k=event.text.text[0];
       if(k==8) k=7;
-      //printf("%d\n",k);
       addkey(k);
       break;
     case SDL_WINDOWEVENT:
       if(event.window.event==SDL_WINDOWEVENT_SIZE_CHANGED) {
         WindowWidth=event.window.data1;
         WindowHeight = event.window.data2;
-        printf("resize %d %d\n",WindowWidth,WindowHeight);
-        if ( m_initialized)
+        if ( m_initialized) {
+          SDL_DestroyTexture(buffer);
+          buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
+                                SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight);
+          SDL_SetRenderTarget(m_renderer, buffer);
           resize_screen();
+        }
       }
       break;
     default:
@@ -4106,11 +4110,11 @@ void handle_events() {
     addsc(keydown);
     keyrepeattime=time+33;
   }
- // }
 
 }
 #define Button1Mask 2
 #define Button3Mask 1
+#define Button2Mask 4
 #define GR_M_RIGHT_DOWN 1
 #define GR_M_LEFT_DOWN 2
 #define GR_M_RIGHT_UP 4
@@ -4127,36 +4131,48 @@ m_tablet_info *pen;
 
   handle_events();
   
-
+  pen->middle = (thebuttons & Button2Mask)!=0;
   Pfprintf(stderr, "m_readpen(pen) flags=%x, x=%d, y=%d\n", theflags,thex,they);
+        pen->relx = 0;
+        pen->rely = 0;
     if(theflags) { 
-    if (theflags & GR_M_BUTTON_DOWN) {
-      pen->dn = (theflags & GR_M_LEFT_DOWN)!=0;
-      pen->depressed = ((thebuttons & Button1Mask)!=0) || pen->dn;
-      pen->up = 0;
-      pen->near_ = ! (thebuttons & Button3Mask) &&
-                  ! (theflags & GR_M_RIGHT_DOWN);
-      
-    } else if (theflags & GR_M_BUTTON_UP) {
-      pen->dn = 0;
-      pen->up = (theflags & GR_M_LEFT_UP)!=0;
-      pen->depressed = ((thebuttons & Button1Mask)!=0) && (! pen->up);
-      pen->near_ = ! (thebuttons & Button3Mask) ||
-                  (theflags & GR_M_RIGHT_UP);
-      
-    } else {
-      pen->dn = 0;
-      pen->up = 0;
-      pen->depressed = ((thebuttons & Button1Mask) != 0);
-      pen->near_ = ! (thebuttons & Button3Mask);
-    }
+      if (theflags & GR_M_BUTTON_DOWN) {
+        pen->dn = (theflags & GR_M_LEFT_DOWN)!=0;
+        pen->depressed = ((thebuttons & Button1Mask)!=0) || pen->dn;
+        pen->up = 0;
+        pen->near_ = ! (thebuttons & Button3Mask) &&
+                    ! (theflags & GR_M_RIGHT_DOWN);
+        
+      } else if (theflags & GR_M_BUTTON_UP) {
+        pen->dn = 0;
+        pen->up = (theflags & GR_M_LEFT_UP)!=0;
+        pen->depressed = ((thebuttons & Button1Mask)!=0) && (! pen->up);
+        pen->near_ = ! (thebuttons & Button3Mask) ||
+                    (theflags & GR_M_RIGHT_UP);
+        
+      } else {
+        pen->dn = 0;
+        pen->up = 0;
+        pen->depressed = ((thebuttons & Button1Mask) != 0);
+        pen->near_ = ! (thebuttons & Button3Mask);
+      }
 
-   if(theflags & GR_M_MOTION) m_cursor(thex,they);
-
+      if(theflags & GR_M_MOTION) {
+        m_cursor(thex,they);
+        pen->relx = relx;
+        pen->rely = rely;
+        relx=0;
+        rely=0;
+      } else {
+        pen->middle=0;
+        pen->relx = 0;
+        pen->rely = 0;
+      }
       pen->x = thex;
       pen->y = they;
       pen->ax = (thex)/nc_fontwidth;
       pen->ay = (they)/nc_fontheight;
+
      // UNTRNSFRM(pen->x, pen->y);
      } 
      else
@@ -4209,7 +4225,9 @@ m_tablet_info *pen;
   mouse.ay = pen->ay;
   mouse.depressed = pen->depressed;
   mouse.near_ = pen->near_;
-
+  mouse.relx=pen->relx;
+  mouse.rely=pen->rely;
+  mouse.middle=pen->middle;
 
 }
 

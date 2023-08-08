@@ -762,7 +762,7 @@ Static Void initscreen()
   m_setlinestyle(2L, 0xaaaaL);
 /* p2c: log.text, line 662:
  * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-  m_setfont(logfont_lfont);
+ // m_setfont(logfont_lfont);
   init_X_screen();
   onescreen = nc_alphashared();
   eightcolors = (m_maxcolor <= 7);
@@ -2882,6 +2882,7 @@ Static boolean pollkbd2()
   return (nk_keybufsize() != 0 || pushedbackkey != '\0');
 }
 
+static void refrfunc();
 
 Static Void pen()
 {
@@ -2929,6 +2930,12 @@ Static Void pen()
   if (snapflag && gg.incircuit) {
     gg.t.x = (gg.t.x + gg.hscale + gg.xoff) / gg.scale * gg.scale - gg.xoff;
     gg.t.y = (gg.t.y + gg.hscale + gg.yoff) / gg.scale * gg.scale - gg.yoff;
+  }
+  if(gg.t.middle) {
+    //printf("middle %d %d\n",gg.t.x , gg.t.downx);
+    xoff0 -= gg.t.relx * gg.scale;
+    yoff0 -= gg.t.rely * gg.scale;
+    refrfunc();
   }
   if (gg.t.x < 0)
     gg.t.x = 0;
