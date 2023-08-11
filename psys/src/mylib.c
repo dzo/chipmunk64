@@ -1,7 +1,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL2_gfxPrimitives.h> 
-#include <GL/gl.h>
+//#include <GL/gl.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -1149,7 +1149,7 @@ void WindowInitialize()
  // SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE); //OpenGL core profile
  // SDL_GL_SetAttribute (SDL_GL_CONTEXT_MAJOR_VERSION, 3); //OpenGL 3+
  // SDL_GL_SetAttribute (SDL_GL_CONTEXT_MINOR_VERSION, 2); //OpenGL 3.3
-  SDL_SetHint (SDL_HINT_RENDER_DRIVER, "opengl") ;
+ // SDL_SetHint (SDL_HINT_RENDER_DRIVER, "opengl") ;
  // SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL, &m_window, &m_renderer);
  
 
@@ -1160,13 +1160,13 @@ void WindowInitialize()
   for(int i=0;i<5;i++)
      cursors[i]=SDL_CreateCursor((const unsigned char *)curzero,(const unsigned char *)(curxor[i]),32,32,curpos[i],curpos[i]);
 
-  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,SDL_WINDOW_SHOWN|  SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,SDL_WINDOW_SHOWN|  SDL_WINDOW_RESIZABLE);
   m_renderer=SDL_CreateRenderer(m_window,-1,SDL_RENDERER_ACCELERATED);
-   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
-    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
-  SDL_RendererInfo info;
-  SDL_GetRendererInfo(m_renderer,&info);
-  printf("Renderer %x\n",info.flags);
+//   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
+//    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
+//  SDL_RendererInfo info;
+//  SDL_GetRendererInfo(m_renderer,&info);
+//  printf("Renderer %x\n",info.flags);
   //#ifdef __EMSCRIPTEN__
   buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
                                         SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
