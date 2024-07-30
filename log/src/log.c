@@ -17478,9 +17478,9 @@ Char *filename_;
 	_Escape(P_escapecode);
     ENDTRY(try24);
     if (f != NULL)
-      f = freopen(filename, "w", f);
+      f = freopen(filename, "wb", f);
     else
-      f = fopen(filename, "w");
+      f = fopen(filename, "wb");
     if (f == NULL)
       _EscIO(FileNotFound);
     fprintf(f, "-5\n");
