@@ -17746,6 +17746,7 @@ short pgnum;
   ENDTRY(try25);
 }
 
+void jssave(char const *filename, char const *mime_type, void const *buffer, size_t buffer_size);
 
 Local Void safesavepage(pgnum, fn)
 short pgnum;
@@ -17754,7 +17755,23 @@ Char *fn;
   long i, j;
 
   if (*fn == '\0')
-    return;
+    return; 
+#if __EMSCRIPTEN__
+  char fn1[256];
+  strcpy(fn1,curfilename[pgnum - 1]);
+  savepage(pgnum, "tmp.lgf");
+  strcpy(curfilename[pgnum - 1],fn1);
+  FILE *fin=fopen("tmp.lgf","rb");
+  fseek(fin, 0L, SEEK_END);
+  int sz = ftell(fin);
+  fseek(fin, 0L, SEEK_SET);
+  char *buffer=malloc(sz);
+  fread(buffer,1,sz,fin);
+  fclose(fin);
+  jssave(fn,"",buffer,sz);
+  free(buffer);
+  return;
+#endif
   beginbottom();
   TRY(try26);
     printf("Saving file %s\n", fn);
@@ -18728,6 +18745,7 @@ typedef Char dirarray[maxdirmax + 1][fidleng + 1];
 /*=     contents of current page are lost.       =*/
 /*=                                              =*/
 /*================================================*/
+void startjsload();
 
 Static Void loadcommand()
 {
@@ -18749,7 +18767,12 @@ Static Void loadcommand()
     printf("Name of file to load: ");
     readlnpass(filename, 0);
     endbottom();
-  } else if (*gg.funcarg == '\0') {
+  } else if (*gg.funcarg == '\0') { 
+  #ifdef __EMSCRIPTEN__
+    startjsload();
+    clearfunc();
+    return;
+  #endif
     clearshowalpha();
     if (cat != NULL)
       Free(cat);
@@ -19169,7 +19192,6 @@ Static Void readcommand()
 {
   Char filename[256], reason[256];
   long i, j;
-
   if (*gg.funcarg == '\0' || !strcmp(gg.funcarg, "*")) {
     beginbottom();
     printf("Name of file to read: ");
@@ -22312,8 +22334,53 @@ void WinMain(void * hinstance, void *hp, char *args, int cmd) {
 
 
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+EMSCRIPTEN_KEEPALIVE int upload_file_return(char const *filename, char *buffer, size_t buffer_size) {
+  /// Load a file - this function is called from javascript when the file upload is activated
+  //printf("Load File %x %x\n",buffer,buffer_size);
+  FILE *fout=fopen("tmp.lgf","wb");
+  fwrite(buffer,1,buffer_size,fout);
+  fclose(fout);
+  char err[256];
+  loadpage("tmp.lgf",err);
+  strcpy(curfilename[gg.curpage - 1], filename);
+  strcpy(gg.func,"REFRESH");
+  return 1;
+} 
+ 
 
+EM_JS(void, startjsload, (), {
+    globalThis["open_file"] = function(e) {
+      const file_reader = new FileReader();
+      file_reader.onload = (event) => {
+        const uint8Arr = new Uint8Array(event.target.result);
+        const data_ptr = _malloc(uint8Arr.length);
+        const data_on_heap = new Uint8Array(Module["HEAPU8"].buffer, data_ptr, uint8Arr.length);
+        data_on_heap.set(uint8Arr);
+        Module.ccall('upload_file_return', 'number', [ 'string', 'number', 'number'], [event.target.filename, data_on_heap.byteOffset, uint8Arr.length]);
+        _free(data_ptr);
+      };
+      file_reader.filename = e.target.files[0].name;
+      file_reader.mime_type = e.target.files[0].type;
+      file_reader.readAsArrayBuffer(e.target.files[0]);
+    };
 
+    var file_selector = document.createElement('input');
+    file_selector.setAttribute('type', 'file'); 
+    file_selector.setAttribute('onchange', 'globalThis["open_file"](event)');
+    file_selector.setAttribute('accept', '.lgf');
+    file_selector.click();
+  });
 
+EM_JS(void, jssave, (char const *filename, char const *mime_type, void const *buffer, size_t buffer_size), {
+  /// Offer a buffer in memory as a file to download, specifying download filename and mime type
+  var a = document.createElement('a');
+  a.download = UTF8ToString(filename);
+  a.href = URL.createObjectURL(new Blob([new Uint8Array(Module["HEAPU8"].buffer, buffer, buffer_size)], {type: UTF8ToString(mime_type)}));
+  a.click();
+});
+
+#endif
 
 /* End. */
