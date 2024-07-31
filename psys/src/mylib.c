@@ -82,7 +82,7 @@ unsigned long grPixels[256];
 SDL_Color m_colors[ColorSets+1][ColorsInSet];
 long cols[256];
 
-int WindowWidth=800,WindowHeight=600;
+int WindowWidth=1280,WindowHeight=720;
 
 /* daveg, 10/6/89:  Just to improve readability of the rest of the code! */
 
@@ -4010,7 +4010,7 @@ void addsc(int sc) {
 
 void handle_events() {
   uint64_t time=time_ms();
-  if(time-lasttime>=15) {
+  if(time-lasttime>=10) {
     SDL_Rect r;
     SDL_RenderGetClipRect(m_renderer,&r);
     SDL_SetRenderTarget(m_renderer, NULL);
@@ -4020,8 +4020,8 @@ void handle_events() {
     if(r.w!=0)
       SDL_RenderSetClipRect(m_renderer,&r);
     lasttime=time;
+    
   }
-  
   int k,sc;
   do {
     nevents=SDL_PollEvent(&event);
@@ -4069,6 +4069,8 @@ void handle_events() {
         addkey('>');
       break;
     case SDL_KEYDOWN:
+      if(event.key.repeat != 0)
+        break;
       sc=event.key.keysym.scancode;
       if(sc==SDL_SCANCODE_LEFT || sc==SDL_SCANCODE_RIGHT || sc==SDL_SCANCODE_UP || sc==SDL_SCANCODE_DOWN || sc==SDL_SCANCODE_RETURN)
       {
@@ -4079,6 +4081,7 @@ void handle_events() {
       break;
     case SDL_KEYUP:
       keydown=0;
+      keyrepeattime=time+3300000;
       break;
     case SDL_QUIT:
       exit(0);
@@ -4235,7 +4238,7 @@ void m_trackpen(pen)
 m_tablet_info *pen;
 {
   Pfprintf(stderr, "m_trackpen(pen)\n");
-  handle_events();
+//  handle_events();
   m_readpen(pen);
 
 /*  fprintf(stderr, "m_cursor(%d, %d)   from m_trackpen\n", pen->x, pen->y);  */
@@ -4285,7 +4288,7 @@ uchar m_inkeyn()
 {
   int k;
 Kfprintf(stderr,"m_inkeyn %d\n",keybuf[keyfirst]);    
-handle_events(); 
+//handle_events(); 
 k=thekey;
 return k;
 
@@ -4293,7 +4296,7 @@ return k;
 
 uchar m_testkey()
 {
-handle_events();                      
+//handle_events();                      
 Kfprintf(stderr,"m_testkey %d\n",keybuf[keyfirst]);    
 if(keyfirst!=keynext) return keybuf[keyfirst];
 return 0;

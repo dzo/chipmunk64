@@ -17824,6 +17824,13 @@ Static Void savecommand()
       strcpy(filename, curfilename[gg.curpage - 1]);
     else
       *filename = '\0';
+    #if __EMSCRIPTEN__
+      safesavepage((int)gg.curpage, filename);
+      endbottom();
+      clearfunc();
+      refrscreen();
+      return;
+    #endif
     readlnpass(filename, 3);
     endbottom();
     if (*filename != '\0')
