@@ -2910,7 +2910,7 @@ Static Void pen()
   }
   /* Be friendly when not running something important */
   if (now-awake > (unsigned long)ALERTNESS)
-   microsleep((unsigned long)10000*DOZETIME);
+   millisleep((unsigned long)10*DOZETIME);
 
   /* end of idling-improvement section */
 
@@ -7133,7 +7133,7 @@ Char *s;
 #ifdef OS2
    vmessage("Starting a help window");
 #else
-   vmessage("Starting an xterm for help");
+   vmessage("Read log.doc for help");
 #endif /* OS2 */
 
    pager = getenv("PAGER");

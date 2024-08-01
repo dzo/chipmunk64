@@ -3985,15 +3985,11 @@ void addkey(int n) {
 }
 
 uint64_t time_ms() {
-  struct timeval time;
-  struct timezone tz;
-
-  gettimeofday(&time, &tz);
-
-  return((time.tv_sec % 86400) * 1000 + time.tv_usec / 1000);
+  return SDL_GetTicks64();
 }
 void resize_screen();
 uint64_t lasttime=0;
+uint64_t lastpolltime=0;
 uint64_t keydowntime=0;
 uint64_t keyrepeattime=0;
 int keydown=0;
@@ -4008,9 +4004,13 @@ void addsc(int sc) {
   if (sc==SDL_SCANCODE_BACKSPACE) addkey(7);
 }
 
+void millisleep(int ms) {
+  SDL_Delay(ms);
+}
+
 void handle_events() {
   uint64_t time=time_ms();
-  if(time-lasttime>=10) {
+  if(time-lasttime>=17) {
     SDL_Rect r;
     SDL_RenderGetClipRect(m_renderer,&r);
     SDL_SetRenderTarget(m_renderer, NULL);
@@ -4020,98 +4020,100 @@ void handle_events() {
     if(r.w!=0)
       SDL_RenderSetClipRect(m_renderer,&r);
     lasttime=time;
-    
   }
   int k,sc;
-  do {
-    nevents=SDL_PollEvent(&event);
-  if(nevents==1) {
-    switch (event.type)
-    {
-      relx=0;rely=0;
-    case SDL_MOUSEBUTTONDOWN:
-      if(event.button.button==SDL_BUTTON_LEFT) {
-        thebuttons |= 2;
-        theflags=2;
-      }
-      if(event.button.button==SDL_BUTTON_RIGHT) {
-        thebuttons |= 1;
-        theflags=1;
-      }
-      if(event.button.button==SDL_BUTTON_MIDDLE) {
-        thebuttons |= 4;
-      }
-      break;
-    case SDL_MOUSEBUTTONUP:
-      if(event.button.button==SDL_BUTTON_LEFT) {
-        thebuttons &= ~2;
-        theflags=8;
-      }
-      if(event.button.button==SDL_BUTTON_RIGHT) {
-        thebuttons &= ~1;
-        theflags=4;
-      }
-      if(event.button.button==SDL_BUTTON_MIDDLE) {
-        thebuttons &= ~4;
-      }
-      break;
-    case SDL_MOUSEMOTION:
-      theflags |= 16;
-      thex=event.motion.x;
-      they=event.motion.y;
-      relx=event.motion.xrel;
-      rely=event.motion.yrel;
-      break;
-    case SDL_MOUSEWHEEL:
-      if(event.wheel.y > 0)
-        addkey('<');
-      if(event.wheel.y < 0)
-        addkey('>');
-      break;
-    case SDL_KEYDOWN:
-      if(event.key.repeat != 0)
-        break;
-      sc=event.key.keysym.scancode;
-      if(sc==SDL_SCANCODE_LEFT || sc==SDL_SCANCODE_RIGHT || sc==SDL_SCANCODE_UP || sc==SDL_SCANCODE_DOWN || sc==SDL_SCANCODE_RETURN)
-      {
-        if(keydown==0) keyrepeattime=time+330;
-        keydown=sc;
-      }
-      addsc(sc);
-      break;
-    case SDL_KEYUP:
-      keydown=0;
-      keyrepeattime=time+3300000;
-      break;
-    case SDL_QUIT:
-      exit(0);
-      break;
-    case SDL_TEXTINPUT:
-      k=event.text.text[0];
-      if(k==8) k=7;
-      addkey(k);
-      break;
-    case SDL_WINDOWEVENT:
-      if(event.window.event==SDL_WINDOWEVENT_SIZE_CHANGED) {
-        WindowWidth=event.window.data1;
-        WindowHeight = event.window.data2;
-        if ( m_initialized) {
-          SDL_DestroyTexture(buffer);
-          buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
-                                SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight);
-          SDL_SetRenderTarget(m_renderer, buffer);
-          resize_screen();
+  if(time-lastpolltime>5) {
+    lastpolltime=time;
+    do {
+      nevents=SDL_PollEvent(&event);
+      if(nevents==1) {
+        switch (event.type)
+        {
+          relx=0;rely=0;
+        case SDL_MOUSEBUTTONDOWN:
+          if(event.button.button==SDL_BUTTON_LEFT) {
+            thebuttons |= 2;
+            theflags=2;
+          }
+          if(event.button.button==SDL_BUTTON_RIGHT) {
+            thebuttons |= 1;
+            theflags=1;
+          }
+          if(event.button.button==SDL_BUTTON_MIDDLE) {
+            thebuttons |= 4;
+          }
+          break;
+        case SDL_MOUSEBUTTONUP:
+          if(event.button.button==SDL_BUTTON_LEFT) {
+            thebuttons &= ~2;
+            theflags=8;
+          }
+          if(event.button.button==SDL_BUTTON_RIGHT) {
+            thebuttons &= ~1;
+            theflags=4;
+          }
+          if(event.button.button==SDL_BUTTON_MIDDLE) {
+            thebuttons &= ~4;
+          }
+          break;
+        case SDL_MOUSEMOTION:
+          theflags |= 16;
+          thex=event.motion.x;
+          they=event.motion.y;
+          relx=event.motion.xrel;
+          rely=event.motion.yrel;
+          break;
+        case SDL_MOUSEWHEEL:
+          if(event.wheel.y > 0)
+            addkey('<');
+          if(event.wheel.y < 0)
+            addkey('>');
+          break;
+        case SDL_KEYDOWN:
+          if(event.key.repeat != 0)
+            break;
+          sc=event.key.keysym.scancode;
+          if(sc==SDL_SCANCODE_LEFT || sc==SDL_SCANCODE_RIGHT || sc==SDL_SCANCODE_UP || sc==SDL_SCANCODE_DOWN || sc==SDL_SCANCODE_RETURN)
+          {
+            if(keydown==0) keyrepeattime=time+330;
+            keydown=sc;
+          }
+          addsc(sc);
+          break;
+        case SDL_KEYUP:
+          keydown=0;
+          keyrepeattime=time+3300000;
+          break;
+        case SDL_QUIT:
+          exit(0);
+          break;
+        case SDL_TEXTINPUT:
+          k=event.text.text[0];
+          if(k==8) k=7;
+          addkey(k);
+          break;
+        case SDL_WINDOWEVENT:
+          if(event.window.event==SDL_WINDOWEVENT_SIZE_CHANGED) {
+            WindowWidth=event.window.data1;
+            WindowHeight = event.window.data2;
+            if ( m_initialized) {
+              SDL_DestroyTexture(buffer);
+              buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
+                                    SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight);
+              SDL_SetRenderTarget(m_renderer, buffer);
+              resize_screen();
+            }
+          }
+          break;
+        default:
+          break;
         }
       }
-      break;
-    default:
-      break;
+    } while(nevents);
+    if(keydown && keyrepeattime<=time) {
+      addsc(keydown);
+      keyrepeattime=time+33;
     }
-  }
-  } while(nevents);
-  if(keydown && keyrepeattime<=time) {
-    addsc(keydown);
-    keyrepeattime=time+33;
   }
 
 }

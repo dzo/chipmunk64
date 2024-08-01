@@ -302,6 +302,7 @@ extern uchar m_inkey();
 extern uchar m_inkeyn();
 extern uchar m_testkey();
 
+extern void millisleep(int);
 
 #undef vextern
 
