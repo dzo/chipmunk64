@@ -12,4 +12,4 @@ gates   cpu.gate
 
 menu    switch led and or nand nor inv
 
-do load pipefwdcpu.lgf
+{do load pipefwdcpu.lgf}
