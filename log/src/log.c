@@ -18753,6 +18753,7 @@ typedef Char dirarray[maxdirmax + 1][fidleng + 1];
 /*=                                              =*/
 /*================================================*/
 void startjsload();
+void initload();
 
 Static Void loadcommand()
 {
@@ -21981,6 +21982,7 @@ Static Void shownews()
 /*=                                              =*/
 /*================================================*/
 
+
 int main(int argc, Char * argv[])
 {
   long FORLIM;
@@ -22001,6 +22003,9 @@ int main(int argc, Char * argv[])
     libf1[temp1 - 1] = NULL;
   TRY(try40);
     initialize();
+#ifdef __EMSCRIPTEN__
+  initload();
+#endif
 #define HCL_KLUDGE
 #ifdef HCL_KLUDGE
     printf("\210\f Starting\201\210 LOG\f\200");
@@ -22042,6 +22047,7 @@ int main(int argc, Char * argv[])
 	  rabtime = timers_sysclock();
 	  if (displaynews)
 	    shownews();
+    
 	  if (*gg.func == '\0') {
 	    do {
 	      if (refrtimer == 0 && !gg.startpoint) {
@@ -22355,7 +22361,8 @@ EMSCRIPTEN_KEEPALIVE int upload_file_return(char const *filename, char *buffer, 
   strcpy(gg.func,"REFRESH");
   return 1;
 } 
- 
+
+
 
 EM_JS(void, startjsload, (), {
     globalThis["open_file"] = function(e) {
@@ -22387,6 +22394,27 @@ EM_JS(void, jssave, (char const *filename, char const *mime_type, void const *bu
   a.href = URL.createObjectURL(new Blob([new Uint8Array(Module["HEAPU8"].buffer, buffer, buffer_size)], {type: UTF8ToString(mime_type)}));
   a.click();
 });
+
+EM_JS(void, loadfromurl, (), {
+  const splits=window.location.href.split("?");
+  if(splits.length==2) {
+    const filename=splits[1];
+    fetch(filename, {
+            credentials: "same-origin"
+        }).then(res=>res.arrayBuffer()).then(response => {
+          const uint8Arr = new Uint8Array(response);
+          const data_ptr = _malloc(uint8Arr.length);
+          const data_on_heap = new Uint8Array(Module["HEAPU8"].buffer, data_ptr, uint8Arr.length);
+          data_on_heap.set(uint8Arr);
+          Module.ccall('upload_file_return', 'number', [ 'string', 'number', 'number'], [filename, data_on_heap.byteOffset, uint8Arr.length]);
+          _free(data_ptr);
+        });
+  }
+});
+
+void initload() {
+  loadfromurl();
+}
 
 #endif
 
