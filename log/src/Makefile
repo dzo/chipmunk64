@@ -241,7 +241,7 @@ log: $(LOGOBJ) tooldir.o $(LIBP2C)
 
 diglog.html: $(LOGOBJ) tooldir.o $(LIBP2C)
 	$(CC) $(CFLAGS) tooldir.o $(LOGOBJ) $(LIBP2C) $(LIBX11)  \
-	$(OTHERLIBS) -o diglog.html --bind -sUSE_SDL=2  -sUSE_SDL_GFX=2 -sASYNCIFY -s ASYNCIFY_STACK_SIZE=51200 -s ALLOW_MEMORY_GROWTH=1 \
+	$(OTHERLIBS) -o diglog.html \
 	--embed-file log.gate --embed-file log.cnf --embed-file lognews.text --embed-file diglog.cnf \
 	--embed-file genlog.cnf --embed-file ana.gate --embed-file actel.gate --embed-file cpu.gate \
 	--embed-file  pipefwdcpu.lgf --embed-file  lplot.cnf --embed-file  pens.cnf \

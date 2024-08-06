@@ -9,10 +9,10 @@ endif
 ifdef WASM
 CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 -Wno-deprecated-non-prototype -Os
 #-O1 -g
-CHIPMUNKCC = emcc  -sUSE_SDL=2  -sUSE_SDL_GFX=2 
+CHIPMUNKCC = emcc 
 AR=emar
 RANLIB=emranlib
-LIBX11 =  -lSDL2 -lSDL2_gfx -lGL -sEXPORTED_RUNTIME_METHODS=ccall
+LIBX11 =  -lSDL2 -lSDL2_gfx -lGL -sEXPORTED_RUNTIME_METHODS=ccall -sUSE_SDL=2  -sUSE_SDL_GFX=2 -sASYNCIFY -s ASYNCIFY_STACK_SIZE=51200 -s ALLOW_MEMORY_GROWTH=1
 #  -s "EXPORTED_FUNCTIONS=['_free','_malloc']" 
 #  -s "EXPORTED_FUNCTIONS=['_free','_malloc']"
 # --bind -sASYNCIFY -s ASYNCIFY_STACK_SIZE=51200

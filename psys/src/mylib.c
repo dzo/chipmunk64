@@ -4240,9 +4240,7 @@ void m_trackpen(pen)
 m_tablet_info *pen;
 {
   Pfprintf(stderr, "m_trackpen(pen)\n");
-//  handle_events();
   m_readpen(pen);
-
 /*  fprintf(stderr, "m_cursor(%d, %d)   from m_trackpen\n", pen->x, pen->y);  */
   m_cursor(pen->x, pen->y); 
 }
@@ -4271,34 +4269,27 @@ uchar m_inkey()
 {
 
   int k;
-nc_cursor_on();
-
-do {
-  handle_events();
-  //#ifdef __EMSCRIPTEN__
- // emscripten_sleep(0);
- // #endif
-k=thekey;
-}while(!k);
-nc_cursor_off();
-Kfprintf(stderr,"m_inkey %d\n",k);    
-return k;
+  nc_cursor_on();
+  do {
+    handle_events();
+    k=thekey;
+  } while(!k);
+  nc_cursor_off();
+  Kfprintf(stderr,"m_inkey %d\n",k);    
+  return k;
 
 }
 
 uchar m_inkeyn()
 {
   int k;
-Kfprintf(stderr,"m_inkeyn %d\n",keybuf[keyfirst]);    
-//handle_events(); 
-k=thekey;
-return k;
-
+  Kfprintf(stderr,"m_inkeyn %d\n",keybuf[keyfirst]);    
+  k=thekey;
+  return k;
 }
 
 uchar m_testkey()
 {
-//handle_events();                      
 Kfprintf(stderr,"m_testkey %d\n",keybuf[keyfirst]);    
 if(keyfirst!=keynext) return keybuf[keyfirst];
 return 0;
