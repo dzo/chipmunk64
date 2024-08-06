@@ -244,7 +244,7 @@ diglog.html: $(LOGOBJ) tooldir.o $(LIBP2C)
 	$(OTHERLIBS) -o diglog.html \
 	--embed-file log.gate --embed-file log.cnf --embed-file lognews.text --embed-file diglog.cnf \
 	--embed-file genlog.cnf --embed-file ana.gate --embed-file actel.gate --embed-file cpu.gate \
-	--embed-file  pipefwdcpu.lgf --embed-file  lplot.cnf --embed-file  pens.cnf \
+	--embed-file  lplot.cnf --embed-file  pens.cnf \
 	--embed-file  plot.font --embed-file librstr.cnf --embed-file groups.cnf
 ## The following permits you to link properly with AmigaOS and 
 ## X shared libraries used in ADE
