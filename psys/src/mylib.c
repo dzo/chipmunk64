@@ -53,11 +53,6 @@ typedef struct {int x;int y; } XPoint;
 
 #ifdef HIRES
 
-#ifdef RGBFILE    
-/* In case someone wants to implement reading RGB from
-   a file like Magic does. */
-unsigned long grPixels[256];
-#endif  /* RGBFILE */
 #endif  /* HIRES */
 
 #if 0
@@ -350,359 +345,7 @@ int red_mask, green_mask, blue_mask;
 
 void DisplayInitialize()
 {
-#if 0
-    int i, j, numcolors;
-    char *bwdef ; /* mike godfrey */
-#ifdef HIRES
-    static int firstcall = 1;
-    int colorCount, realColors, usableColors, status;
-    unsigned long basepixel, pixelvalue;
-    int grNumBitPlanes;
-    long grCompleteMask;
-    //XColor colors[256*3];               /* for TrueColor */
-    char *pmap, *p;
-    //Visual *grvisual;
-    //XVisualInfo grvisual_info, *grvisual_get, grtemplate;
-    int gritems, gritems_list, grcolorCount, grclass;
-    char *visual_type[6];
-#define visual_table_len  7
-    int visual_table[visual_table_len];
-    char *log_color;
-#else
-    char *getenv();
-#endif  /* HIRES */
-    char *ep;
-    extern int nc_text_in_window;
-    char * m_usrfont;
-
-    if (nc_text_in_window == 1 && (ep = getenv("AUTORAISE")) != NULL) {
-      if (strcicmp(ep, "true") == 0) 
-        m_autoraise = true;
-      else if (strcicmp(ep, "false") == 0)
-        m_autoraise = false;
-    }
-
-    oldgrid = &grid1;
-    newgrid = &grid2;
-
-   Xfprintf(stderr, "m_display = XOpenDisplay(\"%s\")\n", m_display_name);
-
-   /* use the m_display_name variable as the name WES 7/17/91 */
-
-   if ('\0' == *m_display_name )
-     m_display = XOpenDisplay(NULL);
-   else
-     m_display = XOpenDisplay(m_display_name);
-
-  SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &m_window, &m_renderer)
-
-    if (! m_display)
-      {
-	if ('\0' == *m_display_name ) {
-	  fprintf(stderr,
-		  "Could not open display. (DISPLAY=%s)\n",
-		  getenv("DISPLAY"));
-	} else {
-	  fprintf(stderr, "Could not open display \"%s\"\n", m_display_name);
-	}
-	exit(1);
-      }
-    screennum = DefaultScreen(m_display);
-    colormap = DefaultColormap(m_display, screennum);
-
-    WinSizeHints.max_width = XDisplayWidth(m_display, screennum);
-    WinSizeHints.max_height = XDisplayHeight(m_display, screennum);
-#ifdef HIRES
-#ifdef HIRESDB
-    fprintf(stderr, "Server Vendor: %s\n", ServerVendor(m_display));
-    fprintf(stderr, "Vendor Release: %d\n", VendorRelease(m_display));
-    fprintf(stderr, "Protocol Version: %d\n", ProtocolVersion(m_display));
-    fprintf(stderr, "Protocol Revision: %d\n", ProtocolRevision(m_display));
-#ifdef OS2
-    fprintf(stderr, "HOSTTYPE: i386-OS/2\n");
-#else
-    fprintf(stderr, "HOSTTYPE: %s\n", getenv("HOSTTYPE"));
-#endif  /* OS2 */
-#endif  /* HIRESDB */
-
-/* Discover properties of Server.  */
-         visual_type[0] = (char *)&"StaticGrey";
-         visual_type[1] = (char *)&"GreyScale";
-         visual_type[2] = (char *)&"StaticColor";
-         visual_type[3] = (char *)&"PseudoColor";
-         visual_type[4] = (char *)&"TrueColor";
-         visual_type[5] = (char *)&"DirectColor";
-
-         grvisual = XDefaultVisual(m_display, screennum);
-         grtemplate.screen = screennum;
-         grtemplate.depth = 0; 
-         grvisual_get = XGetVisualInfo(m_display,(long) 0x0, &grtemplate, &gritems);
-         if(grvisual_get == NULL) {
-           fprintf(stderr, "Could not obtain Visual Info from Server %s. Will attempt default.\n",
-              getenv("DISPLAY")); }
-         else {
-           gritems_list = gritems;
-#ifdef HIRESDB
-           printf("XGetVisualInfo returned visuals list of length %d:\n", gritems);
-           while(gritems) { gritems--;
-             printf("Found Visual Class %s with:\n"
-               "     depth %d, colormap_size %d, bits_per_rgb %d.\n",
-               visual_type[grvisual_get[gritems].class],
-               grvisual_get[gritems].depth,
-               grvisual_get[gritems].colormap_size,
-               grvisual_get[gritems].bits_per_rgb);
-             if(grvisual_get[gritems].class == 4) {
-               printf("     TrueColor masks: red %06x, green %06x, blue %06x\n",
-                 grvisual_get[gritems].red_mask, grvisual_get[gritems].green_mask,
-                 grvisual_get[gritems].blue_mask); }
-         }
-#endif  /* HIRESDB */
-/* Unfortunately, the list returned by Xservers has classes in random order.
-   Therefore, a search is needed to find a good choice. The only currently
-   supported classes are PseudoColor at depth 8 and TrueColor at depth 24.
-   It is likely that TrueColor depths 8 through 32 will work, but these have
-   not been tested.
-
-   At present the preferred order is: PseudoColor at 8, then TrueColor at 24,
-   then TrueColor at 16, ...
-   Unless this is overridden by the LOG_COLOR environment variable, which
-   can be: bw, 8, 15, 16, 24
-*/
-         for(j = 0; j < visual_table_len; j++) { visual_table[j] = -1; }
-         for(j = 0; j < gritems_list; j++) {
-           if((grvisual_get[j].class == 0) && (grvisual_get[j].depth == 8))
-             visual_table[1] = j;              /* StaticGrey */
-           if((grvisual_get[j].class == 1) && (grvisual_get[j].depth == 8))
-             visual_table[2] = j;              /* GreyScale */
-           if((grvisual_get[j].class == 3) && (grvisual_get[j].depth == 8))
-             visual_table[3] = j;              /* Psuedocolor */
-           if((grvisual_get[j].class == 4) && (grvisual_get[j].depth == 15))
-             visual_table[4] = j;              /* TrueColor */
-           if((grvisual_get[j].class == 4) && (grvisual_get[j].depth == 16))
-             visual_table[5] = j;              /* TrueColor */
-           if((grvisual_get[j].class == 4) && (grvisual_get[j].depth == 24))
-             visual_table[6] = j;              /* TrueColor */
-         }
-         log_color = getenv("LOG_COLOR");
-#ifdef HIRESDB
-printf("log_color: %s visual_table: %d %d %d %d %d %d %d\n", log_color, visual_table[0],
-      visual_table[1],visual_table[2],visual_table[3],visual_table[4],visual_table[5],
-      visual_table[6]);
-#endif  /* HIRESDB */
-         gritems = -1;
-         if(log_color != NULL) {
-            if(strncmp(log_color, "8bit", 4) == 0)  gritems = visual_table[3];
-            if(strncmp(log_color, "15bit", 5) == 0) gritems = visual_table[4];
-            if(strncmp(log_color, "16bit", 5) == 0) gritems = visual_table[5];
-            if(strncmp(log_color, "24bit", 5) == 0) gritems = visual_table[6];
-/* I think bw will work with Staticgray, Grayscale, Staticcolor or Pseudocolor     */
-            if(strncmp(log_color, "bw", 2) == 0) { 
-               gritems = visual_table[3];
-               if(gritems == -1) gritems= visual_table[0];
-               if(gritems == -1) gritems= visual_table[1];
-               if(gritems == -1) gritems= visual_table[2]; }
-            if(gritems == -1) {
-               fprintf(stderr, "The LOG_COLOR mode %s is not available.\n"
-                   "Choose from bw, 8bit, 15bit, 16bit, or 24bit.\n", log_color);
-               XFree(grvisual_get);
-               exit(1); }
-         }
-         else {
-            if(visual_table[3] != -1)      gritems = visual_table[3];
-            else if(visual_table[6] != -1) gritems = visual_table[6];
-            else if(visual_table[5] != -1) gritems = visual_table[5];
-            else if(visual_table[4] != -1) gritems = visual_table[4];
-            else if(visual_table[1] != -1) gritems = visual_table[1];
-         }
-         if(gritems == -1) {
-           fprintf(stderr, "Neither TrueColor 24, 16, 15, nor PseudoColor 8, nor BW found. "
-              "Cannot initialize DISPLAY %s\n", getenv("DISPLAY"));
-           XFree(grvisual_get);
-           exit(1); }
-#ifdef HIRESDB
-         else {
-           printf("Using %s, depth %d\n", visual_type[grvisual_get[gritems].class],
-            grvisual_get[gritems].depth); }
-#endif  /* HIRESDB */
-           grclass         = grvisual_get[gritems].class;
-           grvisual        = grvisual_get[gritems].visual;
-           grcolorCount    = grvisual_get[gritems].colormap_size;
-           grCurrent.depth = grvisual_get[gritems].depth;
-           red_mask        = grvisual_get[gritems].red_mask;
-           green_mask      = grvisual_get[gritems].green_mask;
-           blue_mask       = grvisual_get[gritems].blue_mask; }
-         XFree(grvisual_get);
-         planeCount = grCurrent.depth;
-         colorCount = grcolorCount;
-         realColors = colorCount;
-         if(planeCount <= 8) {
-             ScrDepth = DefaultDepth(m_display,screennum);
-             Xfprintf(stderr,"Screendepth = %d\n",ScrDepth);
-             bwdef = XGetDefault( m_display, "mylib", "color");  /* **mdg** */
-             if(log_color == NULL)log_color = "color";
-             if(bwdef == NULL) bwdef = "color";    /* required since some strcmp's
-                                                   cannot handle NULL   */
-
-             Xfprintf(stderr, "bwdef: %s\n", bwdef);
-
-             if ((ScrDepth < 4) || 
-        	((bwdef != NULL) && (!strcmp(bwdef, "black_and_white")))
-                || !strcmp(log_color,"bw"))
-             {
-             /* Assuming black-and-white */
-        	BlackAndWhite = True;
-             } 
-             else 
-             {
-	        Xfprintf(stderr, "if (! XAllocColorCells())...\n");  
-	        if (! XAllocColorCells(m_display, colormap, True, plane_masks,
-			       WinDepth, &pixel, 1)) 
-	        {
-	           numcolors = DefaultVisual(m_display,
-				      DefaultScreen(m_display))->map_entries;
-	           if (numcolors < 16) {
-	              fprintf(stderr, "Not enough color planes on screen\n");
-	              exit(-1);
-	           }
-	           Xfprintf(stderr, "colormap = XCreateColormap()\n");
-	           colormap = XCreateColormap(m_display, DefaultRootWindow(m_display),
-				       DefaultVisual(m_display,
-						     DefaultScreen(m_display)),
-				       AllocAll);
-	           Xfprintf(stderr, "XInstallColormap()\n");
-	           XInstallColormap(m_display, colormap);
-	           Xfprintf(stderr, "XAllocColorCells()\n");
-	           if (!XAllocColorCells(m_display, colormap, True, plane_masks,
-				  WinDepth, &pixel, 1))
-	           {
-  		     BlackAndWhite = True;
-#ifdef HIRESDB
-                     fprintf(stderr, "Could not Allocate Color Cells -- using bw\n");
-#endif  /* HIRESDB */
-	           }
-                }
-	     }
-             for (i = 0; i < 1<<WinDepth; i++) {
-                pixelvalue = pixel;
-                for (j = 0; j < WinDepth; j++)
-                   pixelvalue += (i & (1<<j)) == 0 ? 0 : plane_masks[j];
-
-             for (j = 0; j <= ColorSets; j++)
-                m_colors[j][i].pixel = pixelvalue;
-             }
-
-	if(planeCount >  8){
-        plane_mask = AllPlanes;
-        notAllPlanes = m_colors[0][(1<<WinDepth)-1].pixel - pixel; }
-        else {
-	  plane_mask = m_colors[0][(1<<WinDepth)-1].pixel - pixel; }
-
-        if (! BlackAndWhite) {   
-          Xfprintf(stderr, "XStoreColors()\n");
-          XStoreColors(m_display, colormap, m_colors[0], ColorsInSet);
-          Xfprintf(stderr, "XSetWindowColormap()\n");
-          XSetWindowColormap(m_display, DefaultRootWindow(m_display), colormap);
-        }
-    }
-    else {
-                /*   code for HIRES goes here. */
-                /* ========================================= */
-          basepixel = 0;
-          usableColors = colorCount;
-	  colormap = XCreateColormap(m_display, DefaultRootWindow(m_display),
-		       DefaultVisual(m_display, DefaultScreen(m_display)),
-				       AllocNone);
- 	  for (i=0; i < usableColors; i++) colors[i].pixel = i;
-          XQueryColors(m_display, XDefaultColormap(m_display, 
-                    screennum), colors, usableColors); 
-
-	  realColors = (basepixel+colorCount > usableColors)?
-		  				usableColors-basepixel:
-						colorCount;
-#ifdef HIRESDB
-printf("realColors %d\n", realColors);
-#endif  /* HIRESDB */
-	  if (realColors != colorCount)
-	  {
-             printf("Only %d contigous colors were available.\n",realColors);
-                  colorCount=realColors;
-	  }
-           if(planeCount == 16) {
-             red_size = 5; green_size = 6; blue_size = 5; }
-           else if(planeCount == 15) {
-             red_size = 5; green_size = 5; blue_size = 5; }
-           else {
-             red_size = 8; green_size = 8; blue_size = 8; }
-           red_shift = green_size + blue_size;
-           green_shift = blue_size;
-           if((planeCount == 24) & (red_mask == 0xff)) {
-           /* this is SUN Solaris doing it backwards: BGR  */
-             red_shift = 0; green_shift = red_size;
-             blue_shift = green_size + red_size; }
-#ifdef RGBFILE
-  /* This code is just to indicate what would be required if LOG ever wanted to
-     provide an RGB data file (like Magic).                                     */
-           p = pmap;
-           for (i=0;i != colorCount;i++) {
-              if((planeCount == 16) || (planeCount == 15)) {
-                 grPixels[i] = (long)(((*p++) >> (8 - red_size))
-                      << (green_size + blue_size)) & red_mask;                      /* red */
-                 grPixels[i] |= (long)(((*p++) >> (8 - green_size))
-                      << blue_size) & green_mask;                                   /* green */
-                 grPixels[i] |= (long)((*p++) >> (8 - blue_size)) & blue_mask; }    /* blue */
-              else if((planeCount == 24) & (red_mask == 0xff)) {
-              /* this is SUN Solaris doing it backwards: BGR  */
-                 grPixels[i] = (long)((*p++) & red_mask);  /* DO NOT MODIFY!       */
-                 grPixels[i] |= (long)(((*p++) << green_shift) & green_mask); /* gcc blows up without */
-                 grPixels[i] |= (long)(((*p++) << blue_shift) & blue_mask);                  /* the masks!           */
-              }
-              else {
-                 grPixels[i] = (long)(((*p++)<< red_shift) & red_mask);  /* DO NOT MODIFY!       */
-                 grPixels[i] |= (long)(((*p++)<< green_shift) & green_mask); /* gcc blows up without */
-                 grPixels[i] |= (long)((*p++) & blue_mask);                  /* the masks!           */
-              }
-           }
-#endif  /* RGBFILE */
-           plane_mask = AllPlanes;
-           notAllPlanes = 0x0a0a0a0a;
-#ifdef HIRESDB
-fprintf(stderr, "plane_mask %x, notAllPlanes %x\n", plane_mask, notAllPlanes);
-#endif  /* HIRESDB */
-           for (i = 0; i < 1<<WinDepth; i++) {
-             for (j = 0; j <= ColorSets; j++) {
-              plane_masks[i] = AllPlanes;
-               if((planeCount == 24) & (red_mask == 0xff)) {
-               /* this is SUN Solaris doing it backwards: BGR  */
-                pixelvalue = (m_colors[j][i].red >> (16 - red_size))
-                    & red_mask;
-                pixelvalue |= ((m_colors[j][i].green >> (16 - green_size))
-                    << red_size) & green_mask;
-                m_colors[j][i].pixel = pixelvalue |
-		  (((m_colors[j][i].blue >> (16 - blue_size))
-                    << (red_size + green_size)) & blue_mask); }
-               else {
-                pixelvalue = ((m_colors[j][i].red >> (16 - red_size))
-                    << (green_size + blue_size)) & red_mask;
-                pixelvalue |= ((m_colors[j][i].green >> (16 - green_size))
-                    << blue_size) & green_mask;
-                m_colors[j][i].pixel = pixelvalue |
-                    ((m_colors[j][i].blue >> (16 - blue_size)) & blue_mask); }
-             }
-           }
-#ifdef HIRESDB
-           printf("m_colors[0-1][3-4].pixel: %6x %6x %6x %6x\n", m_colors[0][3].pixel,
-                m_colors[0][4].pixel,m_colors[1][4].pixel,m_colors[1][5].pixel);
-#endif  /* HIRESDB */
-    }
-#endif  /* HIRES ffff */
-#endif
-  //if (!(m_usrfont = XGetDefault (m_display, "mylib", "font")))
-  //m_usrfont = strdup(DefaultFont);
-  //Xfprintf(stderr, "fontnum = XLoadFont()\n");
-  //fontnum = XLoadFont(m_display, m_usrfont);
   currentfont = 0;
-  //Xfprintf(stderr, "currentfont = XQueryFont()\n");
-  //currentfont = XQueryFont(m_display, fontnum);
   fontasc = 8;//TTF_FontHeight(currentfont) ;//->max_bounds.ascent;
 }
 
@@ -715,31 +358,7 @@ fprintf(stderr, "plane_mask %x, notAllPlanes %x\n", plane_mask, notAllPlanes);
 
 void mapkey()
 {
-  /*
-  Xfprintf(stderr, "several XRebindKeysym()'s\n");
-   XRebindKeysym(m_display,XK_Find,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_Insert,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_Delete,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_Select,NULL,0,(unsigned char *)wol_select,1) ;
-   XRebindKeysym(m_display,XK_Prior,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_Next,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_Home,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_Up,NULL,0,(unsigned char *)wol_up_arrow,1) ;
-   XRebindKeysym(m_display,XK_Down,NULL,0,(unsigned char *)wol_down_arrow,1) ;
-   XRebindKeysym(m_display,XK_Left,NULL,0,(unsigned char *)wol_left_arrow,1) ;
-   XRebindKeysym(m_display,XK_Right,NULL,0,(unsigned char *)wol_right_arrow,1);
-#ifdef XK_Reset
-   XRebindKeysym(m_display,XK_Reset,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_System,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_User,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_ClearLine,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_InsertLine,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_DeleteLine,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_DeleteChar,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_BackTab,NULL,0,(unsigned char *)"",0) ;
-   XRebindKeysym(m_display,XK_KP_BackTab,NULL,0,(unsigned char *)"",0) ;
-#endif
-*/
+ 
  }
 unsigned curxor[5][32]={{0xf0,
                      0xc0,
@@ -811,337 +430,6 @@ SDL_Texture *buffer;
 void WindowInitialize()
 {
   
-  #if 0
-  Window root;
-  int i, x, y;
-  unsigned int w, h, bw, d;
-  Pixmap p;
-  GC tempgc;
-  XEvent event;
-  char *usrgeo,*defgeo = {"512x390+0+0"};
-  int  WinX, WinY, x_pad, y_pad;
-  int WinW, WinH;
-
-
-  root = DefaultRootWindow(m_display);
-
-  WinAttr.background_pixel = m_colors[m_black]->pixel;
-  WinAttr.border_pixel = WhitePixel(m_display, DefaultScreen(m_display));
-  WinAttr.event_mask = WindowEventMask;
-
-
-  /* This next section allows entries in .Xdefaults to set initial
-     size and position of the mylib window. 
-     Jim Clark 7/13/92 */
-
-  usrgeo = XGetDefault (m_display, "mylib", "geometry");
-    
-  if (usrgeo == NULL)
-    {
-      WinSizeHints.flags |= PPosition;
-      WinSizeHints.flags |= PSize;
-    }
-  else
-    {
-      WinSizeHints.flags |= USPosition;
-      WinSizeHints.flags |= USSize;
-    }
-  x_pad = 0;
-  y_pad = 0;
-
-  XGeometry(m_display,screennum, usrgeo, defgeo, WinBorder, nc_fontwidth,
-	    nc_fontheight, x_pad, y_pad, &WinX, &WinY,
-	    &WinW, &WinH);
-
-/*    End of revised section.  */
-
-
-  Xfprintf(stderr, "m_window = XCreateWindow()\n");
-  m_window = XCreateWindow(m_display, root, WinX, WinY, WinW, WinH, WinBorder,
-			   CopyFromParent, InputOutput, 
-			   DefaultVisual(m_display, screennum),
-			   WinAttrMask, &WinAttr);
-
-  Xfprintf(stderr, "XStoreName()\n");
-  XStoreName(m_display, m_window, "mylib");
-  Xfprintf(stderr, "XSetIconName()\n");
-  XSetIconName(m_display, m_window, "mylib");
-  Xfprintf(stderr, "XSetCommand()\n");
-  XSetCommand(m_display, m_window, &progname, 1);
-  Xfprintf(stderr, "XSetWMHints()\n");
-  XSetWMHints(m_display, m_window, &WinWMHints);
-  Xfprintf(stderr, "XSetNormalHints()\n");
-  XSetNormalHints(m_display, m_window, &WinSizeHints);
-
-  Xfprintf(stderr, "XMapWindow()\n");
-  XMapWindow(m_display, m_window);
-
-  for (i = 0; i < ColorsInSet; i++) {
-    Xfprintf(stderr, "gc[%d] = XCreateGC()\n", i);
-    gc[i] = XCreateGC(m_display, m_window, 0, NULL);
-    Xfprintf(stderr, "XSetFillRule()\n");
-    XSetFillRule(m_display, gc[i], WindingRule);
-    Xfprintf(stderr, "XSetFont()\n");
-    XSetFont(m_display, gc[i], fontnum);
-    Xfprintf(stderr, "XSetGraphicsExposures()\n");
-    XSetGraphicsExposures(m_display, gc[i], False);
-  }
-  Xfprintf(stderr, "newgrid->gc1 = XCreateGC()\n");
-  newgrid->gc1 = XCreateGC(m_display, m_window, 0, NULL);
-  Xfprintf(stderr, "newgrid->gc2 = XCreateGC()\n");
-  newgrid->gc2 = XCreateGC(m_display, m_window, 0, NULL);
-  Xfprintf(stderr, "oldgrid->gc1 = XCreateGC()\n");
-  oldgrid->gc1 = XCreateGC(m_display, m_window, 0, NULL);
-  Xfprintf(stderr, "oldgrid->gc2 = XCreateGC()\n");
-  oldgrid->gc2 = XCreateGC(m_display, m_window, 0, NULL);
-  Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc1)\n");
-  XSetFunction(m_display, newgrid->gc1, GXor);
-  Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc2)\n");
-  XSetFunction(m_display, newgrid->gc2, GXand);
-  Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc1)\n");
-  XSetFunction(m_display, oldgrid->gc1, GXor);
-  Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc2)\n");
-  XSetFunction(m_display, oldgrid->gc2, GXand);
-  Xfprintf(stderr, "XSetFillStyle(m_display, newgrid->gc1)\n");
-  XSetFillStyle(m_display, newgrid->gc1, FillTiled);
-  Xfprintf(stderr, "XSetFillStyle(m_display, newgrid->gc2)\n");
-  XSetFillStyle(m_display, newgrid->gc2, FillTiled);
-  Xfprintf(stderr, "XSetFillStyle(m_display, oldgrid->gc1)\n");
-  XSetFillStyle(m_display, oldgrid->gc1, FillTiled);
-  Xfprintf(stderr, "XSetFillStyle(m_display, oldgrid->gc2)\n");
-  XSetFillStyle(m_display, oldgrid->gc2, FillTiled);
-  Xfprintf(stderr, "XSetGraphicsExposures(m_display, newgrid->gc1)\n");
-  XSetGraphicsExposures(m_display, newgrid->gc1, False);
-  Xfprintf(stderr, "XSetGraphicsExposures(m_display, newgrid->gc2)\n");
-  XSetGraphicsExposures(m_display, newgrid->gc2, False);
-  Xfprintf(stderr, "XSetGraphicsExposures(m_display, oldgrid->gc1)\n");
-  XSetGraphicsExposures(m_display, oldgrid->gc1, False);
-  Xfprintf(stderr, "XSetGraphicsExposures(m_display, oldgrid->gc2)\n");
-  XSetGraphicsExposures(m_display, oldgrid->gc2, False);
-
-  mapkey();
-
-  Xfprintf(stderr, "XCreatePixmap()\n");
-  p = XCreatePixmap(m_display, m_window, 1, 1, 1);
-  Xfprintf(stderr, "XCreateGC()\n");
-  tempgc = XCreateGC(m_display, p, 0, NULL);
-  Xfprintf(stderr, "XSetForeground()\n");
-  XSetForeground(m_display, tempgc, 0);
-  Xfprintf(stderr, "XDrawPoint()\n");
-  XDrawPoint(m_display, p, tempgc, 0, 0);
-  Xfprintf(stderr, "XCreatePixmapCursor()\n");
-  blankcursor = XCreatePixmapCursor(m_display, p, p, &m_colors[0][m_black],
-				    &m_colors[0][m_black], 0, 0);
-  Xfprintf(stderr, "cursors[0].sub = XCreatFontCursor()\n");
-  cursors[0].sub = XCreateFontCursor(m_display, XC_tcross);
-  Xfprintf(stderr, "XRecolorCursor(m_display, cursors[0].sub)\n");
-  XRecolorCursor(m_display, cursors[0].sub, &m_colors[0][m_white],
-                                            &m_colors[0][m_black]);
-  Xfprintf(stderr, "cursors[1].sub = XCreatFontCursor()\n");
-  cursors[1].sub = XCreateFontCursor(m_display, XC_left_ptr);
-  Xfprintf(stderr, "XRecolorCursor(m_display, cursors[1].sub)\n");
-  XRecolorCursor(m_display, cursors[1].sub, &m_colors[0][m_white],
-                                            &m_colors[0][m_black]);
-  Xfprintf(stderr, "cursors[2].sub = XCreatFontCursor()\n");
-  cursors[2].sub = XCreateFontCursor(m_display, XC_X_cursor);
-  Xfprintf(stderr, "XRecolorCursor(m_display, cursors[2].sub)\n");
-  XRecolorCursor(m_display, cursors[2].sub, &m_colors[0][15],
-		                            &m_colors[0][m_black]);
-  Xfprintf(stderr, "cursors[3].sub = XCreatFontCursor()\n");
-  cursors[3].sub = XCreateFontCursor(m_display, XC_gobbler);
-  Xfprintf(stderr, "XRecolorCursor(m_display, cursors[3].sub)\n");
-  XRecolorCursor(m_display, cursors[3].sub, &m_colors[0][m_yellow],
-		                            &m_colors[0][m_black]);
-  Xfprintf(stderr, "XDefineCursor()\n");
-/*  fprintf(stderr, "XDefineCursor() (0)\n");  */
-  XDefineCursor(m_display, m_window, cursors[0].sub);
-  Xfprintf(stderr, "XFreePixmap()\n");
-  XFreePixmap(m_display, p);
-  Xfprintf(stderr, "XFreeGC()\n");
-  XFreeGC(m_display, tempgc);
-
-  Xfprintf(stderr, "XGetGeometry()\n");
-  XGetGeometry(m_display, m_window, &root, &x, &y, &w, &h, &bw, &d);
-  m_across = w;
-  m_down = h;
-  RealWinDepth = d;
-
-  Xfprintf(stderr, "UnderCursor = XCreatePixmap()\n");
-  UnderCursor = XCreatePixmap(m_display, m_window, 24, 24, RealWinDepth);
-
-  Xfprintf(stderr, "cursors[0].c1 = XCreatePixmap()\n");
-  cursors[0].c1 = XCreatePixmap(m_display, m_window, 11, 11, RealWinDepth);
-  Xfprintf(stderr, "cursors[0].c2 = XCreatePixmap()\n");
-  cursors[0].c2 = XCreatePixmap(m_display, m_window, 11, 11, RealWinDepth);
-  cursors[0].xoff = 5;
-  cursors[0].yoff = 5;
-  cursors[0].w = 11;
-  cursors[0].h = 11;
-
-  Xfprintf(stderr, "cursors[1].c1 = XCreatePixmap()\n");
-  cursors[1].c1 = XCreatePixmap(m_display, m_window, 8, 8, RealWinDepth);
-  Xfprintf(stderr, "cursors[1].c2 = XCreatePixmap()\n");
-  cursors[1].c2 = XCreatePixmap(m_display, m_window, 8, 8, RealWinDepth);
-  cursors[1].xoff = 0;
-  cursors[1].yoff = 0;
-  cursors[1].w = 7;
-  cursors[1].h = 7;
-
-  Xfprintf(stderr, "cursors[2].c1 = XCreatePixmap()\n");
-  cursors[2].c1 = XCreatePixmap(m_display, m_window, 9, 9, RealWinDepth);
-  Xfprintf(stderr, "cursors[2].c2 = XCreatePixmap()\n");
-  cursors[2].c2 = XCreatePixmap(m_display, m_window, 9, 9, RealWinDepth);
-  cursors[2].xoff = 5;
-  cursors[2].yoff = 5;
-  cursors[2].w = 8;
-  cursors[2].h = 8;
-
-  Xfprintf(stderr, "cursors[3].c1 = XCreatePixmap()\n");
-  cursors[3].c1 = XCreatePixmap(m_display, m_window, 11, 11, RealWinDepth);
-  Xfprintf(stderr, "cursors[3].c2 = XCreatePixmap()\n");
-  cursors[3].c2 = XCreatePixmap(m_display, m_window, 11, 11, RealWinDepth);
-  cursors[3].xoff = 5;
-  cursors[3].yoff = 5;
-  cursors[3].w = 10;
-  cursors[3].h = 10;
-
-  Xfprintf(stderr, "tempgc = XCreateGC()\n");
-  tempgc = XCreateGC(m_display, cursors[0].c1, 0, NULL);
-  Xfprintf(stderr, "XSetPlaneMask(m_display, tempgc)\n");
-  XSetPlaneMask(m_display, tempgc, plane_mask);
-
-  Xfprintf(stderr, "XSetForeground(m_display, tempgc, 0)\n");
-  XSetForeground(m_display, tempgc, 0);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[0].c1)\n");
-  XFillRectangle(m_display, cursors[0].c1, tempgc, 0, 0, 11, 11);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[1].c1)\n");
-  XFillRectangle(m_display, cursors[1].c1, tempgc, 0, 0, 8, 8);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[2].c1)\n");
-  XFillRectangle(m_display, cursors[2].c1, tempgc, 0, 0, 9, 9);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[3].c1)\n");
-  XFillRectangle(m_display, cursors[3].c1, tempgc, 0, 0, 11, 11);
-
-  Xfprintf(stderr, "XSetForeground(m_display, tempgc, -1)\n");
-  XSetForeground(m_display, tempgc, -1);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[0].c1)\n");
-  XFillRectangle(m_display, cursors[0].c2, tempgc, 0, 0, 11, 11);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[1].c1)\n");
-  XFillRectangle(m_display, cursors[1].c2, tempgc, 0, 0, 8, 8);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[2].c1)\n");
-  XFillRectangle(m_display, cursors[2].c2, tempgc, 0, 0, 9, 9);
-
-  Xfprintf(stderr, "XFillRectangle(m_display, cursors[3].c1)\n");
-  XFillRectangle(m_display, cursors[3].c2, tempgc, 0, 0, 11, 11);
-
-  Xfprintf(stderr, "XSetForeground(m_display, tempgc)\n");
-  XSetForeground(m_display, tempgc, m_colors[0][m_white].pixel);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[0].c1)\n");
-  XDrawLine(m_display, cursors[0].c1, tempgc, 5, 0, 5, 10);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[0].c1)\n");
-  XDrawLine(m_display, cursors[0].c1, tempgc, 0, 5, 10, 5);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[0].c2)\n");
-  XDrawLine(m_display, cursors[0].c2, tempgc, 5, 0, 5, 10);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[0].c2)\n");
-  XDrawLine(m_display, cursors[0].c2, tempgc, 0, 5, 10, 5);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c1)\n");
-  XDrawLine(m_display, cursors[2].c1, tempgc, 0, 0, 2, 2);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c1)\n");
-  XDrawLine(m_display, cursors[2].c1, tempgc, 7, 0, 5, 2);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c1)\n");
-  XDrawLine(m_display, cursors[2].c1, tempgc, 7, 7, 5, 5);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c1)\n");
-  XDrawLine(m_display, cursors[2].c1, tempgc, 0, 7, 2, 5);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c2)\n");
-  XDrawLine(m_display, cursors[2].c2, tempgc, 0, 0, 2, 2);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c2)\n");
-  XDrawLine(m_display, cursors[2].c2, tempgc, 7, 0, 5, 2);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c2)\n");
-  XDrawLine(m_display, cursors[2].c2, tempgc, 7, 7, 5, 5);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[2].c2)\n");
-  XDrawLine(m_display, cursors[2].c2, tempgc, 0, 7, 2, 5);
-
-  Xfprintf(stderr, "XSetForeground(m_display, tempgc)\n");
-  XSetForeground(m_display, tempgc, m_colors[0][m_white].pixel);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[1].c1)\n");
-  XDrawLine(m_display, cursors[1].c1, tempgc, 0, 0, 4, 0);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[1].c1)\n");
-  XDrawLine(m_display, cursors[1].c1, tempgc, 0, 0, 0, 4);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[1].c1)\n");
-  XDrawLine(m_display, cursors[1].c1, tempgc, 0, 0, 7, 7);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[1].c2)\n");
-  XDrawLine(m_display, cursors[1].c2, tempgc, 0, 0, 4, 0);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[1].c2)\n");
-  XDrawLine(m_display, cursors[1].c2, tempgc, 0, 0, 0, 4);
-
-  Xfprintf(stderr, "XDrawLine(m_display, cursors[1].c2)\n");
-  XDrawLine(m_display, cursors[1].c2, tempgc, 0, 0, 7, 7);
-
-  Xfprintf(stderr, "XFreeGC(m_display, tempgc)\n");
-  XFreeGC(m_display, tempgc);
-
-  Xfprintf(stderr, "CursorGC = XCreateGC()\n");
-  CursorGC = XCreateGC(m_display, m_window, 0, NULL);
-
-  Xfprintf(stderr, "CursorGC2 = XCreateGC()\n");
-  CursorGC2 = XCreateGC(m_display, m_window, 0, NULL);
-
-  Xfprintf(stderr, "CursorGC3 = XCreateGC()\n");
-  CursorGC3 = XCreateGC(m_display, m_window, 0, NULL);
-
-  Xfprintf(stderr, "XSetPlaneMask(m_display, CursorGC)\n");
-  XSetPlaneMask(m_display, CursorGC, plane_mask);
-
-  Xfprintf(stderr, "XSetPlaneMask(m_display, CursorGC2)\n");
-  XSetPlaneMask(m_display, CursorGC2, plane_mask);
-
-  Xfprintf(stderr, "XSetPlaneMask(m_display, CursorGC3)\n");
-  XSetPlaneMask(m_display, CursorGC3, plane_mask);
-
-  Xfprintf(stderr, "XSetGraphicsExposures(m_display, CursorGC)\n");
-  XSetGraphicsExposures(m_display, CursorGC, False);
-
-  Xfprintf(stderr, "XSetGraphicsExposures(m_display, CursorGC2)\n");
-  XSetGraphicsExposures(m_display, CursorGC2, False);
-
-  Xfprintf(stderr, "XSetGraphicsExposures(m_display, CursorGC3)\n");
-  XSetGraphicsExposures(m_display, CursorGC3, False);
-
-  Xfprintf(stderr, "XSetFunction(m_display, CursorGC2, GXor)\n");
-  XSetFunction(m_display, CursorGC2, GXor);
-
-  Xfprintf(stderr, "XSetFunction(m_display, CursorGC3, GXand)\n");
-  XSetFunction(m_display, CursorGC3, GXand);
-
-  Xfprintf(stderr, "XSetFont(m_display, CursorGC)\n");
-  XSetFont(m_display, CursorGC, XLoadFont(m_display, "cursor"));
-
-  Xfprintf(stderr, "XWindowevent(m_display, m_window, ExposureMask)\n");
-  XWindowEvent(m_display, m_window, ExposureMask, &event);
-#endif
  // SDL_Init(SDL_INIT_VIDEO);
  // SDL_SetHint(SDL_HINT_EMSCRIPTEN_ASYNCIFY, "1");
 //...
@@ -1150,6 +438,7 @@ void WindowInitialize()
  // SDL_GL_SetAttribute (SDL_GL_CONTEXT_MAJOR_VERSION, 3); //OpenGL 3+
  // SDL_GL_SetAttribute (SDL_GL_CONTEXT_MINOR_VERSION, 2); //OpenGL 3.3
  // SDL_SetHint (SDL_HINT_RENDER_DRIVER, "opengl") ;
+ //   SDL_SetHint (SDL_HINT_RENDER_VSYNC,"1");
  // SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL, &m_window, &m_renderer);
  
 
@@ -1168,7 +457,7 @@ void WindowInitialize()
 //  SDL_GetRendererInfo(m_renderer,&info);
 //  printf("Renderer %x\n",info.flags);
   //#ifdef __EMSCRIPTEN__
-  buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
+  buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888,
                                         SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
   SDL_SetRenderTarget(m_renderer, buffer);
   //#endif
@@ -1210,7 +499,6 @@ extern int WindowWidth,WindowHeight;
 static void do_init_screen(full)
 int full;
 {
-  //Window root;
   int i, x, y;
   int w, h, bw, d;
 
@@ -1227,148 +515,16 @@ int full;
 
   Xfprintf(stderr, "XGetGeometry()\n");
   SDL_GetWindowSize(m_window, &w, &h);
-  //XGetGeometry(m_display, m_window, &root, &x, &y, &w, &h, &bw, &d);
   m_across = WindowWidth;
   m_down = WindowHeight;
   RealWinDepth = d;
   m_across--;
   m_down--;
-#if 0
-  if (BlackAndWhite) {
-    /* setup black-and-white attributes */
-    m_maxcolor = 16;
-    /* m_black         0 */
-    Xfprintf(stderr, "XSetForeground(m_display,gc[m_black=%d])\n",m_black);
-    XSetBackground(m_display,gc[m_red],WhitePixel(m_display,screennum));
-    XSetForeground(m_display,gc[m_red],BlackPixel(m_display,screennum));
-    XSetDashes(m_display, gc[m_black], 0, (char*)lo_dashed, LINESTIPPLELENGTH);
-    XSetLineAttributes(m_display,gc[m_red],1,LineDoubleDash,CapButt,JoinMiter);
-    default_linestyle[0] = lo_dashed;
-
-    /* m_red           1 */
-    Xfprintf(stderr, 
-     "XSetForeground(m_display,gc[m_red], WhitePixel(m_display,screennum))\n");
-    XSetForeground(m_display,gc[m_red],WhitePixel(m_display,screennum));
-    XSetDashes(m_display, gc[m_red], 0, (char*)lo_dashed, LINESTIPPLELENGTH);
-    XSetLineAttributes(m_display,gc[m_red],1,LineDoubleDash,CapButt,JoinMiter);
-    default_linestyle[1] = lo_dashed;
-
-    /* m_green         2 */
-    Xfprintf(stderr,
-    "XSetForeground(m_display,gc[m_green],WhitePixel(m_display,screennum))\n");
-    XSetForeground(m_display,gc[m_green],WhitePixel(m_display,screennum));
-    default_linestyle[2] = NULL;
- 
-    /* m_yellow        3 */
-    Xfprintf(stderr, 
-     "XSetForeground(m_display,gc[m_yellow],WhitePixel(m_display,screennum))\n"
-	     );
-    XSetForeground(m_display,gc[m_yellow],WhitePixel(m_display,screennum));
-    XSetDashes(m_display, gc[m_yellow], 0, (char*)sh_dashed,
-	       LINESTIPPLELENGTH);
-    XSetLineAttributes(m_display,gc[m_yellow],1,
-		       LineDoubleDash,CapButt,JoinMiter);
-    default_linestyle[3] = sh_dashed;
-
-    /* m_blue          4 */
-    Xfprintf(stderr, 
-     "XSetForeground(m_display,gc[m_blue],WhitePixel(m_display,screennum))\n");
-    XSetForeground(m_display,gc[m_blue],WhitePixel(m_display,screennum));
-    default_linestyle[4] = NULL;
-
-    /* m_purple        5 */
-    Xfprintf(stderr, 
-    "XSetForeground(m_display,gc[m_purple],WhitePixel(m_display,screennum))\n"
-	     );
-    XSetForeground(m_display,gc[m_purple],WhitePixel(m_display,screennum));
-    default_linestyle[5] = NULL;
- 
- 
-    /* m_cyan          6 */
-    Xfprintf(stderr, 
-    "XSetForeground(m_display,gc[m_cyan],WhitePixel(m_display,screennum))\n"
-	     );
-    XSetForeground(m_display,gc[m_cyan],WhitePixel(m_display,screennum));
-    default_linestyle[6] = NULL;
- 
-    /* m_white         7 */
-    Xfprintf(stderr, 
-    "XSetForeground(m_display,gc[m_white],WhitePixel(m_display,screennum))\n");
-    XSetForeground(m_display,gc[m_white],WhitePixel(m_display,screennum));
-    default_linestyle[7] = NULL;
-
- 
-    Xfprintf(stderr, 
-    "XSetForeground(m_display,gc[8],WhitePixel(m_display,screennum))\n");
-    XSetForeground(m_display,gc[8],WhitePixel(m_display,screennum));
-    default_linestyle[8] = NULL;
-
-    XSetForeground(m_display,gc[9],WhitePixel(m_display,screennum));
-    default_linestyle[9] = NULL;
-    XSetForeground(m_display,gc[10],WhitePixel(m_display,screennum));
-    default_linestyle[10] = NULL;
-    XSetForeground(m_display,gc[11],WhitePixel(m_display,screennum));
-    default_linestyle[11] = NULL;
-    XSetForeground(m_display,gc[12],WhitePixel(m_display,screennum));
-    default_linestyle[12] = NULL;
-    XSetForeground(m_display,gc[13],WhitePixel(m_display,screennum));
-    default_linestyle[13] = NULL;
-    XSetForeground(m_display,gc[14],WhitePixel(m_display,screennum));
-    default_linestyle[14] = NULL;
-    XSetForeground(m_display,gc[15],WhitePixel(m_display,screennum));
-    default_linestyle[15] = NULL;
-
-  }  
-  else 
-    {
-      m_maxcolor = (1L << WinDepth) - 1;
-      for (i = 0; i < ColorsInSet; i++) {
-	Xfprintf(stderr, "XSetPlaneMask(m_display, gc[%d])\n", i);
-	XSetPlaneMask(m_display, gc[i], plane_mask);
- 
-	Xfprintf(stderr, "XSetForeground(m_display, gc[%d])\n", i);
-	XSetForeground(m_display, gc[i], m_colors[0][i].pixel);
-      }
-    }
-
-  i = m_white;
-
-
-  Xfprintf(stderr, "XSetPlaneMask(m_display, newgrid->gc1)\n");
-  XSetPlaneMask(m_display, newgrid->gc1, plane_mask);
-
-  Xfprintf(stderr, "XSetForeground(m_display, newgrid->gc1)\n");
-  XSetForeground(m_display, newgrid->gc1, m_colors[0][i].pixel);
-  XSetBackground(m_display, newgrid->gc1, BlackPixel(m_display,screennum));
-
-  Xfprintf(stderr, "XSetPlaneMask(m_display, newgrid->gc2)\n");
-  XSetPlaneMask(m_display, newgrid->gc2, plane_mask);
-
-  Xfprintf(stderr, "XSetForeground(m_display, newgrid->gc2)\n");
-  XSetForeground(m_display, newgrid->gc2, m_colors[0][i].pixel);
-  XSetBackground(m_display, newgrid->gc2, BlackPixel(m_display,screennum));
-
-  Xfprintf(stderr, "XSetPlaneMask(m_display, oldgrid->gc1)\n");
-  XSetPlaneMask(m_display, oldgrid->gc1, plane_mask);
-
-  Xfprintf(stderr, "XSetForeground(m_display, oldgrid->gc1)\n");
-  XSetForeground(m_display, oldgrid->gc1, m_colors[0][i].pixel);
-  XSetBackground(m_display, oldgrid->gc1, BlackPixel(m_display,screennum));
-
-  Xfprintf(stderr, "XSetPlaneMask(m_display, oldgrid->gc2)\n");
-  XSetPlaneMask(m_display, oldgrid->gc2, plane_mask);
-
-  Xfprintf(stderr, "XSetForeground(m_display, oldgrid->gc2)\n");
-  XSetForeground(m_display, oldgrid->gc2, m_colors[0][i].pixel);
-  XSetBackground(m_display, oldgrid->gc2, BlackPixel(m_display,screennum));
-  #endif
   m_maxcolor=16;
   m_color(m_red);
   m_choosecursor(0);
 
-
   Ffprintf(stderr, "XFlush()\n");
- // XFlush(m_display);
 
   nocache = sync_all_calls;
   flip = 1;
@@ -1695,23 +851,6 @@ int x1, y1, x2, y2;
     rect.y = y1;
     rect.w = x2 - x1;
     rect.h = y2 - y1;
-/*
-    for (i = 0; i < ColorsInSet; i++) {
-      Xfprintf(stderr, "XSetClipRectanges(m_display, gc[%d])\n", i);
-      XSetClipRectangles(m_display, gc[i], 0, 0, &rect, 1, Unsorted);
-    }
-    Xfprintf(stderr, "XSetClipRectanges(m_display, newgrid->gc1)\n");
-    XSetClipRectangles(m_display, newgrid->gc1, 0, 0, &rect, 1, Unsorted);
-
-    Xfprintf(stderr, "XSetClipRectanges(m_display, newgrid->gc2)\n");
-    XSetClipRectangles(m_display, newgrid->gc2, 0, 0, &rect, 1, Unsorted);
-
-    Xfprintf(stderr, "XSetClipRectanges(m_display, oldgrid->gc1)\n");
-    XSetClipRectangles(m_display, oldgrid->gc1, 0, 0, &rect, 1, Unsorted);
-
-    Xfprintf(stderr, "XSetClipRectanges(m_display, oldgrid->gc2)\n");
-    XSetClipRectangles(m_display, oldgrid->gc2, 0, 0, &rect, 1, Unsorted);
-    */
 
     SDL_RenderSetClipRect(m_renderer,&rect);
     m_clip_x1 = x1;
@@ -1732,24 +871,7 @@ void m_noclip()
 #ifdef EXTRA_BUFFERING
     flush_buffers();
 #endif /* EXTRA_BUFFERING */
-/*
-    for (i = 0; i < ColorsInSet; i++) {
-      Xfprintf(stderr, "XSetClipMask(m_display, gc[%d])\n", i);
-      XSetClipMask(m_display, gc[i], None);
-    }
-    
-    Xfprintf(stderr, "XSetClipMask(m_display, newgrid->gc1)\n");
-    XSetClipMask(m_display, newgrid->gc1, None);
-    
-    Xfprintf(stderr, "XSetClipMask(m_display, newgrid->gc2)\n");
-    XSetClipMask(m_display, newgrid->gc2, None);
-    
-    Xfprintf(stderr, "XSetClipMask(m_display, oldgrid->gc1)\n");
-    XSetClipMask(m_display, oldgrid->gc1, None);
-    
-    Xfprintf(stderr, "XSetClipMask(m_display, oldgrid->gc2)\n");
-    XSetClipMask(m_display, oldgrid->gc2, None);
-    */
+
    SDL_RenderSetClipRect(m_renderer,NULL);
     m_clip_x1 = 0;
     m_clip_y1 = 0;
@@ -1826,42 +948,17 @@ static void turncursoroff()
 
   if (cursor_is_on) {
     Xfprintf(stderr, "XCopyArea()   (turncursoroff)\n");
-    /*
-    XCopyArea(m_display, UnderCursor, m_window, CursorGC, 0, 0,
-	      cursors[curcursor].w, cursors[curcursor].h,
-	      cursx-cursors[curcursor].xoff, cursy-cursors[curcursor].yoff);
-    if (nocache) {
-      Ffprintf(stderr, "XFlush()\n");
-      XFlush(m_display);
-    }
-    */
+    
   }
 }
 
 static void turncursoron()
 {
   Mfprintf(stderr, "turncursoron() at (%d,%d)\n", cursx, cursy);
-/*  fprintf(stderr, "turncursoron() at (%d,%d)\n", cursx, cursy);  */
 
   if (cursor_is_on) {
     Xfprintf(stderr, "XCopyArea()   (turncursoron)\n");
-    /*
-    XCopyArea(m_display, m_window, UnderCursor, CursorGC,
-	      cursx-cursors[curcursor].xoff, cursy-cursors[curcursor].yoff, 
-	      cursors[curcursor].w, cursors[curcursor].h, 0, 0);
-    Xfprintf(stderr, "XCopyArea()   (turncursoron)\n");
-    XCopyArea(m_display, cursors[curcursor].c1, m_window, CursorGC2, 0, 0,
-	      cursors[curcursor].w, cursors[curcursor].h,
-	      cursx-cursors[curcursor].xoff, cursy-cursors[curcursor].yoff);
-    Xfprintf(stderr, "XCopyArea()   (turncursoron)\n");
-    XCopyArea(m_display, cursors[curcursor].c2, m_window, CursorGC3, 0, 0,
-	      cursors[curcursor].w, cursors[curcursor].h,
-	      cursx-cursors[curcursor].xoff, cursy-cursors[curcursor].yoff);
-    if (nocache) {
-      Ffprintf(stderr, "XFlush()\n");
-      XFlush(m_display);
-    }
-    */
+   
   }
 }
 
@@ -1893,41 +990,10 @@ int x, y;
     cursx = x;
     cursy = y;
     Xfprintf(stderr, "XCopyArea()  (m_cursor)\n");
-    /*
-    XCopyArea(m_display, m_window, UnderCursor, CursorGC,
-	      cursx-cursors[curcursor].xoff, cursy-cursors[curcursor].yoff, 
-	      cursors[curcursor].w, cursors[curcursor].h, 0, 0);
-    Xfprintf(stderr, "XCopyArea()  (m_cursor)\n");
-    XCopyArea(m_display, cursors[curcursor].c1, m_window, CursorGC2, 0, 0,
-	      cursors[curcursor].w, cursors[curcursor].h,
-	      cursx-cursors[curcursor].xoff, cursy-cursors[curcursor].yoff);
-    Xfprintf(stderr, "XCopyArea()  (m_cursor)\n");
-    XCopyArea(m_display, cursors[curcursor].c2, m_window, CursorGC3, 0, 0,
-	      cursors[curcursor].w, cursors[curcursor].h,
-	      cursx-cursors[curcursor].xoff, cursy-cursors[curcursor].yoff);
-    if (nocache) {
-      Ffprintf(stderr, "XFlush()\n");
-      XFlush(m_display);
-    }
-    if (! cursor_is_on) {
-      cursor_is_on = 1;
-      Xfprintf(stderr, "XDefineCursor()  (m_cursor)\n");
-      XDefineCursor(m_display, m_window, blankcursor);
-    }
-    */
+   
   }
 }
-/*
-static struct {
-  unsigned int cursor;
-  unsigned long color;
-} xcursors[] = {
-  { XC_tcross, 15 },
-  { XC_left_ptr, m_white },
-  { XC_X_cursor, 15 },
-  { XC_gobbler, m_yellow },
-};
-*/
+
 
 void m_choosecursor(n)
 int n;
@@ -2024,131 +1090,7 @@ SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
 break;
 }
 
-#if 0
-  if (c != currentmode) {
-#ifdef EXTRA_BUFFERING
-    flush_buffers();
-#endif /* EXTRA_BUFFERING */
-    for (i = 0; i < ColorsInSet; i++)
-      switch (c) {
-      case m_normal:
-	Xfprintf(stderr, "XSetFunction(m_display, gc[%d], GXcopy)\n", i);
-	XSetFunction(m_display, gc[i], GXcopy);
-	break;
-      case m_xor:
-	if ((BlackAndWhite) && 
- 	    (WhitePixel(m_display,screennum) == 0)) {
-	  Xfprintf(stderr, "XSetFunction(m_display, gc[%d], GXequiv)\n", i);
-	  XSetFunction(m_display, gc[i], GXequiv);
- 	} else {
-	  Xfprintf(stderr, "XSetFunction(m_display, gc[%d], GXxor)\n", i);
-	  XSetFunction(m_display, gc[i], GXxor);
- 	}
-	break;
-      case m_over:
-	Xfprintf(stderr, "XSetFunction(m_display, gc[%d], GXor)\n", i);
-	XSetFunction(m_display, gc[i], GXor);
-	break;
-      case m_mask:
-	Xfprintf(stderr, "XSetFunction(m_display, gc[%d], GXandInverted)\n", i);
-	XSetFunction(m_display, gc[i], GXandInverted);
-	break;
-      case m_erase:
-	Xfprintf(stderr, "XSetFunction(m_display, gc[%d], GXclear)\n", i);
-	XSetFunction(m_display, gc[i], GXclear);
-	break;
-      case m_trans:
-	Xfprintf(stderr, "XSetFunction(m_display, gc[%d], GXnoop)\n", i);
-	XSetFunction(m_display, gc[i], GXnoop);
-	break;
-      default:
-	break;
-      }
-    switch (c) {
-    case m_normal:
-      Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc1, GXor)\n");
-      XSetFunction(m_display, newgrid->gc1, GXor);
 
-      Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc2, GXand)\n");
-      XSetFunction(m_display, newgrid->gc2, GXand);
-
-      Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc1, GXor)\n");
-      XSetFunction(m_display, oldgrid->gc1, GXor);
-
-      Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc2, GXand)\n");
-      XSetFunction(m_display, oldgrid->gc2, GXand);
-
-#ifdef old_linux  /* linux fix by harold levy */
-      XSetPlaneMask (m_display, newgrid->gc1, AllPlanes);
-      XSetPlaneMask (m_display, newgrid->gc2, AllPlanes);
-      XSetPlaneMask (m_display, oldgrid->gc1, AllPlanes);
-      XSetPlaneMask (m_display, oldgrid->gc2, AllPlanes);
-      XSetPlaneMask (m_display, CursorGC, AllPlanes);
-      XSetPlaneMask (m_display, CursorGC2, AllPlanes);
-      XSetPlaneMask (m_display, CursorGC3, AllPlanes);
-      for (i = 0; i < ColorsInSet; i ++)
-	XSetPlaneMask(m_display, gc[i], AllPlanes);
-#endif
-      break;
-    case m_xor:
-      if ((BlackAndWhite) && 
-	  (WhitePixel(m_display,screennum) == 0)) {
-	Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc1, GXequiv)\n");
-	XSetFunction(m_display, newgrid->gc1, GXequiv);
-	Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc1, GXequiv)\n");
-	XSetFunction(m_display, oldgrid->gc1, GXequiv);
-      } else {
-	Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc1, GXxor)\n");
-	XSetFunction(m_display, newgrid->gc1, GXxor);
-	
-	Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc1, GXxor)\n");
-	XSetFunction(m_display, oldgrid->gc1, GXxor);
-
-#ifdef old_linux        /* linux fix by Harold Levy */
-	XSetPlaneMask (m_display, newgrid->gc1, notAllPlanes); 
-	XSetPlaneMask (m_display, newgrid->gc2, notAllPlanes);
-	XSetPlaneMask (m_display, oldgrid->gc1, notAllPlanes);
-	XSetPlaneMask (m_display, oldgrid->gc2, notAllPlanes);
-	XSetPlaneMask (m_display, CursorGC, notAllPlanes);
-	XSetPlaneMask (m_display, CursorGC2, notAllPlanes);
-	XSetPlaneMask (m_display, CursorGC3, notAllPlanes);
-	for (i = 0; i < ColorsInSet; i ++) 
-	  XSetPlaneMask(m_display, gc[i], notAllPlanes);
-#endif
-      }
-      break;
-    case m_over:
-      Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc1, GXor)\n");
-      XSetFunction(m_display, newgrid->gc1, GXor);
-
-      Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc1, GXor)\n");
-      XSetFunction(m_display, oldgrid->gc1, GXor);
-      break;
-    case m_mask:
-      Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc2, GXandInverted)\n");
-      XSetFunction(m_display, newgrid->gc2, GXandInverted);
-
-      Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc2, GXandInverted)\n");
-      XSetFunction(m_display, oldgrid->gc2, GXandInverted);
-      break;
-    case m_erase:
-      Xfprintf(stderr, "XSetFunction(m_display, newgrid->gc1, GXclear)\n");
-      XSetFunction(m_display, newgrid->gc1, GXclear);
-
-      Xfprintf(stderr, "XSetFunction(m_display, oldgrid->gc1, GXclear)\n");
-      XSetFunction(m_display, oldgrid->gc1, GXclear);
-      break;
-    case m_trans:
-      break;
-    case m_hitdet:
-      break;
-    default:
-      fprintf(stderr, "mylib: unsupported m_colormode requested (%d)\n", c);
-      break;
-    }
-    currentmode = c;
-  }
-  #endif
 }
 
 void m_color(newcolor)
@@ -2197,74 +1139,8 @@ if(r==0xf0) r=255;
 if(g==0xf0) g=255;
 if(b==0xf0) b=255;
 
-//m_colors[ColorSets][c].r=r;
-//m_colors[ColorSets][c].g=g;
-//m_colors[ColorSets][c].b=b;
 cols[c]=0xff000000 | (b<<16) | (g<<8) | r;
-#if 0
-  unsigned char *d;
-#ifdef HIRES
-  unsigned long pixelvalue;
-#endif  /* HIRES */
-  Mfprintf(stderr, "m_setcolor(%d, %d, %d, %d)\n", c, r, g, b);
 
-  if (BlackAndWhite) {
-    if ((c == 0) || ((r < 2) && (g < 2) && (b < 2))) {
-      /* background or black */
-      XSetBackground(m_display,gc[c],WhitePixel(m_display,screennum));
-      XSetForeground(m_display,gc[c],BlackPixel(m_display,screennum));
-    } else {
-      XSetBackground(m_display,gc[c],BlackPixel(m_display,screennum));
-      XSetForeground(m_display,gc[c],WhitePixel(m_display,screennum));
-    }
-    if ((d = FigureOutBWLine(r, g, b)) != NULL) {
-      default_linestyle[b] = d;
-      XSetDashes(m_display, gc[c], 0, (char*)d, LINESTIPPLELENGTH);
-      XSetLineAttributes(m_display,gc[c],1,LineDoubleDash,
-			 CapButt,JoinMiter);
-    } else {
-      XSetLineAttributes(m_display, gc[c], 1, LineSolid,
-			 CapButt, JoinMiter);
-    }
-  };
-
-  if (c >= 0 && c <= m_maxcolor) {
-    m_colors[ColorSets][c].red = r*4369;
-    m_colors[ColorSets][c].green = g*4369;
-    m_colors[ColorSets][c].blue = b*4369;
-#ifdef HIRES
-    if ((!BlackAndWhite) && (grCurrent.depth > 8)){
-               if((grCurrent.depth == 24) & (red_mask == 0xff)) {
-               /* this is SUN Solaris doing it backwards: BGR  */
-                pixelvalue = (m_colors[ColorSets][c].red >> (16 - red_size))
-                    & red_mask;
-                pixelvalue |= ((m_colors[ColorSets][c].green >> (16 - green_size))
-                    << red_size) & green_mask;
-                m_colors[ColorSets][c].pixel = pixelvalue |
-		  (((m_colors[ColorSets][c].blue >> (16 - blue_size))
-                    << (red_size + green_size)) & blue_mask); }
-               else {
-      pixelvalue = ((m_colors[ColorSets][c].red >> (16 - red_size))
-          << (green_size + blue_size)) & red_mask;
-      pixelvalue |= ((m_colors[ColorSets][c].green >> (16 - green_size))
-          << blue_size) & green_mask;
-      m_colors[ColorSets][c].pixel = pixelvalue |
-        ((m_colors[ColorSets][c].blue >> (16 - blue_size)) & blue_mask); }
-      XSetForeground(m_display, gc[c], m_colors[ColorSets][c].pixel); }
-    else {
-      if ((!BlackAndWhite) && (grCurrent.depth <= 8)) {
-        Xfprintf(stderr, "XStoreColor()\n");
-        XStoreColor(m_display, colormap, &m_colors[ColorSets][c]);
-      }
-    }
-#else
-    if(!BlackAndWhite) {
-      Xfprintf(stderr, "XStoreColor()\n");
-      XStoreColor(m_display, colormap, &m_colors[ColorSets][c]);
-    }
-#endif  /* HIRES */
-  }
-  #endif
 }
 
 
@@ -2297,67 +1173,7 @@ m_colorarray r, g, b;
     m_colors[ColorSets][i].g = g[i+1]*4369;
     m_colors[ColorSets][i].b = b[i+1]*4369;
   }
-  #if 0
-#ifdef HIRES
-  unsigned long pixelvalue;
-#endif  /* HIRES */
-
-  Mfprintf(stderr, "m_setcolors(r, g, b)\n");
-
-  for (i = 0; i <= m_maxcolor; i++) {
-    if (BlackAndWhite) {
-      if ((i == 0) || ((r[i+1] < 2) && (g[i+1] < 2) && (b[i+1] < 2))) {
-	/* background */
-	XSetBackground(m_display,gc[i],WhitePixel(m_display,screennum));
-	XSetForeground(m_display,gc[i],BlackPixel(m_display,screennum));
-      } else {
-	XSetBackground(m_display,gc[i],BlackPixel(m_display,screennum));
-	XSetForeground(m_display,gc[i],WhitePixel(m_display,screennum));
-      }
-      if ((d = FigureOutBWLine(r[i+1], g[i+1], b[i+1])) != NULL) {
-	default_linestyle[i] = d;
-	XSetDashes(m_display, gc[i], 0, (char*)d, LINESTIPPLELENGTH);
-	XSetLineAttributes(m_display,gc[i],1,LineDoubleDash,
-			   CapButt,JoinMiter);
-      } else {
-	XSetLineAttributes(m_display, gc[i], 1, LineSolid,
- 			   CapButt, JoinMiter);
-      }
-    }
-    m_colors[ColorSets][i].red = r[i+1]*4369;
-    m_colors[ColorSets][i].green = g[i+1]*4369;
-    m_colors[ColorSets][i].blue = b[i+1]*4369;
-#ifdef HIRES
-    if ((!BlackAndWhite) && (grCurrent.depth > 8)){
-               if((grCurrent.depth == 24) & (red_mask == 0xff)) {
-               /* this is SUN Solaris doing it backwards: BGR  */
-                pixelvalue = (m_colors[ColorSets][i].red >> (16 - red_size))
-                    & red_mask;
-                pixelvalue |= ((m_colors[ColorSets][i].green >> (16 - green_size))
-                    << red_size) & green_mask;
-                m_colors[ColorSets][i].pixel = pixelvalue |
-		  (((m_colors[ColorSets][i].blue >> (16 - blue_size))
-                    << (red_size + green_size)) & blue_mask); }
-               else {
-      pixelvalue = ((m_colors[ColorSets][i].red >> (16 - red_size))
-          << (green_size + blue_size)) & red_mask;
-      pixelvalue |= ((m_colors[ColorSets][i].green >> (16 - green_size))
-          << blue_size) & green_mask;
-      m_colors[ColorSets][i].pixel = pixelvalue |
-        ((m_colors[ColorSets][i].blue >> (16 - blue_size)) & blue_mask); }
-      XSetForeground(m_display, gc[i], m_colors[ColorSets][i].pixel); }
-  }
-  if ((!BlackAndWhite) && (grCurrent.depth <= 8)){
-    Xfprintf(stderr, "XStoreColors()\n");
-    XStoreColors(m_display, colormap, m_colors[ColorSets], m_maxcolor+1);
-  } 
-#else
-  if(!BlackAndWhite) {
-    Xfprintf(stderr, "XStoreColors()\n");
-    XStoreColors(m_display, colormap, m_colors[ColorSets], m_maxcolor+1);
-  }
-#endif  /* HIRES */
-#endif
+  
 }
 
 void m_seecolors(r, g, b)
@@ -3665,9 +2481,6 @@ int n, x[], y[];
 }
 
 
-
-#if 1
-
 /* If no edges intersect, then rectangle must be entirely inside or
    entirely outside polygon.  Thus, we can simply check if any one point
    in the rectangle is in the polygon. */
@@ -3697,136 +2510,6 @@ SDL_Point *points;
   }
   return (count & 1);
 }
-
-#else
-
-#define SWAPINTS(x,y)  { int _t = (x); (x) = (y); (y) = _t; }
-
-struct hitdet_edge {
-  int x1, y1, x2, y2, dir, curx;
-};
-
-int hitdet_fillpoly_comp(e1, e2)
-struct hitdet_edge *e1, *e2;
-{
-  return e1->y1 - e2->y1;
-}
-
-int hitdet_fillpoly(n, x, y)
-int n, x[], y[];
-{
-  int i, j, count, cury1, cury2, first, last;
-  struct hitdet_edge *edges, *e, tedge;
-
-  printf("\n\n\n\nhitdet_fillpoly called...\n");     /***/
-
-  /* Create edges array */
-  edges = (struct hitdet_edge *) calloc(n, sizeof(struct hitdet_edge));
-  edges[0].x2 = x[0];
-  edges[0].y2 = y[0];
-  TRNSFRM(edges[0].x2, edges[0].y2);
-  printf("edges[0] = (%d,%d)\n", edges[0].x2, edges[0].y2);   /***/
-  for (i = 1, e = &edges[1]; i < n; i++, e++) {
-    e->x1 = e[-1].x2;
-    e->y1 = e[-1].y2;
-    e->x2 = x[i];
-    e->y2 = y[i];
-    TRNSFRM(e->x2, e->y2);
-    printf("edges[%d] = (%d,%d)\n", i, edges[i].x2, edges[i].y2);   /***/
-  }
-  edges[0].x1 = edges[n-1].x2;
-  edges[0].y1 = edges[n-1].y2;
-
-  /* Sort each edge so y1 <= y2 */
-  for (i = 0, e = edges; i < n; i++, e++) {
-    if (e->y1 > e->y2) {
-      SWAPINTS(e->x1, e->x2);
-      SWAPINTS(e->y1, e->y2);
-      e->dir = -1;
-    } else
-      e->dir = 1;
-    printf("edges[%d] = (%d,%d) - (%d,%d)\n",                     /***/
-	   i, edges[i].x1, edges[i].y1, edges[i].x2, edges[i].y2);   /***/
-  }
-
-  /* Sort edges in order of increasing y1 */
-  qsort(edges, n, sizeof(struct hitdet_edge), hitdet_fillpoly_comp);
-  for (i = 0; i < n; i++)    /***/
-    printf("edges[%d] = (%d,%d) - (%d,%d)\n",                     /***/
-	   i, edges[i].x1, edges[i].y1, edges[i].x2, edges[i].y2);   /***/
-
-  /* Initialize "active" list */
-  first = 0;
-  last = 0;
-  cury1 = edges[0].y1;
-  if (cury1 < m_clip_y1)
-    cury1 = m_clip_y1;
-  while (cury1 <= m_clip_y2) {
-
-    /* Collect things into active list */
-    while (last < n && edges[last].y1 <= cury1)
-      last++;
-
-    /* Find next y position of interest */
-    if (last < n) {
-      cury2 = edges[last].y1;
-      if (cury2 > m_clip_y2)
-	cury2 = m_clip_y2 + 1;
-    } else
-      cury2 = m_clip_y2 + 1;
-    printf("cury1 = %d, cury2 = %d, first=%d, last=%d\n",    /***/
-	   cury1, cury2, first, last);		    /***/
-
-    /* Compute x-coordinate of each edge at this y position */
-    for (i = first, e = &edges[first]; i < last; i++, e++) {
-      e->curx = e->x1 + (cury2 - e->y1) * (e->x2 - e->x1) / (e->y2 - e->y1);
-    }
-
-    /* Sort active list on x, dropping edges if necessary */
-    /* (Insertion sort because list is likely almost-sorted already) */
-    for (i = first+1; i < last; i++) {
-      e = &edges[i];
-      j = i;
-      while (j > first &&
-	     (e->y2 <= cury1 || e->curx < e[-1].curx)) {
-	tedge = e[0];
-	e[0] = e[-1];
-	e[-1] = tedge;
-	j--, e--;
-      }
-    }
-    while (first < last && edges[first].y2 <= cury1)
-      first++;
-    printf("first = %d, last = %d\n", first, last);    /***/
-    for (i = first; i < last; i++)		       /***/
-      printf("edges[%d] = (%d,%d) - (%d,%d) at %d\n",                /***/
-	     i, edges[i].x1, edges[i].y1, edges[i].x2, edges[i].y2,     /***/
-	     edges[i].curx);   /***/
-
-    /* Check if any trapezoids intersect clipping rectangle */
-    for (i = first; i < last; i = j) {
-      j = i;
-      count = 0;
-      do {
-	count += edges[j].dir;
-	j++;
-      } while (count != 0 && j < last);
-      if (edges[i].curx <= m_clip_x2 && edges[j-1].curx >= m_clip_x1) {
-	free(edges);
-	return 1;     /* Found a visible trapezoid */
-      }
-    }
-
-    /* Advance to next y position */
-    cury1 = cury2;
-  }
-
-  /* No trapezoids intersect */
-  free(edges);
-  return 0;
-}
-
-#endif
 
 
 void m_fillpoly(n, x, y)
@@ -3942,13 +2625,6 @@ char *f, *str;
   return strlen(str)*6;
 }
 
-/*
----m_getcpicture(x1, y1, x2, y2, p)
-int x1, y1, x2, y2;
-m_picturevar *p;
-{
-  
-*/
 
 /* Added these two functions for auto raise and lower support for X11.
  * The functions existed but were just #define'ed as nothing.
@@ -4009,113 +2685,110 @@ void millisleep(int ms) {
 }
 
 void handle_events() {
-  uint64_t time=time_ms();
-  if(time-lasttime>=17) {
-    SDL_Rect r;
-    SDL_RenderGetClipRect(m_renderer,&r);
-    SDL_SetRenderTarget(m_renderer, NULL);
-    SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
-    SDL_RenderPresent(m_renderer);
-    SDL_SetRenderTarget(m_renderer, buffer);
-    if(r.w!=0)
-      SDL_RenderSetClipRect(m_renderer,&r);
-    lasttime=time;
-  }
-  int k,sc;
-  if(time-lastpolltime>5) {
-    lastpolltime=time;
-    do {
-      nevents=SDL_PollEvent(&event);
-      if(nevents==1) {
-        switch (event.type)
-        {
-          relx=0;rely=0;
-        case SDL_MOUSEBUTTONDOWN:
-          if(event.button.button==SDL_BUTTON_LEFT) {
-            thebuttons |= 2;
-            theflags=2;
-          }
-          if(event.button.button==SDL_BUTTON_RIGHT) {
-            thebuttons |= 1;
-            theflags=1;
-          }
-          if(event.button.button==SDL_BUTTON_MIDDLE) {
-            thebuttons |= 4;
-          }
-          break;
-        case SDL_MOUSEBUTTONUP:
-          if(event.button.button==SDL_BUTTON_LEFT) {
-            thebuttons &= ~2;
-            theflags=8;
-          }
-          if(event.button.button==SDL_BUTTON_RIGHT) {
-            thebuttons &= ~1;
-            theflags=4;
-          }
-          if(event.button.button==SDL_BUTTON_MIDDLE) {
-            thebuttons &= ~4;
-          }
-          break;
-        case SDL_MOUSEMOTION:
-          theflags |= 16;
-          thex=event.motion.x;
-          they=event.motion.y;
-          relx=event.motion.xrel;
-          rely=event.motion.yrel;
-          break;
-        case SDL_MOUSEWHEEL:
-          if(event.wheel.y > 0)
-            addkey('<');
-          if(event.wheel.y < 0)
-            addkey('>');
-          break;
-        case SDL_KEYDOWN:
-          if(event.key.repeat != 0)
-            break;
-          sc=event.key.keysym.scancode;
-          if(sc==SDL_SCANCODE_LEFT || sc==SDL_SCANCODE_RIGHT || sc==SDL_SCANCODE_UP || sc==SDL_SCANCODE_DOWN || sc==SDL_SCANCODE_RETURN)
-          {
-            if(keydown==0) keyrepeattime=time+330;
-            keydown=sc;
-          }
-          addsc(sc);
-          break;
-        case SDL_KEYUP:
-          keydown=0;
-          keyrepeattime=time+3300000;
-          break;
-        case SDL_QUIT:
-          exit(0);
-          break;
-        case SDL_TEXTINPUT:
-          k=event.text.text[0];
-          if(k==8) k=7;
-          addkey(k);
-          break;
-        case SDL_WINDOWEVENT:
-          if(event.window.event==SDL_WINDOWEVENT_SIZE_CHANGED) {
-            WindowWidth=event.window.data1;
-            WindowHeight = event.window.data2;
-            if ( m_initialized) {
-              SDL_DestroyTexture(buffer);
-              buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
-                                    SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight);
-              SDL_SetRenderTarget(m_renderer, buffer);
-              resize_screen();
-            }
-          }
-          break;
-        default:
-          break;
-        }
-      }
-    } while(nevents);
-    if(keydown && keyrepeattime<=time) {
-      addsc(keydown);
-      keyrepeattime=time+33;
-    }
-  }
+    uint64_t time = time_ms();
+    if (time - lasttime >= 18) {
+        SDL_Rect r;
+        SDL_RenderGetClipRect(m_renderer, &r);
+        SDL_SetRenderTarget(m_renderer, NULL);
+        SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
+        lasttime = time_ms();//time;
+        SDL_RenderPresent(m_renderer);
+        SDL_SetRenderTarget(m_renderer, buffer);
+        if (r.w != 0) SDL_RenderSetClipRect(m_renderer, &r);
+        
 
+    }
+    int k, sc;
+    if (time - lastpolltime >= 18) {
+        lastpolltime = time;
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                relx = 0;
+                rely = 0;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        thebuttons |= 2;
+                        theflags = 2;
+                    }
+                    if (event.button.button == SDL_BUTTON_RIGHT) {
+                        thebuttons |= 1;
+                        theflags = 1;
+                    }
+                    if (event.button.button == SDL_BUTTON_MIDDLE) {
+                        thebuttons |= 4;
+                    }
+                    break;
+                case SDL_MOUSEBUTTONUP:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        thebuttons &= ~2;
+                        theflags = 8;
+                    }
+                    if (event.button.button == SDL_BUTTON_RIGHT) {
+                        thebuttons &= ~1;
+                        theflags = 4;
+                    }
+                    if (event.button.button == SDL_BUTTON_MIDDLE) {
+                        thebuttons &= ~4;
+                    }
+                    break;
+                case SDL_MOUSEMOTION:
+                    theflags |= 16;
+                    thex = event.motion.x;
+                    they = event.motion.y;
+                    relx = event.motion.xrel;
+                    rely = event.motion.yrel;
+                    break;
+                case SDL_MOUSEWHEEL:
+                    if (event.wheel.y > 0) addkey('<');
+                    if (event.wheel.y < 0) addkey('>');
+                    break;
+                case SDL_KEYDOWN:
+                    if (event.key.repeat != 0) break;
+                    sc = event.key.keysym.scancode;
+                    if (sc == SDL_SCANCODE_LEFT || sc == SDL_SCANCODE_RIGHT ||
+                        sc == SDL_SCANCODE_UP || sc == SDL_SCANCODE_DOWN ||
+                        sc == SDL_SCANCODE_RETURN) {
+                        if (keydown == 0) keyrepeattime = time + 330;
+                        keydown = sc;
+                    }
+                    addsc(sc);
+                    break;
+                case SDL_KEYUP:
+                    keydown = 0;
+                    keyrepeattime = time + 3300000;
+                    break;
+                case SDL_QUIT:
+                    exit(0);
+                    break;
+                case SDL_TEXTINPUT:
+                    k = event.text.text[0];
+                    if (k == 8) k = 7;
+                    addkey(k);
+                    break;
+                case SDL_WINDOWEVENT:
+                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                        WindowWidth = event.window.data1;
+                        WindowHeight = event.window.data2;
+                        if (m_initialized) {
+                            SDL_DestroyTexture(buffer);
+                            buffer = SDL_CreateTexture(
+                                m_renderer, SDL_PIXELFORMAT_RGB888,
+                                SDL_TEXTUREACCESS_TARGET, WindowWidth,
+                                WindowHeight);
+                            SDL_SetRenderTarget(m_renderer, buffer);
+                            resize_screen();
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (keydown && keyrepeattime <= time) {
+            addsc(keydown);
+            keyrepeattime = time + 33;
+        }
+    }
 }
 #define Button1Mask 2
 #define Button3Mask 1
@@ -4191,35 +2864,7 @@ m_tablet_info *pen;
       }
       
       theflags=0;
-      /*
-   if(nevents==1) { 
-    if (event.type == SDL_MOUSEBUTTONDOWN) {
-      if(event.button.button==SDL_BUTTON_LEFT) {
-        pen->dn = 1;
-        pen->depressed = 1;
-        pen->up = 0;
-      }
-      if(event.button.button==SDL_BUTTON_RIGHT) {
-        pen->near_ = 1;
-      }
-    } else if (event.type == SDL_MOUSEBUTTONUP) {
-      if(event.button.button==SDL_BUTTON_LEFT) {
-        pen->dn = 0;
-        pen->up = 1;
-        pen->depressed = 0;
-      }
-      if(event.button.button==SDL_BUTTON_RIGHT) {
-        pen->near_ = 0;
-      }
-    }
-    if (event.type == SDL_MOUSEMOTION) {
-      pen->x = event.motion.x;
-      pen->y = event.motion.y;
-      pen->ax = (pen->x)/nc_fontwidth;
-      pen->ay = (pen->y)/nc_fontheight;
-    }
-   }
-  */
+     
   pen->moving = pen->x != mouse.x || pen->y != mouse.y ||
                 pen->depressed != mouse.depressed || pen->near_ != mouse.near_;
   pen->inalpha = mouse.inalpha;

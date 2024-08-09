@@ -7,7 +7,7 @@ RANLIB=llvm-ranlib
 LIBX11 =  -lSDL2 -mwindows
 endif
 ifdef WASM
-CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 -Wno-deprecated-non-prototype -Os
+CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 -Wno-deprecated-non-prototype -Oz -sDISABLE_EXCEPTION_CATCHING=1
 #-O1 -g
 CHIPMUNKCC = emcc 
 AR=emar
