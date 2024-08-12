@@ -1,7 +1,6 @@
 /* Output from p2c, the Pascal-to-C translator */
 /* From input file "log.text" */
 
-
 /* "LOG", the circuit editing and simulation system,
    "DigLOG", the digital simulator for LOG.
    Copyright (C) 1985, 1990 David Gillespie.
@@ -24,8 +23,6 @@ You should have received a copy of the GNU General Public License
 along with this program; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. */
 
-
-
 /*
 
 
@@ -41,13 +38,12 @@ the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. */
 
 */
 
-
 #ifndef OS2
 #include <unistd.h>
 #endif
 #include <time.h>
 
-#define LOAD_SEARCH    /* Use the search path in load command. */
+#define LOAD_SEARCH /* Use the search path in load command. */
 
 #ifdef OS2
 #include <float.h>
@@ -62,14 +58,14 @@ char *str, **ptr;
 {
   double d;
   char s;
-  d = strtod(str, ptr);(*ptr)--;
-  s =  *ptr[0];
-  if(isdigit(s) != 0) (*ptr)++;
+  d = strtod(str, ptr);
+  (*ptr)--;
+  s = *ptr[0];
+  if (isdigit(s) != 0) (*ptr)++;
   return d;
 }
-#define strtod(a,b) t_strtod(a,b)
+#define strtod(a, b) t_strtod(a, b)
 #endif
-
 
 #ifndef LOGDEF_H
 #include "logdef.h"
@@ -134,7 +130,6 @@ char *str, **ptr;
 /* p2c: logfont.text, line 1: Warning: Expected MODULE, found a '*' [227] */
 /* p2c: log.text, line 52: Warning: Could not find module LOGFONT [271] */
 
-
 #include "logfont.h"
 #include "logstuff.h"
 #include "swap.h"
@@ -155,124 +150,121 @@ extern char *GetChipmunkPath();
 char *my_strdup();
 #undef strdup
 #define strdup my_strdup
-#define newci_findprocedure2  findprocedure
-extern boolean findprocedure PP((Char *name, Void (**start)()));
+#define newci_findprocedure2 findprocedure
+extern boolean findprocedure PP((Char * name, Void (**start)()));
 
-
-#define debuglog        false
-#define debugprint      true
+#define debuglog false
+#define debugprint true
 
 #ifndef LOGLIB
 
-#define LOGLIB          "/LIB/LOG"
+#define LOGLIB "/LIB/LOG"
 #endif
 
-#define gridcen         25   /* Center of "grid" used while drawing gates */
+#define gridcen 25 /* Center of "grid" used while drawing gates */
 
-#define memtolerance    20000   /* Minimum "safe" amount of free memory */
+#define memtolerance 20000 /* Minimum "safe" amount of free memory */
 
-#define charheight      8   /* Height of text characters */
+#define charheight 8 /* Height of text characters */
 
-#define tapdelay        30
-    /* How long to wait before a "tap" becomes a "press" */
-#define taptolerance    5
-    /* How far you can move before a "tap" becomes a "press" */
-#define knobwait        25   /* How long to wait for the knob during scroll */
+#define tapdelay 30
+/* How long to wait before a "tap" becomes a "press" */
+#define taptolerance 5
+/* How far you can move before a "tap" becomes a "press" */
+#define knobwait 25 /* How long to wait for the knob during scroll */
 
-#define deffastmin      2   /* Simulator delay for good response (csecs) */
-#define deffastmax      50   /* Simulator delay for fast simulation */
-#define deffastrate     35   /* Centiseconds per increase in fastspeed */
+#define deffastmin 2   /* Simulator delay for good response (csecs) */
+#define deffastmax 50  /* Simulator delay for fast simulation */
+#define deffastrate 35 /* Centiseconds per increase in fastspeed */
 
-#define frytime         50   /* How long a frying object fries, in csecs */
+#define frytime 50 /* How long a frying object fries, in csecs */
 
-#define chrplain        128
-#define chrinverse      129
-#define chrunderl       132
+#define chrplain 128
+#define chrinverse 129
+#define chrunderl 132
 
-#define chrgreen        136
-#define chryellow       137
-#define chrblack        138
-#define chrred          139
-#define chrcyan         140
-#define chrwhite        141
-#define chrblue         142
-#define chrpurple       143
+#define chrgreen 136
+#define chryellow 137
+#define chrblack 138
+#define chrred 139
+#define chrcyan 140
+#define chrwhite 141
+#define chrblue 142
+#define chrpurple 143
 
-#define EXEC            "\003"   /* ASCII code of EXECUTE key */
+#define EXEC "\003" /* ASCII code of EXECUTE key */
 /* p2c: log.text, line 106: Note: Character >= 128 encountered [281] */
-#define CTRLD           "\253"   /* Control-D */
+#define CTRLD "\253" /* Control-D */
 
+#define maxmaxkinds 255 /* Maximum number of gates in catalog */
 
-#define maxmaxkinds     255   /* Maximum number of gates in catalog */
+#define maxgatesfiles 15
+#define defmaxsignal 500  /* Maximum number of TO/FROM nodes */
+#define defhtmaxcount 500 /* Maximum number of history timesteps */
 
-#define maxgatesfiles   15
-#define defmaxsignal    500   /* Maximum number of TO/FROM nodes */
-#define defhtmaxcount   500   /* Maximum number of history timesteps */
+#define origin 16384 /* Origin of grid coordinate system */
 
-#define origin          16384   /* Origin of grid coordinate system */
+#define topmessagepos 2 /* Position of first message */
 
-#define topmessagepos   2   /* Position of first message */
+#define maxrots 8 /* Number of gate orientations */
 
-#define maxrots         8   /* Number of gate orientations */
+#define hscrollspd 2 /* Knob-scrolling speed */
+#define vscrollspd 2
+#define hfastscrollspd 10 /* Menu-box-scrolling speed */
+#define vfastscrollspd 10
 
-#define hscrollspd      2   /* Knob-scrolling speed */
-#define vscrollspd      2
-#define hfastscrollspd  10   /* Menu-box-scrolling speed */
-#define vfastscrollspd  10
+#define watchdogtime 500 /* Time limit for CLR I/O "watchdog" timer */
 
-#define watchdogtime    500   /* Time limit for CLR I/O "watchdog" timer */
+#define refrdelay 70 /* Delay before refreshing screen */
 
-#define refrdelay       70   /* Delay before refreshing screen */
+#define baselinewidth 80
+#define kindgroupmaxsize 40 /* Stuff about gate slots in menu area */
 
-#define baselinewidth   80
-#define kindgroupmaxsize  40   /* Stuff about gate slots in menu area */
+#define kindgroupspacing (gridcen * 2)
 
-#define kindgroupspacing  (gridcen * 2)
+#define maxsafescale (gridcen / log_scale0)
 
-#define maxsafescale    (gridcen / log_scale0)
+#define menux1 1
+#define menux2 48
+#define menux3 (-69)
+#define menux4 (-27)
 
-#define menux1          1
-#define menux2          48
-#define menux3          (-69)
-#define menux4          (-27)
+#define pigsfly false /*  */
 
-#define pigsfly         false   /*  */
+#define gattrrecsize (sizeof(log_gattrrec) + ((sizeof(log_gattrrec)) & 1))
+#define kattrrecsize (sizeof(log_kattrrec) + ((sizeof(log_kattrrec)) & 1))
 
-#define gattrrecsize    (sizeof(log_gattrrec) + ((sizeof(log_gattrrec)) & 1))
-#define kattrrecsize    (sizeof(log_kattrrec) + ((sizeof(log_kattrrec)) & 1))
-
-#define histleft        40
-#define histvscale      6
+#define histleft 40
+#define histvscale 6
 /*(histdown div 24) * 2*/
-#define histdivision    30
+#define histdivision 30
 
-#define histsweeptype   1
-#define histtrigsig     2
-#define histstarttime   3
-#define histstoptime    4
-#define histfullaction  5
-#define histminstep     6
-#define histmaxstep     7
-#define histmaxcount    8
-#define histcurcount    9
-#define histalignsigs   10
-#define histfirsttime   11
-#define histcurtime     12
-#define histsecdiv      13
-#define histcurtstep    14
+#define histsweeptype 1
+#define histtrigsig 2
+#define histstarttime 3
+#define histstoptime 4
+#define histfullaction 5
+#define histminstep 6
+#define histmaxstep 7
+#define histmaxcount 8
+#define histcurcount 9
+#define histalignsigs 10
+#define histfirsttime 11
+#define histcurtime 12
+#define histsecdiv 13
+#define histcurtstep 14
 
-#define histsweep_contin  0
-#define histsweep_onreset  1
-#define histsweep_trig  2
-#define histsweep_manual  3
+#define histsweep_contin 0
+#define histsweep_onreset 1
+#define histsweep_trig 2
+#define histsweep_manual 3
 
-#define rablistsize     23   /* Size of Rabbit State Machine */
-#define rabtabsize      10   /* Maximum number of rabbits on screen */
-#define rabmussize      32   /* Length of rabbit theme music */
-#define rabdelay        30000   /* Time to wait for rabbit: 5 Minutes */
+#define rablistsize 23 /* Size of Rabbit State Machine */
+#define rabtabsize 10  /* Maximum number of rabbits on screen */
+#define rabmussize 32  /* Length of rabbit theme music */
+#define rabdelay 30000 /* Time to wait for rabbit: 5 Minutes */
 
-#define NAMEGAP         (3 * gg.scale) /* signallabel horizontal offset */
-
+#define NAMEGAP (3 * gg.scale) /* signallabel horizontal offset */
 
 typedef struct descrec {
 #ifdef __alpha__
@@ -309,18 +301,18 @@ typedef union filerec {
 
 typedef struct filerecfilerec {
   FILE *f;
-  FILEBUFNC(f,filerec);
+  FILEBUFNC(f, filerec);
 } filerecfilerec;
 
 typedef struct rablistrec {
   short x, y, next;
-} rablistrec;   /* Rabbit mode state descriptor */
+} rablistrec; /* Rabbit mode state descriptor */
 
 typedef rablistrec rablisttype[rablistsize + 1];
 
 typedef struct rabmusrec {
   short note, time;
-} rabmusrec;   /* Rabbit music descriptor */
+} rabmusrec; /* Rabbit music descriptor */
 
 typedef rabmusrec rabmustype[rabmussize];
 
@@ -337,11 +329,9 @@ typedef struct logmenurec {
   Char name[17];
   Char cmd[33];
   boolean *bool;
-} logmenurec;   /* Pop-up menu options */
+} logmenurec; /* Pop-up menu options */
 
 typedef logmenurec logmenutype[8];
-
-
 
 /* Pointer to node-combination record */
 /* Pointer to temporary solder */
@@ -350,13 +340,11 @@ typedef logmenurec logmenutype[8];
 /* Pointer to box in catalog page */
 /* Pointer to library string record */
 
-
 typedef struct cnrec {
   log_nrec *n, **np;
   boolean done;
   struct cnrec *next;
-} cnrec;   /* Delayed Combinenodes record */
-
+} cnrec; /* Delayed Combinenodes record */
 
 typedef struct blobrec {
   log_hwrec *hw;
@@ -365,33 +353,28 @@ typedef struct blobrec {
   struct blobrec *next;
 } blobrec;
 
-
 typedef struct cnfrec {
   Char tool[17];
   struct cnfrec *next;
-  Char s[256];   /*not fully allocated*/
-} cnfrec;   /* Tool configuration record */
-
+  Char s[256]; /*not fully allocated*/
+} cnfrec;      /* Tool configuration record */
 
 typedef struct macrorec {
   Char key;
   struct macrorec *next;
   Char name[33];
-} macrorec;   /* Macro key */
-
+} macrorec; /* Macro key */
 
 typedef struct catboxrec {
   short pos, count;
   struct catboxrec *next;
-} catboxrec;   /* yow */
-
+} catboxrec; /* yow */
 
 typedef struct librstrrec {
   Char name[9];
   Char *str;
   struct librstrrec *left, *right;
 } librstrrec;
-
 
 typedef struct baseptrs {
   log_grec *gcopy;
@@ -403,12 +386,6 @@ typedef struct baseptrs {
   short x1copy, y1copy, x2copy, y2copy, dxcopy, dycopy, pgnum;
   boolean valid;
 } baseptrs;
-
-
-
-
-
-
 
 /* 0*/
 /* If the pen is in "this" sector, */
@@ -438,105 +415,52 @@ typedef struct baseptrs {
 /*23*/
 
 static Const rablisttype rablist = {
-  { 0, 0, 1 },
-  { 0, 4, 2 },
-  { 0, 3, 3 },
-  { 0, 2, 4 },
-  { 0, 1, 5 },
-  { 0, 0, 6 },
-  { 1, 0, 7 },
-  { 2, 0, 8 },
-  { 3, 0, 9 },
-  { 4, 0, 10 },
-  { 4, 1, 11 },
-  { 4, 2, -12 },
-  { 3, 2, 13 },
-  { 2, 2, 14 },
-  { 1, 2, 15 },
-  { 2, 2, -18 },
-  { 0, 2, 17 },
-  { 1, 2, 15 },
-  { 3, 2, -20 },
-  { 2, 3, -20 },
-  { 3, 3, 21 },
-  { 4, 3, -23 },
-  { 3, 4, -23 },
-  { 4, 4, 42 }
-};
+    {0, 0, 1},   {0, 4, 2},   {0, 3, 3},  {0, 2, 4},   {0, 1, 5},   {0, 0, 6},
+    {1, 0, 7},   {2, 0, 8},   {3, 0, 9},  {4, 0, 10},  {4, 1, 11},  {4, 2, -12},
+    {3, 2, 13},  {2, 2, 14},  {1, 2, 15}, {2, 2, -18}, {0, 2, 17},  {1, 2, 15},
+    {3, 2, -20}, {2, 3, -20}, {3, 3, 21}, {4, 3, -23}, {3, 4, -23}, {4, 4, 42}};
 
 static Const rabmustype discomadness = {
-  { 3, 46 },
-  { 0, 8 },
-  { 4, 10 },
-  { 0, 15 },
-  { 4, 12 },
-  { 0, 2 },
-  { 5, 35 },
-  { 0, 6 },
-  { 4, 35 },
-  { 0, 6 },
-  { 5, 8 },
-  { 0, 17 },
-  { 5, 12 },
-  { 0, 2 },
-  { 6, 35 },
-  { 0, 6 },
-  { 5, 35 },
-  { 0, 6 },
-  { 6, 8 },
-  { 0, 17 },
-  { 6, 12 },
-  { 0, 2 },
-  { 8, 35 },
-  { 0, 6 },
-  { 3, 35 },
-  { 0, 6 },
-  { 4, 8 },
-  { 0, 16 },
-  { 4, 12 },
-  { 0, 3 },
-  { 5, 50 },
-  { 0, 0 }
-};
+    {3, 46}, {0, 8}, {4, 10}, {0, 15}, {4, 12}, {0, 2}, {5, 35}, {0, 6},
+    {4, 35}, {0, 6}, {5, 8},  {0, 17}, {5, 12}, {0, 2}, {6, 35}, {0, 6},
+    {5, 35}, {0, 6}, {6, 8},  {0, 17}, {6, 12}, {0, 2}, {8, 35}, {0, 6},
+    {3, 35}, {0, 6}, {4, 8},  {0, 16}, {4, 12}, {0, 3}, {5, 50}, {0, 0}};
 
-#define maxeditmodes    4
+#define maxeditmodes 4
 
-
-
-
-Static log_action gg;   /* External global variables */
+Static log_action gg; /* External global variables */
 
 Static short cursx, cursy;   /* Current position of cursor */
-Static short cursx1, cursy1;   /* Wire starting point */
-Static short cursx2, cursy2;   /* Wire ending point */
-Static short chairx, chairy;   /* Current position of crosshair */
+Static short cursx1, cursy1; /* Wire starting point */
+Static short cursx2, cursy2; /* Wire ending point */
+Static short chairx, chairy; /* Current position of crosshair */
 
-Static boolean cursorflag;   /* Cursor is displayed */
+Static boolean cursorflag; /* Cursor is displayed */
 Static boolean prevcursorflag;
-    /* Cursor was displayed before operation began */
-Static boolean chairflag;   /* Crosshair is on screen */
-Static boolean chairflag2;   /* Crosshair will be on screen */
-Static boolean rbandflag;   /* Rubber-band wire is on screen */
-Static boolean rabbits, rabflag;   /* Rabbit mode */
+/* Cursor was displayed before operation began */
+Static boolean chairflag;        /* Crosshair is on screen */
+Static boolean chairflag2;       /* Crosshair will be on screen */
+Static boolean rbandflag;        /* Rubber-band wire is on screen */
+Static boolean rabbits, rabflag; /* Rabbit mode */
 Static boolean avoidrabbits;
 
 Static short txacross, txdown, across, down, baseline, line1, line2,
-	     kindgroupbase, kindgroupleft, kindgroupright, kindgroupstart,
-	     kindgroupsize, histdown;
+    kindgroupbase, kindgroupleft, kindgroupright, kindgroupstart, kindgroupsize,
+    histdown;
 
-Static boolean entrycapslock;   /* Capslock status on entry */
+Static boolean entrycapslock; /* Capslock status on entry */
 Static boolean oldcapslock;   /* Previous capslock status */
 
-Static boolean signalcaps;   /* Capslock flag for signal-name entry */
-Static boolean labelcaps;   /* Capslock flag for label entry */
+Static boolean signalcaps; /* Capslock flag for signal-name entry */
+Static boolean labelcaps;  /* Capslock flag for label entry */
 
-Static Char (*index_)[9];   /* Index into gate library */
-Static short *indexoffset;   /* Offset of each gate */
-Static uchar *indexfile;   /* File number of each gate */
-Static uchar *indexgroup;   /* Group number of each gate */
-Static uchar *loadedgates;   /* Tells whether a gate is in the catalog */
-Static log_krec *kind[maxmaxkinds];   /* Kind of gate in each catalog space */
-Static kindgrouptype kindgroup;   /* Kind of gate in each menu-area space */
+Static Char (*index_)[9];           /* Index into gate library */
+Static short *indexoffset;          /* Offset of each gate */
+Static uchar *indexfile;            /* File number of each gate */
+Static uchar *indexgroup;           /* Group number of each gate */
+Static uchar *loadedgates;          /* Tells whether a gate is in the catalog */
+Static log_krec *kind[maxmaxkinds]; /* Kind of gate in each catalog space */
+Static kindgrouptype kindgroup;     /* Kind of gate in each menu-area space */
 Static kindgrouptype kindsig;
 Static kindattrtype kindattr;
 Static na_strlist *gatefilenames;
@@ -545,36 +469,36 @@ Static catboxrec *catboxes;
 Static librstrrec *librstrs;
 
 Static Char *gatesname[maxgatesfiles];
-Static Char *loghelpname, *lognewsname;   /* Names of system files */
+Static Char *loghelpname, *lognewsname; /* Names of system files */
 
-Static long temp1, temp2, temp3, temp4;   /* For use by main program */
+Static long temp1, temp2, temp3, temp4; /* For use by main program */
 Static Char tempch;
 
-Static short zoom;   /* Zooming level */
-Static boolean ospointflag;   /* Starting point was touched */
+Static short zoom;          /* Zooming level */
+Static boolean ospointflag; /* Starting point was touched */
 
-Static long xoff0, yoff0;   /* Old XOFF, YOFF */
+Static long xoff0, yoff0; /* Old XOFF, YOFF */
 
-Static short curwcolor;   /* Current VLSI wire color */
+Static short curwcolor;    /* Current VLSI wire color */
 Static char cureditmode;   /* Current editing (gate-tapping) mode */
-Static short curlistgroup;   /* Current group in library list */
+Static short curlistgroup; /* Current group in library list */
 
-Static boolean vlsimode[log_maxpages];   /* Page contains VLSI circuits */
+Static boolean vlsimode[log_maxpages]; /* Page contains VLSI circuits */
 Static long xoffp[log_maxpages], yoffp[log_maxpages];
-    /* XOFF, YOFF for non-current pages */
+/* XOFF, YOFF for non-current pages */
 Static short gatecount[log_maxpages];   /* Highest used gate-ID number */
-Static Char *curfilename[log_maxpages];   /* Name of last-loaded file */
+Static Char *curfilename[log_maxpages]; /* Name of last-loaded file */
 Static long realcurpage;
 
-Static log_nrec *freenode;   /* Node "free" list */
-Static log_grec *freegate;   /* Gate "free" list */
+Static log_nrec *freenode; /* Node "free" list */
+Static log_grec *freegate; /* Gate "free" list */
 
-Static baseptrs copybuf;   /* Del/Copy/Paste buffer */
+Static baseptrs copybuf; /* Del/Copy/Paste buffer */
 
 Static long htcount;   /* Number of timesteps in list */
-Static short hncount;   /* Number of names in list */
-Static short hnocount;   /* Old number of names in list */
-Static short histtrig;   /* Number of signal which triggers history */
+Static short hncount;  /* Number of names in list */
+Static short hnocount; /* Old number of names in list */
+Static short histtrig; /* Number of signal which triggers history */
 Static na_strlist *histlbl;
 Static short histnumattrs;
 Static log_kattrrec *histkattr;
@@ -582,36 +506,43 @@ Static log_gattrrec *histgattr;
 Static short histgridmode, histgridwhich;
 Static log_hnrec *histgridhn;
 Static double histvalrange, histdivsacross;
-Static boolean histonscreen;   /* Leading edge of trace is visible */
-Static boolean histreset;   /* Clear the history memory */
-Static double histtime;   /* Current time for history mode */
+Static boolean histonscreen; /* Leading edge of trace is visible */
+Static boolean histreset;    /* Clear the history memory */
+Static double histtime;      /* Current time for history mode */
 
-Static boolean probeflag;   /* Has the probe been checked? */
+Static boolean probeflag; /* Has the probe been checked? */
 
-Static log_nrec *nodeconflictbase;   /* Node conflict list */
-Static log_grec *gateconflictbase;   /* Gate conflict list */
+Static log_nrec *nodeconflictbase; /* Node conflict list */
+Static log_grec *gateconflictbase; /* Gate conflict list */
 
-Static cnfrec *cnfbase;   /* List of tool configuration lines */
-Static na_strlist *colorbase;   /* List of configured colors */
-Static macrorec *macrobase;   /* List of macro keys */
-Static na_strlist *thingstodo, *nexttodo;   /* List of delayed commands */
-Static na_strlist *messages;   /* List of delayed messages */
-Static na_strlist *commandlist;   /* List of tool-activation commands */
+Static cnfrec *cnfbase;                   /* List of tool configuration lines */
+Static na_strlist *colorbase;             /* List of configured colors */
+Static macrorec *macrobase;               /* List of macro keys */
+Static na_strlist *thingstodo, *nexttodo; /* List of delayed commands */
+Static na_strlist *messages;              /* List of delayed messages */
+Static na_strlist *commandlist;           /* List of tool-activation commands */
 
-Static Char modename[9];   /* Word in 'mode' area of menu */
-Static boolean modeflag;   /* Mode area contains a word */
-Static long modetime;   /* Time (in minutes) in mode display */
+Static Char modename[9]; /* Word in 'mode' area of menu */
+Static boolean modeflag; /* Mode area contains a word */
+Static long modetime;    /* Time (in minutes) in mode display */
 Static log_krec *modeprobekind;
 
-Static nk_keytransinfo *curkeytrans;   /* Current keyboard definitions */
+Static nk_keytransinfo *curkeytrans; /* Current keyboard definitions */
 
 Static enum {
-  normal, grid, delete__, copy_, paste, boxcursor
-} cursortype, oldcursortype;
+  normal,
+  grid,
+  delete__,
+  copy_,
+  paste,
+  boxcursor
+} cursortype,
+    oldcursortype;
 /* Type of cursor */
 
-/*  menupicture, errorpicture : m_picturevar;              { Various saved images */
-Static short bottomcount;   /* How many nested BEGINBOTTOMs */
+/*  menupicture, errorpicture : m_picturevar;              { Various saved
+ * images */
+Static short bottomcount; /* How many nested BEGINBOTTOMs */
 
 Static uchar rcolormap[16], gcolormap[16], bcolormap[16];
 
@@ -620,34 +551,34 @@ Static short gategreen, gateyellow, gatered, gateorange, gateblack, gatewhite;
 Static short defineboxcolor, definebackcolor, definetextcolor, catboxcolor;
 
 Static short messagepos;   /* Position of next message */
-Static short messageright;   /* Maximum width of messages */
+Static short messageright; /* Maximum width of messages */
 
 Static long fastsavetime;
 
-Static long watchdog, rabtime;   /* Miscellaneous timers */
+Static long watchdog, rabtime; /* Miscellaneous timers */
 
-Static log_tool *simtype_ignore;   /* Non-simulated type */
-Static log_tool *simtype_common;   /* Common-pin type */
+Static log_tool *simtype_ignore; /* Non-simulated type */
+Static log_tool *simtype_common; /* Common-pin type */
 
 Static double status_oldtime, status_oldtstep;
 Static long status_oldmem;
 
-Static rablistrec rabtable[rabtabsize];   /* Positions of rabbits */
-Static short rabstate;   /* Rabbit recognizer state */
+Static rablistrec rabtable[rabtabsize]; /* Positions of rabbits */
+Static short rabstate;                  /* Rabbit recognizer state */
 
-Static long helpptr;   /* Help descriptor */
+Static long helpptr; /* Help descriptor */
 
-Static boolean popup_grid;   /* Pop-up menus */
+Static boolean popup_grid; /* Pop-up menus */
 Static logmenurec *popupmenus[4];
 
-Static filerecfilerec *libf1[maxgatesfiles];   /* Library files */
+Static filerecfilerec *libf1[maxgatesfiles]; /* Library files */
 Static short libfstart[maxgatesfiles];
-    /* First descriptor record in LIBF1 */
-Static short libptr;   /* Most recently replaced catalog item */
-Static short idxsize;   /* Number of gates in library */
+/* First descriptor record in LIBF1 */
+Static short libptr;  /* Most recently replaced catalog item */
+Static short idxsize; /* Number of gates in library */
 Static Char *librgroupnames[9];
 
-Static short refrtimer, refrtimer0;   /* Time until screen is refreshed */
+Static short refrtimer, refrtimer0; /* Time until screen is refreshed */
 
 Static long tabletaddr;
 
@@ -658,36 +589,33 @@ Static long programmark;
 
 Static Char pushedbackkey, realkey;
 
-extern long EXCP_LINE;   /* Line number of last error */
+extern long EXCP_LINE; /* Line number of last error */
 Static long excpline;
 
 Static short conflictdelay;
 
-Static boolean eightcolors;   /* Has only 8 colors */
-Static boolean onescreen;   /* Has only one screen */
-Static boolean doingcnffunction;   /* This is an ACT_CNF, not an ACT_FUNC */
+Static boolean eightcolors;      /* Has only 8 colors */
+Static boolean onescreen;        /* Has only one screen */
+Static boolean doingcnffunction; /* This is an ACT_CNF, not an ACT_FUNC */
 Static boolean justonecommand;   /* LOG -R mode, so exit after first cmd */
-Static boolean displaynews;   /* LOGNEWS has not yet been displayed */
-Static boolean immedscroll;   /* Don't need to defer 'REFR' function */
-Static boolean tempverbose;   /* Verbose mode temporarily on */
-Static boolean commandfound;   /* Function name was acknowledged */
-Static boolean cursorhide;   /* Cursor is hidden */
-Static boolean reportnowait;   /* Don't wait for key on bug reports */
-Static boolean firsttraining;   /* Training used for first time */
-Static boolean training;   /* Training mode for Help command */
-Static boolean snapflag;   /* Snap-to-grid cursor */
-Static boolean showsolder;   /* Display solder points */
-Static boolean briefprobe;   /* Temporary probe mode */
-Static boolean conflictenbl;   /* Conflict checking enabled */
-Static boolean conflictstop;   /* Conflict stopping mode */
-Static boolean anyconflicts;   /* Any active, reported conflicts? */
-Static boolean steppingoff;   /* Single-step is turning simulation off */
-Static boolean suppressdots;   /* Temporarily suppressing red dots */
-Static boolean glowsolder;   /* Display solder dots in Glow mode */
-Static boolean vlsi;   /* Current page is VLSI mode */
-
-
-
+Static boolean displaynews;      /* LOGNEWS has not yet been displayed */
+Static boolean immedscroll;      /* Don't need to defer 'REFR' function */
+Static boolean tempverbose;      /* Verbose mode temporarily on */
+Static boolean commandfound;     /* Function name was acknowledged */
+Static boolean cursorhide;       /* Cursor is hidden */
+Static boolean reportnowait;     /* Don't wait for key on bug reports */
+Static boolean firsttraining;    /* Training used for first time */
+Static boolean training;         /* Training mode for Help command */
+Static boolean snapflag;         /* Snap-to-grid cursor */
+Static boolean showsolder;       /* Display solder points */
+Static boolean briefprobe;       /* Temporary probe mode */
+Static boolean conflictenbl;     /* Conflict checking enabled */
+Static boolean conflictstop;     /* Conflict stopping mode */
+Static boolean anyconflicts;     /* Any active, reported conflicts? */
+Static boolean steppingoff;      /* Single-step is turning simulation off */
+Static boolean suppressdots;     /* Temporarily suppressing red dots */
+Static boolean glowsolder;       /* Display solder dots in Glow mode */
+Static boolean vlsi;             /* Current page is VLSI mode */
 
 /*$ if debugging or debuglog $
    $ debug on $                 { Emit debugging information }
@@ -699,18 +627,11 @@ $ end $*/
    $ stackcheck off $           { Ignore stack overflows }
 $ end $*/
 
-
-
-
-
 extern Void m_saveclip PV();
 
 extern Void nc_cursor_on PV();
 
 extern Void nc_cursor_off PV();
-
-
-
 
 /*=================  INITSCREEN  =================*/
 /*=                                              =*/
@@ -719,8 +640,7 @@ extern Void nc_cursor_off PV();
 /*=                                              =*/
 /*================================================*/
 
-Static Void initcolormap()
-{
+Static Void initcolormap() {
   m_setcolor((long)log_gray, 4L, 4L, 4L);
   m_setcolor((long)log_red, 15L, 0L, 0L);
   m_setcolor((long)log_green, 0L, 15L, 0L);
@@ -745,24 +665,19 @@ Static Void initcolormap()
   m_vseecolors(0L, 16L, rcolormap, gcolormap, bcolormap);
 }
 
-
-Static Void fixcolormap()
-{
+Static Void fixcolormap() {
   m_vsetcolors(0L, 16L, rcolormap, gcolormap, bcolormap);
   recolor_log_cursors(gg.color.cursor, true);
 }
 
-
-
-Static Void initscreen()
-{
+Static Void initscreen() {
   m_init_screen();
   m_upside_down();
   m_setlinestyle(1L, 0xf0f0L);
   m_setlinestyle(2L, 0xaaaaL);
-/* p2c: log.text, line 662:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
- // m_setfont(logfont_lfont);
+  /* p2c: log.text, line 662:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  // m_setfont(logfont_lfont);
   init_X_screen();
   onescreen = nc_alphashared();
   eightcolors = (m_maxcolor <= 7);
@@ -771,9 +686,9 @@ Static Void initscreen()
   txdown = nc_curWindow->height - 1;
   across = m_across;
   down = m_down;
-  baseline = down - 53;   /* Position of baseline on screen */
-  line1 = down - 43;   /* Position of first text line in menu */
-  line2 = down - 23;   /* Position of second text line in menu */
+  baseline = down - 53; /* Position of baseline on screen */
+  line1 = down - 43;    /* Position of first text line in menu */
+  line2 = down - 23;    /* Position of second text line in menu */
   histdown = down - 26;
   histdivsacross = (double)(across - histleft) / histdivision;
   histvalrange = (double)histdown / histdivision * 5;
@@ -783,9 +698,9 @@ Static Void initscreen()
   kindgroupstart = kindgroupleft + kindgroupspacing / 2;
   kindgroupbase = (baseline + down) / 2;
 
-/* p2c: log.text, line 685: Note: Characters >= 128 encountered [281] */
-/* p2c: log.text, line 685:
- * Note: WRITE statement contains color/attribute characters [203] */
+  /* p2c: log.text, line 685: Note: Characters >= 128 encountered [281] */
+  /* p2c: log.text, line 685:
+   * Note: WRITE statement contains color/attribute characters [203] */
   printf("\200\210");
   SETRUNLIGHT(' ');
 
@@ -793,15 +708,11 @@ Static Void initscreen()
   gg.stillnear = true;
 }
 
-
-Static Void initscreen2()
-{
+Static Void initscreen2() {
   initscreen();
   m_clear();
   m_graphics_on();
 }
-
-
 
 Static Char *ioresult_message(Result, iores)
 Char *Result;
@@ -809,12 +720,9 @@ long iores;
 {
   Char s[81];
 
-  misc_getioerrmsg(s, iores);   /* MISC */
+  misc_getioerrmsg(s, iores); /* MISC */
   return strcpy(Result, s);
 }
-
-
-
 
 /*==================  WORKING  ===================*/
 /*=                                              =*/
@@ -822,11 +730,7 @@ long iores;
 /*=                                              =*/
 /*================================================*/
 
-Static Void working()
-{
-}
-
-
+Static Void working() {}
 
 /*===================  ALERT  ====================*/
 /*=                                              =*/
@@ -835,13 +739,9 @@ Static Void working()
 /*=                                              =*/
 /*================================================*/
 
-Static Void alert()
-{
-  if (!gg.quiet)
-    BEEPER(17, 10);
+Static Void alert() {
+  if (!gg.quiet) BEEPER(17, 10);
 }
-
-
 
 /*==================  WARNING  ===================*/
 /*=                                              =*/
@@ -850,15 +750,9 @@ Static Void alert()
 /*=                                              =*/
 /*================================================*/
 
-Static Void warning()
-{
-  if (!gg.quiet)
-    BEEPER(4, 10);
+Static Void warning() {
+  if (!gg.quiet) BEEPER(4, 10);
 }
-
-
-
-
 
 /*==================  NOBLINK  ===================*/
 /*=                                              =*/
@@ -866,8 +760,7 @@ Static Void warning()
 /*=                                              =*/
 /*================================================*/
 
-Static Void noblink()
-{
+Static Void noblink() {
   nc_cursXY(-1, -1);
   /*  oldx := xpos;
     oldy := ypos;
@@ -878,11 +771,7 @@ Static Void noblink()
     ypos := oldy; */
 }
 
-
-
-
-Static Void clearalpha()
-{
+Static Void clearalpha() {
   if (!onescreen) {
     printf("\f");
     noblink();
@@ -891,21 +780,12 @@ Static Void clearalpha()
   nk_gotoxy(0, 0);
 }
 
-
-
-Static Void showalpha()
-{
+Static Void showalpha() {
   m_graphics_off();
   m_alpha_on();
 }
 
-
-
 Static Void clearshowalpha PV();
-
-
-
-
 
 /*===================  REPORT  ===================*/
 /*=                                              =*/
@@ -913,8 +793,7 @@ Static Void clearshowalpha PV();
 /*=                                              =*/
 /*================================================*/
 
-Static Void message PP((Char *msg));
-
+Static Void message PP((Char * msg));
 
 Static Void report(num, s)
 short num;
@@ -931,25 +810,18 @@ Char *s;
   BEEPER(4, 15);
   clearshowalpha();
   nk_gotoxy(0, txdown - 1);
-/* p2c: log.text, line 831: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 831: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 831:
- * Note: WRITE statement contains color/attribute characters [203] */
+  /* p2c: log.text, line 831: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 831: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 831:
+   * Note: WRITE statement contains color/attribute characters [203] */
   printf("\215--> Internal error %d in %s\210\n", num, s);
-  if (gg.traceflag)
-    fprintf(tracefile, "--> Internal error %d in %s\n", num, s);
+  if (gg.traceflag) fprintf(tracefile, "--> Internal error %d in %s\n", num, s);
   m_alpha_on();
   printf("    Press any key to continue.");
   ch = nk_getkey();
-  if (ch == 'N' || ch == 'n')
-    reportnowait = true;
+  if (ch == 'N' || ch == 'n') reportnowait = true;
   putchar('\n');
 }
-
-
-
-
-
 
 /*===================  LINE  =====================*/
 /*=                                              =*/
@@ -961,10 +833,8 @@ Static Void line(x1, y1, x2, y2)
 short x1, y1, x2, y2;
 {
   m_drawline(x1 * gg.scale - gg.xoff, y1 * gg.scale - gg.yoff,
-	     x2 * gg.scale - gg.xoff, y2 * gg.scale - gg.yoff);
+             x2 * gg.scale - gg.xoff, y2 * gg.scale - gg.yoff);
 }
-
-
 
 /*===================  HLINE  ====================*/
 /*=                                              =*/
@@ -980,10 +850,8 @@ short x1, x2, y;
 
   yy = y * gg.scale - gg.yoff;
   m_drawline(x1 * gg.scale - gg.xoff, (long)yy, x2 * gg.scale - gg.xoff,
-	     (long)yy);
+             (long)yy);
 }
-
-
 
 /*===================  VLINE  ====================*/
 /*=                                              =*/
@@ -999,10 +867,8 @@ short x, y1, y2;
 
   xx = x * gg.scale - gg.xoff;
   m_drawline((long)xx, y1 * gg.scale - gg.yoff, (long)xx,
-	     y2 * gg.scale - gg.yoff);
+             y2 * gg.scale - gg.yoff);
 }
-
-
 
 /*===================  POINT  ====================*/
 /*=                                              =*/
@@ -1012,11 +878,7 @@ short x, y1, y2;
 
 Static Void point(x, y)
 short x, y;
-{
-  m_drawpoint(x * gg.scale - gg.xoff, y * gg.scale - gg.yoff);
-}
-
-
+{ m_drawpoint(x * gg.scale - gg.xoff, y * gg.scale - gg.yoff); }
 
 /*===================  RECT  =====================*/
 /*=                                              =*/
@@ -1028,10 +890,8 @@ Static Void rect(x1, y1, x2, y2)
 short x1, y1, x2, y2;
 {
   m_drawrect(x1 * gg.scale - gg.xoff, y1 * gg.scale - gg.yoff,
-	     x2 * gg.scale - gg.xoff, y2 * gg.scale - gg.yoff);
+             x2 * gg.scale - gg.xoff, y2 * gg.scale - gg.yoff);
 }
-
-
 
 /*====================  BOX  =====================*/
 /*=                                              =*/
@@ -1043,10 +903,8 @@ Static Void box(x1, y1, x2, y2)
 short x1, y1, x2, y2;
 {
   m_fillrect(x1 * gg.scale - gg.xoff, y1 * gg.scale - gg.yoff,
-	     x2 * gg.scale - gg.xoff, y2 * gg.scale - gg.yoff);
+             x2 * gg.scale - gg.xoff, y2 * gg.scale - gg.yoff);
 }
-
-
 
 /*=================  DRAWSTR2  ===================*/
 /*=                                              =*/
@@ -1063,15 +921,14 @@ Char *s;
   if (m_curcolor() < 16) {
     save = m_curcolor();
     m_color((long)gg.color.backgr);
-/* p2c: log.text, line 950:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 950:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     m_fillrect(x - 1L, y - 2L, x + m_strwidth(logfont_lfont, s), y + 9L);
     m_color(save);
   }
   m_move((long)x, (long)y);
   m_displaytext(s);
 }
-
 
 Static Void rightstr2(x, y, s)
 short x, y;
@@ -1082,16 +939,15 @@ Char *s;
   if (m_curcolor() < 16) {
     save = m_curcolor();
     m_color((long)gg.color.backgr);
-/* p2c: log.text, line 965:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 965:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     m_fillrect(x + m_strwidth(logfont_lfont, s) - 1, y - 2L, x + 1L, y + 9L);
     m_color(save);
   }
-/* p2c: log.text, line 968:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 968:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_rightstr((long)x, (long)y, logfont_lfont, s);
 }
-
 
 Static Void centerstr2(x, y, s)
 short x, y;
@@ -1104,17 +960,15 @@ Char *s;
     save = m_curcolor();
     m_color((long)gg.color.backgr);
     w = m_strwidth(logfont_lfont, s) / 2 + 2;
-/* p2c: log.text, line 981:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 981:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     m_fillrect((long)(x - w), y - 2L, (long)(x + w), y + 9L);
     m_color(save);
   }
-/* p2c: log.text, line 985:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 985:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_centerstr((long)x, (long)y, logfont_lfont, s);
 }
-
-
 
 /*=================  DRAWNUM1  ===================*/
 /*=                                              =*/
@@ -1134,8 +988,6 @@ short x, y, n;
   m_displaytext(s);
 }
 
-
-
 /*=================  DRAWNUM2  ===================*/
 /*=                                              =*/
 /*=  Draw a two-digit number at the specified    =*/
@@ -1150,17 +1002,12 @@ short x, y, n;
 
   m_move((long)x, (long)y);
   strcpy(s, "  ");
-  if (n >= 10)
-    s[0] = n / 10 + '0';
+  if (n >= 10) s[0] = n / 10 + '0';
   s[1] = n % 10 + '0';
-/* p2c: log.text, line 1023:
- * Note: Using % for possibly-negative arguments [317] */
+  /* p2c: log.text, line 1023:
+   * Note: Using % for possibly-negative arguments [317] */
   m_displaytext(s);
 }
-
-
-
-
 
 Static Void xformcoords(g, x, y)
 log_grec *g;
@@ -1181,8 +1028,6 @@ short *x, *y;
        (log_rotxy[g->rot] * xx + log_rotyy[g->rot] * yy) / log_scale0;
 }
 
-
-
 Static Void plainxformcoords(g, x, y)
 log_grec *g;
 short *x, *y;
@@ -1199,23 +1044,13 @@ short *x, *y;
   *y = g->y * log_scale0 + log_rotxy[g->rot] * xx + log_rotyy[g->rot] * *y;
 }
 
-
-
-
-
-
 /*==================  CLIPON  ====================*/
 /*=                                              =*/
 /*=  Allow drawing only in the working area.     =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void clipon()
-{
-  m_clip(0L, 0L, (long)across, baseline - 1L);
-}
-
-
+Static Void clipon() { m_clip(0L, 0L, (long)across, baseline - 1L); }
 
 /*==================  CLIPOFF  ===================*/
 /*=                                              =*/
@@ -1223,12 +1058,7 @@ Static Void clipon()
 /*=                                              =*/
 /*================================================*/
 
-Static Void clipoff()
-{
-  m_noclip();
-}
-
-
+Static Void clipoff() { m_noclip(); }
 
 /*==================  UERASE  ====================*/
 /*=                                              =*/
@@ -1244,8 +1074,6 @@ short x1, y1, x2, y2;
   m_fillrect((long)x1, (long)y1, (long)x2, (long)y2);
 }
 
-
-
 /*===================  ERASE  ====================*/
 /*=                                              =*/
 /*=  Erase a rectangular area of the screen      =*/
@@ -1260,8 +1088,6 @@ short x1, y1, x2, y2;
   box(x1, y1, x2, y2);
 }
 
-
-
 /*================  NORABBITS  ===================*/
 /*=                                              =*/
 /*=  Make sure there are no rabbits on the       =*/
@@ -1269,8 +1095,7 @@ short x1, y1, x2, y2;
 /*=                                              =*/
 /*================================================*/
 
-Static Void norabbits()
-{
+Static Void norabbits() {
   short i;
 
   clipoff();
@@ -1283,15 +1108,13 @@ Static Void norabbits()
   rabflag = false;
 }
 
-
 /*================  ADDRABBIT  ===================*/
 /*=                                              =*/
 /*=  Draw a rabbit on the screen.                =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void addrabbit()
-{
+Static Void addrabbit() {
   short i, j, rx, ry;
   boolean nogood;
   rablistrec *WITH;
@@ -1299,8 +1122,7 @@ Static Void addrabbit()
   clipoff();
   j = -1;
   for (i = 1; i <= rabtabsize; i++) {
-    if (rabtable[i - 1].next == 0)
-      j = i;
+    if (rabtable[i - 1].next == 0) j = i;
   }
   if (j == -1) {
     j = P_rand(&gg.rndseed, (long)rabtabsize) + 1;
@@ -1314,9 +1136,9 @@ Static Void addrabbit()
     for (i = 0; i < rabtabsize; i++) {
       WITH = &rabtable[i];
       if (WITH->next == 1) {
-	if (WITH->x + 24 >= rx && WITH->x <= rx + 24 && WITH->y + 26 >= ry &&
-	    WITH->y <= ry + 26)
-	  nogood = true;
+        if (WITH->x + 24 >= rx && WITH->x <= rx + 24 && WITH->y + 26 >= ry &&
+            WITH->y <= ry + 26)
+          nogood = true;
       }
     }
   } while (nogood);
@@ -1327,9 +1149,6 @@ Static Void addrabbit()
   rabflag = true;
   rabtime = timers_sysclock();
 }
-
-
-
 
 /*==================  HVLINE  ====================*/
 /*=                                              =*/
@@ -1347,22 +1166,18 @@ short x1, y1, *x2, *y2;
   boolean Result;
 
   Result = true;
-  if (x1 == *x2 && y1 == *y2)
-    return false;
-  if (abs(*x2 - x1) > abs(*y2 - y1) && abs(*y2 - y1) < abs(*x2 - x1) / 3 + 20)
-  {   /*7/14/88*/
+  if (x1 == *x2 && y1 == *y2) return false;
+  if (abs(*x2 - x1) > abs(*y2 - y1) &&
+      abs(*y2 - y1) < abs(*x2 - x1) / 3 + 20) { /*7/14/88*/
     *y2 = y1;
     return Result;
   }
-  if (abs(*y2 - y1) <= abs(*x2 - x1) ||
-      abs(*x2 - x1) >= abs(*y2 - y1) / 3 + 20)
-	/*7/14/88*/
-	  return false;
+  if (abs(*y2 - y1) <= abs(*x2 - x1) || abs(*x2 - x1) >= abs(*y2 - y1) / 3 + 20)
+    /*7/14/88*/
+    return false;
   *x2 = x1;
   return Result;
 }
-
-
 
 /*===================  FIXXY  ====================*/
 /*=                                              =*/
@@ -1378,8 +1193,6 @@ short *x, *y;
   *y = (*y + gg.yoff + gg.hscale) / gg.scale * gg.scale - gg.yoff;
 }
 
-
-
 /*================  NOCROSSHAIR  =================*/
 /*=                                              =*/
 /*=  Turn off crosshair (no effect until next    =*/
@@ -1387,12 +1200,7 @@ short *x, *y;
 /*=                                              =*/
 /*================================================*/
 
-Static Void nocrosshair()
-{
-  chairflag2 = false;
-}
-
-
+Static Void nocrosshair() { chairflag2 = false; }
 
 /*=================  CROSSHAIR  ==================*/
 /*=                                              =*/
@@ -1408,8 +1216,6 @@ short x, y;
   chairy = y * gg.scale - gg.yoff;
   chairflag2 = true;
 }
-
-
 
 /*=================  XORCURSOR  ==================*/
 /*=                                              =*/
@@ -1431,8 +1237,7 @@ short x, y;
 /*=                                              =*/
 /*================================================*/
 
-Static Void xorcursor()
-{
+Static Void xorcursor() {
   long curcm;
   short cx0, cy0;
 
@@ -1446,92 +1251,91 @@ Static Void xorcursor()
   if (!chairflag || cursortype == grid) {
     if (cursortype != normal && cursy < baseline) {
       switch (cursortype) {
+        case grid:
+          choose_log_cursor(0);
+          /* p2c: log.text, line 1308:
+           * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+          if (chairflag) {
+            m_drawline(cursx1 - 3L, cursy1 - 5L, cursx1 + 3L, cursy1 + 5L);
+            m_drawline(cursx1 - 3L, cursy1 + 5L, cursx1 + 3L, cursy1 - 5L);
+          }
+          cx0 = (cursx + gg.xoff) / gg.scale * gg.scale - gg.xoff;
+          cy0 = (cursy + gg.yoff) / gg.scale * gg.scale - gg.yoff;
+          m_drawline(0L, (long)cy0, (long)across, (long)cy0);
+          m_drawline((long)cx0, 0L, (long)cx0, baseline - 1L);
+          break;
 
-      case grid:
-	choose_log_cursor(0);
-/* p2c: log.text, line 1308:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
-	if (chairflag) {
-	  m_drawline(cursx1 - 3L, cursy1 - 5L, cursx1 + 3L, cursy1 + 5L);
-	  m_drawline(cursx1 - 3L, cursy1 + 5L, cursx1 + 3L, cursy1 - 5L);
-	}
-	cx0 = (cursx + gg.xoff) / gg.scale * gg.scale - gg.xoff;
-	cy0 = (cursy + gg.yoff) / gg.scale * gg.scale - gg.yoff;
-	m_drawline(0L, (long)cy0, (long)across, (long)cy0);
-	m_drawline((long)cx0, 0L, (long)cx0, baseline - 1L);
-	break;
+        case delete__:
+          choose_log_cursor(2);
+          /* p2c: log.text, line 1343:
+           * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+          break;
 
-      case delete__:
-	choose_log_cursor(2);
-/* p2c: log.text, line 1343:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
-	break;
+        case copy_:
+          choose_log_cursor(1);
+          /* p2c: log.text, line 1357:
+           * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+          break;
 
-      case copy_:
-	choose_log_cursor(1);
-/* p2c: log.text, line 1357:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
-	break;
+        case boxcursor:
+          choose_log_cursor(4);
+          /* p2c: log.text, line 1374:
+           * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+          break;
 
-      case boxcursor:
-	choose_log_cursor(4);
-/* p2c: log.text, line 1374:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
-	break;
+        case paste:
+          choose_log_cursor(0);
+          /* p2c: log.text, line 1380:
+           * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+          cx0 = (cursx + gg.xoff + 2) / gg.scale;
+          cy0 = (cursy + gg.yoff + 2) / gg.scale;
+          m_saveclip();
+          m_clip(0L, 0L, (long)across, baseline - 1L);
+          gg.cx_min = cx0;
+          gg.cx_max = cx0 + copybuf.dxcopy;
+          gg.cy_min = cy0;
+          gg.cy_max = cy0 + copybuf.dycopy;
+          rect(gg.cx_min, gg.cy_min, gg.cx_max, gg.cy_max);
+          m_unclip();
+          break;
 
-      case paste:
-	choose_log_cursor(0);
-/* p2c: log.text, line 1380:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
-	cx0 = (cursx + gg.xoff + 2) / gg.scale;
-	cy0 = (cursy + gg.yoff + 2) / gg.scale;
-	m_saveclip();
-	m_clip(0L, 0L, (long)across, baseline - 1L);
-	gg.cx_min = cx0;
-	gg.cx_max = cx0 + copybuf.dxcopy;
-	gg.cy_min = cy0;
-	gg.cy_max = cy0 + copybuf.dycopy;
-	rect(gg.cx_min, gg.cy_min, gg.cx_max, gg.cy_max);
-	m_unclip();
-	break;
-
-      default:
-	break;
+        default:
+          break;
       }
     } else {
       if (rabbits && !avoidrabbits && cursy < baseline) {
-	choose_log_cursor(0);
-/* p2c: log.text, line 1402:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
-	if (cursx < 45)
-	  m_bunny(0L, cursy - 17L);
-	else
-	  m_bunny(cursx - 45L, cursy - 17L);
+        choose_log_cursor(0);
+        /* p2c: log.text, line 1402:
+         * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+        if (cursx < 45)
+          m_bunny(0L, cursy - 17L);
+        else
+          m_bunny(cursx - 45L, cursy - 17L);
       } else if (gg.probemode) {
-	choose_log_cursor(3);
-/* p2c: log.text, line 1420:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+        choose_log_cursor(3);
+        /* p2c: log.text, line 1420:
+         * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
       } else {
-	choose_log_cursor(0);
-/* p2c: log.text, line 1436:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+        choose_log_cursor(0);
+        /* p2c: log.text, line 1436:
+         * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
       }
     }
   }
   if (chairflag) {
     if (rbandflag) {
       choose_log_cursor(0);
-/* p2c: log.text, line 1446:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+      /* p2c: log.text, line 1446:
+       * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
       if (vlsi)
-	m_color((long)gg.color.wire[curwcolor - log_wcol_normal]);
+        m_color((long)gg.color.wire[curwcolor - log_wcol_normal]);
       else
-	m_color((long)gg.color.xwire);
+        m_color((long)gg.color.xwire);
       m_drawline((long)cursx1, (long)cursy1, (long)cursx2, (long)cursy2);
     } else {
       choose_log_cursor(0);
-/* p2c: log.text, line 1460:
- * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
+      /* p2c: log.text, line 1460:
+       * Warning: Symbol 'CHOOSE_LOG_CURSOR' is not defined [221] */
     }
   }
   oldcursortype = cursortype;
@@ -1540,8 +1344,6 @@ Static Void xorcursor()
   /*and (cursy < baseline)*/
 }
 
-
-
 /*=================  HIDECURSOR  =================*/
 /*=                                              =*/
 /*=  Used to remove cursor from screen while     =*/
@@ -1549,30 +1351,19 @@ Static Void xorcursor()
 /*=                                              =*/
 /*================================================*/
 
-Static Void hidecursor()
-{
-  if (cursorflag)
-    xorcursor();
+Static Void hidecursor() {
+  if (cursorflag) xorcursor();
 }
 
-
-
-
-Static Void hidecursor_hook()
-{
-  if (!cursorhide)
-    hidecursor();
+Static Void hidecursor_hook() {
+  if (!cursorhide) hidecursor();
   cursorhide = true;
 }
 
-
-Static Void unhidecursor_hook()
-{
-  if (cursorhide)
-    hidecursor();
+Static Void unhidecursor_hook() {
+  if (cursorhide) hidecursor();
   cursorhide = false;
 }
-
 
 Static Void hidecursorrect_hook(x1, y1, x2, y2)
 long x1, y1, x2, y2;
@@ -1581,12 +1372,6 @@ long x1, y1, x2, y2;
       y2 >= gg.cy_min)
     hidecursor_hook();
 }
-
-
-
-
-
-
 
 /*================  DRAWCURSOR  ==================*/
 /*=                                              =*/
@@ -1599,8 +1384,7 @@ Static Void drawcursor(x, y)
 short x, y;
 {
   if (x != cursx || y != cursy || !cursorflag || cursortype != oldcursortype) {
-    if (cursorflag && !cursorhide)
-      xorcursor();
+    if (cursorflag && !cursorhide) xorcursor();
     cursx = x;
     cursy = y;
     cursx1 = chairx;
@@ -1612,18 +1396,15 @@ short x, y;
       chairflag = true;
       fixxy(&cursx2, &cursy2);
       rbandflag = (abs(cursx1 - cursx2) + abs(cursy1 - cursy2) >= gg.scale &&
-		   hvline(cursx1, cursy1, &cursx2, &cursy2));
+                   hvline(cursx1, cursy1, &cursx2, &cursy2));
     }
     xorcursor();
   } else {
-    if (!cursorflag && !cursorhide)
-      xorcursor();
+    if (!cursorflag && !cursorhide) xorcursor();
   }
   cursorflag = true;
   cursorhide = false;
 }
-
-
 
 /*=================  REMCURSOR  ==================*/
 /*=                                              =*/
@@ -1631,16 +1412,12 @@ short x, y;
 /*=                                              =*/
 /*================================================*/
 
-Static Void remcursor()
-{
+Static Void remcursor() {
   prevcursorflag = cursorflag;
-  if (cursorflag)
-    xorcursor();
+  if (cursorflag) xorcursor();
   cursorflag = false;
   cursorhide = false;
 }
-
-
 
 /*================  RESTORECURSOR  ===============*/
 /*=                                              =*/
@@ -1649,16 +1426,10 @@ Static Void remcursor()
 /*=                                              =*/
 /*================================================*/
 
-Static Void restorecursor()
-{
-  if (prevcursorflag != cursorflag)
-    xorcursor();
+Static Void restorecursor() {
+  if (prevcursorflag != cursorflag) xorcursor();
   cursorflag = prevcursorflag;
 }
-
-
-
-
 
 /*==================  SETMODE  ===================*/
 /*=                                              =*/
@@ -1672,7 +1443,6 @@ Static Void refreditmode PV();
 Static Void log_setmode(s)
 Const Char *s;
 
-
 {
   time_t h;
   char *cp;
@@ -1680,9 +1450,8 @@ Const Char *s;
   remcursor();
   clipoff();
   m_color((long)gg.color.backgr);
-  if (gg.showpage > 0)
-    drawstr2(across + menux3, line2, modename);
-  refreditmode();   /*may have been trashed by previous mode name*/
+  if (gg.showpage > 0) drawstr2(across + menux3, line2, modename);
+  refreditmode(); /*may have been trashed by previous mode name*/
   if (*s != '\0') {
     strcpy(modename, s);
     modeflag = true;
@@ -1696,22 +1465,14 @@ Const Char *s;
       cp = ctime(&h);
       sprintf(modename, "%.5s", cp + 11);
       modetime = timers_sysclock() / 6000;
-      if (!strcmp(modename, "00:00"))
-	strcpy(modename, "__@/ ");
+      if (!strcmp(modename, "00:00")) strcpy(modename, "__@/ ");
       m_color((long)gg.color.menuword);
     }
     modeflag = false;
     modeprobekind = gg.probekind;
   }
-  if (gg.showpage > 0)
-    drawstr2(across + menux3, line2, modename);
+  if (gg.showpage > 0) drawstr2(across + menux3, line2, modename);
 }
-
-
-
-
-
-
 
 Static Void dounits(s, r)
 Char *s;
@@ -1719,11 +1480,9 @@ double *r;
 {
   Char ch;
 
-  if (*s == '\0')
-    return;
+  if (*s == '\0') return;
   ch = s[0];
-  if (ch >= 'a')
-    ch -= 32;
+  if (ch >= 'a') ch -= 32;
   if (ch == 'F') {
     *r *= 1e-15;
     return;
@@ -1752,16 +1511,13 @@ double *r;
     *r *= 1e12;
     return;
   }
-  if (ch != 'M')
-    return;
+  if (ch != 'M') return;
   if (strlen(s) >= 3 && (s[1] == 'E' || s[1] == 'e') &&
       (s[2] == 'G' || s[2] == 'g'))
     *r *= 1e6;
   else
     *r *= 1e-3;
 }
-
-
 
 Static Void readreal(s_, r)
 Char *s_;
@@ -1774,7 +1530,7 @@ double *r;
 
   strcpy(s, s_);
   if (!(*s != '\0' &&
-	(s[0] == '.' || s[0] == '+' || s[0] == '-' || isdigit(s[0]))))
+        (s[0] == '.' || s[0] == '+' || s[0] == '-' || isdigit(s[0]))))
     return;
   *r = strtod(s, &STR1);
   i = STR1 - s + 1;
@@ -1783,10 +1539,6 @@ double *r;
   strcpy(s, STR2);
   dounits(s, r);
 }
-
-
-
-
 
 Static Void strwordx(buf, wrd)
 Char *buf, *wrd;
@@ -1802,13 +1554,10 @@ Char *buf, *wrd;
     return;
   }
   i = strposc(buf, '"', 2L);
-  if (i == 0)
-    i = strlen(buf) + 1;
+  if (i == 0) i = strlen(buf) + 1;
   strpart(wrd, buf, 2, i - 1);
   strcpy_overlap(buf, buf + i);
 }
-
-
 
 Static Void getword(buf, wrd)
 Char *buf, *wrd;
@@ -1825,8 +1574,6 @@ Char *buf, *wrd;
     strupper(wrd, wrd);
   }
 }
-
-
 
 Static long getint(s, def)
 Char *s;
@@ -1858,16 +1605,10 @@ long def;
     return def;
 }
 
-
-
 Static Void pgetint(buf, i, def)
 Char *buf;
 long *i, def;
-{
-  *i = getint(buf, def);
-}
-
-
+{ *i = getint(buf, def); }
 
 Static double getreal(s, def)
 Char *s;
@@ -1879,25 +1620,18 @@ double def;
   getword(s, w);
   r = def;
   TRY(try1);
-    readreal(w, &r);
+  readreal(w, &r);
   RECOVER(try1);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    r = def;
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  r = def;
   ENDTRY(try1);
   return r;
 }
 
-
-
 Static Void pgetreal(buf, r, def)
 Char *buf;
 double *r, def;
-{
-  *r = getreal(buf, def);
-}
-
-
+{ *r = getreal(buf, def); }
 
 Static Void getbool(buf, b)
 Char *buf;
@@ -1907,8 +1641,7 @@ boolean *b;
 
   getword(buf, w);
   if (!strcmp(w, "ON") || !strcmp(w, "YES") || !strcmp(w, "Y") ||
-      !strcmp(w, "RABBITS"))
-  {   /*avoid*/
+      !strcmp(w, "RABBITS")) { /*avoid*/
     *b = true;
     return;
   }
@@ -1922,11 +1655,6 @@ boolean *b;
     *b = !*b;
 }
 
-
-
-
-
-
 /*=================  SORTSHINTS  =================*/
 /*=                                              =*/
 /*=  Put two shortint variables into increasing  =*/
@@ -1939,14 +1667,11 @@ short *x, *y;
 {
   short temp;
 
-  if (*x <= *y)
-    return;
+  if (*x <= *y) return;
   temp = *x;
   *x = *y;
   *y = temp;
 }
-
-
 
 /*================  INSIDEGATE  ==================*/
 /*=                                              =*/
@@ -1973,16 +1698,17 @@ short x, y;
   /* Modify x1 position for length of text on TO/FROM-type gates */
 
   if (WITH->flag.U3.named && g->sig > 0) {
-     Char STR1[256];
-     short xwid = m_strwidth(NULL, strrtrim(strcpy(STR1,
-	    gg.signaltab[g->sig - 1].name))) - NAMEGAP;
+    Char STR1[256];
+    short xwid =
+        m_strwidth(NULL,
+                   strrtrim(strcpy(STR1, gg.signaltab[g->sig - 1].name))) -
+        NAMEGAP;
 
-     if (WITH->flag.U3.nright) {
-	if (xwid > loc_x2) loc_x2 = xwid;
-     }
-     else {
-	if (-xwid < loc_x1) loc_x1 = -xwid;
-     }
+    if (WITH->flag.U3.nright) {
+      if (xwid > loc_x2) loc_x2 = xwid;
+    } else {
+      if (-xwid < loc_x1) loc_x1 = -xwid;
+    }
   }
 
   if (g->rot == 0)
@@ -1999,9 +1725,6 @@ short x, y;
   }
 }
 
-
-
-
 /*=================  TESTPROBE  ==================*/
 /*=                                              =*/
 /*=  Find which wire, pin, or gate the Probe     =*/
@@ -2010,8 +1733,7 @@ short x, y;
 /*=                                              =*/
 /*================================================*/
 
-Static Void unprobe()
-{
+Static Void unprobe() {
   gg.probenode = NULL;
   gg.probegate = NULL;
   gg.probepin = 0;
@@ -2022,10 +1744,6 @@ Static Void unprobe()
   probeflag = false;
 }
 
-
-
-
-
 Static log_krec *peninkind(xx, yy)
 short xx, yy;
 {
@@ -2034,16 +1752,12 @@ short xx, yy;
 
   Result = NULL;
   if (!(P_ibetween((long)kindgroupleft, (long)xx, kindgroupright - 1L) &&
-	P_ibetween((long)baseline, (long)yy, (long)down)))
+        P_ibetween((long)baseline, (long)yy, (long)down)))
     return Result;
   i = kindgroup[(xx - kindgroupleft) / kindgroupspacing];
-  if (i > 0)
-    return (kind[(i & (log_kindoffset - 1)) - 1]);
+  if (i > 0) return (kind[(i & (log_kindoffset - 1)) - 1]);
   return Result;
 }
-
-
-
 
 Static Void testprobe(xx, yy)
 short xx, yy;
@@ -2062,53 +1776,49 @@ short xx, yy;
     if (gg.incircuit) {
       g = gg.gbase[gg.curpage - 1];
       while (g != NULL && gg.probegate == NULL) {
-	k = g->kind;
-	if (g->x >= x - k->bbmax && g->x <= x + k->bbmax &&
-	    g->y >= y - k->bbmax && g->y <= y + k->bbmax) {
-	  if (insidegate(g, x, y))
-	    gg.probegate = g;
-	  else if (g->kind->simtype->simtype >= 8) {
-	    FORLIM = g->kind->numpins;
-	    for (i = 1; i <= FORLIM; i++) {
-	      if (x == g->pinpos[i - 1].x && y == g->pinpos[i - 1].y) {
-		gg.probegate = g;
-		gg.probenode = g->pin[i - 1];
-		gg.probepin = i;
-	      }
-	    }
-	  }
-	}
-	g = g->next;
+        k = g->kind;
+        if (g->x >= x - k->bbmax && g->x <= x + k->bbmax &&
+            g->y >= y - k->bbmax && g->y <= y + k->bbmax) {
+          if (insidegate(g, x, y))
+            gg.probegate = g;
+          else if (g->kind->simtype->simtype >= 8) {
+            FORLIM = g->kind->numpins;
+            for (i = 1; i <= FORLIM; i++) {
+              if (x == g->pinpos[i - 1].x && y == g->pinpos[i - 1].y) {
+                gg.probegate = g;
+                gg.probenode = g->pin[i - 1];
+                gg.probepin = i;
+              }
+            }
+          }
+        }
+        g = g->next;
       }
       hw = gg.hwbase[gg.curpage - 1];
       while (hw != NULL && gg.probenode == NULL) {
-	if (hw->x1 <= x && x <= hw->x2 && hw->y == y) {
-	  gg.probehwire = hw;
-	  gg.probenode = hw->node;
-	}
-	hw = hw->next;
+        if (hw->x1 <= x && x <= hw->x2 && hw->y == y) {
+          gg.probehwire = hw;
+          gg.probenode = hw->node;
+        }
+        hw = hw->next;
       }
       vw = gg.vwbase[gg.curpage - 1];
       while (vw != NULL && gg.probenode == NULL) {
-	if (vw->y1 <= y && y <= vw->y2 && vw->x == x) {
-	  gg.probevwire = vw;
-	  gg.probenode = vw->node;
-	}
-	vw = vw->next;
+        if (vw->y1 <= y && y <= vw->y2 && vw->x == x) {
+          gg.probevwire = vw;
+          gg.probenode = vw->node;
+        }
+        vw = vw->next;
       }
     } else
       gg.probekind = peninkind(xx, yy);
   }
-  if (gg.probegate != NULL)
-    gg.probekind = gg.probegate->kind;
+  if (gg.probegate != NULL) gg.probekind = gg.probegate->kind;
   if (gg.probenode != NULL)
     gg.probesimtype = gg.probenode->simtype;
   else if (gg.probekind != NULL)
     gg.probesimtype = gg.probekind->simtype;
 }
-
-
-
 
 Static Void checkprobe(xx, yy)
 short xx, yy;
@@ -2117,11 +1827,10 @@ short xx, yy;
 
   x = (xx + gg.hscale + gg.xoff) / gg.scale;
   y = (yy + gg.hscale + gg.yoff) / gg.scale;
-  if (gg.probegate != NULL &&
-      (gg.probegate->x < x - gg.probekind->bbmax ||
-       gg.probegate->x > x + gg.probekind->bbmax ||
-       gg.probegate->y < y - gg.probekind->bbmax ||
-       gg.probegate->y > y + gg.probekind->bbmax)) {
+  if (gg.probegate != NULL && (gg.probegate->x < x - gg.probekind->bbmax ||
+                               gg.probegate->x > x + gg.probekind->bbmax ||
+                               gg.probegate->y < y - gg.probekind->bbmax ||
+                               gg.probegate->y > y + gg.probekind->bbmax)) {
     unprobe();
     return;
   }
@@ -2131,20 +1840,13 @@ short xx, yy;
     return;
   }
   if (gg.probehwire != NULL &&
-      (gg.probehwire->x1 > x || x > gg.probehwire->x2 ||
-       gg.probehwire->y != y))
+      (gg.probehwire->x1 > x || x > gg.probehwire->x2 || gg.probehwire->y != y))
     unprobe();
   else if (gg.probevwire != NULL &&
-	   (gg.probevwire->y1 > y || y > gg.probevwire->y2 ||
-	    gg.probevwire->x != x))
+           (gg.probevwire->y1 > y || y > gg.probevwire->y2 ||
+            gg.probevwire->x != x))
     unprobe();
 }
-
-
-
-
-
-
 
 Static Void parselabel(lbl, numattrs, attr)
 na_strlist **lbl;
@@ -2166,12 +1868,11 @@ log_kattrrec **attr;
   l1 = *lbl;
   while (l1 != NULL) {
     j = strposc(l1->s, ':', 1L);
-    if (j != 0 && j != strpos2(l1->s, "::", 1))
-      (*numattrs)++;
+    if (j != 0 && j != strpos2(l1->s, "::", 1)) (*numattrs)++;
     l1->value = (na_long)strlen(l1->s);
     l1 = l1->next;
   }
-/* p2c: log.text, line 2056: Note: Can't interpret size in NA_NEW [174] */
+  /* p2c: log.text, line 2056: Note: Can't interpret size in NA_NEW [174] */
   *attr = (log_kattrrec *)Malloc(*numattrs * kattrrecsize);
   maxx = 0;
   l1 = *lbl;
@@ -2186,200 +1887,188 @@ log_kattrrec **attr;
       strcpy(STR1, strltrim(l1->s));
       strcpy(l1->s, STR1);
       while (*l1->s == '[') {
-	j2 = strposc(l1->s, ']', 1L);
-	if (j2 < 3)
-	  continue;
-	l2 = strlist_append(&attrnames, strpart(STR1, l1->s, 2, j2 - 1));
-	l2->value = (na_long)((long)j);
-	strcpy_overlap(l1->s, l1->s + j2);
-	strcpy(STR1, strltrim(l1->s));
-	strcpy(l1->s, STR1);
+        j2 = strposc(l1->s, ']', 1L);
+        if (j2 < 3) continue;
+        l2 = strlist_append(&attrnames, strpart(STR1, l1->s, 2, j2 - 1));
+        l2->value = (na_long)((long)j);
+        strcpy_overlap(l1->s, l1->s + j2);
+        strcpy(STR1, strltrim(l1->s));
+        strcpy(l1->s, STR1);
       }
       j2 = strposc(l1->s, ';', 1L);
       if (j2 != 0 && j2 < j1) {
-	sprintf(buf, "%.*s", j2 - 1, l1->s);
-	strrtrim(buf);
-	j3 = 1;
-	while (j3 < j && WITH->vra == 0) {
-	  if ((*attr)[j3 - 1].dtype == 'V') {
-	    l2 = (*attr)[j3 - 1].UU.U86.v;
-	    while (l2 != NULL && strcicmp(l2->s, buf) != 0)
-	      l2 = l2->next;
-	    if (l2 != NULL) {
-	      WITH->vr = (long)l2->value;
-	      WITH->vra = j3;
-	    }
-	  }
-	  j3++;
-	}
-	strcpy_overlap(l1->s, l1->s + j2);
+        sprintf(buf, "%.*s", j2 - 1, l1->s);
+        strrtrim(buf);
+        j3 = 1;
+        while (j3 < j && WITH->vra == 0) {
+          if ((*attr)[j3 - 1].dtype == 'V') {
+            l2 = (*attr)[j3 - 1].UU.U86.v;
+            while (l2 != NULL && strcicmp(l2->s, buf) != 0) l2 = l2->next;
+            if (l2 != NULL) {
+              WITH->vr = (long)l2->value;
+              WITH->vra = j3;
+            }
+          }
+          j3++;
+        }
+        strcpy_overlap(l1->s, l1->s + j2);
       }
       if (l1->s[0] == ' ') {
-	strcpy(STR1, strltrim(l1->s));
-	strcpy(l1->s, STR1);
+        strcpy(STR1, strltrim(l1->s));
+        strcpy(l1->s, STR1);
       }
       WITH->prec = 0;
       haveprec = false;
       while (isdigit(l1->s[0])) {
-	WITH->prec = WITH->prec * 10 + l1->s[0] - 48;
-	haveprec = true;
-	strcpy_overlap(l1->s, l1->s + 1);
+        WITH->prec = WITH->prec * 10 + l1->s[0] - 48;
+        haveprec = true;
+        strcpy_overlap(l1->s, l1->s + 1);
       }
       if (l1->s[0] == ' ') {
-	strcpy(STR1, strltrim(l1->s));
-	strcpy(l1->s, STR1);
+        strcpy(STR1, strltrim(l1->s));
+        strcpy(l1->s, STR1);
       }
       WITH->opt = false;
       do {
-	WITH->dtype = toupper(l1->s[0]);
-	if (l1->s[0] != ':') {
-	  do {
-	    strcpy_overlap(l1->s, l1->s + 1);
-	  } while (l1->s[0] == ' ');
-	}
-	if (WITH->dtype == 'O')
-	  WITH->opt = true;
+        WITH->dtype = toupper(l1->s[0]);
+        if (l1->s[0] != ':') {
+          do {
+            strcpy_overlap(l1->s, l1->s + 1);
+          } while (l1->s[0] == ' ');
+        }
+        if (WITH->dtype == 'O') WITH->opt = true;
       } while (WITH->dtype == 'O');
       if (WITH->dtype == 'F' || WITH->dtype == 'U' || WITH->dtype == 'R') {
-	*WITH->UU.U82.u = '\0';
-	if (WITH->dtype == 'F' || WITH->dtype == 'U') {
-	  while (l1->s[0] != ',' && l1->s[0] != ':') {
-	    if (l1->s[0] != ' ' && strlen(WITH->UU.U82.u) < 3)
-	      sprintf(WITH->UU.U82.u + strlen(WITH->UU.U82.u), "%c", l1->s[0]);
-	    strcpy_overlap(l1->s, l1->s + 1);
-	  }
-	  if (l1->s[0] == ',')
-	    strcpy_overlap(l1->s, l1->s + 1);
-	  strcpy(STR1, strltrim(l1->s));
-	  strcpy(l1->s, STR1);
-	}
-	*buf = '\0';
-	while (l1->s[0] != ':') {
-	  sprintf(buf + strlen(buf), "%c", l1->s[0]);
-	  strcpy_overlap(l1->s, l1->s + 1);
-	}
-	WITH->UU.U82.r = 0.0;
-	WITH->blnk = true;
-	if (*buf != '\0') {
-	  readreal(buf, &WITH->UU.U82.r);
-	  WITH->blnk = false;
-	}
-	if (!haveprec)
-	  WITH->prec = 0;
+        *WITH->UU.U82.u = '\0';
+        if (WITH->dtype == 'F' || WITH->dtype == 'U') {
+          while (l1->s[0] != ',' && l1->s[0] != ':') {
+            if (l1->s[0] != ' ' && strlen(WITH->UU.U82.u) < 3)
+              sprintf(WITH->UU.U82.u + strlen(WITH->UU.U82.u), "%c", l1->s[0]);
+            strcpy_overlap(l1->s, l1->s + 1);
+          }
+          if (l1->s[0] == ',') strcpy_overlap(l1->s, l1->s + 1);
+          strcpy(STR1, strltrim(l1->s));
+          strcpy(l1->s, STR1);
+        }
+        *buf = '\0';
+        while (l1->s[0] != ':') {
+          sprintf(buf + strlen(buf), "%c", l1->s[0]);
+          strcpy_overlap(l1->s, l1->s + 1);
+        }
+        WITH->UU.U82.r = 0.0;
+        WITH->blnk = true;
+        if (*buf != '\0') {
+          readreal(buf, &WITH->UU.U82.r);
+          WITH->blnk = false;
+        }
+        if (!haveprec) WITH->prec = 0;
       } else if (WITH->dtype == 'I') {
-	WITH->UU.U73.i1 = 0;
-	WITH->blnk = true;
-	while (isdigit(l1->s[0])) {
-	  WITH->UU.U73.i1 = WITH->UU.U73.i1 * 10 + l1->s[0] - 48;
-	  strcpy_overlap(l1->s, l1->s + 1);
-	  WITH->blnk = false;
-	}
-	if (!haveprec)
-	  WITH->prec = 1;
+        WITH->UU.U73.i1 = 0;
+        WITH->blnk = true;
+        while (isdigit(l1->s[0])) {
+          WITH->UU.U73.i1 = WITH->UU.U73.i1 * 10 + l1->s[0] - 48;
+          strcpy_overlap(l1->s, l1->s + 1);
+          WITH->blnk = false;
+        }
+        if (!haveprec) WITH->prec = 1;
       } else if (WITH->dtype == 'H') {
-	WITH->UU.U73.i1 = 0;
-	j1 = 0;
-	WITH->blnk = true;
-	while ((l1->s[0] >= 'a' && l1->s[0] <= 'f') ||
-	       (l1->s[0] >= 'A' && l1->s[0] <= 'F') || isdigit(l1->s[0])) {
-	  WITH->UU.U73.i1 = WITH->UU.U73.i1 * 10 + l1->s[0] - 48;
-	  if (l1->s[0] >= 'A')
-	    WITH->UU.U73.i1 -= 7;
-	  if (l1->s[0] >= 'a')
-	    WITH->UU.U73.i1 -= 32;
-	  strcpy_overlap(l1->s, l1->s + 1);
-	  j1++;
-	  WITH->blnk = false;
-	}
-	if (!haveprec) {
-	  if (j1 != 0)
-	    WITH->prec = j1;
-	  else
-	    WITH->prec = 1;
-	}
+        WITH->UU.U73.i1 = 0;
+        j1 = 0;
+        WITH->blnk = true;
+        while ((l1->s[0] >= 'a' && l1->s[0] <= 'f') ||
+               (l1->s[0] >= 'A' && l1->s[0] <= 'F') || isdigit(l1->s[0])) {
+          WITH->UU.U73.i1 = WITH->UU.U73.i1 * 10 + l1->s[0] - 48;
+          if (l1->s[0] >= 'A') WITH->UU.U73.i1 -= 7;
+          if (l1->s[0] >= 'a') WITH->UU.U73.i1 -= 32;
+          strcpy_overlap(l1->s, l1->s + 1);
+          j1++;
+          WITH->blnk = false;
+        }
+        if (!haveprec) {
+          if (j1 != 0)
+            WITH->prec = j1;
+          else
+            WITH->prec = 1;
+        }
       } else if (WITH->dtype == 'C') {
-	j1 = strposc(l1->s, ':', 1L);
-	sprintf(buf, "%.*s", j1 - 1, l1->s);
-	strrtrim(buf);
-	strcpy_overlap(l1->s, l1->s + j1 - 1);
-	if (!haveprec)
-	  WITH->prec = 255;
-	if (strlen(buf) > WITH->prec) {
-	  buf[WITH->prec] = '\0';
-/* p2c: log.text, line 2200:
- * Note: Modification of string length may translate incorrectly [146] */
-	}
-	WITH->UU.c = (Char *)Malloc(WITH->prec + 1L);
-	strcpy(WITH->UU.c, buf);
-	WITH->blnk = (*buf == '\0');
+        j1 = strposc(l1->s, ':', 1L);
+        sprintf(buf, "%.*s", j1 - 1, l1->s);
+        strrtrim(buf);
+        strcpy_overlap(l1->s, l1->s + j1 - 1);
+        if (!haveprec) WITH->prec = 255;
+        if (strlen(buf) > WITH->prec) {
+          buf[WITH->prec] = '\0';
+          /* p2c: log.text, line 2200:
+           * Note: Modification of string length may translate
+           * incorrectly [146] */
+        }
+        WITH->UU.c = (Char *)Malloc(WITH->prec + 1L);
+        strcpy(WITH->UU.c, buf);
+        WITH->blnk = (*buf == '\0');
       } else if (WITH->dtype == 'A') {
-	j1 = strposc(l1->s, ':', 1L);
-	sprintf(buf, "%.*s", j1 - 1, l1->s);
-	strrtrim(buf);
-	strcpy_overlap(l1->s, l1->s + j1 - 1);
-	WITH->prec = 255;
-	WITH->UU.sp = strdup(buf);
-	WITH->blnk = (*buf == '\0');
+        j1 = strposc(l1->s, ':', 1L);
+        sprintf(buf, "%.*s", j1 - 1, l1->s);
+        strrtrim(buf);
+        strcpy_overlap(l1->s, l1->s + j1 - 1);
+        WITH->prec = 255;
+        WITH->UU.sp = strdup(buf);
+        WITH->blnk = (*buf == '\0');
       } else if (WITH->dtype == 'B') {
-	WITH->blnk = false;
-	if (l1->s[0] == 'y' || l1->s[0] == 'Y' || l1->s[0] == 't' ||
-	    l1->s[0] == 'T')
-	  WITH->UU.b = true;
-	else if (l1->s[0] == 'n' || l1->s[0] == 'N' || l1->s[0] == 'f' ||
-		 l1->s[0] == 'F')
-	  WITH->UU.b = false;
-	else
-	  WITH->blnk = true;
-	if (l1->s[0] == 'x' || l1->s[0] == 'X' || l1->s[0] == 'f' ||
-	    l1->s[0] == 'F' || l1->s[0] == 't' || l1->s[0] == 'T')
-	  WITH->prec = 2;
-	else
-	  WITH->prec = 1;
+        WITH->blnk = false;
+        if (l1->s[0] == 'y' || l1->s[0] == 'Y' || l1->s[0] == 't' ||
+            l1->s[0] == 'T')
+          WITH->UU.b = true;
+        else if (l1->s[0] == 'n' || l1->s[0] == 'N' || l1->s[0] == 'f' ||
+                 l1->s[0] == 'F')
+          WITH->UU.b = false;
+        else
+          WITH->blnk = true;
+        if (l1->s[0] == 'x' || l1->s[0] == 'X' || l1->s[0] == 'f' ||
+            l1->s[0] == 'F' || l1->s[0] == 't' || l1->s[0] == 'T')
+          WITH->prec = 2;
+        else
+          WITH->prec = 1;
       } else if (WITH->dtype == 'V') {
-	strlist_init(&l2);
-	WITH->UU.U86.nv = 0;
-	do {
-	  *buf = '\0';
-	  while (l1->s[0] != ',' && l1->s[0] != ':') {
-	    sprintf(buf + strlen(buf), "%c", l1->s[0]);
-	    strcpy_overlap(l1->s, l1->s + 1);
-	  }
-	  if (l1->s[0] == ',')
-	    strcpy_overlap(l1->s, l1->s + 1);
-	  l3 = strlist_append(&l2,
-	      strcpy(STR1, strltrim(strrtrim(strcpy(STR2, buf)))));
-	  l3->value = (na_long)((long)WITH->UU.U86.nv);
-	  WITH->UU.U86.nv++;
-	  strcpy(STR1, strltrim(l1->s));
-	  strcpy(l1->s, STR1);
-	} while (l1->s[0] != ':');
-	WITH->UU.U86.v = l2;
-	WITH->blnk = false;
-	if (haveprec)
-	  WITH->UU.U86.dv = WITH->prec;
-	else
-	  WITH->UU.U86.dv = 0;
-	WITH->prec = 1;
+        strlist_init(&l2);
+        WITH->UU.U86.nv = 0;
+        do {
+          *buf = '\0';
+          while (l1->s[0] != ',' && l1->s[0] != ':') {
+            sprintf(buf + strlen(buf), "%c", l1->s[0]);
+            strcpy_overlap(l1->s, l1->s + 1);
+          }
+          if (l1->s[0] == ',') strcpy_overlap(l1->s, l1->s + 1);
+          l3 = strlist_append(
+              &l2, strcpy(STR1, strltrim(strrtrim(strcpy(STR2, buf)))));
+          l3->value = (na_long)((long)WITH->UU.U86.nv);
+          WITH->UU.U86.nv++;
+          strcpy(STR1, strltrim(l1->s));
+          strcpy(l1->s, STR1);
+        } while (l1->s[0] != ':');
+        WITH->UU.U86.v = l2;
+        WITH->blnk = false;
+        if (haveprec)
+          WITH->UU.U86.dv = WITH->prec;
+        else
+          WITH->UU.U86.dv = 0;
+        WITH->prec = 1;
       } else {
-	WITH->dtype = 'R';
-	WITH->UU.U82.r = 0.0;
-	WITH->blnk = true;
-	if (!haveprec)
-	  WITH->prec = 0;
+        WITH->dtype = 'R';
+        WITH->UU.U82.r = 0.0;
+        WITH->blnk = true;
+        if (!haveprec) WITH->prec = 0;
       }
-      if (WITH->blnk)
-	WITH->opt = true;
+      if (WITH->blnk) WITH->opt = true;
       j1 = strposc(l1->s, ':', 1L);
       strcpy_overlap(l1->s, l1->s + j1);
       j++;
       WITH->y = yy;
-      if (strlen(l1->s) > maxx)
-	maxx = strlen(l1->s);
+      if (strlen(l1->s) > maxx) maxx = strlen(l1->s);
     }
     j1 = 1;
     while (j1 < strlen(l1->s)) {
       if (l1->s[j1 - 1] == ':' && l1->s[j1] == ':')
-	strcpy_overlap(l1->s + j1 - 1, l1->s + j1);
+        strcpy_overlap(l1->s + j1 - 1, l1->s + j1);
       j1++;
     }
     yy++;
@@ -2391,14 +2080,8 @@ log_kattrrec **attr;
     l1->value = (Anyptr)attrnames;
   }
   FORLIM = *numattrs;
-  for (j = 0; j < FORLIM; j++)
-    (*attr)[j].x = maxx + 1;
+  for (j = 0; j < FORLIM; j++) (*attr)[j].x = maxx + 1;
 }
-
-
-
-
-
 
 Static Void stamp(i)
 long *i;
@@ -2406,9 +2089,6 @@ long *i;
   gg.curstamp++;
   *i = gg.curstamp;
 }
-
-
-
 
 Static Void newtool(t, name)
 log_tool **t;
@@ -2433,17 +2113,13 @@ Char *name;
   stamp(&(*t)->netstamp);
   (*t)->deltatime = 0.0;
   t2 = gg.toolbase;
-  while (t2 != NULL && t2->next != NULL)
-    t2 = t2->next;
+  while (t2 != NULL && t2->next != NULL) t2 = t2->next;
   if (t2 == NULL)
     gg.toolbase = *t;
   else
     t2->next = *t;
   (*t)->next = NULL;
 }
-
-
-
 
 Static log_tool *findtool(name_)
 Char *name_;
@@ -2454,7 +2130,7 @@ Char *name_;
   Char savefunc[17];
   Char saveargs[256];
   Char suffix[51];
-  Void (*proc) PP((log_action *act));
+  Void(*proc) PP((log_action * act));
   boolean ready;
   cnfrec *cnfp;
 
@@ -2462,10 +2138,8 @@ Char *name_;
   strcpy(savefunc, gg.func);
   strcpy(saveargs, gg.funcarg);
   lp = gg.toolbase;
-  while (lp != NULL && strcmp(lp->name, name))
-    lp = lp->next;
-  if (lp == NULL)
-    newtool(&lp, name);
+  while (lp != NULL && strcmp(lp->name, name)) lp = lp->next;
+  if (lp == NULL) newtool(&lp, name);
   if (!lp->ready) {
     sprintf(suffix, "LOG_%s_PROC", name);
     ready = newci_findprocedure2(suffix, (Void(**) PV())(&proc));
@@ -2473,17 +2147,15 @@ Char *name_;
       fprintf(tracefile, "Findtool to load: %s -  %s.\n", suffix, lp->fname);
     if (!ready && lp->fname != NULL) {
       TRY(try2);
-	newci_fixfname(lp->fname, "code", "");
-	if (gg.traceflag)
-	  fprintf(tracefile, "Findtool, loading %s\n", lp->fname);
-	newci_loadprogram(lp->fname);
+      newci_fixfname(lp->fname, "code", "");
+      if (gg.traceflag) fprintf(tracefile, "Findtool, loading %s\n", lp->fname);
+      newci_loadprogram(lp->fname);
       RECOVER(try2);
-	if (P_escapecode == -20)
-	  _Escape(P_escapecode);
+      if (P_escapecode == -20) _Escape(P_escapecode);
       ENDTRY(try2);
       ready = newci_findprocedure2(suffix, (Void(**) PV())(&proc));
       if (gg.traceflag)
-	fprintf(tracefile, "Findtool, ready=%s\n", ready ? " TRUE" : "FALSE");
+        fprintf(tracefile, "Findtool, ready=%s\n", ready ? " TRUE" : "FALSE");
     }
     if (ready) {
       lp->proc = proc;
@@ -2491,31 +2163,29 @@ Char *name_;
       gg.acttool = lp;
       (*proc)(&gg);
       if (lp->ready) {
-	cnfp = cnfbase;
-	while (cnfp != NULL) {
-	  if (!strcmp(cnfp->tool, name)) {
-	    doingcnffunction = true;
-	    gg.action = act_cnf;
-	    strcpy(gg.funcarg, cnfp->s);
-	    getword(gg.funcarg, gg.func);
-	    (*proc)(&gg);
-	    doingcnffunction = false;
-	  }
-	  cnfp = cnfp->next;
-	}
-	gg.action = act_color;
-	(*proc)(&gg);
-	gg.action = act_endinit;
-	(*proc)(&gg);
-	lp->nexttstep = 0.0;
-	lp->nnumattrs = 0;
-	lp->nattr = NULL;
-	if (lp->nlbl != NULL)
-	  parselabel(&lp->nlbl, &lp->nnumattrs, &lp->nattr);
-	lp->hnumattrs = 0;
-	lp->hattr = NULL;
-	if (lp->hlbl != NULL)
-	  parselabel(&lp->hlbl, &lp->hnumattrs, &lp->hattr);
+        cnfp = cnfbase;
+        while (cnfp != NULL) {
+          if (!strcmp(cnfp->tool, name)) {
+            doingcnffunction = true;
+            gg.action = act_cnf;
+            strcpy(gg.funcarg, cnfp->s);
+            getword(gg.funcarg, gg.func);
+            (*proc)(&gg);
+            doingcnffunction = false;
+          }
+          cnfp = cnfp->next;
+        }
+        gg.action = act_color;
+        (*proc)(&gg);
+        gg.action = act_endinit;
+        (*proc)(&gg);
+        lp->nexttstep = 0.0;
+        lp->nnumattrs = 0;
+        lp->nattr = NULL;
+        if (lp->nlbl != NULL) parselabel(&lp->nlbl, &lp->nnumattrs, &lp->nattr);
+        lp->hnumattrs = 0;
+        lp->hattr = NULL;
+        if (lp->hlbl != NULL) parselabel(&lp->hlbl, &lp->hnumattrs, &lp->hattr);
       }
     }
   }
@@ -2524,8 +2194,6 @@ Char *name_;
   strcpy(gg.funcarg, saveargs);
   return Result;
 }
-
-
 
 Static Void calltool(t, act)
 log_tool *t;
@@ -2540,8 +2208,6 @@ log_actionkinds act;
   gg.acttool = savetool;
 }
 
-
-
 Static Void calltoolgate(g, act)
 log_grec *g;
 log_actionkinds act;
@@ -2549,8 +2215,6 @@ log_actionkinds act;
   gg.actgate = g;
   calltool(g->kind->simtype, act);
 }
-
-
 
 Static Void calltoolnode(n, act)
 log_nrec *n;
@@ -2560,8 +2224,6 @@ log_actionkinds act;
   calltool(n->simtype, act);
 }
 
-
-
 Static Void calltoolkind(k, act)
 log_krec *k;
 log_actionkinds act;
@@ -2570,8 +2232,6 @@ log_actionkinds act;
   calltool(k->simtype, act);
 }
 
-
-
 Static Void calltools(act)
 log_actionkinds act;
 {
@@ -2579,12 +2239,10 @@ log_actionkinds act;
 
   tp = gg.toolbase;
   while (tp != NULL) {
-    if (tp->ready)
-      calltool(tp, act);
+    if (tp->ready) calltool(tp, act);
     tp = tp->next;
   }
 }
-
 
 Static Void callsimtools(act)
 log_actionkinds act;
@@ -2593,14 +2251,10 @@ log_actionkinds act;
 
   tp = gg.toolbase;
   while (tp != NULL) {
-    if (tp->ready && tp->simulator)
-      calltool(tp, act);
+    if (tp->ready && tp->simulator) calltool(tp, act);
     tp = tp->next;
   }
 }
-
-
-
 
 Static Void send_general(sim, act)
 log_tool *sim;
@@ -2614,8 +2268,6 @@ Char *act;
   strcpy(gg.genfunc, savefunc);
 }
 
-
-
 Static Void send_gennode(n, act)
 log_nrec *n;
 Char *act;
@@ -2627,7 +2279,6 @@ Char *act;
   calltoolnode(n, act_gennode);
   strcpy(gg.genfunc, savefunc);
 }
-
 
 Static Void send_genkind(k, act)
 log_krec *k;
@@ -2641,7 +2292,6 @@ Char *act;
   strcpy(gg.genfunc, savefunc);
 }
 
-
 Static Void send_gengate(g, act)
 log_grec *g;
 Char *act;
@@ -2653,8 +2303,6 @@ Char *act;
   calltoolgate(g, act_gengate);
   strcpy(gg.genfunc, savefunc);
 }
-
-
 
 Static Void send_all(act)
 Char *act;
@@ -2673,7 +2321,6 @@ Char *act;
   }
   strcpy(gg.genfunc, savefunc);
 }
-
 
 Static Void send_allnodes(act)
 Char *act;
@@ -2694,7 +2341,6 @@ Char *act;
   strcpy(gg.genfunc, savefunc);
 }
 
-
 Static Void send_allkinds(act)
 Char *act;
 {
@@ -2713,7 +2359,6 @@ Char *act;
   }
   strcpy(gg.genfunc, savefunc);
 }
-
 
 Static Void send_allgates(act)
 Char *act;
@@ -2734,23 +2379,14 @@ Char *act;
   strcpy(gg.genfunc, savefunc);
 }
 
-
-
-
-
-
 Static Void closetool(tp)
 log_tool *tp;
 {
-  if (tp->ready)
-    calltool(tp, act_exit);
+  if (tp->ready) calltool(tp, act_exit);
   tp->ready = false;
 }
 
-
-
-Static Void closetools()
-{
+Static Void closetools() {
   log_tool *tp;
 
   tp = gg.toolbase;
@@ -2759,8 +2395,6 @@ Static Void closetools()
     tp = tp->next;
   }
 }
-
-
 
 Static long glowcol(n, def)
 log_nrec *n;
@@ -2771,12 +2405,7 @@ long def;
   return (gg.actx);
 }
 
-
-
-
-
-Static Void resetmessages()
-{
+Static Void resetmessages() {
   short opos;
 
   opos = messagepos;
@@ -2788,22 +2417,17 @@ Static Void resetmessages()
   }
 }
 
-
-
-
-
 /*================  CLEARSCREEN  =================*/
 /*=                                              =*/
 /*=  Clear the screen.                           =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void clearscreen()
-{
+Static Void clearscreen() {
   remcursor();
   m_noclip();
   m_vsetcolors((long)gg.color.backgr, 1L, &rcolormap[gg.color.backgr],
-	       &gcolormap[gg.color.backgr], &bcolormap[gg.color.backgr]);
+               &gcolormap[gg.color.backgr], &bcolormap[gg.color.backgr]);
   m_color((long)gg.color.backgr);
   m_fillrect(0L, 0L, (long)across, (long)down);
   fixcolormap();
@@ -2812,25 +2436,13 @@ Static Void clearscreen()
   gg.showpage = 0;
 }
 
-
-
-
-Static Void clearshowalpha()
-{
-  if (onescreen)
-    clearscreen();
+Static Void clearshowalpha() {
+  if (onescreen) clearscreen();
   printf("\f");
   nk_gotoxy(0, 0);
   noblink();
   showalpha();
 }
-
-
-
-
-
-
-
 
 /*====================  PEN  =====================*/
 /*=                                              =*/
@@ -2849,8 +2461,7 @@ Static Void clearshowalpha()
 /*=                                              =*/
 /*================================================*/
 
-Static Void show_events()
-{
+Static Void show_events() {
   /*zEMBED
      char buf[30];
      extern int m_events_received;
@@ -2869,7 +2480,6 @@ Static Void show_events()
   */
 }
 
-
 /*==================  POLLKBD2  ==================*/
 /*=                                              =*/
 /*=  Return TRUE if a key has been pressed       =*/
@@ -2877,62 +2487,58 @@ Static Void show_events()
 /*=                                              =*/
 /*================================================*/
 
-Static boolean pollkbd2()
-{
+Static boolean pollkbd2() {
   return (nk_keybufsize() != 0 || pushedbackkey != '\0');
 }
 
 static void refrfunc();
 
-Static Void pen()
-{
-
+Static Void pen() {
 #define ALERTNESS 2 /* Time to get bored (in cs) */
-#define DOZETIME  5 /* Time to sleep after nodding off */
+#define DOZETIME 5  /* Time to sleep after nodding off */
 
   long x, y;
   short i, rx, ry, cred;
   /* Static boolean pollkbd2(void); */
   static int oldx, oldy;
   static long awake;
-  long now; 
+  long now;
   Char rval, gval, bval;
-
 
   /* the following section improves idling behavior       */
   /* contributed by Nick Bailey (een6njb@sun.leeds.ac.uk) */
 
   /* Keep on your toes if s/he's still twitching about! */
   now = timers_sysclock();
-  if (gg.t.x!=oldx || gg.t.y!=oldy || pollkbd2() || gg.busyflag  ) {
+  if (gg.t.x != oldx || gg.t.y != oldy || pollkbd2() || gg.busyflag) {
     awake = now;
-    oldx = gg.t.x; oldy = gg.t.y;
+    oldx = gg.t.x;
+    oldy = gg.t.y;
   }
   /* Be friendly when not running something important */
-  if (now-awake > (unsigned long)ALERTNESS)
-   millisleep((unsigned long)10*DOZETIME);
+  if (now - awake > (unsigned long)ALERTNESS)
+    millisleep((unsigned long)10 * DOZETIME);
 
   /* end of idling-improvement section */
 
   TRY(try3);
-    gg.t0 = gg.t;
-    m_readpen(&gg.t);
-    show_events();
-    gg.stillnear = (gg.stillnear && gg.t.near_);
-    gg.incircuit = (gg.t.y < baseline && gg.showpage > 0);
+  gg.t0 = gg.t;
+  m_readpen(&gg.t);
+  show_events();
+  gg.stillnear = (gg.stillnear && gg.t.near_);
+  gg.incircuit = (gg.t.y < baseline && gg.showpage > 0);
   RECOVER(try3);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    printf("Graphics tablet error\n");
-    m_init_pen(tabletaddr);
-    m_alpha_on();
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  printf("Graphics tablet error\n");
+  m_init_pen(tabletaddr);
+  m_alpha_on();
   ENDTRY(try3);
   if (snapflag && gg.incircuit) {
     gg.t.x = (gg.t.x + gg.hscale + gg.xoff) / gg.scale * gg.scale - gg.xoff;
     gg.t.y = (gg.t.y + gg.hscale + gg.yoff) / gg.scale * gg.scale - gg.yoff;
   }
-  if(gg.t.middle) {
-    //printf("middle %d %d\n",gg.t.x , gg.t.downx);
+  if (gg.t.middle) {
+    // printf("middle %d %d\n",gg.t.x , gg.t.downx);
     xoff0 -= gg.t.relx * gg.scale;
     yoff0 -= gg.t.rely * gg.scale;
     refrfunc();
@@ -2951,46 +2557,44 @@ Static Void pen()
     if (rx != rablist[rabstate].x || ry != rablist[rabstate].y) {
       i = abs(rablist[rabstate].next) - 1;
       do {
-	i++;
+        i++;
       } while ((rablist[i].x != rx || rablist[i].y != ry) &&
-	       rablist[i].next < 0);
+               rablist[i].next < 0);
       if (rablist[i].x == rx && rablist[i].y == ry) {
-	if (i == rablistsize) {
-	  remcursor();
-	  rabbits = !rabbits;
-	  if (rabbits && !gg.quiet) {
-	    i = 1;
-	    x = timers_sysclock();
-	    do {
-	      y = discomadness[i - 1].time;
-	      BEEPER(discomadness[i - 1].note, (int)y);
-	      do {
-	      } while (timers_sysclock() <= x + y);
-	      /* nothing */
-	      i++;
-	      x = timers_sysclock();
-	    } while (y != 0);
-	  }
-	  rabstate = 0;
-	} else
-	  rabstate = i;
+        if (i == rablistsize) {
+          remcursor();
+          rabbits = !rabbits;
+          if (rabbits && !gg.quiet) {
+            i = 1;
+            x = timers_sysclock();
+            do {
+              y = discomadness[i - 1].time;
+              BEEPER(discomadness[i - 1].note, (int)y);
+              do {
+              } while (timers_sysclock() <= x + y);
+              /* nothing */
+              i++;
+              x = timers_sysclock();
+            } while (y != 0);
+          }
+          rabstate = 0;
+        } else
+          rabstate = i;
       } else
-	rabstate = 0;
+        rabstate = 0;
     }
   } else
     rabstate = 0;
   if (gg.probemode) {
     if (cursx != gg.t.x || cursy != gg.t.y) {
-      if (gg.probesimtype != NULL)
-	checkprobe((int)gg.t.x, (int)gg.t.y);
+      if (gg.probesimtype != NULL) checkprobe((int)gg.t.x, (int)gg.t.y);
       probeflag = false;
       drawcursor((int)gg.t.x, (int)gg.t.y);
     } else {
-      if (!cursorflag)
-	drawcursor((int)gg.t.x, (int)gg.t.y);
+      if (!cursorflag) drawcursor((int)gg.t.x, (int)gg.t.y);
       if (!probeflag) {
-	testprobe((int)gg.t.x, (int)gg.t.y);
-	probeflag = true;
+        testprobe((int)gg.t.x, (int)gg.t.y);
+        probeflag = true;
       }
     }
     if (!gg.t.near_ && briefprobe) {
@@ -2999,8 +2603,7 @@ Static Void pen()
     }
   } else {
     briefprobe = false;
-    if (gg.probesimtype != NULL)
-      unprobe();
+    if (gg.probesimtype != NULL) unprobe();
     if (gg.t.near_)
       drawcursor((int)gg.t.x, (int)gg.t.y);
     else
@@ -3011,27 +2614,25 @@ Static Void pen()
       (rcolormap[cred] == 255 || gcolormap[cred] == 255 ||
        bcolormap[cred] == 255)) {
     x = timers_sysclock() * 6 % 137 + 119;
-/* p2c: log.text, line 2863:
- * Note: Using % for possibly-negative arguments [317] */
+    /* p2c: log.text, line 2863:
+     * Note: Using % for possibly-negative arguments [317] */
     rval = (Char)(x * rcolormap[cred] / 255);
     gval = (Char)(x * gcolormap[cred] / 255);
     bval = (Char)(x * bcolormap[cred] / 255);
-    m_vsetcolors((long)cred, 1L, (unsigned char *) &rval, 
-		 (unsigned char *) &gval, (unsigned char *) &bval);
+    m_vsetcolors((long)cred, 1L, (unsigned char *)&rval, (unsigned char *)&gval,
+                 (unsigned char *)&bval);
   }
   if (gg.t.moving) {
     gg.fastspeed = gg.fastmin;
     fastsavetime = timers_sysclock();
   } else if (gg.fastspeed < gg.fastmax &&
-	     timers_sysclock() > fastsavetime + gg.fastrate) {
+             timers_sysclock() > fastsavetime + gg.fastrate) {
     gg.fastspeed++;
     fastsavetime = timers_sysclock();
   }
   gg.gridx = (gg.t.x + gg.hscale + gg.xoff) / gg.scale;
   gg.gridy = (gg.t.y + gg.hscale + gg.yoff) / gg.scale;
 }
-
-
 
 /*=================  JUSTTAP  ====================*/
 /*=                                              =*/
@@ -3040,8 +2641,7 @@ Static Void pen()
 /*=                                              =*/
 /*================================================*/
 
-Static boolean justtap()
-{
+Static boolean justtap() {
   long t0;
   short tx, ty;
 
@@ -3051,14 +2651,9 @@ Static boolean justtap()
   do {
     pen();
   } while (gg.t.depressed && labs(gg.t.x - tx) <= taptolerance &&
-	   labs(gg.t.y - ty) <= taptolerance && timers_sysclock() <= t0);
+           labs(gg.t.y - ty) <= taptolerance && timers_sysclock() <= t0);
   return (!gg.t.depressed);
 }
-
-
-
-
-
 
 /*==================  TESTKEY2  ==================*/
 /*=                                              =*/
@@ -3066,8 +2661,7 @@ Static boolean justtap()
 /*=                                              =*/
 /*================================================*/
 
-Static Char testkey2()
-{
+Static Char testkey2() {
   if (pushedbackkey != '\0')
     return pushedbackkey;
   else if (pollkbd2())
@@ -3076,8 +2670,6 @@ Static Char testkey2()
     return ' ';
 }
 
-
-
 /*==================  INKEY2  ====================*/
 /*=                                              =*/
 /*=  Return a keystroke.  Key is removed from    =*/
@@ -3085,8 +2677,7 @@ Static Char testkey2()
 /*=                                              =*/
 /*================================================*/
 
-Static Char inkey2()
-{
+Static Char inkey2() {
   Char ch;
 
   do {
@@ -3098,13 +2689,15 @@ Static Char inkey2()
     realkey = nk_getkey();
   ch = realkey;
   if ((ch & 255) >= 168 && (ch & 255) <= 239 && nk_capslock) {
-/* p2c: log.text, line 2967: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 2967: Note: Character >= 128 encountered [281] */
+    /* p2c: log.text, line 2967: Note: Character >= 128 encountered [281] */
+    /* p2c: log.text, line 2967: Note: Character >= 128 encountered [281] */
     if ((ch & 255) <= 193) {
-/* p2c: log.text, line 2968: Note: Character >= 128 encountered [281] */
+      /* p2c: log.text, line 2968: Note: Character >= 128 encountered [281]
+       */
       ch += 46;
     } else if ((ch & 255) >= 214) {
-/* p2c: log.text, line 2970: Note: Character >= 128 encountered [281] */
+      /* p2c: log.text, line 2970: Note: Character >= 128 encountered [281]
+       */
       ch -= 46;
     }
   }
@@ -3112,22 +2705,16 @@ Static Char inkey2()
   return ch;
 }
 
-
 Static Void inkey3(ch)
 Char *ch;
-{
-  *ch = inkey2();
-}
+{ *ch = inkey2(); }
 
-
-Static Char inkey4()
-{
+Static Char inkey4() {
   /* undo CAPSLOCK key */
   Char ch;
 
   ch = inkey2();
-  if (!nk_capslock)
-    return ch;
+  if (!nk_capslock) return ch;
   if (isupper(ch))
     ch += 32;
   else if (islower(ch))
@@ -3135,14 +2722,9 @@ Static Char inkey4()
   return ch;
 }
 
-
 Static Void ungetkey2(ch)
 Char ch;
-{
-  pushedbackkey = ch;
-}
-
-
+{ pushedbackkey = ch; }
 
 /*===============  WAITFORKEY  ===================*/
 /*=                                              =*/
@@ -3150,22 +2732,15 @@ Char ch;
 /*=                                              =*/
 /*================================================*/
 
-Static Void waitforkey()
-{
+Static Void waitforkey() {
   Char ch;
 
-  while (pollkbd2())
-    ch = inkey2();
+  while (pollkbd2()) ch = inkey2();
   do {
     pen();
   } while (!(pollkbd2() || (gg.t.dn && gg.t.off)));
-  if (pollkbd2())
-    ch = inkey2();
+  if (pollkbd2()) ch = inkey2();
 }
-
-
-
-
 
 /*===================  INBOX  ====================*/
 /*=                                              =*/
@@ -3176,11 +2751,7 @@ Static Void waitforkey()
 
 Static boolean inbox(x, y, x1, y1)
 short x, y, x1, y1;
-{
-  return (gg.t.x >= x && gg.t.y >= y && gg.t.x <= x + x1 && gg.t.y <= y + y1);
-}
-
-
+{ return (gg.t.x >= x && gg.t.y >= y && gg.t.x <= x + x1 && gg.t.y <= y + y1); }
 
 /*================  UDRAWGATEC  ==================*/
 /*=                                              =*/
@@ -3196,86 +2767,83 @@ long x1, y1, x2, y2;
   long diam, savecol, coord;
 
   switch (v->vkind) {
-
-  case 'v':
-    m_drawline(x1, y1, x2, y2);
-    break;
-
-  case 'C':
-    diam = P_imax2(labs(x1 - x2), labs(y1 - y2));
-    switch (diam) {
-
-    case 3:
-      if (x1 == x2) {
-	coord = P_imin2(y1, y2);
-	m_move2(x1, coord);
-	m_draw(x1 + 2, coord + 1);
-	m_draw(x1 + 2, coord + 2);
-	m_draw(x1, coord + 3);
-	m_draw(x1 - 2, coord + 2);
-	m_draw(x1 - 2, coord + 1);
-	m_draw(x1, coord);
-      } else if (y1 == y2) {
-	coord = P_imin2(x1, x2);
-	m_move2(coord, y1);
-	m_draw(coord + 1, y1 + 2);
-	m_draw(coord + 2, y1 + 2);
-	m_draw(coord + 3, y1);
-	m_draw(coord + 2, y1 - 2);
-	m_draw(coord + 1, y1 - 2);
-	m_draw(coord, y1);
-      } else
-	m_circle((x1 + x2) / 2, (y1 + y2) / 2, 1L);
+    case 'v':
+      m_drawline(x1, y1, x2, y2);
       break;
 
-    case 5:
-      if (x1 == x2) {
-	coord = P_imin2(y1, y2);
-	m_move2(x1, coord);
-	m_draw(x1 + 3, coord + 1);
-	m_draw(x1 + 3, coord + 4);
-	m_draw(x1, coord + 5);
-	m_draw(x1 - 3, coord + 4);
-	m_draw(x1 - 3, coord + 1);
-	m_draw(x1, coord);
-      } else if (y1 == y2) {
-	coord = P_imin2(x1, x2);
-	m_move2(coord, y1);
-	m_draw(coord + 1, y1 + 3);
-	m_draw(coord + 4, y1 + 3);
-	m_draw(coord + 5, y1);
-	m_draw(coord + 4, y1 - 3);
-	m_draw(coord + 1, y1 - 3);
-	m_draw(coord, y1);
-      } else
-	m_circle((x1 + x2) / 2, (y1 + y2) / 2, 2L);
+    case 'C':
+      diam = P_imax2(labs(x1 - x2), labs(y1 - y2));
+      switch (diam) {
+        case 3:
+          if (x1 == x2) {
+            coord = P_imin2(y1, y2);
+            m_move2(x1, coord);
+            m_draw(x1 + 2, coord + 1);
+            m_draw(x1 + 2, coord + 2);
+            m_draw(x1, coord + 3);
+            m_draw(x1 - 2, coord + 2);
+            m_draw(x1 - 2, coord + 1);
+            m_draw(x1, coord);
+          } else if (y1 == y2) {
+            coord = P_imin2(x1, x2);
+            m_move2(coord, y1);
+            m_draw(coord + 1, y1 + 2);
+            m_draw(coord + 2, y1 + 2);
+            m_draw(coord + 3, y1);
+            m_draw(coord + 2, y1 - 2);
+            m_draw(coord + 1, y1 - 2);
+            m_draw(coord, y1);
+          } else
+            m_circle((x1 + x2) / 2, (y1 + y2) / 2, 1L);
+          break;
+
+        case 5:
+          if (x1 == x2) {
+            coord = P_imin2(y1, y2);
+            m_move2(x1, coord);
+            m_draw(x1 + 3, coord + 1);
+            m_draw(x1 + 3, coord + 4);
+            m_draw(x1, coord + 5);
+            m_draw(x1 - 3, coord + 4);
+            m_draw(x1 - 3, coord + 1);
+            m_draw(x1, coord);
+          } else if (y1 == y2) {
+            coord = P_imin2(x1, x2);
+            m_move2(coord, y1);
+            m_draw(coord + 1, y1 + 3);
+            m_draw(coord + 4, y1 + 3);
+            m_draw(coord + 5, y1);
+            m_draw(coord + 4, y1 - 3);
+            m_draw(coord + 1, y1 - 3);
+            m_draw(coord, y1);
+          } else
+            m_circle((x1 + x2) / 2, (y1 + y2) / 2, 2L);
+          break;
+
+        default:
+          m_circle((x1 + x2) / 2, (y1 + y2) / 2, diam / 2);
+          break;
+      }
       break;
 
-    default:
-      m_circle((x1 + x2) / 2, (y1 + y2) / 2, diam / 2);
+    case 'e':
+      savecol = m_curcolor();
+      m_color(m_trans);
+      m_ellipse((x1 + x2) / 2, (y1 + y2) / 2, (x1 - x2) / 2, (y1 - y2) / 2,
+                savecol);
+      m_color(savecol);
       break;
-    }
-    break;
 
-  case 'e':
-    savecol = m_curcolor();
-    m_color(m_trans);
-    m_ellipse((x1 + x2) / 2, (y1 + y2) / 2, (x1 - x2) / 2, (y1 - y2) / 2,
-	      savecol);
-    m_color(savecol);
-    break;
+    case 'E':
+      m_ellipse((x1 + x2) / 2, (y1 + y2) / 2, (x1 - x2) / 2, (y1 - y2) / 2,
+                m_curcolor());
+      break;
 
-  case 'E':
-    m_ellipse((x1 + x2) / 2, (y1 + y2) / 2, (x1 - x2) / 2, (y1 - y2) / 2,
-	      m_curcolor());
-    break;
-
-  case 'r':   /*should do a true roundrect*/
-    m_drawrect(x1, y1, x2, y2);
-    break;
+    case 'r': /*should do a true roundrect*/
+      m_drawrect(x1, y1, x2, y2);
+      break;
   }
 }
-
 
 Static Void drawvector4(v, x1, y1, x2, y2, x3, y3, x4, y4)
 log_vectorrec *v;
@@ -3284,29 +2852,28 @@ long x1, y1, x2, y2, x3, y3, x4, y4;
   long xarr[4], yarr[4];
 
   switch (v->vkind) {
+    case 'c':
+      m_bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+      break;
 
-  case 'c':
-    m_bezier(x1, y1, x2, y2, x3, y3, x4, y4);
-    break;
-
-  case 'F':
-    xarr[0] = x1;
-    yarr[0] = y1;
-    xarr[1] = x2;
-    yarr[1] = y2;
-    xarr[2] = x3;
-    yarr[2] = y3;
-    xarr[3] = x4;
-    yarr[3] = y4;
-    m_fillpoly(4L, (int *) xarr, (int *) yarr);
-    break;
+    case 'F':
+      xarr[0] = x1;
+      yarr[0] = y1;
+      xarr[1] = x2;
+      yarr[1] = y2;
+      xarr[2] = x3;
+      yarr[2] = y3;
+      xarr[3] = x4;
+      yarr[3] = y4;
+      m_fillpoly(4L, (int *)xarr, (int *)yarr);
+      break;
   }
 }
 
-
-#define big1            "0.,+123-456*789/\0()^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
-#define big2            "0.,\000123-456\000789 "
-
+#define big1         \
+  "0.,+123-456*789/" \
+  "\0()^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
+#define big2 "0.,\000123-456\000789 "
 
 Static Void drawtext(v, scale, rot, xx, yy)
 log_vectorrec *v;
@@ -3320,140 +2887,130 @@ long scale, rot, xx, yy;
   sc = v->UU.U116.tsize * scale;
   if (sc >= log_scale0 * 70) {
     tx = (v->UU.U116.torg % 3 - 1) * log_rotxx[rot] +
-	 (v->UU.U116.torg / 3 - 1) * log_rotyx[rot];
+         (v->UU.U116.torg / 3 - 1) * log_rotyx[rot];
     ty = (v->UU.U116.torg % 3 - 1) * log_rotxy[rot] +
-	 (v->UU.U116.torg / 3 - 1) * log_rotyy[rot];
+         (v->UU.U116.torg / 3 - 1) * log_rotyy[rot];
     i = strposc(v->UU.U116.sp, '$', 1L);
     if (i > 0 && i < strlen(v->UU.U116.sp)) {
       strcpy(buf, v->UU.U116.sp);
       mode = 'X';
       while (i <= strlen(buf)) {
-	if (buf[i - 1] == '$' && i < strlen(buf)) {
-	  switch (toupper(buf[i])) {
+        if (buf[i - 1] == '$' && i < strlen(buf)) {
+          switch (toupper(buf[i])) {
+            case '$':
+              strcpy_overlap(buf + i - 1, buf + i);
+              i++;
+              break;
 
-	  case '$':
-	    strcpy_overlap(buf + i - 1, buf + i);
-	    i++;
-	    break;
+            case 'P':
+            case 'B':
+            case 'O':
+            case 'X':
+              mode = toupper(buf[i]); /*close enough*/
+              strcpy_overlap(buf + i - 1, buf + i + 1);
+              break;
 
-	  case 'P':
-	  case 'B':
-	  case 'O':
-	  case 'X':
-	    mode = toupper(buf[i]);   /*close enough*/
-	    strcpy_overlap(buf + i - 1, buf + i + 1);
-	    break;
+            default:
+              i++;
+              break;
+          }
+          continue;
+        }
+        switch (mode) {
+          case 'P':
+            j = strposc("0.,+123-456*789/E()^", buf[i - 1], 1L);
+            if (j > 0) buf[i - 1] = (Char)(j + 147);
+            break;
 
-	  default:
-	    i++;
-	    break;
-	  }
-	  continue;
-	}
-	switch (mode) {
+          case 'B':
+            j = strposc("0.,+123-456*789/\0()^ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                        toupper(buf[i - 1]), 1L);
+            if (j > 20)
+              buf[i - 1] = (Char)(j + 147);
+            else if (j > 0)
+              buf[i - 1] = (Char)(j + 127);
+            break;
 
-	case 'P':
-	  j = strposc("0.,+123-456*789/E()^", buf[i - 1], 1L);
-	  if (j > 0)
-	    buf[i - 1] = (Char)(j + 147);
-	  break;
-
-	case 'B':
-	  j = strposc("0.,+123-456*789/\0()^ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-		      toupper(buf[i - 1]), 1L);
-	  if (j > 20)
-	    buf[i - 1] = (Char)(j + 147);
-	  else if (j > 0)
-	    buf[i - 1] = (Char)(j + 127);
-	  break;
-
-	case 'O':
-	  j = strposc("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-		      toupper(buf[i - 1]), 1L);
-	  if (j > 0)
-	    buf[i - 1] = (Char)(j + 213);
-	  break;
-	}
-	i++;
+          case 'O':
+            j = strposc("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+                        toupper(buf[i - 1]), 1L);
+            if (j > 0) buf[i - 1] = (Char)(j + 213);
+            break;
+        }
+        i++;
       }
       switch (tx) {
+        case -1:
+          m_drawstr(xx, yy - (ty + 1) * 3, NULL, buf);
+          break;
 
-      case -1:
-	m_drawstr(xx, yy - (ty + 1) * 3, NULL, buf);
-	break;
+        case 0:
+          m_centerstr(xx, yy - (ty + 1) * 3, NULL, buf);
+          break;
 
-      case 0:
-	m_centerstr(xx, yy - (ty + 1) * 3, NULL, buf);
-	break;
-
-      case 1:
-	m_rightstr(xx, yy - (ty + 1) * 3, NULL, buf);
-	break;
+        case 1:
+          m_rightstr(xx, yy - (ty + 1) * 3, NULL, buf);
+          break;
       }
       return;
     }
     switch (tx) {
+      case -1:
+        m_drawstr(xx, yy - (ty + 1) * 3, NULL, v->UU.U116.sp);
+        break;
 
-    case -1:
-      m_drawstr(xx, yy - (ty + 1) * 3, NULL, v->UU.U116.sp);
-      break;
+      case 0:
+        m_centerstr(xx, yy - (ty + 1) * 3, NULL, v->UU.U116.sp);
+        break;
 
-    case 0:
-      m_centerstr(xx, yy - (ty + 1) * 3, NULL, v->UU.U116.sp);
-      break;
-
-    case 1:
-      m_rightstr(xx, yy - (ty + 1) * 3, NULL, v->UU.U116.sp);
-      break;
+      case 1:
+        m_rightstr(xx, yy - (ty + 1) * 3, NULL, v->UU.U116.sp);
+        break;
     }
     return;
   }
-  if (sc < log_scale0 * 40)
-    return;
+  if (sc < log_scale0 * 40) return;
   if (sc >= log_scale0 * 50) {
-    if (!strsubset(v->UU.U116.sp, big1))
-      return;
+    if (!strsubset(v->UU.U116.sp, big1)) return;
     buf[strlen(v->UU.U116.sp)] = '\0';
     FORLIM = strlen(v->UU.U116.sp);
-/* p2c: log.text, line 3242:
- * Note: Modification of string length may translate incorrectly [146] */
+    /* p2c: log.text, line 3242:
+     * Note: Modification of string length may translate incorrectly [146] */
     for (i = 0; i < FORLIM; i++) {
       j = strposc(big1, v->UU.U116.sp[i], 1L);
       if (j <= 20)
-	buf[i] = (Char)(j + 127);
+        buf[i] = (Char)(j + 127);
       else if (j <= 46)
-	buf[i] = (Char)(j + 147);
+        buf[i] = (Char)(j + 147);
       else if (j <= 72)
-	buf[i] = (Char)(j + 121);
+        buf[i] = (Char)(j + 121);
       else
-	buf[i] = ' ';
+        buf[i] = ' ';
     }
     tx = (v->UU.U116.torg % 3 - 1) * log_rotxx[rot] +
-	 (v->UU.U116.torg / 3 - 1) * log_rotyx[rot];
+         (v->UU.U116.torg / 3 - 1) * log_rotyx[rot];
     ty = (v->UU.U116.torg % 3 - 1) * log_rotxy[rot] +
-	 (v->UU.U116.torg / 3 - 1) * log_rotyy[rot];
+         (v->UU.U116.torg / 3 - 1) * log_rotyy[rot];
     switch (tx) {
+      case -1:
+        m_drawstr(xx, yy - (ty + 2) * 2, NULL, buf);
+        break;
 
-    case -1:
-      m_drawstr(xx, yy - (ty + 2) * 2, NULL, buf);
-      break;
+      case 0:
+        m_centerstr(xx, yy - (ty + 2) * 2, NULL, buf);
+        break;
 
-    case 0:
-      m_centerstr(xx, yy - (ty + 2) * 2, NULL, buf);
-      break;
-
-    case 1:
-      m_rightstr(xx, yy - (ty + 2) * 2, NULL, buf);
-      break;
+      case 1:
+        m_rightstr(xx, yy - (ty + 2) * 2, NULL, buf);
+        break;
     }
     return;
   }
-  if (!strsubset(v->UU.U116.sp, big2))
-    return;
+  if (!strsubset(v->UU.U116.sp, big2)) return;
   buf[strlen(v->UU.U116.sp)] = '\0';
   FORLIM = strlen(v->UU.U116.sp);
-/* p2c: log.text, line 3268:
- * Note: Modification of string length may translate incorrectly [146] */
+  /* p2c: log.text, line 3268:
+   * Note: Modification of string length may translate incorrectly [146] */
   for (i = 0; i < FORLIM; i++) {
     j = strposc(big2, v->UU.U116.sp[i], 1L);
     if (j <= 15)
@@ -3466,25 +3023,22 @@ long scale, rot, xx, yy;
   ty = (v->UU.U116.torg % 3 - 1) * log_rotxy[rot] +
        (v->UU.U116.torg / 3 - 1) * log_rotyy[rot];
   switch (tx) {
+    case -1:
+      m_drawstr(xx, yy - (ty + 1) * 2 - 3, NULL, buf);
+      break;
 
-  case -1:
-    m_drawstr(xx, yy - (ty + 1) * 2 - 3, NULL, buf);
-    break;
+    case 0:
+      m_centerstr(xx, yy - (ty + 1) * 2 - 3, NULL, buf);
+      break;
 
-  case 0:
-    m_centerstr(xx, yy - (ty + 1) * 2 - 3, NULL, buf);
-    break;
-
-  case 1:
-    m_rightstr(xx, yy - (ty + 1) * 2 - 3, NULL, buf);
-    break;
+    case 1:
+      m_rightstr(xx, yy - (ty + 1) * 2 - 3, NULL, buf);
+      break;
   }
 }
 
 #undef big1
 #undef big2
-
-
 
 Static Void plaindrawgatec(x, y, g, c)
 short x, y, g, c;
@@ -3497,8 +3051,7 @@ short x, y, g, c;
 
   k = kind[(g & (log_kindoffset - 1)) - 1];
   z = log_scale0 * k->bbmax + 2;
-  if (x < -z || x > across + z || y < -z || y > down + z)
-    return;
+  if (x < -z || x > across + z || y < -z || y > down + z) return;
   hidecursor();
   hascolor = (c != gg.color.backgr && c != gg.color.conflict);
   m_color((long)c);
@@ -3507,65 +3060,57 @@ short x, y, g, c;
     for (i = 0; i < FORLIM; i++) {
       WITH1 = &k->vector[i];
       switch (WITH1->vkind) {
+        case '1':
+          if (hascolor) m_color((long)c);
+          break;
 
-      case '1':
-	if (hascolor)
-	  m_color((long)c);
-	break;
+        case '2':
+          if (hascolor) m_color((long)gategreen);
+          break;
 
-      case '2':
-	if (hascolor)
-	  m_color((long)gategreen);
-	break;
+        case '3':
+          if (hascolor) m_color((long)gateyellow);
+          break;
 
-      case '3':
-	if (hascolor)
-	  m_color((long)gateyellow);
-	break;
+        case '4':
+          if (hascolor) m_color((long)gatered);
+          break;
 
-      case '4':
-	if (hascolor)
-	  m_color((long)gatered);
-	break;
+        case '5':
+          if (hascolor) m_color((long)gateorange);
+          break;
 
-      case '5':
-	if (hascolor)
-	  m_color((long)gateorange);
-	break;
+        case '6':
+          if (hascolor) m_color((long)gateblack);
+          break;
 
-      case '6':
-	if (hascolor)
-	  m_color((long)gateblack);
-	break;
+        case '7':
+          if (hascolor) m_color((long)gatewhite);
+          break;
 
-      case '7':
-	if (hascolor)
-	  m_color((long)gatewhite);
-	break;
+        case 'v':
+        case 'C':
+        case 'e':
+        case 'E':
+        case 'r':
+          drawvector2(&k->vector[i], (long)(x + WITH1->x1),
+                      (long)(y + WITH1->y1), (long)(x + WITH1->UU.U99.x2),
+                      (long)(y + WITH1->UU.U99.y2));
+          break;
 
-      case 'v':
-      case 'C':
-      case 'e':
-      case 'E':
-      case 'r':
-	drawvector2(&k->vector[i], (long)(x + WITH1->x1),
-		    (long)(y + WITH1->y1), (long)(x + WITH1->UU.U99.x2),
-		    (long)(y + WITH1->UU.U99.y2));
-	break;
+        case 'c':
+        case 'F':
+          drawvector4(
+              &k->vector[i], (long)(x + WITH1->x1), (long)(y + WITH1->y1),
+              (long)(x + WITH1->UU.U99.x2), (long)(y + WITH1->UU.U99.y2),
+              (long)(x + WITH1->UU.U99.x3), (long)(y + WITH1->UU.U99.y3),
+              (long)(x + WITH1->UU.U99.x4), (long)(y + WITH1->UU.U99.y4));
+          break;
 
-      case 'c':
-      case 'F':
-	drawvector4(&k->vector[i], (long)(x + WITH1->x1),
-	  (long)(y + WITH1->y1), (long)(x + WITH1->UU.U99.x2),
-	  (long)(y + WITH1->UU.U99.y2), (long)(x + WITH1->UU.U99.x3),
-	  (long)(y + WITH1->UU.U99.y3), (long)(x + WITH1->UU.U99.x4),
-	  (long)(y + WITH1->UU.U99.y4));
-	break;
-
-      case 't':
-	drawtext(&k->vector[i], (long)log_scale0, 0L, (long)(x + WITH1->x1),
-		 (long)(y + WITH1->y1));
-	break;
+        case 't':
+          drawtext(&k->vector[i], (long)log_scale0, 0L, (long)(x + WITH1->x1),
+                   (long)(y + WITH1->y1));
+          break;
       }
     }
   } else {
@@ -3578,79 +3123,69 @@ short x, y, g, c;
     for (i = 0; i < FORLIM; i++) {
       WITH1 = &k->vector[i];
       switch (WITH1->vkind) {
+        case '1':
+          if (hascolor) m_color((long)c);
+          break;
 
-      case '1':
-	if (hascolor)
-	  m_color((long)c);
-	break;
+        case '2':
+          if (hascolor) m_color((long)gategreen);
+          break;
 
-      case '2':
-	if (hascolor)
-	  m_color((long)gategreen);
-	break;
+        case '3':
+          if (hascolor) m_color((long)gateyellow);
+          break;
 
-      case '3':
-	if (hascolor)
-	  m_color((long)gateyellow);
-	break;
+        case '4':
+          if (hascolor) m_color((long)gatered);
+          break;
 
-      case '4':
-	if (hascolor)
-	  m_color((long)gatered);
-	break;
+        case '5':
+          if (hascolor) m_color((long)gateorange);
+          break;
 
-      case '5':
-	if (hascolor)
-	  m_color((long)gateorange);
-	break;
+        case '6':
+          if (hascolor) m_color((long)gateblack);
+          break;
 
-      case '6':
-	if (hascolor)
-	  m_color((long)gateblack);
-	break;
+        case '7':
+          if (hascolor) m_color((long)gatewhite);
+          break;
 
-      case '7':
-	if (hascolor)
-	  m_color((long)gatewhite);
-	break;
+        case 'v':
+        case 'C':
+        case 'e':
+        case 'E':
+        case 'r':
+          drawvector2(
+              &k->vector[i], (long)(x + WITH1->x1 * rxx + WITH1->y1 * ryx),
+              (long)(y + WITH1->x1 * rxy + WITH1->y1 * ryy),
+              (long)(x + WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx),
+              (long)(y + WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy));
+          break;
 
-      case 'v':
-      case 'C':
-      case 'e':
-      case 'E':
-      case 'r':
-	drawvector2(&k->vector[i],
-	  (long)(x + WITH1->x1 * rxx + WITH1->y1 * ryx),
-	  (long)(y + WITH1->x1 * rxy + WITH1->y1 * ryy),
-	  (long)(x + WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx),
-	  (long)(y + WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy));
-	break;
+        case 'c':
+        case 'F':
+          drawvector4(
+              &k->vector[i], (long)(x + WITH1->x1 * rxx + WITH1->y1 * ryx),
+              (long)(y + WITH1->x1 * rxy + WITH1->y1 * ryy),
+              (long)(x + WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx),
+              (long)(y + WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy),
+              (long)(x + WITH1->UU.U99.x3 * rxx + WITH1->UU.U99.y3 * ryx),
+              (long)(y + WITH1->UU.U99.x3 * rxy + WITH1->UU.U99.y3 * ryy),
+              (long)(x + WITH1->UU.U99.x4 * rxx + WITH1->UU.U99.y4 * ryx),
+              (long)(y + WITH1->UU.U99.x4 * rxy + WITH1->UU.U99.y4 * ryy));
+          break;
 
-      case 'c':
-      case 'F':
-	drawvector4(&k->vector[i],
-	  (long)(x + WITH1->x1 * rxx + WITH1->y1 * ryx),
-	  (long)(y + WITH1->x1 * rxy + WITH1->y1 * ryy),
-	  (long)(x + WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx),
-	  (long)(y + WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy),
-	  (long)(x + WITH1->UU.U99.x3 * rxx + WITH1->UU.U99.y3 * ryx),
-	  (long)(y + WITH1->UU.U99.x3 * rxy + WITH1->UU.U99.y3 * ryy),
-	  (long)(x + WITH1->UU.U99.x4 * rxx + WITH1->UU.U99.y4 * ryx),
-	  (long)(y + WITH1->UU.U99.x4 * rxy + WITH1->UU.U99.y4 * ryy));
-	break;
-
-      case 't':
-	drawtext(&k->vector[i], (long)log_scale0, (long)z,
-		 (long)(x + WITH1->x1 * rxx + WITH1->y1 * ryx),
-		 (long)(y + WITH1->x1 * rxy + WITH1->y1 * ryy));
-	break;
+        case 't':
+          drawtext(&k->vector[i], (long)log_scale0, (long)z,
+                   (long)(x + WITH1->x1 * rxx + WITH1->y1 * ryx),
+                   (long)(y + WITH1->x1 * rxy + WITH1->y1 * ryy));
+          break;
       }
     }
   }
   hidecursor();
 }
-
-
 
 Static Void udrawgatec(x, y, g, c)
 short x, y, g, c;
@@ -3675,8 +3210,7 @@ short x, y, g, c;
   }
   hascolor = (c != gg.color.backgr);
   z = log_scale0 * k->bbmax + 2;
-  if (x < -z || x > across + z || y < -z || y > down + z)
-    return;
+  if (x < -z || x > across + z || y < -z || y > down + z) return;
   z = g / log_kindoffset;
   rxx = log_rotxx[z] * maxsafescale;
   rxy = log_rotxy[z] * maxsafescale;
@@ -3688,80 +3222,75 @@ short x, y, g, c;
   for (i = 0; i < FORLIM; i++) {
     WITH1 = &k->vector[i];
     switch (WITH1->vkind) {
+      case '1':
+        if (hascolor) m_color((long)c);
+        break;
 
-    case '1':
-      if (hascolor)
-	m_color((long)c);
-      break;
+      case '2':
+        if (hascolor) m_color((long)gategreen);
+        break;
 
-    case '2':
-      if (hascolor)
-	m_color((long)gategreen);
-      break;
+      case '3':
+        if (hascolor) m_color((long)gateyellow);
+        break;
 
-    case '3':
-      if (hascolor)
-	m_color((long)gateyellow);
-      break;
+      case '4':
+        if (hascolor) m_color((long)gatered);
+        break;
 
-    case '4':
-      if (hascolor)
-	m_color((long)gatered);
-      break;
+      case '5':
+        if (hascolor) m_color((long)gateorange);
+        break;
 
-    case '5':
-      if (hascolor)
-	m_color((long)gateorange);
-      break;
+      case '6':
+        if (hascolor) m_color((long)gateblack);
+        break;
 
-    case '6':
-      if (hascolor)
-	m_color((long)gateblack);
-      break;
+      case '7':
+        if (hascolor) m_color((long)gatewhite);
+        break;
 
-    case '7':
-      if (hascolor)
-	m_color((long)gatewhite);
-      break;
+      case 'v':
+      case 'C':
+      case 'e':
+      case 'E':
+      case 'r':
+        drawvector2(
+            &k->vector[i],
+            (long)(x + (WITH1->x1 * rxx + WITH1->y1 * ryx) / k->bbmax),
+            (long)(y + (WITH1->x1 * rxy + WITH1->y1 * ryy) / k->bbmax),
+            (long)(x + (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) /
+                           k->bbmax),
+            (long)(y + (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) /
+                           k->bbmax));
+        break;
 
-    case 'v':
-    case 'C':
-    case 'e':
-    case 'E':
-    case 'r':
-      drawvector2(&k->vector[i],
-	(long)(x + (WITH1->x1 * rxx + WITH1->y1 * ryx) / k->bbmax),
-	(long)(y + (WITH1->x1 * rxy + WITH1->y1 * ryy) / k->bbmax),
-	(long)(x + (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) / k->bbmax),
-	(long)(y + (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) / k->bbmax));
-      break;
-
-    case 'c':
-    case 'F':
-      drawvector4(&k->vector[i], (long)(x + (WITH1->x1 * rxx +
-		WITH1->y1 * ryx) / k->bbmax), (long)
-	  (y + (WITH1->x1 * rxy + WITH1->y1 * ryy) / k->bbmax), (long)
-	  (x + (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) / k->bbmax),
-	(long)
-	  (y + (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) / k->bbmax),
-	(long)
-	  (x + (WITH1->UU.U99.x3 * rxx + WITH1->UU.U99.y3 * ryx) / k->bbmax),
-	(long)
-	  (y + (WITH1->UU.U99.x3 * rxy + WITH1->UU.U99.y3 * ryy) / k->bbmax),
-	(long)
-	  (x + (WITH1->UU.U99.x4 * rxx + WITH1->UU.U99.y4 * ryx) / k->bbmax),
-	(long)
-	  (y + (WITH1->UU.U99.x4 * rxy + WITH1->UU.U99.y4 * ryy) / k->bbmax));
-/* p2c: log.text, line 3438: Note:
- * Line breaker spent 0.0+6.00 seconds, 5000 tries on line 3682 [251] */
-      break;
+      case 'c':
+      case 'F':
+        drawvector4(
+            &k->vector[i],
+            (long)(x + (WITH1->x1 * rxx + WITH1->y1 * ryx) / k->bbmax),
+            (long)(y + (WITH1->x1 * rxy + WITH1->y1 * ryy) / k->bbmax),
+            (long)(x + (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) /
+                           k->bbmax),
+            (long)(y + (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) /
+                           k->bbmax),
+            (long)(x + (WITH1->UU.U99.x3 * rxx + WITH1->UU.U99.y3 * ryx) /
+                           k->bbmax),
+            (long)(y + (WITH1->UU.U99.x3 * rxy + WITH1->UU.U99.y3 * ryy) /
+                           k->bbmax),
+            (long)(x + (WITH1->UU.U99.x4 * rxx + WITH1->UU.U99.y4 * ryx) /
+                           k->bbmax),
+            (long)(y + (WITH1->UU.U99.x4 * rxy + WITH1->UU.U99.y4 * ryy) /
+                           k->bbmax));
+        /* p2c: log.text, line 3438: Note:
+         * Line breaker spent 0.0+6.00 seconds, 5000 tries on line 3682 [251]
+         */
+        break;
     }
   }
   hidecursor();
 }
-
-
-
 
 /*=================  DRAWGATEC  ==================*/
 /*=                                              =*/
@@ -3777,8 +3306,7 @@ short x, y, g, c;
   log_krec *WITH;
   short FORLIM;
 
-  if (g == 0 || vlsi)
-    return;
+  if (g == 0 || vlsi) return;
   m_color((long)c);
   z = g / log_kindoffset;
   if (z != 0) {
@@ -3790,15 +3318,13 @@ short x, y, g, c;
     FORLIM = WITH->numpins;
     for (i = 0; i < FORLIM; i++)
       point(x + WITH->pin[i].x * rxx + WITH->pin[i].y * ryx,
-	    y + WITH->pin[i].x * rxy + WITH->pin[i].y * ryy);
+            y + WITH->pin[i].x * rxy + WITH->pin[i].y * ryy);
     return;
   }
   WITH = kind[(g & (log_kindoffset - 1)) - 1];
   FORLIM = WITH->numpins;
-  for (i = 0; i < FORLIM; i++)
-    point(x + WITH->pin[i].x, y + WITH->pin[i].y);
+  for (i = 0; i < FORLIM; i++) point(x + WITH->pin[i].x, y + WITH->pin[i].y);
 }
-
 
 Static Void drawgatec(x, y, g, c)
 short x, y, g, c;
@@ -3811,8 +3337,8 @@ short x, y, g, c;
   log_vectorrec *WITH1;
 
   if (zoom == 0)
-    plaindrawgatec((int)(x * gg.scale - gg.xoff),
-		   (int)(y * gg.scale - gg.yoff), g, c);
+    plaindrawgatec((int)(x * gg.scale - gg.xoff), (int)(y * gg.scale - gg.yoff),
+                   g, c);
   else {
     z = g / log_kindoffset;
     rxx = log_rotxx[z] * gg.scale;
@@ -3829,129 +3355,136 @@ short x, y, g, c;
     for (i = 0; i < FORLIM; i++) {
       WITH1 = &WITH->vector[i];
       switch (WITH1->vkind) {
+        case '1':
+          if (hascolor) m_color((long)c);
+          break;
 
-      case '1':
-	if (hascolor)
-	  m_color((long)c);
-	break;
+        case '2':
+          if (hascolor) m_color((long)gategreen);
+          break;
 
-      case '2':
-	if (hascolor)
-	  m_color((long)gategreen);
-	break;
+        case '3':
+          if (hascolor) m_color((long)gateyellow);
+          break;
 
-      case '3':
-	if (hascolor)
-	  m_color((long)gateyellow);
-	break;
+        case '4':
+          if (hascolor) m_color((long)gatered);
+          break;
 
-      case '4':
-	if (hascolor)
-	  m_color((long)gatered);
-	break;
+        case '5':
+          if (hascolor) m_color((long)gateorange);
+          break;
 
-      case '5':
-	if (hascolor)
-	  m_color((long)gateorange);
-	break;
+        case '6':
+          if (hascolor) m_color((long)gateblack);
+          break;
 
-      case '6':
-	if (hascolor)
-	  m_color((long)gateblack);
-	break;
+        case '7':
+          if (hascolor) m_color((long)gatewhite);
+          break;
 
-      case '7':
-	if (hascolor)
-	  m_color((long)gatewhite);
-	break;
+        case 'v':
+        case 'r':
+          drawvector2(
+              &WITH->vector[i],
+              (long)(xx + (WITH1->x1 * rxx + WITH1->y1 * ryx) / log_scale0),
+              (long)(yy + (WITH1->x1 * rxy + WITH1->y1 * ryy) / log_scale0),
+              (long)(xx + (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) /
+                              log_scale0),
+              (long)(yy + (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) /
+                              log_scale0));
+          /* p2c: log.text, line 3556: Note:
+           * Line breaker spent 1.0+1.00 seconds, 5000 tries on line 3806
+           * [251] */
+          break;
 
-      case 'v':
-      case 'r':
-	drawvector2(
-	  &WITH->vector[i],
-	  (long)(xx + (WITH1->x1 * rxx + WITH1->y1 * ryx) / log_scale0),
-	  (long)(yy + (WITH1->x1 * rxy + WITH1->y1 * ryy) / log_scale0),
-	  (long)
-	    (xx + (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) / log_scale0),
-	  (long)
-	  (yy +
-	   (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) / log_scale0));
-/* p2c: log.text, line 3556: Note:
- * Line breaker spent 1.0+1.00 seconds, 5000 tries on line 3806 [251] */
-	break;
+        case 'C':
+          m_circle(xx + ((WITH1->x1 + WITH1->UU.U99.x2) * rxx +
+                         (WITH1->y1 + WITH1->UU.U99.y2) * ryx) /
+                            (log_scale0 * 2L),
+                   yy + ((WITH1->x1 + WITH1->UU.U99.x2) * rxy +
+                         (WITH1->y1 + WITH1->UU.U99.y2) * ryy) /
+                            (log_scale0 * 2L),
+                   P_imax2((long)abs((WITH1->x1 - WITH1->UU.U99.x2) * rxx +
+                                     (WITH1->y1 - WITH1->UU.U99.y2) * ryx),
+                           (long)abs((WITH1->x1 - WITH1->UU.U99.x2) * ryx +
+                                     (WITH1->y1 - WITH1->UU.U99.y2) * ryy)) /
+                       (log_scale0 * 2));
+          /* p2c: log.text, line 3556: Note:
+           * Line breaker spent 0.0+5.00 seconds, 5000 tries on line 3820
+           * [251] */
+          break;
 
-      case 'C':
-	m_circle(xx + ((WITH1->x1 + WITH1->UU.U99.x2) * rxx + (WITH1->y1 +
-		    WITH1->UU.U99.y2) * ryx) / (log_scale0 * 2L),
-	  yy + ((WITH1->x1 + WITH1->UU.U99.x2) * rxy + (WITH1->y1 + WITH1->
-		      UU.U99.y2) * ryy) / (log_scale0 * 2L),
-	  P_imax2((long)abs((WITH1->x1 - WITH1->UU.U99.x2) * rxx +
-		    (WITH1->y1 - WITH1->UU.U99.y2) * ryx),
-	      (long)abs((WITH1->x1 - WITH1->UU.U99.x2) * ryx +
-		    (WITH1->y1 - WITH1->UU.U99.y2) * ryy)) /
-	    (log_scale0 * 2));
-/* p2c: log.text, line 3556: Note:
- * Line breaker spent 0.0+5.00 seconds, 5000 tries on line 3820 [251] */
-	break;
+        case 'e':
+          savecol = m_curcolor();
+          m_color(m_trans);
+          m_ellipse(xx + ((WITH1->x1 + WITH1->UU.U99.x2) * rxx +
+                          (WITH1->y1 + WITH1->UU.U99.y2) * ryx) /
+                             (log_scale0 * 2L),
+                    yy + ((WITH1->x1 + WITH1->UU.U99.x2) * rxy +
+                          (WITH1->y1 + WITH1->UU.U99.y2) * ryy) /
+                             (log_scale0 * 2L),
+                    ((WITH1->x1 - WITH1->UU.U99.x2) * rxx +
+                     (WITH1->y1 - WITH1->UU.U99.y2) * ryx) /
+                        (log_scale0 * 2L),
+                    ((WITH1->x1 - WITH1->UU.U99.x2) * ryx +
+                     (WITH1->y1 - WITH1->UU.U99.y2) * ryy) /
+                        (log_scale0 * 2L),
+                    savecol);
+          /* p2c: log.text, line 3556: Note:
+           * Line breaker spent 1.0+3.00 seconds, 5000 tries on line 3837
+           * [251] */
+          m_color(savecol);
+          break;
 
-      case 'e':
-	savecol = m_curcolor();
-	m_color(m_trans);
-	m_ellipse(
-	  xx + ((WITH1->x1 + WITH1->UU.U99.x2) * rxx +
-		(WITH1->y1 + WITH1->UU.U99.y2) * ryx) / (log_scale0 * 2L),
-	  yy + ((WITH1->x1 + WITH1->UU.U99.x2) * rxy +
-		(WITH1->y1 + WITH1->UU.U99.y2) * ryy) / (log_scale0 * 2L),
-	  ((WITH1->x1 - WITH1->UU.U99.x2) * rxx +
-	      (WITH1->y1 - WITH1->UU.U99.y2) * ryx) / (log_scale0 * 2L),
-	  ((WITH1->x1 - WITH1->UU.U99.x2) * ryx +
-	      (WITH1->y1 - WITH1->UU.U99.y2) * ryy) / (log_scale0 * 2L),
-	  savecol);
-/* p2c: log.text, line 3556: Note:
- * Line breaker spent 1.0+3.00 seconds, 5000 tries on line 3837 [251] */
-	m_color(savecol);
-	break;
+        case 'E':
+          m_ellipse(xx + ((WITH1->x1 + WITH1->UU.U99.x2) * rxx +
+                          (WITH1->y1 + WITH1->UU.U99.y2) * ryx) /
+                             (log_scale0 * 2L),
+                    yy + ((WITH1->x1 + WITH1->UU.U99.x2) * rxy +
+                          (WITH1->y1 + WITH1->UU.U99.y2) * ryy) /
+                             (log_scale0 * 2L),
+                    ((WITH1->x1 - WITH1->UU.U99.x2) * rxx +
+                     (WITH1->y1 - WITH1->UU.U99.y2) * ryx) /
+                        (log_scale0 * 2L),
+                    ((WITH1->x1 - WITH1->UU.U99.x2) * ryx +
+                     (WITH1->y1 - WITH1->UU.U99.y2) * ryy) /
+                        (log_scale0 * 2L),
+                    m_curcolor());
+          /* p2c: log.text, line 3556: Note:
+           * Line breaker spent 1.0+2.00 seconds, 5000 tries on line 3853
+           * [251] */
+          break;
 
-      case 'E':
-	m_ellipse(
-	  xx + ((WITH1->x1 + WITH1->UU.U99.x2) * rxx +
-		(WITH1->y1 + WITH1->UU.U99.y2) * ryx) / (log_scale0 * 2L),
-	  yy + ((WITH1->x1 + WITH1->UU.U99.x2) * rxy +
-		(WITH1->y1 + WITH1->UU.U99.y2) * ryy) / (log_scale0 * 2L),
-	  ((WITH1->x1 - WITH1->UU.U99.x2) * rxx +
-	      (WITH1->y1 - WITH1->UU.U99.y2) * ryx) / (log_scale0 * 2L),
-	  ((WITH1->x1 - WITH1->UU.U99.x2) * ryx +
-	      (WITH1->y1 - WITH1->UU.U99.y2) * ryy) / (log_scale0 * 2L),
-	  m_curcolor());
-/* p2c: log.text, line 3556: Note:
- * Line breaker spent 1.0+2.00 seconds, 5000 tries on line 3853 [251] */
-	break;
+        case 'c':
+        case 'F':
+          drawvector4(
+              &WITH->vector[i],
+              (long)(xx + (WITH1->x1 * rxx + WITH1->y1 * ryx) / log_scale0),
+              (long)(yy + (WITH1->x1 * rxy + WITH1->y1 * ryy) / log_scale0),
+              (long)(xx + (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) /
+                              log_scale0),
+              (long)(yy + (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) /
+                              log_scale0),
+              (long)(xx + (WITH1->UU.U99.x3 * rxx + WITH1->UU.U99.y3 * ryx) /
+                              log_scale0),
+              (long)(yy + (WITH1->UU.U99.x3 * rxy + WITH1->UU.U99.y3 * ryy) /
+                              log_scale0),
+              (long)(xx + (WITH1->UU.U99.x4 * rxx + WITH1->UU.U99.y4 * ryx) /
+                              log_scale0),
+              (long)(yy + (WITH1->UU.U99.x4 * rxy + WITH1->UU.U99.y4 * ryy) /
+                              log_scale0));
+          /* p2c: log.text, line 3556: Note:
+           * Line breaker spent 0.0+6.00 seconds, 5000 tries on line 3873
+           * [251] */
+          break;
 
-      case 'c':
-      case 'F':
-	drawvector4(&WITH->vector[i], (long)(xx + (WITH1->x1 * rxx +
-		  WITH1->y1 * ryx) / log_scale0), (long)(yy +
-	      (WITH1->x1 * rxy + WITH1->y1 * ryy) / log_scale0), (long)(xx +
-	      (WITH1->UU.U99.x2 * rxx + WITH1->UU.U99.y2 * ryx) / log_scale0),
-	  (long)(yy +
-	      (WITH1->UU.U99.x2 * rxy + WITH1->UU.U99.y2 * ryy) / log_scale0),
-	  (long)(xx +
-	      (WITH1->UU.U99.x3 * rxx + WITH1->UU.U99.y3 * ryx) / log_scale0),
-	  (long)(yy +
-	      (WITH1->UU.U99.x3 * rxy + WITH1->UU.U99.y3 * ryy) / log_scale0),
-	  (long)(xx +
-	      (WITH1->UU.U99.x4 * rxx + WITH1->UU.U99.y4 * ryx) / log_scale0),
-	  (long)(yy + (WITH1->UU.U99.x4 * rxy + WITH1->UU.U99.y4 * ryy) /
-		log_scale0));
-/* p2c: log.text, line 3556: Note:
- * Line breaker spent 0.0+6.00 seconds, 5000 tries on line 3873 [251] */
-	break;
-
-      case 't':
-	drawtext(&WITH->vector[i], (long)gg.scale, (long)z,
-	  (long)(xx + (WITH1->x1 * rxx + WITH1->y1 * ryx) / log_scale0),
-	  (long)(yy + (WITH1->x1 * rxy + WITH1->y1 * ryy) / log_scale0));
-	break;
+        case 't':
+          drawtext(
+              &WITH->vector[i], (long)gg.scale, (long)z,
+              (long)(xx + (WITH1->x1 * rxx + WITH1->y1 * ryx) / log_scale0),
+              (long)(yy + (WITH1->x1 * rxy + WITH1->y1 * ryy) / log_scale0));
+          break;
       }
     }
     hidecursor();
@@ -3960,11 +3493,6 @@ short x, y, g, c;
     drawgatedotsc(x, y, g, gg.color.gatepin);
 }
 
-
-
-
-
-
 Static Void signallabel(x, y, gtype, sig, c)
 short x, y, gtype, sig, c;
 {
@@ -3972,19 +3500,18 @@ short x, y, gtype, sig, c;
   Char STR1[256];
 
   k = kind[(gtype & (log_kindoffset - 1)) - 1];
-  if (!(sig != 0 && k->flag.U3.named))
-    return;
+  if (!(sig != 0 && k->flag.U3.named)) return;
   remcursor();
   m_color((long)c);
   if (k->flag.U3.nright != (gtype / log_kindoffset == 0))
-    drawstr2((int)(x - m_strwidth(NULL,
-		     strrtrim(strcpy(STR1, gg.signaltab[sig - 1].name))) + NAMEGAP),
-	     y - 3, gg.signaltab[sig - 1].name);
+    drawstr2((int)(x -
+                   m_strwidth(NULL, strrtrim(strcpy(
+                                        STR1, gg.signaltab[sig - 1].name))) +
+                   NAMEGAP),
+             y - 3, gg.signaltab[sig - 1].name);
   else
     drawstr2(x - NAMEGAP, y - 3, gg.signaltab[sig - 1].name);
 }
-
-
 
 Static Void gsignallabel(x, y, g, c)
 short x, y;
@@ -3992,12 +3519,10 @@ log_grec *g;
 short c;
 {
   signallabel((int)(x * gg.scale - gg.xoff), (int)(y * gg.scale - gg.yoff),
-	      g->g, g->sig, c);
+              g->g, g->sig, c);
 }
 
-
-typedef enum {inside,north,east,south,west} placement;
-
+typedef enum { inside, north, east, south, west } placement;
 
 Static Void drawpnums(g, c)
 log_grec *g;
@@ -4007,13 +3532,12 @@ short c;
   Char s[7];
   log_krec *WITH;
   short FORLIM, FORLIM1;
-  int tx,ty,ex,ey;
-  int minx,miny,maxx,maxy;
+  int tx, ty, ex, ey;
+  int minx, miny, maxx, maxy;
   placement p = inside;
   long hw;
 
-  if (zoom <= 0 || gg.textinvisible || gg.pnuminvisible)
-    return;
+  if (zoom <= 0 || gg.textinvisible || gg.pnuminvisible) return;
   m_color((long)c);
   rxx = log_rotxx[g->rot];
   rxy = log_rotxy[g->rot];
@@ -4022,10 +3546,10 @@ short c;
   WITH = g->kind;
 
   /* use grab rectangle to determine which edge this pin is attached to. */
-  minx = ( WITH->x1 * rxx + WITH->y1 * ryx);
-  miny = ( WITH->x1 * rxy + WITH->y1 * ryy);
-  maxx = ( WITH->x2 * rxx + WITH->y2 * ryx);
-  maxy = ( WITH->x2 * rxy + WITH->y2 * ryy);
+  minx = (WITH->x1 * rxx + WITH->y1 * ryx);
+  miny = (WITH->x1 * rxy + WITH->y1 * ryy);
+  maxx = (WITH->x2 * rxx + WITH->y2 * ryx);
+  maxy = (WITH->x2 * rxy + WITH->y2 * ryy);
 
   FORLIM = WITH->numpnums;
   for (i = 0; i < FORLIM; i++) {
@@ -4045,39 +3569,36 @@ short c;
     tx = g->x * gg.scale + ex * gg.scale / log_scale0 - gg.xoff;
     ty = g->y * gg.scale + ey * gg.scale / log_scale0 - gg.yoff;
     switch (p) {
-    case west:
-      tx -= 5;
-      break;
-    case east:
-      tx += 5;
-      break; 
-    case north:
-      tx -= hw;
-      ty -= 9;
-      break; 
-    case south:
-      tx -= hw;
-      ty += 5;
-      break; 
+      case west:
+        tx -= 5;
+        break;
+      case east:
+        tx += 5;
+        break;
+      case north:
+        tx -= hw;
+        ty -= 9;
+        break;
+      case south:
+        tx -= hw;
+        ty += 5;
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
 
     if (p == west)
-      m_rightstr(tx,ty,NULL,s);
+      m_rightstr(tx, ty, NULL, s);
     else
-      m_drawstr(tx,ty,NULL,s);
-
+      m_drawstr(tx, ty, NULL, s);
   }
 }
 
 #undef fromtab
 #undef totab
 
-
 Static Void setscale PP((short s));
-
 
 Static Void kdrawgatec(i, c)
 short i, c;
@@ -4094,14 +3615,6 @@ short i, c;
   setscale(ozoom);
 }
 
-
-
-
-
-
-
-
-
 /*=================  DRAWGATEX  ==================*/
 /*=                                              =*/
 /*=  Draw a gate.  If it is a TO or FROM gate,   =*/
@@ -4113,23 +3626,15 @@ Static Void drawgatexc(g, c)
 log_grec *g;
 short c;
 {
-  if (g->dimcolor && c == gg.color.gate)
-    c = gg.color.dimgate;
+  if (g->dimcolor && c == gg.color.gate) c = gg.color.dimgate;
   drawgatec(g->x, g->y, g->g, c);
-  if (!gg.textinvisible)
-    gsignallabel(g->x, g->y, g, gg.color.signal);
-  if (g->kind->numpnums > 0)
-    drawpnums(g, gg.color.pinnum);
+  if (!gg.textinvisible) gsignallabel(g->x, g->y, g, gg.color.signal);
+  if (g->kind->numpnums > 0) drawpnums(g, gg.color.pinnum);
 }
-
 
 Static Void drawgatex(g)
 log_grec *g;
-{
-  drawgatexc(g, gg.color.gate);
-}
-
-
+{ drawgatexc(g, gg.color.gate); }
 
 Static Void setdimgate(g, dim)
 log_grec *g;
@@ -4137,27 +3642,19 @@ boolean dim;
 {
   log_grec *g1;
 
-  if (g->dimcolor == dim)
-    return;
+  if (g->dimcolor == dim) return;
   g->dimcolor = dim;
-  if (gg.showpage <= 0)
-    return;
+  if (gg.showpage <= 0) return;
   g1 = gg.gbase[gg.showpage - 1];
-  while (g1 != NULL && g1 != g)
-    g1 = g1->next;
-  if (g1 != g)
-    return;
+  while (g1 != NULL && g1 != g) g1 = g1->next;
+  if (g1 != g) return;
   m_saveclip();
   clipon();
   drawgatex(g);
   m_unclip();
 }
 
-
-#define rtn             "ERAGATE"
-
-
-
+#define rtn "ERAGATE"
 
 /*==================  ERAGATE  ===================*/
 /*=                                              =*/
@@ -4191,15 +3688,12 @@ log_grec *g;
   }
   drawgatec(g->x, g->y, g->g, gg.color.backgr);
   gsignallabel(g->x, g->y, g, gg.color.backgr);
-  if (g->kind->numpnums > 0)
-    drawpnums(g, gg.color.backgr);
+  if (g->kind->numpnums > 0) drawpnums(g, gg.color.backgr);
   drawgatedotsc(g->x, g->y, g->g, gg.color.backgr);
   calltoolgate(g, act_erasegate);
 }
 
 #undef rtn
-
-
 
 /*================  DRAWSOLDERC  =================*/
 /*=                                              =*/
@@ -4211,8 +3705,7 @@ log_grec *g;
 Static Void drawsolderc(x, y, c)
 short x, y, c;
 {
-  if (!showsolder)
-    return;
+  if (!showsolder) return;
   if (vlsi) {
     if (c == gg.color.conflict || c == gg.color.backgr)
       m_color((long)c);
@@ -4236,8 +3729,6 @@ short x, y, c;
   m_drawline(x - 1L, y + 2L, x + 1L, y + 2L);
 }
 
-
-
 /*=================  DRAWTRANSC  =================*/
 /*=                                              =*/
 /*=  Draw a VLSI transistor at a certain         =*/
@@ -4248,8 +3739,7 @@ short x, y, c;
 Static Void drawtransc(x, y, c)
 short x, y, c;
 {
-  if (!vlsi)
-    return;
+  if (!vlsi) return;
   if (c == gg.color.solder)
     m_color((long)gg.color.vlsicut);
   else
@@ -4258,8 +3748,6 @@ short x, y, c;
   y = y * gg.scale - gg.yoff;
   m_circle((long)x, (long)y, 4L);
 }
-
-
 
 /*==================  ERALABEL  ==================*/
 /*=                                              =*/
@@ -4271,13 +3759,11 @@ Static Void eralabel(l)
 log_lrec *l;
 {
   m_color((long)gg.color.backgr);
-/* p2c: log.text, line 3810:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 3810:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_drawstr(l->x * gg.scale - gg.xoff, l->y * gg.scale - gg.yoff + 2,
-	    logfont_lfont, l->name);
+            logfont_lfont, l->name);
 }
-
-
 
 /*==================  XORLABEL  ==================*/
 /*=                                              =*/
@@ -4291,14 +3777,12 @@ log_lrec *l;
 {
   m_colormode((long)m_xor);
   m_color((long)gg.color.labeltext);
-/* p2c: log.text, line 3825:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 3825:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_drawstr(x * gg.scale - gg.xoff, y * gg.scale - gg.yoff + 2, logfont_lfont,
-	    l->name);
+            l->name);
   m_colormode((long)m_normal);
 }
-
-
 
 /*==================  DRAWBOXC  ==================*/
 /*=                                              =*/
@@ -4315,15 +3799,10 @@ short x1, y1, x2, y2, c;
   m_linestyle(0L);
 }
 
-
 Static Void drawboxc(b, c)
 log_brec *b;
 short c;
-{
-  drawboxc0(b->x1, b->y1, b->x2, b->y2, c);
-}
-
-
+{ drawboxc0(b->x1, b->y1, b->x2, b->y2, c); }
 
 /*================  DRAWMARKERSC  ================*/
 /*=                                              =*/
@@ -4342,11 +3821,6 @@ short c;
   vline(gg.markerx2, gg.markery2 - 2, gg.markery2);
   clipoff();
 }
-
-
-
-
-
 
 /*=================  DRAWNODEC  ==================*/
 /*=                                              =*/
@@ -4377,16 +3851,16 @@ short c;
     hw = gg.hwbase[gg.curpage - 1];
     while (hw != NULL) {
       if (hw->node == n && hw != gg.movinghw) {
-	m_color((long)gg.color.wire[hw->wcolr - log_wcol_normal]);
-	hline(hw->x1, hw->x2, hw->y);
+        m_color((long)gg.color.wire[hw->wcolr - log_wcol_normal]);
+        hline(hw->x1, hw->x2, hw->y);
       }
       hw = hw->next;
     }
     vw = gg.vwbase[gg.curpage - 1];
     while (vw != NULL) {
       if (vw->node == n && vw != gg.movingvw) {
-	m_color((long)gg.color.wire[vw->wcolr - log_wcol_normal]);
-	vline(vw->x, vw->y1, vw->y2);
+        m_color((long)gg.color.wire[vw->wcolr - log_wcol_normal]);
+        vline(vw->x, vw->y1, vw->y2);
       }
       vw = vw->next;
     }
@@ -4394,14 +3868,12 @@ short c;
     m_color((long)c);
     hw = gg.hwbase[gg.curpage - 1];
     while (hw != NULL) {
-      if (hw->node == n && hw != gg.movinghw)
-	hline(hw->x1, hw->x2, hw->y);
+      if (hw->node == n && hw != gg.movinghw) hline(hw->x1, hw->x2, hw->y);
       hw = hw->next;
     }
     vw = gg.vwbase[gg.curpage - 1];
     while (vw != NULL) {
-      if (vw->node == n && vw != gg.movingvw)
-	vline(vw->x, vw->y1, vw->y2);
+      if (vw->node == n && vw != gg.movingvw) vline(vw->x, vw->y1, vw->y2);
       vw = vw->next;
     }
   }
@@ -4409,16 +3881,13 @@ short c;
     s = gg.sbase[gg.curpage - 1];
     while (s != NULL) {
       if ((s->hwire != NULL && s->hwire->node == n) ||
-	  (s->vwire != NULL && s->vwire->node == n))
-	drawsolderc(s->x, s->y, c);
+          (s->vwire != NULL && s->vwire->node == n))
+        drawsolderc(s->x, s->y, c);
       s = s->next;
     }
   }
   hidecursor();
 }
-
-
-
 
 /*=================  DRAWNODE  ===================*/
 /*=                                              =*/
@@ -4429,11 +3898,7 @@ short c;
 
 Static Void drawnode(n)
 log_nrec *n;
-{
-  drawnodec(n, -1);
-}
-
-
+{ drawnodec(n, -1); }
 
 /*================  REFRPAGEDISP  ================*/
 /*=                                              =*/
@@ -4443,9 +3908,7 @@ log_nrec *n;
 
 Static boolean pageempty PP((int pg));
 
-
-Static Void refrpagedisp()
-{
+Static Void refrpagedisp() {
   short num;
 
   m_color((long)gg.color.page1);
@@ -4456,12 +3919,9 @@ Static Void refrpagedisp()
   drawstr2(across - 35, 14, "OF");
   m_color((long)gg.color.page4);
   num = gg.numpages;
-  while (num > gg.curpage && pageempty(num))
-    num--;
+  while (num > gg.curpage && pageempty(num)) num--;
   drawnum2(across - 14, 14, num);
 }
-
-
 
 /*================  REFREDITMODE  ================*/
 /*=                                              =*/
@@ -4469,38 +3929,34 @@ Static Void refrpagedisp()
 /*=                                              =*/
 /*================================================*/
 
-Static Void refreditmode()
-{
+Static Void refreditmode() {
   hidecursor();
   m_color((long)gg.color.backgr);
   m_fillrect(across + menux4 - 1L, line2 - 2L, across + menux4 + 30L,
-	     line2 + 9L);
+             line2 + 9L);
   switch (cureditmode) {
+    case 1:
+      m_color((long)gg.color.menuword);
+      drawstr2(across + menux4, line2, "ROT");
+      break;
 
-  case 1:
-    m_color((long)gg.color.menuword);
-    drawstr2(across + menux4, line2, "ROT");
-    break;
+    case 2:
+      m_color((long)gg.color.menuword);
+      drawstr2(across + menux4, line2, "MIR-");
+      break;
 
-  case 2:
-    m_color((long)gg.color.menuword);
-    drawstr2(across + menux4, line2, "MIR-");
-    break;
+    case 3:
+      m_color((long)gg.color.menuword);
+      drawstr2(across + menux4, line2, "MIR|");
+      break;
 
-  case 3:
-    m_color((long)gg.color.menuword);
-    drawstr2(across + menux4, line2, "MIR|");
-    break;
-
-  case 4:
-    m_color((long)gg.color.selword);
-    drawstr2(across + menux4, line2, "CNFG");
-    break;
+    case 4:
+      m_color((long)gg.color.selword);
+      drawstr2(across + menux4, line2, "CNFG");
+      break;
   }
   hidecursor();
 }
-
-
 
 /*===============  REFRBASELINE  =================*/
 /*=                                              =*/
@@ -4517,23 +3973,17 @@ boolean always;
     c = gg.color.conflict;
   else
     c = gg.baselinecolor;
-  if (!(c != gg.color.curbaseline || always))
-    return;
+  if (!(c != gg.color.curbaseline || always)) return;
   clipoff();
   gg.color.curbaseline = c;
   hidecursor();
   m_color((long)c);
   m_fillrect(0L, (long)baseline, (long)kindgroupleft, baseline + 1L);
-  m_fillrect((long)kindgroupright, (long)baseline, (long)across,
-	     baseline + 1L);
+  m_fillrect((long)kindgroupright, (long)baseline, (long)across, baseline + 1L);
   hidecursor();
 }
 
-
-#define rtn             "REFRESH"
-
-
-
+#define rtn "REFRESH"
 
 /*===================  REFRESH  ==================*/
 /*=                                              =*/
@@ -4542,8 +3992,7 @@ boolean always;
 /*=                                              =*/
 /*================================================*/
 
-Static Void refresh()
-{
+Static Void refresh() {
   long x1, y1, x2, y2;
   log_grec *g;
   log_hwrec *hw;
@@ -4570,8 +4019,8 @@ Static Void refresh()
     g = gg.gbase[gg.curpage - 1];
     while (g != NULL) {
       if (P_ibetweenm(x1, (long)g->x, x2, (long)g->kind->bbmax) &&
-	  P_ibetweenm(y1, (long)g->y, y2, (long)g->kind->bbmax))
-	drawgatex(g);
+          P_ibetweenm(y1, (long)g->y, y2, (long)g->kind->bbmax))
+        drawgatex(g);
       g = g->next;
     }
     suppressdots = false;
@@ -4579,83 +4028,80 @@ Static Void refresh()
     if (gg.glowmode) {
       hw = gg.hwbase[gg.curpage - 1];
       while (hw != NULL) {
-	if (hw->y > y1 && hw->y < y2 && hw != gg.movinghw) {
-	  m_color(glowcol(hw->node,
-			  (long)gg.color.wire[hw->wcolr - log_wcol_normal]));
-	  hline(hw->x1, hw->x2, hw->y);
-	}
-	hw = hw->next;
+        if (hw->y > y1 && hw->y < y2 && hw != gg.movinghw) {
+          m_color(glowcol(hw->node,
+                          (long)gg.color.wire[hw->wcolr - log_wcol_normal]));
+          hline(hw->x1, hw->x2, hw->y);
+        }
+        hw = hw->next;
       }
       working();
       vw = gg.vwbase[gg.curpage - 1];
       while (vw != NULL) {
-	if (vw->x > x1 && vw->x < x2 && vw != gg.movingvw) {
-	  m_color(glowcol(vw->node,
-			  (long)gg.color.wire[vw->wcolr - log_wcol_normal]));
-	  vline(vw->x, vw->y1, vw->y2);
-	}
-	vw = vw->next;
+        if (vw->x > x1 && vw->x < x2 && vw != gg.movingvw) {
+          m_color(glowcol(vw->node,
+                          (long)gg.color.wire[vw->wcolr - log_wcol_normal]));
+          vline(vw->x, vw->y1, vw->y2);
+        }
+        vw = vw->next;
       }
       working();
       if (showsolder) {
-	s = gg.sbase[gg.curpage - 1];
-	while (s != NULL) {
-	  if (s->hwire != NULL)
-	    n = s->hwire->node;
-	  else
-	    n = s->vwire->node;
-	  drawsolderc(s->x, s->y, (int)glowcol(n, (long)gg.color.solder));
-	  s = s->next;
-	}
+        s = gg.sbase[gg.curpage - 1];
+        while (s != NULL) {
+          if (s->hwire != NULL)
+            n = s->hwire->node;
+          else
+            n = s->vwire->node;
+          drawsolderc(s->x, s->y, (int)glowcol(n, (long)gg.color.solder));
+          s = s->next;
+        }
       }
     } else {
       m_color((long)gg.color.wire[0]);
       hw = gg.hwbase[gg.curpage - 1];
       while (hw != NULL) {
-	if (hw->y > y1 && hw->y < y2 && hw != gg.movinghw) {
-	  if (vlsi)
-	    m_color((long)gg.color.wire[hw->wcolr - log_wcol_normal]);
-	  hline(hw->x1, hw->x2, hw->y);
-	}
-	hw = hw->next;
+        if (hw->y > y1 && hw->y < y2 && hw != gg.movinghw) {
+          if (vlsi) m_color((long)gg.color.wire[hw->wcolr - log_wcol_normal]);
+          hline(hw->x1, hw->x2, hw->y);
+        }
+        hw = hw->next;
       }
       working();
       vw = gg.vwbase[gg.curpage - 1];
       while (vw != NULL) {
-	if (vw->x > x1 && vw->x < x2 && vw != gg.movingvw) {
-	  if (vlsi)
-	    m_color((long)gg.color.wire[vw->wcolr - log_wcol_normal]);
-	  vline(vw->x, vw->y1, vw->y2);
-	}
-	vw = vw->next;
+        if (vw->x > x1 && vw->x < x2 && vw != gg.movingvw) {
+          if (vlsi) m_color((long)gg.color.wire[vw->wcolr - log_wcol_normal]);
+          vline(vw->x, vw->y1, vw->y2);
+        }
+        vw = vw->next;
       }
       working();
       if (showsolder) {
-	s = gg.sbase[gg.curpage - 1];
-	while (s != NULL) {
-	  if (s->hwire != NULL)
-	    n = s->hwire->node;
-	  else
-	    n = s->vwire->node;
-	  drawsolderc(s->x, s->y, gg.color.solder);
-	  s = s->next;
-	}
+        s = gg.sbase[gg.curpage - 1];
+        while (s != NULL) {
+          if (s->hwire != NULL)
+            n = s->hwire->node;
+          else
+            n = s->vwire->node;
+          drawsolderc(s->x, s->y, gg.color.solder);
+          s = s->next;
+        }
       }
     }
     if (gg.dotsvisible) {
       g = gg.gbase[gg.curpage - 1];
       while (g != NULL) {
-	if (g->x > x1 && g->x < x2 && g->y > y1 && g->y < y2)
-	  drawgatedotsc(g->x, g->y, g->g, gg.color.gatepin);
-	g = g->next;
+        if (g->x > x1 && g->x < x2 && g->y > y1 && g->y < y2)
+          drawgatedotsc(g->x, g->y, g->g, gg.color.gatepin);
+        g = g->next;
       }
     }
   } else {
     working();
     g = gg.gbase[gg.curpage - 1];
     while (g != NULL) {
-      if (g->kind->flag.U3.visible)
-	drawgatex(g);
+      if (g->kind->flag.U3.visible) drawgatex(g);
       g = g->next;
     }
   }
@@ -4671,26 +4117,22 @@ Static Void refresh()
     m_color((long)gg.color.labeltext);
     while (l != NULL) {
       if (l->y > y1 && l->y < y2) {
-/* p2c: log.text, line 4234:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	m_drawstr(l->x * gg.scale - gg.xoff, l->y * gg.scale - gg.yoff + 2,
-		  logfont_lfont, l->name);
+        /* p2c: log.text, line 4234:
+         * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+        m_drawstr(l->x * gg.scale - gg.xoff, l->y * gg.scale - gg.yoff + 2,
+                  logfont_lfont, l->name);
       }
       l = l->next;
     }
   }
   working();
-  if (gg.markers)
-    drawmarkersc(gg.color.marker);
-  if (memavail() < memtolerance)
-    message("Low on memory!");
+  if (gg.markers) drawmarkersc(gg.color.marker);
+  if (memavail() < memtolerance) message("Low on memory!");
   clipoff();
   restorecursor();
 }
 
 #undef rtn
-
-
 
 /*=================  REFRESHSOON  ================*/
 /*=                                              =*/
@@ -4699,21 +4141,13 @@ Static Void refresh()
 /*=                                              =*/
 /*================================================*/
 
-Static Void refreshsoon()
-{
+Static Void refreshsoon() {
   refrtimer0 = refrdelay;
   refrtimer = refrdelay;
   gg.refrflag = true;
 }
 
-
-#define spacing         10
-
-
-
-
-
-
+#define spacing 10
 
 Static Void message(msg)
 Char *msg;
@@ -4730,20 +4164,18 @@ Char *msg;
     resetmessages();
     refreshsoon();
   }
-  messageright = P_imax2((long)messageright,
-			 m_strwidth(logfont_lfont, msg) + 3);
-/* p2c: log.text, line 4285:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  messageright =
+      P_imax2((long)messageright, m_strwidth(logfont_lfont, msg) + 3);
+  /* p2c: log.text, line 4285:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_color((long)gg.color.message);
-/* p2c: log.text, line 4287:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 4287:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_drawstr(2L, (long)messagepos, logfont_lfont, msg);
   messagepos += spacing;
 }
 
 #undef spacing
-
-
 
 Static Void vmessage(msg)
 Char *msg;
@@ -4751,8 +4183,7 @@ Char *msg;
   na_strlist *l1;
 
   if (gg.initdone) {
-    if (gg.verbose || tempverbose)
-      message(msg);
+    if (gg.verbose || tempverbose) message(msg);
   } else {
     l1 = strlist_append(&messages, msg);
     if (tempverbose)
@@ -4762,8 +4193,6 @@ Char *msg;
   }
   tempverbose = false;
 }
-
-
 
 Static Void vmessageflag(msg, b)
 Char *msg;
@@ -4780,87 +4209,66 @@ boolean b;
   }
 }
 
-
-
 Static Void tracemessage(msg)
 Char *msg;
 {
-  if (!gg.traceflag)
-    return;
+  if (!gg.traceflag) return;
   if (!gg.traceopen) {
     if (*tracefname == '\0') {
       do {
-	sprintf(tracefname, "/tmp/%.10s%03ld",
-        /* P_citinfo->username, P_rand(&gg.rndseed, 1000L)); */
-      	"log", P_rand(&gg.rndseed, 1000L)); 
-
+        sprintf(tracefname, "/tmp/%.10s%03ld",
+                /* P_citinfo->username, P_rand(&gg.rndseed, 1000L)); */
+                "log", P_rand(&gg.rndseed, 1000L));
       } while (access(tracefname, F_OK) == 0);
     }
     if (tracefile != NULL)
       tracefile = freopen(tracefname, "a", tracefile);
     else
       tracefile = fopen(tracefname, "a");
-    if (tracefile == NULL)
-      _EscIO(FileNotFound);
+    if (tracefile == NULL) _EscIO(FileNotFound);
     gg.traceopen = true;
   }
   fprintf(tracefile, "%s\n", msg);
 }
 
-
-
 Static Void dumpmessage(msg)
 Char *msg;
 {
-  if (*dumpfname == '\0')
-    return;
+  if (*dumpfname == '\0') return;
   if (!gg.dumpopen) {
     if (dumpfile != NULL)
       dumpfile = freopen(dumpfname, "a", dumpfile);
     else
       dumpfile = fopen(dumpfname, "a");
-    if (dumpfile == NULL)
-      _EscIO(FileNotFound);
+    if (dumpfile == NULL) _EscIO(FileNotFound);
     gg.dumpopen = true;
   }
   fprintf(dumpfile, "%s\n", msg);
 }
 
-
-
-Static Void closedump()
-{
+Static Void closedump() {
   if (gg.dumpopen) {
     TRY(try4);
-      if (dumpfile != NULL)
-	fclose(dumpfile);
-      dumpfile = NULL;
+    if (dumpfile != NULL) fclose(dumpfile);
+    dumpfile = NULL;
     RECOVER(try4);
-      if (P_escapecode == -20)
-	_Escape(P_escapecode);
+    if (P_escapecode == -20) _Escape(P_escapecode);
     ENDTRY(try4);
   }
   gg.dumpopen = false;
 }
 
-
-
-Static Void closetrace()
-{
+Static Void closetrace() {
   if (gg.traceopen) {
     TRY(try5);
-      if (tracefile != NULL)
-	fclose(tracefile);
-      tracefile = NULL;
+    if (tracefile != NULL) fclose(tracefile);
+    tracefile = NULL;
     RECOVER(try5);
-      if (P_escapecode == -20)
-	_Escape(P_escapecode);
+    if (P_escapecode == -20) _Escape(P_escapecode);
     ENDTRY(try5);
   }
   gg.traceopen = false;
 }
-
-
 
 Static Void setdumpname(name_)
 Char *name_;
@@ -4873,8 +4281,6 @@ Char *name_;
   strcpy(dumpfname, name);
 }
 
-
-
 Static Void settracename(name_)
 Char *name_;
 {
@@ -4884,21 +4290,13 @@ Char *name_;
   newci_fixfname(name, "text", "");
   closetrace();
   strcpy(tracefname, name);
-  if (gg.traceflag)
-    tracemessage("Trace mode ON");
+  if (gg.traceflag) tracemessage("Trace mode ON");
 }
 
-
-
-Static Void closedumpfiles()
-{
+Static Void closedumpfiles() {
   closedump();
   closetrace();
 }
-
-
-
-
 
 /*==================  REFRMENU  ==================*/
 /*=                                              =*/
@@ -4906,8 +4304,7 @@ Static Void closedumpfiles()
 /*=                                              =*/
 /*================================================*/
 
-Static Void refrmenu()
-{
+Static Void refrmenu() {
   short i, FORLIM;
 
   working();
@@ -4917,7 +4314,7 @@ Static Void refrmenu()
   refrbaseline(true);
   m_color((long)gg.color.backgr);
   m_fillrect(kindgroupleft + 1L, (long)baseline, kindgroupright - 1L,
-	     baseline + 1L);
+             baseline + 1L);
   m_color((long)gg.color.menuword);
   drawstr2(menux1, line1, "Frills");
   drawstr2(menux2, line1, "Editing");
@@ -4931,53 +4328,35 @@ Static Void refrmenu()
   else
     log_setmode("");
   FORLIM = kindgroupsize;
-  for (i = 1; i <= FORLIM; i++)
-    kdrawgatec(i, gg.color.kindgate);
+  for (i = 1; i <= FORLIM; i++) kdrawgatec(i, gg.color.kindgate);
 }
 
-
-
-
-Static Void beginbottom()
-{
+Static Void beginbottom() {
   remcursor();
   clipoff();
   bottomcount++;
-  if (m_autoraise)
-    {
-      clearshowalpha();
-    }
-  else
-    {
-      clearalpha();
-    }
+  if (m_autoraise) {
+    clearshowalpha();
+  } else {
+    clearalpha();
+  }
   nk_gotoxy(0, txdown - 1);
 }
 
-
-
-Static Void endbottom()
-{
+Static Void endbottom() {
   remcursor();
   bottomcount--;
-  if (m_autoraise)
+  if (m_autoraise) {
+    if (bottomcount < 1) /* fix from WES */
     {
-      if (bottomcount < 1)   /* fix from WES */
-	{
-	  bottomcount =0;
-	  m_graphics_on();
-	}
+      bottomcount = 0;
+      m_graphics_on();
     }
-  else
-    {
-      m_graphics_on();   /* switch back to the graphics window */
-    }
+  } else {
+    m_graphics_on(); /* switch back to the graphics window */
+  }
   clearalpha();
-
 }
-
-
-
 
 /*=================  BEGINERROR  =================*/
 /*=                                              =*/
@@ -4985,15 +4364,11 @@ Static Void endbottom()
 /*=                                              =*/
 /*================================================*/
 
-Static Void beginerror()
-{
+Static Void beginerror() {
   beginbottom();
   strlist_empty(&thingstodo);
   warning();
 }
-
-
-
 
 /*==================  ENDERROR  ==================*/
 /*=                                              =*/
@@ -5001,16 +4376,12 @@ Static Void beginerror()
 /*=                                              =*/
 /*================================================*/
 
-Static Void enderror()
-{
+Static Void enderror() {
   printf("  Press any key to continue.");
   m_alpha_on();
   waitforkey();
   endbottom();
 }
-
-
-
 
 /*================  REFRSCREEN1  =================*/
 /*=                                              =*/
@@ -5018,8 +4389,7 @@ Static Void enderror()
 /*=                                              =*/
 /*================================================*/
 
-Static Void refrscreen1()
-{
+Static Void refrscreen1() {
   m_colormode((long)m_normal);
   m_noclip();
   remcursor();
@@ -5029,19 +4399,13 @@ Static Void refrscreen1()
   gg.refrflag = true;
 }
 
-
-
-
-
-
 /*=================  REFRSCREEN  =================*/
 /*=                                              =*/
 /*=  Clear and redraw entire screen.             =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void refrscreen()
-{
+Static Void refrscreen() {
   gg.showpage = gg.curpage;
   bottomcount = 0;
   m_colormode((long)m_normal);
@@ -5053,19 +4417,10 @@ Static Void refrscreen()
   m_graphics_on();
 }
 
-
-
-Void resize_screen()
-{
+Void resize_screen() {
   initscreen2();
   refrscreen();
 }
-
-
-
-
-
-
 
 Static Void chpage(pg)
 short pg;
@@ -5081,7 +4436,6 @@ short pg;
   }
 }
 
-
 Static Void chpageplace(pg, x1, y1, x2, y2)
 short pg, x1, y1, x2, y2;
 {
@@ -5090,8 +4444,7 @@ short pg, x1, y1, x2, y2;
   stamp(&gg.pagestamp[pg - 1]);
   gg.pagechanged[pg - 1] = true;
   r = gg.pageregions[pg - 1];
-  if (r == NULL)
-    return;
+  if (r == NULL) return;
   sortshints(&x1, &x2);
   sortshints(&y1, &y2);
   while (r != NULL) {
@@ -5101,53 +4454,34 @@ short pg, x1, y1, x2, y2;
   }
 }
 
-
-
 Static boolean pageempty(pg)
 short pg;
 {
   return (gg.gbase[pg - 1] == NULL && gg.hwbase[pg - 1] == NULL &&
-	  gg.vwbase[pg - 1] == NULL && gg.bbase[pg - 1] == NULL &&
-	  gg.lbase[pg - 1] == NULL);
+          gg.vwbase[pg - 1] == NULL && gg.bbase[pg - 1] == NULL &&
+          gg.lbase[pg - 1] == NULL);
 }
-
 
 Static boolean pagenull(pg)
 short pg;
-{
-  return (pageempty(pg) && gg.pageregions[pg - 1] == NULL);
-}
-
+{ return (pageempty(pg) && gg.pageregions[pg - 1] == NULL); }
 
 Static boolean pagechanged(pg)
 short pg;
-{
-  return (gg.pagechanged[pg - 1] && !pageempty(pg));
-}
+{ return (gg.pagechanged[pg - 1] && !pageempty(pg)); }
 
-
-
-Static boolean anychanged()
-{
+Static boolean anychanged() {
   short i;
 
   i = 1;
-  while (i <= gg.numpages && !pagechanged(i))
-    i++;
+  while (i <= gg.numpages && !pagechanged(i)) i++;
   return (i <= gg.numpages);
 }
-
-
-
-
-
-
 
 Static Void reportnodeconflict(n)
 log_nrec *n;
 {
-  if (n->conflict || !conflictenbl)
-    return;
+  if (n->conflict || !conflictenbl) return;
   if (!n->oconflict) {
     n->confnext = nodeconflictbase;
     nodeconflictbase = n;
@@ -5157,13 +4491,10 @@ log_nrec *n;
   n->conflict = true;
 }
 
-
-
 Static Void reportgateconflict(g)
 log_grec *g;
 {
-  if (g->conflict || !conflictenbl)
-    return;
+  if (g->conflict || !conflictenbl) return;
   if (!g->oconflict) {
     g->confnext = gateconflictbase;
     gateconflictbase = g;
@@ -5172,12 +4503,6 @@ log_grec *g;
   }
   g->conflict = true;
 }
-
-
-
-
-
-
 
 Static Void drawhistdivisions(x1, x2)
 short x1, x2;
@@ -5190,22 +4515,20 @@ short x1, x2;
     if (x >= x1) {
       y = histdown;
       while (y >= 0) {
-	m_drawpoint((long)x, (long)y);
-	y -= histdivision;
+        m_drawpoint((long)x, (long)y);
+        y -= histdivision;
       }
     }
     x += histdivision;
   }
 }
 
-
-
 Static Void historypointx(ht, x)
 log_htrec *ht;
 short *x;
 {
   gg.actval = (ht->time - histgattr[histfirsttime - 1].UU.r) /
-	      histgattr[histsecdiv - 1].UU.r;
+              histgattr[histsecdiv - 1].UU.r;
   if (gg.actval > histdivsacross) {
     *x = across * 2;
     return;
@@ -5215,8 +4538,6 @@ short *x;
   else
     *x = histleft + (long)floor(gg.actval * histdivision + 0.5);
 }
-
-
 
 Static Void historyvaluey(hn, value, outval, y)
 log_hnrec *hn;
@@ -5234,9 +4555,7 @@ short *y;
   else if (gg.actval > histvalrange)
     gg.actval = histvalrange;
   *y = hn->y - (long)floor(gg.actval * histdivision + 0.5);
-}  /*also returns in gg.acty*/
-
-
+} /*also returns in gg.acty*/
 
 Static Void historypointy(hn, ht, y)
 log_hnrec *hn;
@@ -5247,9 +4566,6 @@ short *y;
 
   historyvaluey(hn, na_srtor(ht->val[hn->num - 1]), &r, y);
 }
-
-
-
 
 Static Void getnodeval(n, val, opts)
 log_nrec *n;
@@ -5262,10 +4578,6 @@ Char *opts;
   *val = gg.actval;
 }
 
-
-
-
-
 /*===================  PASS  =====================*/
 /*=                                              =*/
 /*=  Make one simulation pass through the        =*/
@@ -5276,8 +4588,7 @@ Char *opts;
 /*=                                              =*/
 /*================================================*/
 
-Static Void pass()
-{
+Static Void pass() {
   log_grec *g, *g1, *g2;
   log_nrec *n, *n1, *n2;
   log_hwrec *hw;
@@ -5302,8 +4613,7 @@ Static Void pass()
   gg.oldsimstatetool = gg.simstatetool;
   gg.simstate = simst_null;
   gg.simstatetool = NULL;
-  if (!gg.pwrflag)
-    gg.fastspeed = gg.fastmin;
+  if (!gg.pwrflag) gg.fastspeed = gg.fastmin;
   if (gg.showpage > 0 && !modeflag &&
       (timers_sysclock() / 6000 != modetime || gg.probekind != modeprobekind))
     log_setmode("");
@@ -5322,14 +4632,13 @@ Static Void pass()
     gg.singlestepcount = 0;
     histreset = true;
     if (histsweep == histsweep_contin ||
-	(histsweep == histsweep_onreset &&
-	 (histgattr[histstarttime - 1].blnk ||
-	  histgattr[histstarttime - 1].UU.r == 0)))
+        (histsweep == histsweep_onreset &&
+         (histgattr[histstarttime - 1].blnk ||
+          histgattr[histstarttime - 1].UU.r == 0)))
       gg.histactive = true;
     st = gg.toolbase;
     while (st != NULL) {
-      if (st->simulator)
-	st->deltatime = 0.0;
+      if (st->simulator) st->deltatime = 0.0;
       st = st->next;
     }
   }
@@ -5345,22 +4654,20 @@ Static Void pass()
   if (histreset || hncount != hnocount) {
     if (gg.htbase != NULL) {
       if (gg.showpage == log_page_history && gg.htbase != gg.htlast) {
-	historypointx(gg.htbase, &hx1);
-	historypointx(gg.htlast, &hx2);
-	if (hx1 < histleft)
-	  hx1 = histleft;
-	if (hx2 > across)
-	  hx2 = across;
-	if (hx1 <= hx2) {
-	  m_color((long)gg.color.backgr);
-	  m_fillrect((long)hx1, 0L, (long)hx2, (long)histdown);
-	  drawhistdivisions(hx1, hx2);
-	}
+        historypointx(gg.htbase, &hx1);
+        historypointx(gg.htlast, &hx2);
+        if (hx1 < histleft) hx1 = histleft;
+        if (hx2 > across) hx2 = across;
+        if (hx1 <= hx2) {
+          m_color((long)gg.color.backgr);
+          m_fillrect((long)hx1, 0L, (long)hx2, (long)histdown);
+          drawhistdivisions(hx1, hx2);
+        }
       }
       while (gg.htbase != NULL) {
-	ht = gg.htbase->next;
-	Free(gg.htbase);
-	gg.htbase = ht;
+        ht = gg.htbase->next;
+        Free(gg.htbase);
+        gg.htbase = ht;
       }
       gg.htlast = NULL;
     }
@@ -5383,16 +4690,16 @@ Static Void pass()
       st->nexttstep = -1.0;
       calltool(st, act_pass);
       if (st->nexttstep >= 0.0) {
-	dtime = st->nexttstep - st->deltatime;
-	if (dtime < 0.0) {
-	  st->deltatime = st->nexttstep * 0.999999999;
-	  dtime = st->nexttstep - st->deltatime;
-	}
-	if (!havetime || dtime < mintime) {
-	  mintime = dtime;
-	  mintimetool = st;
-	}
-	havetime = true;
+        dtime = st->nexttstep - st->deltatime;
+        if (dtime < 0.0) {
+          st->deltatime = st->nexttstep * 0.999999999;
+          dtime = st->nexttstep - st->deltatime;
+        }
+        if (!havetime || dtime < mintime) {
+          mintime = dtime;
+          mintimetool = st;
+        }
+        havetime = true;
       }
     }
     st = st->next;
@@ -5404,15 +4711,14 @@ Static Void pass()
     m_noclip();
     vmessage("Warning: scope memory is 100% full");
     switch (histgattr[histfullaction - 1].UU.nv) {
+      case 0:
+        gg.histactive = false;
+        break;
 
-    case 0:
-      gg.histactive = false;
-      break;
-
-    case 1:
-      gg.pwrflag = false;
-      vmessage("Simulation is OFF (scope full)");
-      break;
+      case 1:
+        gg.pwrflag = false;
+        vmessage("Simulation is OFF (scope full)");
+        break;
     }
     m_unclip();
   }
@@ -5420,181 +4726,180 @@ Static Void pass()
     gg.simstatetool = mintimetool;
     if (havetime) {
       if (mintime > 0) {
-	gg.simstate = simst_running;
-	if (histsweep == histsweep_onreset) {
-	  flag = (gg.time >= histgattr[histstarttime - 1].UU.r);
-	  flag2 = (gg.time >= histgattr[histstoptime - 1].UU.r);
-	}
-	gg.time += mintime;
-	gg.prevtimestep = mintime;
-	if (histsweep == histsweep_onreset) {
-	  if (!histgattr[histstarttime - 1].blnk && !flag &&
-	      gg.time >= histgattr[histstarttime - 1].UU.r)
-	    gg.histactive = true;
-	  if (!histgattr[histstoptime - 1].blnk && !flag2 &&
-	      gg.time >= histgattr[histstoptime - 1].UU.r)
-	    gg.histactive = false;
-	}
-	st = gg.toolbase;
-	while (st != NULL) {
-	  if (st->simulator) {
-	    if (st->nexttstep > 0.0) {
-	      gg.actflag = (st->nexttstep - st->deltatime == mintime);
-	      if (gg.actflag)
-		st->deltatime = 0.0;
-	      else
-		st->deltatime += mintime;
-	      calltool(st, act_tstep);
-	    }
-	  }
-	  st = st->next;
-	}
-	if (gg.histactive && hncount > 0 &&
-	    (histgattr[histminstep - 1].blnk ||
-	     gg.time - histtime >= histgattr[histminstep - 1].UU.r)) {
-	  if (htcount >= histgattr[histmaxcount - 1].UU.U73.i1) {
-	    if (gg.showpage == log_page_history)
-	      historypointx(gg.htbase, &hx1);
-	    while (htcount >= histgattr[histmaxcount - 1].UU.U73.i1) {
-	      ht = gg.htbase->next;
-	      Free(gg.htbase);
-	      gg.htbase = ht;
-	      htcount--;
-	    }
-	    if (gg.showpage == log_page_history) {
-	      if (gg.htbase != NULL)
-		historypointx(gg.htbase, &hx2);
-	      else
-		hx2 = across;
-	      if (hx2 >= hx1) {
-		m_color((long)gg.color.backgr);
-		m_fillrect((long)hx1, 0L, (long)hx2, (long)histdown);
-		drawhistdivisions(hx1, hx2);
-	      }
-	    }
-	  }
-	  if (gg.htbase == NULL) {
-	    histgattr[histfirsttime - 1].UU.r = gg.time;
-	    histgattr[histfirsttime - 1].changed = true;
-	    histonscreen = false;
-	  }
-/* p2c: log.text, line 5010:
- * Note: Suspicious mixture of sizes in NA_NEW [173] */
+        gg.simstate = simst_running;
+        if (histsweep == histsweep_onreset) {
+          flag = (gg.time >= histgattr[histstarttime - 1].UU.r);
+          flag2 = (gg.time >= histgattr[histstoptime - 1].UU.r);
+        }
+        gg.time += mintime;
+        gg.prevtimestep = mintime;
+        if (histsweep == histsweep_onreset) {
+          if (!histgattr[histstarttime - 1].blnk && !flag &&
+              gg.time >= histgattr[histstarttime - 1].UU.r)
+            gg.histactive = true;
+          if (!histgattr[histstoptime - 1].blnk && !flag2 &&
+              gg.time >= histgattr[histstoptime - 1].UU.r)
+            gg.histactive = false;
+        }
+        st = gg.toolbase;
+        while (st != NULL) {
+          if (st->simulator) {
+            if (st->nexttstep > 0.0) {
+              gg.actflag = (st->nexttstep - st->deltatime == mintime);
+              if (gg.actflag)
+                st->deltatime = 0.0;
+              else
+                st->deltatime += mintime;
+              calltool(st, act_tstep);
+            }
+          }
+          st = st->next;
+        }
+        if (gg.histactive && hncount > 0 &&
+            (histgattr[histminstep - 1].blnk ||
+             gg.time - histtime >= histgattr[histminstep - 1].UU.r)) {
+          if (htcount >= histgattr[histmaxcount - 1].UU.U73.i1) {
+            if (gg.showpage == log_page_history) historypointx(gg.htbase, &hx1);
+            while (htcount >= histgattr[histmaxcount - 1].UU.U73.i1) {
+              ht = gg.htbase->next;
+              Free(gg.htbase);
+              gg.htbase = ht;
+              htcount--;
+            }
+            if (gg.showpage == log_page_history) {
+              if (gg.htbase != NULL)
+                historypointx(gg.htbase, &hx2);
+              else
+                hx2 = across;
+              if (hx2 >= hx1) {
+                m_color((long)gg.color.backgr);
+                m_fillrect((long)hx1, 0L, (long)hx2, (long)histdown);
+                drawhistdivisions(hx1, hx2);
+              }
+            }
+          }
+          if (gg.htbase == NULL) {
+            histgattr[histfirsttime - 1].UU.r = gg.time;
+            histgattr[histfirsttime - 1].changed = true;
+            histonscreen = false;
+          }
+          /* p2c: log.text, line 5010:
+           * Note: Suspicious mixture of sizes in NA_NEW [173] */
 
 #ifdef __alpha__
           ht = (log_htrec *)Malloc(sizeof(log_htrec) -
-                                  log_million * sizeof(Anyptr) +
-                                  hncount * sizeof(Anyptr) *2);
+                                   log_million * sizeof(Anyptr) +
+                                   hncount * sizeof(Anyptr) * 2);
 #else
           ht = (log_htrec *)Malloc(sizeof(log_htrec) -
-                                  log_million * sizeof(Anyptr) +
-                                  hncount * sizeof(Anyptr));
+                                   log_million * sizeof(Anyptr) +
+                                   hncount * sizeof(Anyptr));
 #endif
 
-	  ht->next = NULL;
-	  ht->time = gg.time;
-	  hn = gg.hnbase;
-	  i1 = 0;
-	  while (hn != NULL) {
-	    gg.actval = 0.0;
-	    gg.actx = hn->sig;
-	    gg.actgattr = hn->attr;
-	    calltoolnode(gg.signaltab[gg.actx - 1].np, act_history);
-	    i1++;
-	    ht->val[i1 - 1] = na_rtosr(gg.actval);
-	    hn = hn->next;
-	  }
-	  if (gg.showpage == log_page_history && gg.htlast != NULL) {
-	    historypointx(gg.htlast, &hx1);
-	    historypointx(ht, &hx2);
-	    hn = gg.hnbase;
-	    while (hn != NULL) {
-	      historypointy(hn, gg.htlast, &hy1);
-	      historypointy(hn, ht, &hy2);
-	      if ((unsigned long)gg.acty <= 15) {
-		m_color(gg.acty);
-		m_drawline((long)hx1, (long)hy1, (long)hx2, (long)hy2);
-	      }
-	      hn = hn->next;
-	    }
-	  }
-	  if (gg.htlast == NULL)
-	    gg.htbase = ht;
-	  else
-	    gg.htlast->next = ht;
-	  gg.htlast = ht;
-	  htcount++;
-	  histtime = gg.time;
-	  if (histsweep != histsweep_contin) {
-	    i1 = histgattr[histmaxcount - 1].UU.U73.i1;
-	    if (htcount >= i1 * 9 / 10) {
-	      if (htcount == i1 * 9 / 10) {
-		m_noclip();
-		vmessage("Warning: scope memory is 90% full");
-	      }
-	      if (htcount == i1 * 19 / 20) {
-		m_noclip();
-		vmessage("Warning: scope memory is 95% full");
-	      }
-	    }
-	  }
-	}
+          ht->next = NULL;
+          ht->time = gg.time;
+          hn = gg.hnbase;
+          i1 = 0;
+          while (hn != NULL) {
+            gg.actval = 0.0;
+            gg.actx = hn->sig;
+            gg.actgattr = hn->attr;
+            calltoolnode(gg.signaltab[gg.actx - 1].np, act_history);
+            i1++;
+            ht->val[i1 - 1] = na_rtosr(gg.actval);
+            hn = hn->next;
+          }
+          if (gg.showpage == log_page_history && gg.htlast != NULL) {
+            historypointx(gg.htlast, &hx1);
+            historypointx(ht, &hx2);
+            hn = gg.hnbase;
+            while (hn != NULL) {
+              historypointy(hn, gg.htlast, &hy1);
+              historypointy(hn, ht, &hy2);
+              if ((unsigned long)gg.acty <= 15) {
+                m_color(gg.acty);
+                m_drawline((long)hx1, (long)hy1, (long)hx2, (long)hy2);
+              }
+              hn = hn->next;
+            }
+          }
+          if (gg.htlast == NULL)
+            gg.htbase = ht;
+          else
+            gg.htlast->next = ht;
+          gg.htlast = ht;
+          htcount++;
+          histtime = gg.time;
+          if (histsweep != histsweep_contin) {
+            i1 = histgattr[histmaxcount - 1].UU.U73.i1;
+            if (htcount >= i1 * 9 / 10) {
+              if (htcount == i1 * 9 / 10) {
+                m_noclip();
+                vmessage("Warning: scope memory is 90% full");
+              }
+              if (htcount == i1 * 19 / 20) {
+                m_noclip();
+                vmessage("Warning: scope memory is 95% full");
+              }
+            }
+          }
+        }
       } else
-	gg.simstate = simst_notready;
+        gg.simstate = simst_notready;
     } else
       gg.simstate = simst_notactive;
     if (gg.glowmode && gg.showpage > 0 && !gg.invisible && !gg.showconflicts) {
       flag = false;
       hw = gg.hwbase[gg.curpage - 1];
       while (hw != NULL) {
-	WITH1 = hw;
-	if ((!WITH1->node->conflict1 || !WITH1->node->conflict2) &&
-	    WITH1->node->changed && hw != gg.movinghw) {
-	  hidecursor_hook();
-	  m_color(glowcol(hw->node,
-			  (long)gg.color.wire[hw->wcolr - log_wcol_normal]));
-	  hline(WITH1->x1, WITH1->x2, WITH1->y);
-	  flag = true;
-	}
-	hw = WITH1->next;
+        WITH1 = hw;
+        if ((!WITH1->node->conflict1 || !WITH1->node->conflict2) &&
+            WITH1->node->changed && hw != gg.movinghw) {
+          hidecursor_hook();
+          m_color(glowcol(hw->node,
+                          (long)gg.color.wire[hw->wcolr - log_wcol_normal]));
+          hline(WITH1->x1, WITH1->x2, WITH1->y);
+          flag = true;
+        }
+        hw = WITH1->next;
       }
       vw = gg.vwbase[gg.curpage - 1];
       while (vw != NULL) {
-	WITH2 = vw;
-	if ((!WITH2->node->conflict1 || !WITH2->node->conflict2) &&
-	    WITH2->node->changed && vw != gg.movingvw) {
-	  hidecursor_hook();
-	  m_color(glowcol(vw->node,
-			  (long)gg.color.wire[vw->wcolr - log_wcol_normal]));
-	  vline(WITH2->x, WITH2->y1, WITH2->y2);
-	  flag = true;
-	}
-	vw = WITH2->next;
+        WITH2 = vw;
+        if ((!WITH2->node->conflict1 || !WITH2->node->conflict2) &&
+            WITH2->node->changed && vw != gg.movingvw) {
+          hidecursor_hook();
+          m_color(glowcol(vw->node,
+                          (long)gg.color.wire[vw->wcolr - log_wcol_normal]));
+          vline(WITH2->x, WITH2->y1, WITH2->y2);
+          flag = true;
+        }
+        vw = WITH2->next;
       }
       if (glowsolder) {
-	s = gg.sbase[gg.curpage - 1];
-	while (s != NULL) {
-	  WITH3 = s;
-	  n = WITH3->hwire->node;
-	  if ((!n->conflict1 || !n->conflict2) && n->changed &&
-	      WITH3->hwire != gg.movinghw && WITH3->vwire != gg.movingvw) {
-	    hidecursor_hook();
-	    drawsolderc(WITH3->x, WITH3->y,
-			(int)glowcol(n, (long)gg.color.solder));
-	    flag = true;
-	  }
-	  s = WITH3->next;
-	}
+        s = gg.sbase[gg.curpage - 1];
+        while (s != NULL) {
+          WITH3 = s;
+          n = WITH3->hwire->node;
+          if ((!n->conflict1 || !n->conflict2) && n->changed &&
+              WITH3->hwire != gg.movinghw && WITH3->vwire != gg.movingvw) {
+            hidecursor_hook();
+            drawsolderc(WITH3->x, WITH3->y,
+                        (int)glowcol(n, (long)gg.color.solder));
+            flag = true;
+          }
+          s = WITH3->next;
+        }
       }
       if (flag) {
-	n = gg.nbase;
-	while (n != NULL) {
-	  n->changed = false;
-	  n = n->next;
-	}
-	unhidecursor_hook();
+        n = gg.nbase;
+        while (n != NULL) {
+          n->changed = false;
+          n = n->next;
+        }
+        unhidecursor_hook();
       }
-    }  /*if gg.glowmode*/
+    } /*if gg.glowmode*/
   } else
     gg.simstate = simst_off;
   hadconflicts = anyconflicts;
@@ -5606,23 +4911,21 @@ Static Void pass()
     if (n->conflict) {
       flag2 = (n->conflict1 && n->conflict2);
       if (gg.simstate == simst_running && !flag2 && n->oconflict) {
-	n->conflict1 = !n->conflict1;
-	if (!n->conflict1)
-	  n->conflict2 = true;
+        n->conflict1 = !n->conflict1;
+        if (!n->conflict1) n->conflict2 = true;
       }
       if (n->conflict1 && n->conflict2) {
-	anyconflicts = true;
-	if ((gg.refrflag || !flag2 || !n->oconflict) && gg.showpage > 0)
-	  drawnodec(n, gg.color.conflict);
+        anyconflicts = true;
+        if ((gg.refrflag || !flag2 || !n->oconflict) && gg.showpage > 0)
+          drawnodec(n, gg.color.conflict);
       }
       n->oconflict = true;
     } else {
-      if (gg.showpage > 0)
-	drawnode(n);
+      if (gg.showpage > 0) drawnode(n);
       if (n1 == NULL)
-	nodeconflictbase = n2;
+        nodeconflictbase = n2;
       else
-	n1->confnext = n2;
+        n1->confnext = n2;
       n->oconflict = false;
       n->conflict1 = false;
       n->conflict2 = false;
@@ -5638,23 +4941,21 @@ Static Void pass()
     if (g->conflict) {
       flag2 = (g->conflict1 && g->conflict2);
       if (gg.simstate == simst_running && !flag2 && g->oconflict) {
-	g->conflict1 = !g->conflict1;
-	if (!g->conflict1)
-	  g->conflict2 = true;
+        g->conflict1 = !g->conflict1;
+        if (!g->conflict1) g->conflict2 = true;
       }
       if (g->conflict2 && g->conflict2) {
-	anyconflicts = true;
-	if ((gg.refrflag || !flag2 || !g->oconflict) && gg.showpage > 0)
-	  drawgatexc(g, gg.color.conflict);
+        anyconflicts = true;
+        if ((gg.refrflag || !flag2 || !g->oconflict) && gg.showpage > 0)
+          drawgatexc(g, gg.color.conflict);
       }
       g->oconflict = true;
     } else {
-      if (gg.showpage > 0)
-	drawgatex(g);
+      if (gg.showpage > 0) drawgatex(g);
       if (g1 == NULL)
-	gateconflictbase = g2;
+        gateconflictbase = g2;
       else
-	g1->confnext = g2;
+        g1->confnext = g2;
       g->oconflict = false;
       g->conflict1 = false;
       g->conflict2 = false;
@@ -5664,8 +4965,7 @@ Static Void pass()
     g = g2;
   }
   /* clipoff; */
-  if (gg.showpage > 0 && bottomcount == 0)
-    refrbaseline(false);
+  if (gg.showpage > 0 && bottomcount == 0) refrbaseline(false);
   gg.baselinecolor = gg.color.baseline;
   gg.resetflag = false;
   histreset = false;
@@ -5674,8 +4974,7 @@ Static Void pass()
     gg.singlestepcount--;
     if (gg.singlestepcount == 0) {
       gg.pwrflag = false;
-      if (steppingoff)
-	vmessage("Simulation is OFF (single-step)");
+      if (steppingoff) vmessage("Simulation is OFF (single-step)");
       steppingoff = false;
     }
   }
@@ -5686,10 +4985,6 @@ Static Void pass()
   gg.refrflag = false;
 }
 
-
-
-
-
 Static Void clearconflicts(tool)
 log_tool *tool;
 {
@@ -5698,28 +4993,17 @@ log_tool *tool;
 
   n = nodeconflictbase;
   while (n != NULL) {
-    if (n->simtype == tool)
-      n->conflict = false;
+    if (n->simtype == tool) n->conflict = false;
     n = n->confnext;
   }
   g = gateconflictbase;
   while (g != NULL) {
-    if (g->kind->simtype == tool)
-      g->conflict = false;
+    if (g->kind->simtype == tool) g->conflict = false;
     g = g->confnext;
   }
 }
 
-
-
-
-
-
 Static short getsignal PP((int d, Char *n));
-
-
-
-
 
 /*===================  NEWHW  ====================*/
 /*=                                              =*/
@@ -5736,10 +5020,7 @@ log_hwrec **hw;
   (*hw)->temp = (na_long)0;
 }
 
-
-#define rtn             "DISPHW"
-
-
+#define rtn "DISPHW"
 
 /*==================  DISPHW  ====================*/
 /*=                                              =*/
@@ -5752,16 +5033,13 @@ log_hwrec **hw;
 {
   log_hwrec *hw1;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Dispose hwire %ld\n", (long)(*hw));
-  if (*hw == NULL)
-    return;
+  if (gg.traceflag) fprintf(tracefile, "Dispose hwire %ld\n", (long)(*hw));
+  if (*hw == NULL) return;
   hw1 = gg.hwbase[gg.curpage - 1];
   if (*hw == hw1)
     gg.hwbase[gg.curpage - 1] = (*hw)->next;
   else {
-    while (hw1 != NULL && hw1->next != *hw)
-      hw1 = hw1->next;
+    while (hw1 != NULL && hw1->next != *hw) hw1 = hw1->next;
     if (hw1 == NULL)
       report(10, rtn);
     else
@@ -5772,8 +5050,6 @@ log_hwrec **hw;
 }
 
 #undef rtn
-
-
 
 /*===================  NEWVW  ====================*/
 /*=                                              =*/
@@ -5790,10 +5066,7 @@ log_vwrec **vw;
   (*vw)->temp = (na_long)0;
 }
 
-
-#define rtn             "DISPVW"
-
-
+#define rtn "DISPVW"
 
 /*==================  DISPVW  ====================*/
 /*=                                              =*/
@@ -5806,16 +5079,13 @@ log_vwrec **vw;
 {
   log_vwrec *vw1;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Dispose vwire %ld\n", (long)(*vw));
-  if (*vw == NULL)
-    return;
+  if (gg.traceflag) fprintf(tracefile, "Dispose vwire %ld\n", (long)(*vw));
+  if (*vw == NULL) return;
   vw1 = gg.vwbase[gg.curpage - 1];
   if (*vw == vw1)
     gg.vwbase[gg.curpage - 1] = (*vw)->next;
   else {
-    while (vw1 != NULL && vw1->next != *vw)
-      vw1 = vw1->next;
+    while (vw1 != NULL && vw1->next != *vw) vw1 = vw1->next;
     if (vw1 == NULL)
       report(10, rtn);
     else
@@ -5826,8 +5096,6 @@ log_vwrec **vw;
 }
 
 #undef rtn
-
-
 
 /*==================  NEWSOLDER  =================*/
 /*=                                              =*/
@@ -5848,10 +5116,7 @@ log_srec **s;
   (*s)->temp = (na_long)0;
 }
 
-
-#define rtn             "DISPSOLDER"
-
-
+#define rtn "DISPSOLDER"
 
 /*================  DISPSOLDER  ==================*/
 /*=                                              =*/
@@ -5864,16 +5129,13 @@ log_srec **s;
 {
   log_srec *s1;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Dispose solder %ld\n", (long)(*s));
-  if (*s == NULL)
-    return;
+  if (gg.traceflag) fprintf(tracefile, "Dispose solder %ld\n", (long)(*s));
+  if (*s == NULL) return;
   s1 = gg.sbase[gg.curpage - 1];
   if (*s == s1)
     gg.sbase[gg.curpage - 1] = (*s)->next;
   else {
-    while (s1 != NULL && s1->next != *s)
-      s1 = s1->next;
+    while (s1 != NULL && s1->next != *s) s1 = s1->next;
     if (s1 == NULL)
       report(10, rtn);
     else
@@ -5884,8 +5146,6 @@ log_srec **s;
 }
 
 #undef rtn
-
-
 
 /*==================  LINKGATE  ==================*/
 /*=                                              =*/
@@ -5899,13 +5159,9 @@ log_grec **g;
   (*g)->next = gg.gbase[gg.curpage - 1];
   gg.gbase[gg.curpage - 1] = *g;
   chpageplace((int)gg.curpage, (*g)->x - (*g)->kind->bbmax,
-	      (*g)->y - (*g)->kind->bbmax, (*g)->x + (*g)->kind->bbmax,
-	      (*g)->y + (*g)->kind->bbmax);
+              (*g)->y - (*g)->kind->bbmax, (*g)->x + (*g)->kind->bbmax,
+              (*g)->y + (*g)->kind->bbmax);
 }
-
-
-
-
 
 Static Void newattrs(gattr, numattrs, kattr)
 log_gattrrec **gattr;
@@ -5914,45 +5170,42 @@ log_kattrrec *kattr;
 {
   short i;
 
-/* p2c: log.text, line 5465: Note: Can't interpret size in NA_NEW [174] */
+  /* p2c: log.text, line 5465: Note: Can't interpret size in NA_NEW [174] */
   *gattr = (log_gattrrec *)Malloc(numattrs * gattrrecsize);
   for (i = 0; i < numattrs; i++) {
     switch (kattr[i].dtype) {
+      case 'R':
+      case 'U':
+      case 'F':
+        (*gattr)[i].UU.r = kattr[i].UU.U82.r;
+        break;
 
-    case 'R':
-    case 'U':
-    case 'F':
-      (*gattr)[i].UU.r = kattr[i].UU.U82.r;
-      break;
+      case 'I':
+      case 'H':
+        (*gattr)[i].UU.U73.i1 = kattr[i].UU.U73.i1;
+        break;
 
-    case 'I':
-    case 'H':
-      (*gattr)[i].UU.U73.i1 = kattr[i].UU.U73.i1;
-      break;
+      case 'C':
+        (*gattr)[i].UU.c = (Char *)Malloc(kattr[i].prec + 1L);
+        strcpy((*gattr)[i].UU.c, kattr[i].UU.c);
+        break;
 
-    case 'C':
-      (*gattr)[i].UU.c = (Char *)Malloc(kattr[i].prec + 1L);
-      strcpy((*gattr)[i].UU.c, kattr[i].UU.c);
-      break;
+      case 'A':
+        (*gattr)[i].UU.sp = strdup(kattr[i].UU.sp);
+        break;
 
-    case 'A':
-      (*gattr)[i].UU.sp = strdup(kattr[i].UU.sp);
-      break;
+      case 'B':
+        (*gattr)[i].UU.b = kattr[i].UU.b;
+        break;
 
-    case 'B':
-      (*gattr)[i].UU.b = kattr[i].UU.b;
-      break;
-
-    case 'V':
-      (*gattr)[i].UU.nv = kattr[i].UU.U86.dv;
-      break;
+      case 'V':
+        (*gattr)[i].UU.nv = kattr[i].UU.U86.dv;
+        break;
     }
     (*gattr)[i].blnk = kattr[i].blnk;
     (*gattr)[i].changed = false;
   }
 }
-
-
 
 Static Void disposeattrs(gattr, numattrs, kattr)
 log_gattrrec **gattr;
@@ -5963,20 +5216,17 @@ log_kattrrec *kattr;
 
   for (i = 0; i < numattrs; i++) {
     switch (kattr[i].dtype) {
+      case 'C':
+        Free((*gattr)[i].UU.c);
+        break;
 
-    case 'C':
-      Free((*gattr)[i].UU.c);
-      break;
-
-    case 'A':
-      strdispose(&(*gattr)[i].UU.sp);
-      break;
+      case 'A':
+        strdispose(&(*gattr)[i].UU.sp);
+        break;
     }
   }
   Free(*gattr);
 }
-
-
 
 Static Void copyattrs(gattr, oldattr, numattrs, kattr)
 log_gattrrec **gattr, *oldattr;
@@ -5985,27 +5235,22 @@ log_kattrrec *kattr;
 {
   short i;
 
-/* p2c: log.text, line 5508: Note: Can't interpret size in NA_NEW [174] */
+  /* p2c: log.text, line 5508: Note: Can't interpret size in NA_NEW [174] */
   *gattr = (log_gattrrec *)Malloc(numattrs * gattrrecsize);
   for (i = 0; i < numattrs; i++) {
     (*gattr)[i] = oldattr[i];
     switch (kattr[i].dtype) {
+      case 'C':
+        (*gattr)[i].UU.c = (Char *)Malloc(kattr[i].prec + 1L);
+        strcpy((*gattr)[i].UU.c, oldattr[i].UU.c);
+        break;
 
-    case 'C':
-      (*gattr)[i].UU.c = (Char *)Malloc(kattr[i].prec + 1L);
-      strcpy((*gattr)[i].UU.c, oldattr[i].UU.c);
-      break;
-
-    case 'A':
-      (*gattr)[i].UU.sp = strdup(oldattr[i].UU.sp);
-      break;
+      case 'A':
+        (*gattr)[i].UU.sp = strdup(oldattr[i].UU.sp);
+        break;
     }
   }
 }
-
-
-
-
 
 /*===================  NEWGATE  ==================*/
 /*=                                              =*/
@@ -6023,7 +5268,6 @@ log_grec **g;
     freegate = freegate->next;
   }
 }
-
 
 Static Void newgate2(g, gt, sig, attrs)
 log_grec **g;
@@ -6044,8 +5288,8 @@ log_gattrrec *attrs;
   (*g)->oconflict = false;
   (*g)->dimcolor = false;
   (*g)->pin = (log_nrec **)Malloc((*g)->kind->numpins * sizeof(log_nrec *));
-  (*g)->pinpos = (log_pinposrec *)
-		 Malloc((*g)->kind->numpins * sizeof(log_pinposrec));
+  (*g)->pinpos =
+      (log_pinposrec *)Malloc((*g)->kind->numpins * sizeof(log_pinposrec));
   if (attrs != NULL)
     copyattrs(&(*g)->attr, attrs, (*g)->kind->numattrs, (*g)->kind->attr);
   else
@@ -6068,18 +5312,10 @@ log_gattrrec *attrs;
   calltoolgate(*g, act_newgate);
 }
 
-
-
 Static Void newgate(g, gt)
 log_grec **g;
 short gt;
-{
-  newgate2(g, gt, 0, NULL);
-}
-
-
-
-
+{ newgate2(g, gt, 0, NULL); }
 
 /*================  COPYGATE  ====================*/
 /*=                                              =*/
@@ -6100,22 +5336,16 @@ log_grec *old, **g;
   }
   (*g)->pin = (log_nrec **)Malloc((*g)->kind->numpins * sizeof(log_nrec *));
   FORLIM = (*g)->kind->numpins;
-  for (i = 0; i < FORLIM; i++)
-    (*g)->pin[i] = old->pin[i];
-  (*g)->pinpos = (log_pinposrec *)
-		 Malloc((*g)->kind->numpins * sizeof(log_pinposrec));
+  for (i = 0; i < FORLIM; i++) (*g)->pin[i] = old->pin[i];
+  (*g)->pinpos =
+      (log_pinposrec *)Malloc((*g)->kind->numpins * sizeof(log_pinposrec));
   FORLIM = (*g)->kind->numpins;
-  for (i = 0; i < FORLIM; i++)
-    (*g)->pinpos[i] = old->pinpos[i];
+  for (i = 0; i < FORLIM; i++) (*g)->pinpos[i] = old->pinpos[i];
   copyattrs(&(*g)->attr, old->attr, (*g)->kind->numattrs, (*g)->kind->attr);
   (*g)->info = (na_long)0;
   gg.actgate2 = old;
   calltoolgate(*g, act_copygate);
 }
-
-
-
-
 
 /*==================  UNLKGATE  ==================*/
 /*=                                              =*/
@@ -6129,18 +5359,15 @@ log_grec **g;
   log_grec *g1;
 
   g1 = gg.gbase[gg.curpage - 1];
-  while (g1 != NULL && g1->next != *g)
-    g1 = g1->next;
+  while (g1 != NULL && g1->next != *g) g1 = g1->next;
   if (g1 == NULL)
     gg.gbase[gg.curpage - 1] = (*g)->next;
   else
     g1->next = (*g)->next;
   chpageplace((int)gg.curpage, (*g)->x - (*g)->kind->bbmax,
-	      (*g)->y - (*g)->kind->bbmax, (*g)->x + (*g)->kind->bbmax,
-	      (*g)->y + (*g)->kind->bbmax);
+              (*g)->y - (*g)->kind->bbmax, (*g)->x + (*g)->kind->bbmax,
+              (*g)->y + (*g)->kind->bbmax);
 }
-
-
 
 /*===============  DISPOSEGATE  ==================*/
 /*=                                              =*/
@@ -6155,9 +5382,7 @@ log_grec **g;
   freegate = *g;
 }
 
-
-#define rtn             "DISPOSEGATE"
-
+#define rtn "DISPOSEGATE"
 
 Static Void disposegate(g)
 log_grec **g;
@@ -6178,8 +5403,7 @@ log_grec **g;
     else
       g2->confnext = (*g)->confnext;
   }
-  if (*g == gg.probegate)
-    gg.probegate = NULL;
+  if (*g == gg.probegate) gg.probegate = NULL;
   calltoolgate(*g, act_disposegate);
   disposeattrs(&(*g)->attr, (*g)->kind->numattrs, (*g)->kind->attr);
   Free((*g)->pin);
@@ -6188,8 +5412,6 @@ log_grec **g;
 }
 
 #undef rtn
-
-
 
 /*==================  NEWLABEL  ==================*/
 /*=                                              =*/
@@ -6205,7 +5427,6 @@ log_lrec *l;
   stamp(&gg.labelstamp);
 }
 
-
 Static Void newlabel(l)
 log_lrec **l;
 {
@@ -6213,8 +5434,6 @@ log_lrec **l;
   (*l)->temp = (na_long)0;
   linklabel(*l);
 }
-
-
 
 /*================  DISPLABEL  ===================*/
 /*=                                              =*/
@@ -6228,8 +5447,7 @@ log_lrec *l;
   log_lrec *l1;
 
   l1 = gg.lbase[gg.curpage - 1];
-  while (l1 != NULL && l1->next != l)
-    l1 = l1->next;
+  while (l1 != NULL && l1->next != l) l1 = l1->next;
   if (l1 == NULL)
     gg.lbase[gg.curpage - 1] = l->next;
   else
@@ -6238,15 +5456,12 @@ log_lrec *l;
   stamp(&gg.labelstamp);
 }
 
-
 Static Void displabel(l)
 log_lrec **l;
 {
   unlinklabel(*l);
   Free(*l);
 }
-
-
 
 /*===================  NEWBOX  ===================*/
 /*=                                              =*/
@@ -6262,7 +5477,6 @@ log_brec *b;
   stamp(&gg.boxstamp);
 }
 
-
 Static Void newbox(b)
 log_brec **b;
 {
@@ -6270,8 +5484,6 @@ log_brec **b;
   (*b)->temp = (na_long)0;
   linkbox(*b);
 }
-
-
 
 /*=================  DISPBOX  ====================*/
 /*=                                              =*/
@@ -6285,8 +5497,7 @@ log_brec *b;
   log_brec *b1;
 
   b1 = gg.bbase[gg.curpage - 1];
-  while (b1 != NULL && b1->next != b)
-    b1 = b1->next;
+  while (b1 != NULL && b1->next != b) b1 = b1->next;
   if (b1 == NULL)
     gg.bbase[gg.curpage - 1] = b->next;
   else
@@ -6295,7 +5506,6 @@ log_brec *b;
   stamp(&gg.boxstamp);
 }
 
-
 Static Void dispbox(b)
 log_brec **b;
 {
@@ -6303,29 +5513,19 @@ log_brec **b;
   Free(*b);
 }
 
-
-
-
-
-
-
 Static Void defsimulator(act)
 log_action *act;
 {
   switch (act->action) {
+    case act_init:
+      act->acttool->simulator = true;
+      act->acttool->ready = true;
+      break;
 
-  case act_init:
-    act->acttool->simulator = true;
-    act->acttool->ready = true;
-    break;
-
-  default:
-    break;
+    default:
+      break;
   }
 }
-
-
-
 
 Static log_tool *findsimtype(st)
 uchar st;
@@ -6340,8 +5540,7 @@ uchar st;
     fprintf(tracefile, "Findsimtype of %d gets %ld\n", st, (long)stp);
   if (!stp->ready || !stp->simulator) {
     rdy = stp->ready;
-    if (rdy)
-      calltool(stp, act_exit);
+    if (rdy) calltool(stp, act_exit);
     stp->proc = defsimulator;
     gg.action = act_init;
     gg.acttool = stp;
@@ -6365,9 +5564,6 @@ uchar st;
   return stp;
 }
 
-
-
-
 /*==================  ADDNODE  ===================*/
 /*=                                              =*/
 /*=  Create a new node.                          =*/
@@ -6384,7 +5580,6 @@ log_nrec **n;
     freenode = freenode->next;
   }
 }
-
 
 Static Void newnode(n, st)
 log_nrec **n;
@@ -6407,16 +5602,10 @@ uchar st;
   calltoolnode(*n, act_newnode);
   (*n)->next = gg.nbase;
   gg.nbase = *n;
-  if (gg.traceflag)
-    fprintf(tracefile, "Make node %ld\n", (long)(*n));
+  if (gg.traceflag) fprintf(tracefile, "Make node %ld\n", (long)(*n));
 }
 
-
-
-
-
-Static Void dumpconflicts()
-{
+Static Void dumpconflicts() {
   /*no longer needed (I hope!)*/
   log_grec *g;
   log_nrec *n;
@@ -6427,24 +5616,21 @@ Static Void dumpconflicts()
   if (n != NULL || g != NULL) {
     printf("Conflicts:\n");
     while (n != NULL) {
-      printf("   Conflict node %ld  c=%c  delay=%d  oc=%c\n",
-	     (long)n, n->conflict ? 'T' : 'F',
-	     3 - n->conflict - n->conflict2 * 2, n->oconflict ? 'T' : 'F');
+      printf("   Conflict node %ld  c=%c  delay=%d  oc=%c\n", (long)n,
+             n->conflict ? 'T' : 'F', 3 - n->conflict - n->conflict2 * 2,
+             n->oconflict ? 'T' : 'F');
       n = n->confnext;
     }
     while (g != NULL) {
-      printf("   Conflict gate %ld  c=%c  delay=%d  oc=%c\n",
-	     (long)g, g->conflict ? 'T' : 'F',
-	     3 - g->conflict - g->conflict2 * 2, g->oconflict ? 'T' : 'F');
+      printf("   Conflict gate %ld  c=%c  delay=%d  oc=%c\n", (long)g,
+             g->conflict ? 'T' : 'F', 3 - g->conflict - g->conflict2 * 2,
+             g->oconflict ? 'T' : 'F');
       g = g->confnext;
     }
   } else
     printf("No conflicts registered.\n");
   m_alpha_on();
 }
-
-
-
 
 /*==================  COPYNODE  ==================*/
 /*=                                              =*/
@@ -6459,7 +5645,7 @@ log_nrec *old, **n;
   **n = *old;
   (*n)->ref = 0;
   copyattrs(&(*n)->attr, old->attr, (*n)->simtype->nnumattrs,
-	    (*n)->simtype->nattr);
+            (*n)->simtype->nattr);
   gg.actnode2 = old;
   calltoolnode(*n, act_copynode);
   (*n)->next = gg.nbase;
@@ -6471,8 +5657,6 @@ log_nrec *old, **n;
   if (gg.traceflag)
     fprintf(tracefile, "Copy node %ld from %ld\n", (long)(*n), (long)old);
 }
-
-
 
 /*===================  DISPNODE  =================*/
 /*=                                              =*/
@@ -6487,19 +5671,15 @@ log_nrec **n;
   freenode = *n;
 }
 
-
-#define rtn             "DISPNODE"
-
+#define rtn "DISPNODE"
 
 Static Void disposenode(n)
 log_nrec **n;
 {
   log_nrec *n1, *n2;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Dispose node %ld\n", (long)(*n));
-  if (*n == NULL)
-    return;
+  if (gg.traceflag) fprintf(tracefile, "Dispose node %ld\n", (long)(*n));
+  if (*n == NULL) return;
   if ((*n)->conflict || (*n)->oconflict) {
     n1 = nodeconflictbase;
     n2 = NULL;
@@ -6514,16 +5694,14 @@ log_nrec **n;
     else
       n2->confnext = (*n)->confnext;
   }
-  if (*n == gg.probenode)
-    gg.probenode = NULL;
+  if (*n == gg.probenode) gg.probenode = NULL;
   stamp(&(*n)->simtype->netstamp);
   calltoolnode(*n, act_disposenode);
   n1 = gg.nbase;
   if (*n == n1)
     gg.nbase = (*n)->next;
   else {
-    while (n1 != NULL && n1->next != *n)
-      n1 = n1->next;
+    while (n1 != NULL && n1->next != *n) n1 = n1->next;
     if (n1 == NULL)
       report(10, rtn);
     else
@@ -6535,21 +5713,15 @@ log_nrec **n;
 
 #undef rtn
 
-
-
-
 Static boolean nodeexists(n)
 log_nrec *n;
 {
   log_nrec *n1;
 
   n1 = gg.nbase;
-  while (n1 != NULL && n1 != n)
-    n1 = n1->next;
+  while (n1 != NULL && n1 != n) n1 = n1->next;
   return (n1 != NULL);
 }
-
-
 
 Static Void newnoderef(n, st, ref)
 log_nrec **n;
@@ -6560,45 +5732,34 @@ long ref;
   (*n)->ref = ref;
 }
 
-
-
 Static log_nrec *refnode(n)
 log_nrec *n;
 {
-  if (n == NULL)
-    return n;
+  if (n == NULL) return n;
   n->ref++;
   if (gg.traceflag)
     fprintf(tracefile, "Reference node %ld -> %d\n", (long)n, n->ref);
   return n;
 }
 
-
-#define rtn             "UNREFNODE"
-
-
+#define rtn "UNREFNODE"
 
 Static Void unrefnode(n)
 log_nrec **n;
 {
-  if (*n == NULL)
-    return;
+  if (*n == NULL) return;
   (*n)->ref--;
   if (gg.traceflag)
     fprintf(tracefile, "Unref node %ld -> %d\n", (long)(*n), (*n)->ref);
-  if ((*n)->ref > 0)
-    return;
+  if ((*n)->ref > 0) return;
   if ((*n)->ref < 0)
     report(10, rtn);
   else {
-    if (!(*n)->keep)
-      disposenode(n);
+    if (!(*n)->keep) disposenode(n);
   }
 }
 
 #undef rtn
-
-
 
 Static Void switchnode(n, n2)
 log_nrec **n, *n2;
@@ -6609,9 +5770,7 @@ log_nrec **n, *n2;
   }
 }
 
-
-Static Void purgesignaltab()
-{
+Static Void purgesignaltab() {
   short i, pg;
   log_nrec *n1;
   log_hnrec *hn;
@@ -6620,15 +5779,13 @@ Static Void purgesignaltab()
   log_sigrec *WITH;
 
   FORLIM = gg.maxsignal;
-  for (i = 0; i < FORLIM; i++)
-    gg.signaltab[i].f = gg.signaltab[i].keep;
+  for (i = 0; i < FORLIM; i++) gg.signaltab[i].f = gg.signaltab[i].keep;
 
   FORLIM = gg.numpages;
   for (pg = 0; pg < FORLIM; pg++) {
     g = gg.gbase[pg];
     while (g != NULL) {
-      if (g->sig != 0)
-        gg.signaltab[g->sig - 1].f = true;
+      if (g->sig != 0) gg.signaltab[g->sig - 1].f = true;
       g = g->next;
     }
   }
@@ -6636,14 +5793,12 @@ Static Void purgesignaltab()
   if (copybuf.valid) {
     g = copybuf.gcopy;
     while (g != NULL) {
-      if (g->sig != 0)
-        gg.signaltab[g->sig - 1].f = true;
+      if (g->sig != 0) gg.signaltab[g->sig - 1].f = true;
       g = g->next;
     }
-  } 
+  }
 
-  if (histtrig != 0)
-    gg.signaltab[histtrig - 1].f = true;
+  if (histtrig != 0) gg.signaltab[histtrig - 1].f = true;
 
   hn = gg.hnbase;
   while (hn != NULL) {
@@ -6653,25 +5808,21 @@ Static Void purgesignaltab()
 
   FORLIM = kindgroupsize;
   for (i = 0; i < FORLIM; i++) {
-    if (kindsig[i] != 0)
-      gg.signaltab[kindsig[i] - 1].f = true;
+    if (kindsig[i] != 0) gg.signaltab[kindsig[i] - 1].f = true;
   }
 
   g = gg.neargate;
-  if (g != NULL && g->sig != 0)
-    gg.signaltab[g->sig - 1].f = true;
+  if (g != NULL && g->sig != 0) gg.signaltab[g->sig - 1].f = true;
 
   gg.lastsignal = 0;
   FORLIM = gg.maxsignal;
   for (i = 1; i <= FORLIM; i++) {
     if (!gg.signaltab[i - 1].f) {
-      if (gg.signaltab[i -1].name && gg.signaltab[i - 1].np) {
+      if (gg.signaltab[i - 1].name && gg.signaltab[i - 1].np) {
         WITH = &gg.signaltab[i - 1];
-        if (WITH->name != NULL)
-          strdispose(&WITH->name);
+        if (WITH->name != NULL) strdispose(&WITH->name);
         n1 = gg.signaltab[i - 1].np;
-        if (n1 && nodeexists(n1))
-          unrefnode(&gg.signaltab[i - 1].np);
+        if (n1 && nodeexists(n1)) unrefnode(&gg.signaltab[i - 1].np);
         gg.signaltab[i - 1].np = NULL;
       }
     } else {
@@ -6680,7 +5831,6 @@ Static Void purgesignaltab()
   }
 }
 
-
 /*=================  GARBAGECOLL  ================*/
 /*=                                              =*/
 /*=  Check each node and get rid of ones that    =*/
@@ -6688,8 +5838,7 @@ Static Void purgesignaltab()
 /*=                                              =*/
 /*================================================*/
 
-Static Void garbagecoll()
-{
+Static Void garbagecoll() {
   log_nrec *n, *n1;
   log_grec *g;
   log_hwrec *hw;
@@ -6699,8 +5848,7 @@ Static Void garbagecoll()
   working();
   n = gg.nbase;
   while (n != NULL) {
-    if (!n->keep)
-      n->ref = 0;
+    if (!n->keep) n->ref = 0;
     n = n->next;
   }
   FORLIM = gg.numpages;
@@ -6718,15 +5866,13 @@ Static Void garbagecoll()
     g = gg.gbase[pg];
     while (g != NULL) {
       FORLIM1 = g->kind->numpins;
-      for (i = 0; i < FORLIM1; i++)
-	g->pin[i]->ref++;
+      for (i = 0; i < FORLIM1; i++) g->pin[i]->ref++;
       g = g->next;
     }
   }
   FORLIM = gg.lastsignal;
   for (i = 0; i < FORLIM; i++) {
-    if (gg.signaltab[i].np != NULL)
-      gg.signaltab[i].np->ref++;
+    if (gg.signaltab[i].np != NULL) gg.signaltab[i].np->ref++;
   }
   callsimtools(act_refnodes);
   working();
@@ -6734,16 +5880,10 @@ Static Void garbagecoll()
   n = gg.nbase;
   while (n != NULL) {
     n1 = n->next;
-    if (n->ref == 0 && !n->keep)
-      disposenode(&n);
+    if (n->ref == 0 && !n->keep) disposenode(&n);
     n = n1;
   }
 }
-
-
-
-
-
 
 /*=================  GETTOFROM  ==================*/
 /*=                                              =*/
@@ -6771,15 +5911,13 @@ Char *n_;
     i = d;
   else {
     i = 1;
-    while (i <= gg.lastsignal &&
-	   (gg.signaltab[i - 1].name == NULL ||
-	    strcmp(gg.signaltab[i - 1].name, n)))
+    while (i <= gg.lastsignal && (gg.signaltab[i - 1].name == NULL ||
+                                  strcmp(gg.signaltab[i - 1].name, n)))
       i++;
     if (i > gg.lastsignal) {
       stamp(&gg.sigstamp);
       i = 1;
-      while (i <= gg.maxsignal && gg.signaltab[i - 1].name != NULL)
-	i++;
+      while (i <= gg.maxsignal && gg.signaltab[i - 1].name != NULL) i++;
       if (i > gg.maxsignal) {
         beginerror();
         printf("Only %d distinct signal names are allowed!\n", gg.maxsignal);
@@ -6795,13 +5933,9 @@ Char *n_;
       }
     }
   }
-  if (i > gg.lastsignal)
-    gg.lastsignal = i;
+  if (i > gg.lastsignal) gg.lastsignal = i;
   return i;
 }
-
-
-
 
 Static Void getsigname(name, sig)
 Char *name;
@@ -6817,10 +5951,6 @@ log_sigrec **sig;
     *sig = NULL;
 }
 
-
-
-
-
 /*==================  SETSCALE  ==================*/
 /*=                                              =*/
 /*=  Set the scaling (zoom) factor.              =*/
@@ -6834,9 +5964,6 @@ Static Void setscale(short s)
   gg.scale = zoomscales[s + 2];
   gg.hscale = gg.scale / 2;
 }
-
-
-
 
 /*==================  NEWPAGE  ===================*/
 /*=                                              =*/
@@ -6877,12 +6004,8 @@ short p;
     gg.curpage = p;
     realcurpage = p;
   }
-  while (gg.numpages > gg.curpage && pagenull((int)gg.numpages))
-    gg.numpages--;
+  while (gg.numpages > gg.curpage && pagenull((int)gg.numpages)) gg.numpages--;
 }
-
-
-
 
 Static Void setupregion(r, pagenum)
 log_regrec **r;
@@ -6893,13 +6016,11 @@ short pagenum;
   if (pagenum < 1 || pagenum > gg.numpages) {
     if (*r != NULL) {
       if (*r == gg.pageregions[(*r)->pagenum - 1])
-	gg.pageregions[(*r)->pagenum - 1] = (*r)->next;
+        gg.pageregions[(*r)->pagenum - 1] = (*r)->next;
       else {
-	r2 = gg.pageregions[(*r)->pagenum - 1];
-	while (r2 != NULL && r2->next != *r)
-	  r2 = r2->next;
-	if (r2 != NULL)
-	  r2->next = (*r)->next;
+        r2 = gg.pageregions[(*r)->pagenum - 1];
+        while (r2 != NULL && r2->next != *r) r2 = r2->next;
+        if (r2 != NULL) r2->next = (*r)->next;
       }
       Free(*r);
     }
@@ -6918,10 +6039,6 @@ short pagenum;
   (*r)->next = gg.pageregions[pagenum - 1];
   gg.pageregions[pagenum - 1] = *r;
 }
-
-
-
-
 
 /*=================  COLORNAME  ==================*/
 /*=                                              =*/
@@ -6950,8 +6067,6 @@ short c;
   }
 }
 
-
-
 /*=================  DUMPNODES  ==================*/
 /*=                                              =*/
 /*=  Print a detailed dissection of the major    =*/
@@ -6959,8 +6074,7 @@ short c;
 /*=                                              =*/
 /*================================================*/
 
-Static Void dumpnodes()
-{
+Static Void dumpnodes() {
   log_nrec *n, *n1;
   log_hwrec *hw;
   log_vwrec *vw;
@@ -6981,7 +6095,7 @@ Static Void dumpnodes()
   sysdate(&datevar);
   systime(&timevar);
   fprintf(tracefile,
-	  "--------------------------------------------------------  ");
+          "--------------------------------------------------------  ");
   fprintf(tracefile, "%2d/%2d/%02d", datevar.month, datevar.day, datevar.year);
   fprintf(tracefile, "  %2d:%2d\n\n", timevar.hour, timevar.minute);
   n = gg.nbase;
@@ -6989,134 +6103,115 @@ Static Void dumpnodes()
   i = 0;
   j = 0;
   TRY(try6);
-    while (j == i && n != NULL) {
-      i++;
-      fprintf(tracefile, "%12ld  T:%s  Ref:%d",
-	      (long)n, n->simtype->name, n->ref);
-      FORLIM = gg.lastsignal;
-      for (j = 0; j < FORLIM; j++) {
-	if (gg.signaltab[j].np == n)
-	  fprintf(tracefile, "   %s", gg.signaltab[j].name);
-      }
-      putc('\n', tracefile);
-      TRY(try7);
-	gg.actfile = gg.tracefile;
-	gg.actflag = true;
-	calltoolnode(n, act_writenode);
-      RECOVER(try7);
-	if (P_escapecode == -20)
-	  goto _Ltry6;
-	fprintf(tracefile, "  (Failed to output node value)   %d\n",
-		P_escapecode);
-      ENDTRY(try7);
-      n1 = gg.nbase;
-      j = 1;
-      while (j < i && n1 != n) {
-	j++;
-	n1 = n1->next;
-      }
-      if (j < i)
-	fprintf(tracefile, "Infinite loop in node list\n");
-      n = n->next;
+  while (j == i && n != NULL) {
+    i++;
+    fprintf(tracefile, "%12ld  T:%s  Ref:%d", (long)n, n->simtype->name,
+            n->ref);
+    FORLIM = gg.lastsignal;
+    for (j = 0; j < FORLIM; j++) {
+      if (gg.signaltab[j].np == n)
+        fprintf(tracefile, "   %s", gg.signaltab[j].name);
     }
-  RECOVER2(try6,_Ltry6);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
+    putc('\n', tracefile);
+    TRY(try7);
+    gg.actfile = gg.tracefile;
+    gg.actflag = true;
+    calltoolnode(n, act_writenode);
+    RECOVER(try7);
+    if (P_escapecode == -20) goto _Ltry6;
+    fprintf(tracefile, "  (Failed to output node value)   %d\n", P_escapecode);
+    ENDTRY(try7);
+    n1 = gg.nbase;
+    j = 1;
+    while (j < i && n1 != n) {
+      j++;
+      n1 = n1->next;
+    }
+    if (j < i) fprintf(tracefile, "Infinite loop in node list\n");
+    n = n->next;
+  }
+  RECOVER2(try6, _Ltry6);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
   ENDTRY(try6);
   putc('\n', tracefile);
   hw = gg.hwbase[gg.curpage - 1];
   fprintf(tracefile, "HWIRES\n");
   TRY(try8);
-    while (hw != NULL) {
-      fprintf(tracefile, "%12ld  X1:%4d X2:%4d  Y:%4d  N:%ld  C:%s\n",
-	      (long)hw, hw->x1, hw->x2, hw->y, (long)hw->node,
-	      colorname(STR3, hw->wcolr));
-      hw = hw->next;
-    }
+  while (hw != NULL) {
+    fprintf(tracefile, "%12ld  X1:%4d X2:%4d  Y:%4d  N:%ld  C:%s\n", (long)hw,
+            hw->x1, hw->x2, hw->y, (long)hw->node, colorname(STR3, hw->wcolr));
+    hw = hw->next;
+  }
   RECOVER(try8);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
   ENDTRY(try8);
   putc('\n', tracefile);
   vw = gg.vwbase[gg.curpage - 1];
   fprintf(tracefile, "VWIRES\n");
   TRY(try9);
-    while (vw != NULL) {
-      fprintf(tracefile, "%12ld   X:%4d Y1:%4d Y2:%4d  N:%ld  C:%s\n",
-	      (long)vw, vw->x, vw->y1, vw->y2, (long)vw->node,
-	      colorname(STR3, vw->wcolr));
-      vw = vw->next;
-    }
+  while (vw != NULL) {
+    fprintf(tracefile, "%12ld   X:%4d Y1:%4d Y2:%4d  N:%ld  C:%s\n", (long)vw,
+            vw->x, vw->y1, vw->y2, (long)vw->node, colorname(STR3, vw->wcolr));
+    vw = vw->next;
+  }
   RECOVER(try9);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
   ENDTRY(try9);
   putc('\n', tracefile);
   s = gg.sbase[gg.curpage - 1];
   fprintf(tracefile, "SOLDER\n");
   TRY(try10);
-    while (s != NULL) {
-      fprintf(tracefile, "%12ld   X:%4d  Y:%4d    HW: %ld,%ld",
-	      (long)s, s->x, s->y, (long)s->hwire, (long)s->hwire2);
-      if (s->hwire == NULL)
-	fprintf(tracefile, "      ");
-      fprintf(tracefile, "    VW: %ld,%ld\n", (long)s->vwire, (long)s->vwire2);
-      s = s->next;
-    }
+  while (s != NULL) {
+    fprintf(tracefile, "%12ld   X:%4d  Y:%4d    HW: %ld,%ld", (long)s, s->x,
+            s->y, (long)s->hwire, (long)s->hwire2);
+    if (s->hwire == NULL) fprintf(tracefile, "      ");
+    fprintf(tracefile, "    VW: %ld,%ld\n", (long)s->vwire, (long)s->vwire2);
+    s = s->next;
+  }
   RECOVER(try10);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
   ENDTRY(try10);
   putc('\n', tracefile);
   g = gg.gbase[gg.curpage - 1];
   fprintf(tracefile, "GATES\n");
   TRY(try11);
-    while (g != NULL) {
-      fprintf(tracefile, "%12ld  G:%3d    X:%4d  Y:%4d  T:%s        %s\n",
-	      (long)g, g->g, g->x, g->y, g->kind->simtype->name,
-	      g->kind->name);
-      WITH = g->kind;
-      FORLIM = WITH->numpins;
-      for (i = 0; i < FORLIM; i++) {
-	fprintf(tracefile, "              Pin %2d   X:%4d  Y:%4d  N:%ld",
-		i + 1, g->pinpos[i].x, g->pinpos[i].y, (long)g->pin[i]);
-	TRY(try12);
-	  fprintf(tracefile, " [%d]", g->pin[i]->ref);
-	RECOVER(try12);
-	  if (P_escapecode == -20)
-	    goto _Ltry11;
-	ENDTRY(try12);
-	putc('\n', tracefile);
-      }
-      TRY(try13);
-	gg.actfile = gg.tracefile;
-	gg.actflag = true;
-	calltoolgate(g, act_writegate);
-      RECOVER(try13);
-	if (P_escapecode == -20)
-	  goto _Ltry11;
-	fprintf(tracefile, "  (Failed to output gate value)   %d\n",
-		P_escapecode);
-      ENDTRY(try13);
-      g = g->next;
+  while (g != NULL) {
+    fprintf(tracefile, "%12ld  G:%3d    X:%4d  Y:%4d  T:%s        %s\n",
+            (long)g, g->g, g->x, g->y, g->kind->simtype->name, g->kind->name);
+    WITH = g->kind;
+    FORLIM = WITH->numpins;
+    for (i = 0; i < FORLIM; i++) {
+      fprintf(tracefile, "              Pin %2d   X:%4d  Y:%4d  N:%ld", i + 1,
+              g->pinpos[i].x, g->pinpos[i].y, (long)g->pin[i]);
+      TRY(try12);
+      fprintf(tracefile, " [%d]", g->pin[i]->ref);
+      RECOVER(try12);
+      if (P_escapecode == -20) goto _Ltry11;
+      ENDTRY(try12);
+      putc('\n', tracefile);
     }
-  RECOVER2(try11,_Ltry11);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
+    TRY(try13);
+    gg.actfile = gg.tracefile;
+    gg.actflag = true;
+    calltoolgate(g, act_writegate);
+    RECOVER(try13);
+    if (P_escapecode == -20) goto _Ltry11;
+    fprintf(tracefile, "  (Failed to output gate value)   %d\n", P_escapecode);
+    ENDTRY(try13);
+    g = g->next;
+  }
+  RECOVER2(try11, _Ltry11);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  fprintf(tracefile, "  Internal error, %d\n", P_escapecode);
   ENDTRY(try11);
   fprintf(tracefile,
-    "\n\n-------------------------------------------------------------------------\n\n\n");
+          "\n\n---------------------------------------------------"
+          "----------------------\n\n\n");
 }
-
-
-
-
-
 
 /*===================  GETHELP  ==================*/
 /*=                                              =*/
@@ -7126,38 +6221,36 @@ Static Void dumpnodes()
 
 Static Void gethelp(s)
 Char *s;
-{  
-   Char cmdline[256];
-   char *pager;
-  
+{
+  Char cmdline[256];
+  char *pager;
+
 #ifdef OS2
-   vmessage("Starting a help window");
+  vmessage("Starting a help window");
 #else
-   vmessage("Read log.doc for help");
+  vmessage("Read log.doc for help");
 #endif /* OS2 */
 
-   pager = getenv("PAGER");
-   if (!pager)
-     pager = "more";
+  pager = getenv("PAGER");
+  if (!pager) pager = "more";
 
 #ifdef OS2
-/* Note that this is not fully correct since if you are running
-   on OS/2 remotely it will start the editor on the host machine,
-   not on your machine. When OS/2 TCPIP discovers xterm this code can
-   be removed and setting PAGER to the right thing will work on all
-   systems.                                          */
-    sprintf(cmdline, "start EPM.EXE %s\n",loghelpname);
+  /* Note that this is not fully correct since if you are running
+     on OS/2 remotely it will start the editor on the host machine,
+     not on your machine. When OS/2 TCPIP discovers xterm this code can
+     be removed and setting PAGER to the right thing will work on all
+     systems.                                          */
+  sprintf(cmdline, "start EPM.EXE %s\n", loghelpname);
 #else
-   if (*m_display_name == '\0')
+  if (*m_display_name == '\0')
     sprintf(cmdline, "xterm -e %s %s & \n", pager, loghelpname);
-   else
-    sprintf(cmdline, "xterm -display %s -e %s %s & \n",
-            m_display_name, pager, loghelpname);
+  else
+    sprintf(cmdline, "xterm -display %s -e %s %s & \n", m_display_name, pager,
+            loghelpname);
 #endif /* OS2 */
 
-   system(cmdline);
+  system(cmdline);
 }
-
 
 /*==================  READLNPASS  ================*/
 /*=                                              =*/
@@ -7177,10 +6270,10 @@ short mode;
   Char STR1[256];
 
   m_alpha_on();
-  if (mode != 3)   /*mode 0: normal*/
+  if (mode != 3) /*mode 0: normal*/
     *s = '\0';
   /*mode 2: exit on knob up/dn*/
-  nk_getxy(&x, &y);   /*mode 3: 2 + keep default*/
+  nk_getxy(&x, &y); /*mode 3: 2 + keep default*/
   oxleft = 1;
   xleft = 1;
   i = 1;
@@ -7200,8 +6293,8 @@ short mode;
     nc_cursor_on();
     if (!pollkbd2()) {
       do {
-	pass();
-	pen();
+        pass();
+        pen();
       } while (!(pollkbd2() || gg.t.dn));
     }
     nc_cursor_off();
@@ -7222,18 +6315,20 @@ short mode;
       i = 1;
       redraw = true;
     } else if (ch >= ' ' && ch != 250 && ch != 251 && strlen(s) < 255) {
-/* p2c: log.text, line 6702: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 6702: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 6703: Note: STRMAX of "s" wants VarStrings=1 [151] */
-      if (starting)
-	*s = '\0';
+      /* p2c: log.text, line 6702: Note: Character >= 128 encountered [281]
+       */
+      /* p2c: log.text, line 6702: Note: Character >= 128 encountered [281]
+       */
+      /* p2c: log.text, line 6703: Note: STRMAX of "s" wants VarStrings=1
+       * [151] */
+      if (starting) *s = '\0';
       sprintf(STR1, "%c%s", ch, s + i - 1);
       strcpy(s + i - 1, STR1);
       i++;
       redraw = true;
     }
     if ((unsigned)mode < 32 && ((1L << mode) & 0xc) != 0 && ch < 32 &&
-	((1L << ch) & 0x80000400L) != 0) {
+        ((1L << ch) & 0x80000400L) != 0) {
       ungetkey2(ch);
       ch = '\015';
     }
@@ -7252,37 +6347,23 @@ short mode;
   }
 }
 
-
-
-
-
-
 Static Void dofunction PV();
 
+Static Void assertfunc PP((Char * name));
 
-Static Void assertfunc PP((Char *name));
-
-
-
-Static Void clearfunc()
-{
+Static Void clearfunc() {
   if (doingcnffunction)
     *gg.func = '\0';
   else
     assertfunc("");
 }
 
-
-
-Static Void refrfunc()
-{
+Static Void refrfunc() {
   if (gg.initdone && !doingcnffunction)
     assertfunc("REFR");
   else
     clearfunc();
 }
-
-
 
 Static Void zoomto(z)
 short z;
@@ -7305,14 +6386,10 @@ short z;
   refrfunc();
 }
 
-
-
-Static Void scroll()
-{
+Static Void scroll() {
   Char ch, TEMP;
 
-  if (strcmp(gg.func, "REFR"))
-    return;
+  if (strcmp(gg.func, "REFR")) return;
   remcursor();
   gg.xoff += xoff0;
   gg.yoff += yoff0;
@@ -7320,22 +6397,16 @@ Static Void scroll()
   xoff0 = 0;
   yoff0 = 0;
   TEMP = nk_testkey(0);
-  if ((uchar)TEMP < 32 && ((1L << TEMP) & 0x90000500L) != 0)
-    ch = inkey2();
+  if ((uchar)TEMP < 32 && ((1L << TEMP) & 0x90000500L) != 0) ch = inkey2();
   restorecursor();
   gg.startpoint = false;
   clearfunc();
 }
 
-
-
-
-Static Void doimmedcnffunction()
-{
+Static Void doimmedcnffunction() {
   Char STR1[256], STR2[256];
 
-  if (*gg.func == '\0')
-    return;
+  if (*gg.func == '\0') return;
   if (!strcmp(gg.func, "SNAP")) {
     getbool(gg.funcarg, &snapflag);
     vmessageflag("Snap-to-grid is ", snapflag);
@@ -7361,8 +6432,7 @@ Static Void doimmedcnffunction()
     return;
   }
   if (!strcmp(gg.func, "PROBE")) {
-    if (gg.initdone)
-      remcursor();
+    if (gg.initdone) remcursor();
     getbool(gg.funcarg, &gg.probemode);
     briefprobe = false;
     clearfunc();
@@ -7433,8 +6503,8 @@ Static Void doimmedcnffunction()
     if (*gg.funcarg != '\0' && isdigit(gg.funcarg[0])) {
       conflictenbl = true;
       conflictdelay = getint(gg.funcarg, 1L);
-      if (conflictdelay > 3)   /*from 0 to 3*/
-	conflictdelay = 3;
+      if (conflictdelay > 3) /*from 0 to 3*/
+        conflictdelay = 3;
     } else
       getbool(gg.funcarg, &conflictenbl);
     if (conflictenbl) {
@@ -7455,16 +6525,14 @@ Static Void doimmedcnffunction()
     gg.fastmin = getint(gg.funcarg, gg.fastmin);
     gg.fastmax = getint(gg.funcarg, gg.fastmax);
     gg.fastrate = getint(gg.funcarg, gg.fastrate);
-    if (gg.fastmax < gg.fastmin)
-      gg.fastmax = gg.fastmin;
+    if (gg.fastmax < gg.fastmin) gg.fastmax = gg.fastmin;
     if (gg.fastspeed < gg.fastmin)
       gg.fastspeed = gg.fastmin;
     else if (gg.fastspeed > gg.fastmax)
       gg.fastspeed = gg.fastmax;
-    if (gg.fastrate < 1)
-      gg.fastrate = 1;
-    sprintf(STR1, "Response: min=%ld, max=%ld, rate=%ld",
-	    gg.fastmin, gg.fastmax, gg.fastrate);
+    if (gg.fastrate < 1) gg.fastrate = 1;
+    sprintf(STR1, "Response: min=%ld, max=%ld, rate=%ld", gg.fastmin,
+            gg.fastmax, gg.fastrate);
     vmessage(STR1);
     clearfunc();
     return;
@@ -7478,10 +6546,8 @@ Static Void doimmedcnffunction()
     clearfunc();
     return;
   }
-  if (strcmp(gg.func, "AVOID"))
-    return;
-  if (gg.initdone)
-    remcursor();
+  if (strcmp(gg.func, "AVOID")) return;
+  if (gg.initdone) remcursor();
   getbool(gg.funcarg, &avoidrabbits);
   if (avoidrabbits)
     vmessage("Avoiding rabbits");
@@ -7490,10 +6556,7 @@ Static Void doimmedcnffunction()
   clearfunc();
 }
 
-
-
-Static Void doimmedfunction()
-{
+Static Void doimmedfunction() {
   log_tool *tp;
   Char cmd[256];
   na_strlist *l1;
@@ -7502,23 +6565,20 @@ Static Void doimmedfunction()
     l1 = strlist_find(commandlist, gg.func);
     if (l1 != NULL) {
       if (*(Char *)l1->value != '\0') {
-	tp = findtool((Char *)l1->value);
-	if (tp->ready)
-	  strlist_delete(&commandlist, l1);
+        tp = findtool((Char *)l1->value);
+        if (tp->ready) strlist_delete(&commandlist, l1);
       }
     }
     doingcnffunction = false;
     strcpy(cmd, gg.func);
     tp = gg.toolbase;
     while (tp != NULL && !strcmp(gg.func, cmd)) {
-      if (tp->ready)
-	calltool(tp, act_immed);
+      if (tp->ready) calltool(tp, act_immed);
       tp = tp->next;
     }
     doimmedcnffunction();
   }
-  if (*gg.func == '\0')
-    return;
+  if (*gg.func == '\0') return;
   if (!strcmp(gg.func, "HELP")) {
     gethelp(gg.funcarg);
     clearfunc();
@@ -7533,8 +6593,7 @@ Static Void doimmedfunction()
   if (!strcmp(gg.func, "TRACE")) {
     getbool(gg.funcarg, &gg.traceflag);
     vmessageflag("Trace mode ", gg.traceflag);
-    if (gg.traceflag)
-      tracemessage("Trace mode ON");
+    if (gg.traceflag) tracemessage("Trace mode ON");
     clearfunc();
     return;
   }
@@ -7607,20 +6666,17 @@ Static Void doimmedfunction()
   }
   if (!strcmp(gg.func, "PAGE")) {
     if (!strcmp(gg.funcarg, "+")) {
-      if (gg.curpage < log_maxpages)
-	newpage((int)(gg.curpage + 1));
+      if (gg.curpage < log_maxpages) newpage((int)(gg.curpage + 1));
     } else if (!strcmp(gg.funcarg, "-")) {
-      if (gg.curpage > 1)
-	newpage((int)(gg.curpage - 1));
+      if (gg.curpage > 1) newpage((int)(gg.curpage - 1));
     } else if (strlen(gg.funcarg) == 1 && gg.funcarg[0] >= '1' &&
-	       gg.funcarg[0] <= '9')
+               gg.funcarg[0] <= '9')
       newpage(gg.funcarg[0] - 48);
     refrfunc();
     return;
   }
   if (strcmp(gg.func, "DO")) {
-    if (immedscroll)
-      scroll();
+    if (immedscroll) scroll();
     return;
   }
   if (*gg.funcarg != '\0') {
@@ -7635,9 +6691,6 @@ Static Void doimmedfunction()
   assertfunc(cmd);
 }
 
-
-
-
 Static Void assertfunc(name_)
 Char *name_;
 {
@@ -7647,8 +6700,7 @@ Char *name_;
   strcpy(name, name_);
   remcursor();
   commandfound = true;
-  while (*name == ':')
-    strcpy_overlap(name, name + 1);
+  while (*name == ':') strcpy_overlap(name, name + 1);
   getword(name, cmd);
   doingcnffunction = false;
   if (!strcmp(gg.func, cmd)) {
@@ -7664,19 +6716,13 @@ Char *name_;
   doimmedfunction();
 }
 
-
-
-
-
-
 /*===================  TRYKBD  ===================*/
 /*=                                              =*/
 /*=  Check the keyboard for macros.              =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void trykbd()
-{
+Static Void trykbd() {
   long t;
   boolean moving;
   Char ch;
@@ -7695,103 +6741,82 @@ Static Void trykbd()
       todo = nexttodo;
     nexttodo = todo->next;
     assertfunc(todo->s);
-    if (nexttodo == NULL)
-      strlist_empty(&thingstodo);
+    if (nexttodo == NULL) strlist_empty(&thingstodo);
     return;
   }
-  if (!pollkbd2())
-    return;
+  if (!pollkbd2()) return;
   norabbits();
   rabtime = timers_sysclock();
   ch = inkey4();
   switch (ch) {
+    case '\003':
+      assertfunc("ABORT");
+      break;
 
-  case '\003':
-    assertfunc("ABORT");
-    break;
-
-  case '\b':
-  case '\034':   /* Scroll horizontally */
-    do {
-      m_graphics_on();
-      m_colormode((long)m_xor);
-      m_color((long)gg.color.scroll);
-      m_drawline(xoff0 - 1, 0L, xoff0 - 1, baseline - 1L);
-      m_drawline(xoff0 + across + 1, 0L, xoff0 + across + 1, baseline - 1L);
-      if (ch == '\b')
-	xoff0 -= gg.scale * hscrollspd;
-      if (ch == '\034')
-	xoff0 += gg.scale * hscrollspd;
-      m_drawline(xoff0 - 1, 0L, xoff0 - 1, baseline - 1L);
-      m_drawline(xoff0 + across + 1, 0L, xoff0 + across + 1, baseline - 1L);
-      m_colormode((long)m_normal);
-      t = timers_sysclock() + knobwait;
+    case '\b':
+    case '\034': /* Scroll horizontally */
       do {
-      } while (timers_sysclock() <= t && testkey2() == ' ');
-      TEMP = testkey2();
-      moving = ((uchar)TEMP < 32 && ((1L << TEMP) & 0x10000100L) != 0);
-      if (moving)
-	ch = inkey2();
-    } while (moving && labs(xoff0) <= across - 10);
-    refrfunc();
-    break;
+        m_graphics_on();
+        m_colormode((long)m_xor);
+        m_color((long)gg.color.scroll);
+        m_drawline(xoff0 - 1, 0L, xoff0 - 1, baseline - 1L);
+        m_drawline(xoff0 + across + 1, 0L, xoff0 + across + 1, baseline - 1L);
+        if (ch == '\b') xoff0 -= gg.scale * hscrollspd;
+        if (ch == '\034') xoff0 += gg.scale * hscrollspd;
+        m_drawline(xoff0 - 1, 0L, xoff0 - 1, baseline - 1L);
+        m_drawline(xoff0 + across + 1, 0L, xoff0 + across + 1, baseline - 1L);
+        m_colormode((long)m_normal);
+        t = timers_sysclock() + knobwait;
+        do {
+        } while (timers_sysclock() <= t && testkey2() == ' ');
+        TEMP = testkey2();
+        moving = ((uchar)TEMP < 32 && ((1L << TEMP) & 0x10000100L) != 0);
+        if (moving) ch = inkey2();
+      } while (moving && labs(xoff0) <= across - 10);
+      refrfunc();
+      break;
 
-  case '\n':
-  case '\037':   /* Scroll vertically */
-    do {
-      m_graphics_on();
-      m_colormode((long)m_xor);
-      m_color((long)gg.color.scroll);
-      if (yoff0 < baseline)
-	m_drawline(0L, yoff0 - 1, (long)across, yoff0 - 1);
-      if (yoff0 < 0)
-	m_drawline(0L, yoff0 + baseline, (long)across, yoff0 + baseline);
-      if (ch == '\n')
-	yoff0 += gg.scale * vscrollspd;
-      if (ch == '\037')
-	yoff0 -= gg.scale * vscrollspd;
-      if (yoff0 < baseline)
-	m_drawline(0L, yoff0 - 1, (long)across, yoff0 - 1);
-      if (yoff0 < 0)
-	m_drawline(0L, yoff0 + baseline, (long)across, yoff0 + baseline);
-      m_colormode((long)m_normal);
-      t = timers_sysclock() + knobwait;
+    case '\n':
+    case '\037': /* Scroll vertically */
       do {
-      } while (timers_sysclock() <= t && testkey2() == ' ');
-      TEMP = testkey2();
-      moving = ((uchar)TEMP < 32 && ((1L << TEMP) & 0x80000400L) != 0);
-      if (moving)
-	ch = inkey2();
-    } while (moving && labs(yoff0) <= baseline - 10);
-    refrfunc();
-    break;
+        m_graphics_on();
+        m_colormode((long)m_xor);
+        m_color((long)gg.color.scroll);
+        if (yoff0 < baseline)
+          m_drawline(0L, yoff0 - 1, (long)across, yoff0 - 1);
+        if (yoff0 < 0)
+          m_drawline(0L, yoff0 + baseline, (long)across, yoff0 + baseline);
+        if (ch == '\n') yoff0 += gg.scale * vscrollspd;
+        if (ch == '\037') yoff0 -= gg.scale * vscrollspd;
+        if (yoff0 < baseline)
+          m_drawline(0L, yoff0 - 1, (long)across, yoff0 - 1);
+        if (yoff0 < 0)
+          m_drawline(0L, yoff0 + baseline, (long)across, yoff0 + baseline);
+        m_colormode((long)m_normal);
+        t = timers_sysclock() + knobwait;
+        do {
+        } while (timers_sysclock() <= t && testkey2() == ' ');
+        TEMP = testkey2();
+        moving = ((uchar)TEMP < 32 && ((1L << TEMP) & 0x80000400L) != 0);
+        if (moving) ch = inkey2();
+      } while (moving && labs(yoff0) <= baseline - 10);
+      refrfunc();
+      break;
 
-  default:
-    mp = macrobase;
-    while (mp != NULL && mp->key != ch)
-      mp = mp->next;
-    if (mp != NULL)
-      assertfunc(mp->name);
-    break;
+    default:
+      mp = macrobase;
+      while (mp != NULL && mp->key != ch) mp = mp->next;
+      if (mp != NULL) assertfunc(mp->name);
+      break;
   }
 }
 
-
-
-
-
-Static Void trykbdscroll()
-{
+Static Void trykbdscroll() {
   immedscroll = true;
   trykbd();
   immedscroll = false;
   scroll();
 }
-
-
-
-
-
 
 /*================  CLOSERGATE  ==================*/
 /*=                                              =*/
@@ -7808,12 +6833,12 @@ short x, y;
   else {
     gg.nearlabel = gg.lbase[gg.curpage - 1];
     while (gg.nearlabel != NULL &&
-	   (x < gg.nearlabel->x ||
-	    x > gg.nearlabel->x + m_strwidth(logfont_lfont,
-					     gg.nearlabel->name) / gg.scale ||
-	    y < gg.nearlabel->y || y > gg.nearlabel->y + 2)) {
-/* p2c: log.text, line 7262:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+           (x < gg.nearlabel->x ||
+            x > gg.nearlabel->x +
+                    m_strwidth(logfont_lfont, gg.nearlabel->name) / gg.scale ||
+            y < gg.nearlabel->y || y > gg.nearlabel->y + 2)) {
+      /* p2c: log.text, line 7262:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
       gg.nearlabel = gg.nearlabel->next;
     }
   }
@@ -7825,10 +6850,10 @@ short x, y;
   if (!gg.textinvisible) {
     gg.nearbox = gg.bbase[gg.curpage - 1];
     while (gg.nearbox != NULL &&
-	   ((x != gg.nearbox->x1 && x != gg.nearbox->x2 &&
-	     y != gg.nearbox->y1 &&
-	     y != gg.nearbox->y2) || x < gg.nearbox->x1 ||
-	    x > gg.nearbox->x2 || y < gg.nearbox->y1 || y > gg.nearbox->y2))
+           ((x != gg.nearbox->x1 && x != gg.nearbox->x2 &&
+             y != gg.nearbox->y1 && y != gg.nearbox->y2) ||
+            x < gg.nearbox->x1 || x > gg.nearbox->x2 || y < gg.nearbox->y1 ||
+            y > gg.nearbox->y2))
       gg.nearbox = gg.nearbox->next;
   } else
     gg.nearbox = NULL;
@@ -7840,8 +6865,6 @@ short x, y;
   while (gg.neargate != NULL && !insidegate(gg.neargate, x, y))
     gg.neargate = gg.neargate->next;
 }
-
-
 
 /*================  CLOSERWIRE  ==================*/
 /*=                                              =*/
@@ -7860,22 +6883,17 @@ short x, y;
   }
   gg.nearhw = gg.hwbase[gg.curpage - 1];
   while (gg.nearhw != NULL &&
-	 (gg.nearhw->y != y || gg.nearhw->x1 > x || gg.nearhw->x2 < x))
+         (gg.nearhw->y != y || gg.nearhw->x1 > x || gg.nearhw->x2 < x))
     gg.nearhw = gg.nearhw->next;
   gg.nearvw = gg.vwbase[gg.curpage - 1];
   while (gg.nearvw != NULL &&
-	 (gg.nearvw->x != x || gg.nearvw->y1 > y || gg.nearvw->y2 < y))
+         (gg.nearvw->x != x || gg.nearvw->y1 > y || gg.nearvw->y2 < y))
     gg.nearvw = gg.nearvw->next;
 }
 
-
 /*assumes hw <> nil if hw2 <> nil*/
 
-#define rtn             "ADDSOLDER"
-
-
-
-
+#define rtn "ADDSOLDER"
 
 /*=================  ADDSOLDER  ==================*/
 /*=                                              =*/
@@ -7892,8 +6910,7 @@ log_vwrec *vw, *vw2;
   log_nrec *n;
 
   s = gg.sbase[gg.curpage - 1];
-  while (s != NULL && (s->x != x || s->y != y))
-    s = s->next;
+  while (s != NULL && (s->x != x || s->y != y)) s = s->next;
   if (s == NULL) {
     newsolder(&s);
     s->x = x;
@@ -7904,10 +6921,8 @@ log_vwrec *vw, *vw2;
     s->vwire = NULL;
     s->vwire2 = NULL;
     n = NULL;
-    if (hw != NULL)
-      n = hw->node;
-    if (vw != NULL && n == NULL)
-      n = vw->node;
+    if (hw != NULL) n = hw->node;
+    if (vw != NULL && n == NULL) n = vw->node;
     hidecursor();
     if (gg.glowmode && n != NULL)
       drawsolderc(x, y, (int)glowcol(n, (long)gg.color.solder));
@@ -7943,13 +6958,10 @@ log_vwrec *vw, *vw2;
     else
       report(4, rtn);
   }
-  if (gg.traceflag)
-    fprintf(tracefile, "Add solder %ld\n", (long)s);
+  if (gg.traceflag) fprintf(tracefile, "Add solder %ld\n", (long)s);
 }
 
 #undef rtn
-
-
 
 /*=================  FINDSOLDER  =================*/
 /*=                                              =*/
@@ -7963,12 +6975,9 @@ short x, y;
   log_srec *s;
 
   s = gg.sbase[gg.curpage - 1];
-  while (s != NULL && (s->x != x || s->y != y))
-    s = s->next;
+  while (s != NULL && (s->x != x || s->y != y)) s = s->next;
   return s;
 }
-
-
 
 /*=================  ADDSOLDERT  =================*/
 /*=                                              =*/
@@ -7995,25 +7004,17 @@ log_vwrec *vw;
     addsolder(vw->x, vw->y2, hw, NULL, vw, NULL);
 }
 
-
-
-
-
-
-
 /*==================  CHGHW/VW  ==================*/
 /*=                                              =*/
 /*=  Used for deleting wires (see DELHWIRE).     =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void chggate PP((log_grec *g, int i, log_nrec *oldnode, log_nrec *n));
+Static Void chggate PP((log_grec * g, int i, log_nrec *oldnode, log_nrec *n));
 
-Static Void chgvw PP((log_vwrec *vw, log_nrec *oldnode, log_nrec *n));
+Static Void chgvw PP((log_vwrec * vw, log_nrec *oldnode, log_nrec *n));
 
-
-#define rtn             "CHGHW"
-
+#define rtn "CHGHW"
 
 Static Void chghw(hw, oldnode, n)
 log_hwrec *hw;
@@ -8031,14 +7032,14 @@ log_nrec *oldnode, *n;
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
     if (abs(g->y - hw->y) <= g->kind->bbmax &&
-	P_ibetweenm((long)hw->x1, (long)g->x, (long)hw->x2,
-		    (long)g->kind->bbmax)) {
+        P_ibetweenm((long)hw->x1, (long)g->x, (long)hw->x2,
+                    (long)g->kind->bbmax)) {
       FORLIM = g->kind->numpins;
       for (i = 1; i <= FORLIM; i++) {
-	px = g->pinpos[i - 1].x;
-	if (hw->x1 <= px && px <= hw->x2 && g->pinpos[i - 1].y == hw->y &&
-	    g->pin[i - 1] == oldnode)
-	  chggate(g, i, oldnode, n);
+        px = g->pinpos[i - 1].x;
+        if (hw->x1 <= px && px <= hw->x2 && g->pinpos[i - 1].y == hw->y &&
+            g->pin[i - 1] == oldnode)
+          chggate(g, i, oldnode, n);
       }
     }
     g = g->next;
@@ -8046,18 +7047,16 @@ log_nrec *oldnode, *n;
   vw = gg.vwbase[gg.curpage - 1];
   while (vw != NULL) {
     if (hw->x1 <= vw->x && vw->x <= hw->x2 && vw->y1 <= hw->y &&
-	hw->y <= vw->y2 && vw->node == oldnode) {
+        hw->y <= vw->y2 && vw->node == oldnode) {
       if ((hw->x1 == vw->x || hw->x2 == vw->x || vw->y1 == hw->y ||
-	   vw->y2 == hw->y) &&
-	  (hw->wcolr == vw->wcolr || hw->wcolr == log_wcol_blue ||
-	   vw->wcolr == log_wcol_blue))
-	chgvw(vw, oldnode, n);
-      else {  /*vlsi only*/
-	s = gg.sbase[gg.curpage - 1];
-	while (s != NULL && (s->x != vw->x || s->y != hw->y))
-	  s = s->next;
-	if (s != NULL)
-	  chgvw(vw, oldnode, n);
+           vw->y2 == hw->y) &&
+          (hw->wcolr == vw->wcolr || hw->wcolr == log_wcol_blue ||
+           vw->wcolr == log_wcol_blue))
+        chgvw(vw, oldnode, n);
+      else { /*vlsi only*/
+        s = gg.sbase[gg.curpage - 1];
+        while (s != NULL && (s->x != vw->x || s->y != hw->y)) s = s->next;
+        if (s != NULL) chgvw(vw, oldnode, n);
       }
     }
     vw = vw->next;
@@ -8065,8 +7064,8 @@ log_nrec *oldnode, *n;
   hw1 = gg.hwbase[gg.curpage - 1];
   while (hw1 != NULL && vlsi) {
     if (hw->y == hw1->y && (hw->x1 == hw1->x2 || hw->x2 == hw1->x1) &&
-	(hw->wcolr == log_wcol_blue || hw1->wcolr == log_wcol_blue) &&
-	hw1->node == oldnode)
+        (hw->wcolr == log_wcol_blue || hw1->wcolr == log_wcol_blue) &&
+        hw1->node == oldnode)
       chghw(hw1, oldnode, n);
     hw1 = hw1->next;
   }
@@ -8074,9 +7073,7 @@ log_nrec *oldnode, *n;
 
 #undef rtn
 
-
-#define rtn             "CHGVW"
-
+#define rtn "CHGVW"
 
 Static Void chgvw(vw, oldnode, n)
 log_vwrec *vw;
@@ -8094,14 +7091,14 @@ log_nrec *oldnode, *n;
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
     if (abs(g->x - vw->x) <= g->kind->bbmax &&
-	P_ibetweenm((long)vw->y1, (long)g->y, (long)vw->y2,
-		    (long)g->kind->bbmax)) {
+        P_ibetweenm((long)vw->y1, (long)g->y, (long)vw->y2,
+                    (long)g->kind->bbmax)) {
       FORLIM = g->kind->numpins;
       for (i = 1; i <= FORLIM; i++) {
-	py = g->pinpos[i - 1].y;
-	if (vw->y1 <= py && py <= vw->y2 && g->pinpos[i - 1].x == vw->x &&
-	    g->pin[i - 1] == oldnode)
-	  chggate(g, i, oldnode, n);
+        py = g->pinpos[i - 1].y;
+        if (vw->y1 <= py && py <= vw->y2 && g->pinpos[i - 1].x == vw->x &&
+            g->pin[i - 1] == oldnode)
+          chggate(g, i, oldnode, n);
       }
     }
     g = g->next;
@@ -8109,16 +7106,14 @@ log_nrec *oldnode, *n;
   hw = gg.hwbase[gg.curpage - 1];
   while (hw != NULL) {
     if (hw->x1 <= vw->x && vw->x <= hw->x2 && vw->y1 <= hw->y &&
-	hw->y <= vw->y2 && hw->node == oldnode) {
+        hw->y <= vw->y2 && hw->node == oldnode) {
       if (hw->x1 == vw->x || hw->x2 == vw->x || vw->y1 == hw->y ||
-	  vw->y2 == hw->y)
-	chghw(hw, oldnode, n);
+          vw->y2 == hw->y)
+        chghw(hw, oldnode, n);
       else {
-	s = gg.sbase[gg.curpage - 1];
-	while (s != NULL && (s->x != vw->x || s->y != hw->y))
-	  s = s->next;
-	if (s != NULL)
-	  chghw(hw, oldnode, n);
+        s = gg.sbase[gg.curpage - 1];
+        while (s != NULL && (s->x != vw->x || s->y != hw->y)) s = s->next;
+        if (s != NULL) chghw(hw, oldnode, n);
       }
     }
     hw = hw->next;
@@ -8126,8 +7121,8 @@ log_nrec *oldnode, *n;
   vw1 = gg.vwbase[gg.curpage - 1];
   while (vw1 != NULL && vlsi) {
     if (vw->x == vw1->x && (vw->y1 == vw1->y2 || vw->y2 == vw1->y1) &&
-	(vw->wcolr == log_wcol_blue || vw1->wcolr == log_wcol_blue) &&
-	vw1->node == oldnode)
+        (vw->wcolr == log_wcol_blue || vw1->wcolr == log_wcol_blue) &&
+        vw1->node == oldnode)
       chgvw(vw1, oldnode, n);
     vw1 = vw1->next;
   }
@@ -8135,9 +7130,7 @@ log_nrec *oldnode, *n;
 
 #undef rtn
 
-
-#define rtn             "CHGGATE"
-
+#define rtn "CHGGATE"
 
 Static Void chggate(g, i, oldnode, n)
 log_grec *g;
@@ -8150,8 +7143,8 @@ log_nrec *oldnode, *n;
   short j, k, savepg, pg, x, y, FORLIM;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Change gate %ld pin %d to node %ld\n",
-	    (long)g, i, (long)n);
+    fprintf(tracefile, "Change gate %ld pin %d to node %ld\n", (long)g, i,
+            (long)n);
   j = i;
   do {
     if (g->pin[j - 1] == oldnode) {
@@ -8162,28 +7155,28 @@ log_nrec *oldnode, *n;
       y = g->pinpos[j - 1].y;
       hw = gg.hwbase[gg.curpage - 1];
       while (hw != NULL) {
-	if (hw->x1 <= x && x <= hw->x2 && hw->y == y && hw->node == oldnode)
-	  chghw(hw, oldnode, n);
-	hw = hw->next;
+        if (hw->x1 <= x && x <= hw->x2 && hw->y == y && hw->node == oldnode)
+          chghw(hw, oldnode, n);
+        hw = hw->next;
       }
       vw = gg.vwbase[gg.curpage - 1];
       while (vw != NULL) {
-	if (vw->y1 <= y && y <= vw->y2 && vw->x == x && vw->node == oldnode)
-	  chgvw(vw, oldnode, n);
-	vw = vw->next;
+        if (vw->y1 <= y && y <= vw->y2 && vw->x == x && vw->node == oldnode)
+          chgvw(vw, oldnode, n);
+        vw = vw->next;
       }
       g1 = gg.gbase[gg.curpage - 1];
       while (g1 != NULL) {
-	if (g1 != g && P_imax2((long)abs(g1->x - x), (long)abs(g1->y - y)) <=
-		       g1->kind->bbmax) {
-	  FORLIM = g1->kind->numpins;
-	  for (k = 1; k <= FORLIM; k++) {
-	    if (x == g1->pinpos[k - 1].x && y == g1->pinpos[k - 1].y &&
-		g1->pin[k - 1] == oldnode)
-	      chggate(g1, k, oldnode, n);
-	  }
-	}
-	g1 = g1->next;
+        if (g1 != g && P_imax2((long)abs(g1->x - x), (long)abs(g1->y - y)) <=
+                           g1->kind->bbmax) {
+          FORLIM = g1->kind->numpins;
+          for (k = 1; k <= FORLIM; k++) {
+            if (x == g1->pinpos[k - 1].x && y == g1->pinpos[k - 1].y &&
+                g1->pin[k - 1] == oldnode)
+              chggate(g1, k, oldnode, n);
+          }
+        }
+        g1 = g1->next;
       }
     }
     j = g->kind->pin[j - 1].c;
@@ -8199,8 +7192,8 @@ log_nrec *oldnode, *n;
     g1 = gg.gbase[gg.curpage - 1];
     while (g1 != NULL) {
       if (g1->kind->simtype == simtype_common && g1->sig == g->sig &&
-	  g1->pin[0] == oldnode)
-	chggate(g1, 1, oldnode, n);
+          g1->pin[0] == oldnode)
+        chggate(g1, 1, oldnode, n);
       g1 = g1->next;
     }
   }
@@ -8209,40 +7202,34 @@ log_nrec *oldnode, *n;
 
 #undef rtn
 
-
 /* Local variables for wantsolder: */
 struct LOC_wantsolder {
   boolean hasred, hasgreen, hasyellow, hasblue;
-} ;
+};
 
 Local Void markcolor(hw, LINK)
 log_hwrec **hw;
 struct LOC_wantsolder *LINK;
 {
-  if (*hw == NULL)
-    return;
+  if (*hw == NULL) return;
   switch ((*hw)->wcolr) {
+    case log_wcol_red:
+      LINK->hasred = true;
+      break;
 
-  case log_wcol_red:
-    LINK->hasred = true;
-    break;
+    case log_wcol_green:
+      LINK->hasgreen = true;
+      break;
 
-  case log_wcol_green:
-    LINK->hasgreen = true;
-    break;
+    case log_wcol_yellow:
+      LINK->hasyellow = true;
+      break;
 
-  case log_wcol_yellow:
-    LINK->hasyellow = true;
-    break;
-
-  case log_wcol_blue:
-    LINK->hasblue = true;
-    break;
+    case log_wcol_blue:
+      LINK->hasblue = true;
+      break;
   }
 }
-
-
-
 
 /*=================  DELHWIRE  ===================*/
 /*=================  DELVWIRE  ===================*/
@@ -8267,8 +7254,6 @@ log_srec *s;
   return (V.hasblue && (V.hasgreen || V.hasyellow || V.hasred));
 }
 
-
-
 Static Void delgetnode(save, old, n)
 log_nrec **save, **old, **n;
 {
@@ -8282,8 +7267,6 @@ log_nrec **save, **old, **n;
   copynode(*old, n);
 }
 
-
-
 Static Void delhwire(hw)
 log_hwrec *hw;
 {
@@ -8294,8 +7277,7 @@ log_hwrec *hw;
   log_grec *g;
   short i, x, y, FORLIM;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Delete hwire %ld\n", (long)hw);
+  if (gg.traceflag) fprintf(tracefile, "Delete hwire %ld\n", (long)hw);
   working();
   clipon();
   m_color((long)gg.color.backgr);
@@ -8308,15 +7290,14 @@ log_hwrec *hw;
   while (s != NULL) {
     s1 = s->next;
     if (s->hwire == hw || s->hwire2 == hw) {
-      if (s->hwire == hw)
-	s->hwire = s->hwire2;
+      if (s->hwire == hw) s->hwire = s->hwire2;
       s->hwire2 = NULL;
       if (!wantsolder(s)) {
-	drawsolderc(s->x, s->y, gg.color.backgr);
-	dispsolder(&s);
+        drawsolderc(s->x, s->y, gg.color.backgr);
+        dispsolder(&s);
       } else {
-	if (gg.traceflag)
-	  fprintf(tracefile, "DELHW keeping solder %ld\n", (long)s);
+        if (gg.traceflag)
+          fprintf(tracefile, "DELHW keeping solder %ld\n", (long)s);
       }
     }
     s = s1;
@@ -8324,39 +7305,36 @@ log_hwrec *hw;
   vw = gg.vwbase[gg.curpage - 1];
   while (vw != NULL) {
     if (hw->x1 <= vw->x && vw->x <= hw->x2 && vw->y1 <= hw->y &&
-	hw->y <= vw->y2 && vw->node == oldnode) {
+        hw->y <= vw->y2 && vw->node == oldnode) {
       delgetnode(&savenode, &oldnode, &n);
-      if (n != oldnode)
-	chgvw(vw, oldnode, n);
+      if (n != oldnode) chgvw(vw, oldnode, n);
     }
     vw = vw->next;
   }
   hw1 = gg.hwbase[gg.curpage - 1];
   while (hw1 != NULL && vlsi) {
     if (hw->y == hw1->y && (hw1->x1 == hw->x2 || hw1->x2 == hw->x1) &&
-	hw1->node == oldnode) {
+        hw1->node == oldnode) {
       delgetnode(&savenode, &oldnode, &n);
-      if (n != oldnode)
-	chghw(hw1, oldnode, n);
+      if (n != oldnode) chghw(hw1, oldnode, n);
     }
     hw1 = hw1->next;
   }
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
     if (abs(g->y - hw->y) <= g->kind->bbmax &&
-	P_ibetweenm((long)hw->x1, (long)g->x, (long)hw->x2,
-		    (long)g->kind->bbmax)) {
+        P_ibetweenm((long)hw->x1, (long)g->x, (long)hw->x2,
+                    (long)g->kind->bbmax)) {
       FORLIM = g->kind->numpins;
       for (i = 1; i <= FORLIM; i++) {
-	if (g->pin[i - 1] == oldnode) {
-	  x = g->pinpos[i - 1].x;
-	  y = g->pinpos[i - 1].y;
-	  if (hw->x1 <= x && x <= hw->x2 && y == hw->y) {
-	    delgetnode(&savenode, &oldnode, &n);
-	    if (n != oldnode)
-	      chggate(g, i, oldnode, n);
-	  }
-	}
+        if (g->pin[i - 1] == oldnode) {
+          x = g->pinpos[i - 1].x;
+          y = g->pinpos[i - 1].y;
+          if (hw->x1 <= x && x <= hw->x2 && y == hw->y) {
+            delgetnode(&savenode, &oldnode, &n);
+            if (n != oldnode) chggate(g, i, oldnode, n);
+          }
+        }
       }
     }
     g = g->next;
@@ -8364,8 +7342,6 @@ log_hwrec *hw;
   disphw(&hw);
   clipoff();
 }
-
-
 
 Static Void delvwire(vw)
 log_vwrec *vw;
@@ -8377,8 +7353,7 @@ log_vwrec *vw;
   log_grec *g;
   short i, x, y, FORLIM;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Delete vwire %ld\n", (long)vw);
+  if (gg.traceflag) fprintf(tracefile, "Delete vwire %ld\n", (long)vw);
   working();
   clipon();
   m_color((long)gg.color.backgr);
@@ -8391,15 +7366,14 @@ log_vwrec *vw;
   while (s != NULL) {
     s1 = s->next;
     if (s->vwire == vw || s->vwire2 == vw) {
-      if (s->vwire == vw)
-	s->vwire = s->vwire2;
+      if (s->vwire == vw) s->vwire = s->vwire2;
       s->vwire2 = NULL;
       if (!wantsolder(s)) {
-	drawsolderc(s->x, s->y, gg.color.backgr);
-	dispsolder(&s);
+        drawsolderc(s->x, s->y, gg.color.backgr);
+        dispsolder(&s);
       } else {
-	if (gg.traceflag)
-	  fprintf(tracefile, "DELVW keeping solder %ld\n", (long)s);
+        if (gg.traceflag)
+          fprintf(tracefile, "DELVW keeping solder %ld\n", (long)s);
       }
     }
     s = s1;
@@ -8407,39 +7381,36 @@ log_vwrec *vw;
   hw = gg.hwbase[gg.curpage - 1];
   while (hw != NULL) {
     if (hw->x1 <= vw->x && vw->x <= hw->x2 && vw->y1 <= hw->y &&
-	hw->y <= vw->y2 && hw->node == oldnode) {
+        hw->y <= vw->y2 && hw->node == oldnode) {
       delgetnode(&savenode, &oldnode, &n);
-      if (n != oldnode)
-	chghw(hw, oldnode, n);
+      if (n != oldnode) chghw(hw, oldnode, n);
     }
     hw = hw->next;
   }
   vw1 = gg.vwbase[gg.curpage - 1];
   while (vw1 != NULL && vlsi) {
     if (vw->x == vw1->x && (vw1->y1 == vw->y2 || vw1->y2 == vw->y1) &&
-	vw1->node == oldnode) {
+        vw1->node == oldnode) {
       delgetnode(&savenode, &oldnode, &n);
-      if (n != oldnode)
-	chgvw(vw1, oldnode, n);
+      if (n != oldnode) chgvw(vw1, oldnode, n);
     }
     vw1 = vw1->next;
   }
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
     if (abs(g->x - vw->x) <= g->kind->bbmax &&
-	P_ibetweenm((long)vw->y1, (long)g->y, (long)vw->y2,
-		    (long)g->kind->bbmax)) {
+        P_ibetweenm((long)vw->y1, (long)g->y, (long)vw->y2,
+                    (long)g->kind->bbmax)) {
       FORLIM = g->kind->numpins;
       for (i = 1; i <= FORLIM; i++) {
-	if (g->pin[i - 1] == oldnode) {
-	  x = g->pinpos[i - 1].x;
-	  y = g->pinpos[i - 1].y;
-	  if (vw->y1 <= y && y <= vw->y2 && x == vw->x) {
-	    delgetnode(&savenode, &oldnode, &n);
-	    if (n != oldnode)
-	      chggate(g, i, oldnode, n);
-	  }
-	}
+        if (g->pin[i - 1] == oldnode) {
+          x = g->pinpos[i - 1].x;
+          y = g->pinpos[i - 1].y;
+          if (vw->y1 <= y && y <= vw->y2 && x == vw->x) {
+            delgetnode(&savenode, &oldnode, &n);
+            if (n != oldnode) chggate(g, i, oldnode, n);
+          }
+        }
       }
     }
     g = g->next;
@@ -8448,8 +7419,6 @@ log_vwrec *vw;
   dispvw(&vw);
   clipoff();
 }
-
-
 
 Static Void chggatepin(g, i, oldnode, savenode)
 log_grec *g;
@@ -8463,16 +7432,15 @@ log_nrec **oldnode, **savenode;
   short j, x, y, FORLIM;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Change gate %ld pin %d from node %ld\n",
-	    (long)g, i, (long)(*oldnode));
+    fprintf(tracefile, "Change gate %ld pin %d from node %ld\n", (long)g, i,
+            (long)(*oldnode));
   x = g->pinpos[i - 1].x;
   y = g->pinpos[i - 1].y;
   hw = gg.hwbase[gg.curpage - 1];
   while (hw != NULL) {
     if (hw->x1 <= x && x <= hw->x2 && hw->y == y && hw->node == *oldnode) {
       delgetnode(savenode, oldnode, &n);
-      if (n != *oldnode)
-	chghw(hw, *oldnode, n);
+      if (n != *oldnode) chghw(hw, *oldnode, n);
     }
     hw = hw->next;
   }
@@ -8480,30 +7448,26 @@ log_nrec **oldnode, **savenode;
   while (vw != NULL) {
     if (vw->y1 <= y && y <= vw->y2 && vw->x == x && vw->node == *oldnode) {
       delgetnode(savenode, oldnode, &n);
-      if (n != *oldnode)
-	chgvw(vw, *oldnode, n);
+      if (n != *oldnode) chgvw(vw, *oldnode, n);
     }
     vw = vw->next;
   }
   g1 = gg.gbase[gg.curpage - 1];
   while (g1 != NULL) {
-    if (g1 != g &&
-	P_imax2((long)abs(g1->x - x), (long)abs(g1->y - y)) <= g1->kind->bbmax) {
+    if (g1 != g && P_imax2((long)abs(g1->x - x), (long)abs(g1->y - y)) <=
+                       g1->kind->bbmax) {
       FORLIM = g1->kind->numpins;
       for (j = 1; j <= FORLIM; j++) {
-	if (x == g1->pinpos[j - 1].x && y == g1->pinpos[j - 1].y &&
-	    g1->pin[j - 1] == *oldnode) {
-	  delgetnode(savenode, oldnode, &n);
-	  if (n != *oldnode)
-	    chggate(g1, j, *oldnode, n);
-	}
+        if (x == g1->pinpos[j - 1].x && y == g1->pinpos[j - 1].y &&
+            g1->pin[j - 1] == *oldnode) {
+          delgetnode(savenode, oldnode, &n);
+          if (n != *oldnode) chggate(g1, j, *oldnode, n);
+        }
       }
     }
     g1 = g1->next;
   }
 }
-
-
 
 Static Void disconnectgate(g)
 log_grec *g;
@@ -8515,8 +7479,7 @@ log_grec *g;
   short FORLIM;
   long SET[9];
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Disconnect gate %ld\n", (long)g);
+  if (gg.traceflag) fprintf(tracefile, "Disconnect gate %ld\n", (long)g);
   stamp(&g->kind->simtype->netstamp);
   calltoolgate(g, act_disconnectgate);
   oldnode = (log_nrec **)Malloc(g->kind->numpins * sizeof(log_nrec *));
@@ -8532,20 +7495,18 @@ log_grec *g;
     if (!P_inset(i, done)) {
       j = i;
       if (i == 1 && g->kind->simtype == simtype_common && g->sig != 0)
-	savenode = NULL;
+        savenode = NULL;
       else
-	savenode = oldnode[i - 1];
+        savenode = oldnode[i - 1];
       do {
-	chggatepin(g, j, &oldnode[i - 1], &savenode);
-	P_addset(done, j);
-	j = g->kind->pin[j - 1].c;
+        chggatepin(g, j, &oldnode[i - 1], &savenode);
+        P_addset(done, j);
+        j = g->kind->pin[j - 1].c;
       } while (j != i && j != 0);
     }
   }
   unlkgate(&g);
 }
-
-
 
 Static Void delgate(g)
 log_grec *g;
@@ -8557,16 +7518,6 @@ log_grec *g;
   clipoff();
 }
 
-
-
-
-
-
-
-
-
-
-
 Static Void confirmsimtype(n)
 log_nrec *n;
 {
@@ -8576,10 +7527,8 @@ log_nrec *n;
   log_hnrec *hn;
   short FORLIM, FORLIM1;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Confirm simtype of %ld\n", (long)n);
-  if (n == NULL || n->simtype->simtype < 8)
-    return;
+  if (gg.traceflag) fprintf(tracefile, "Confirm simtype of %ld\n", (long)n);
+  if (n == NULL || n->simtype->simtype < 8) return;
   found = false;
   FORLIM = gg.numpages;
   for (pg = 0; pg < FORLIM; pg++) {
@@ -8587,18 +7536,15 @@ log_nrec *n;
     while (g != NULL && !found) {
       FORLIM1 = g->kind->numpins;
       for (i = 0; i < FORLIM1; i++) {
-	if (g->pin[i] == n) {
-	  if (g->kind->pin[i].s >= 8)
-	    found = true;
-	}
+        if (g->pin[i] == n) {
+          if (g->kind->pin[i].s >= 8) found = true;
+        }
       }
       g = g->next;
     }
   }
-  if (found)
-    return;
-  if (gg.traceflag)
-    fprintf(tracefile, "Deleting simtype of %ld\n", (long)n);
+  if (found) return;
+  if (gg.traceflag) fprintf(tracefile, "Deleting simtype of %ld\n", (long)n);
   calltoolnode(n, act_disposenode);
   disposeattrs(&n->attr, n->simtype->nnumattrs, n->simtype->nattr);
   hn = gg.hnbase;
@@ -8610,13 +7556,7 @@ log_nrec *n;
   n->simtype = simtype_ignore;
 }
 
-
-#define rtn             "COMBINENODES"
-
-
-
-
-
+#define rtn "COMBINENODES"
 
 /*================  COMBINENODES  ================*/
 /*=                                              =*/
@@ -8639,34 +7579,32 @@ cnrec *cnbase;
   short i, pg, FORLIM, FORLIM1;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Combine node %ld into %ld\n",
-	    (long)(*n1), (long)(*n2));
+    fprintf(tracefile, "Combine node %ld into %ld\n", (long)(*n1), (long)(*n2));
   working();
-  if (*n2 == NULL)
-    switchnode(n2, *n1);
-  nn1 = *n1;   /*VAR params may change out from under us*/
+  if (*n2 == NULL) switchnode(n2, *n1);
+  nn1 = *n1; /*VAR params may change out from under us*/
   nn2 = *n2;
   if (nn1 != NULL) {
     if (nn2 == nn1)
       stamp(&nn2->simtype->netstamp);
     else {
       if (nn1->simtype != nn2->simtype) {
-	if (nn1->simtype->simtype >= 8) {
-	  if (nn2->simtype->simtype >= 8) {
-	    /* shouldn't happen */
-	    report(10, rtn);
-	  } else {
-	    n3 = nn1;
-	    nn1 = nn2;
-	    nn2 = n3;
-	  }
-	}
-	gg.actx = nn1->simtype->simtype;
-	gg.actnode2 = nn1;
-	calltoolnode(nn2, act_combineintonode);
+        if (nn1->simtype->simtype >= 8) {
+          if (nn2->simtype->simtype >= 8) {
+            /* shouldn't happen */
+            report(10, rtn);
+          } else {
+            n3 = nn1;
+            nn1 = nn2;
+            nn2 = n3;
+          }
+        }
+        gg.actx = nn1->simtype->simtype;
+        gg.actnode2 = nn1;
+        calltoolnode(nn2, act_combineintonode);
       } else {
-	gg.actnode2 = nn1;
-	calltoolnode(nn2, act_combinenodes);
+        gg.actnode2 = nn1;
+        calltoolnode(nn2, act_combinenodes);
       }
       oldsimtype = nn1->simtype;
       newsimtype = nn2->simtype;
@@ -8674,51 +7612,47 @@ cnrec *cnbase;
       nn2->changed = true;
       FORLIM = gg.numpages;
       for (pg = 0; pg < FORLIM; pg++) {
-	hw = gg.hwbase[pg];
-	while (hw != NULL) {
-	  if (hw->node == nn1)
-	    switchnode(&hw->node, nn2);
-	  hw = hw->next;
-	}
-	vw = gg.vwbase[pg];
-	while (vw != NULL) {
-	  if (vw->node == nn1)
-	    switchnode(&vw->node, nn2);
-	  vw = vw->next;
-	}
-	g = gg.gbase[pg];
-	while (g != NULL) {
-	  FORLIM1 = g->kind->numpins;
-	  for (i = 0; i < FORLIM1; i++) {
-	    if (g->pin[i] == nn1)
-	      switchnode(&g->pin[i], nn2);
-	  }
-	  g = g->next;
-	}
+        hw = gg.hwbase[pg];
+        while (hw != NULL) {
+          if (hw->node == nn1) switchnode(&hw->node, nn2);
+          hw = hw->next;
+        }
+        vw = gg.vwbase[pg];
+        while (vw != NULL) {
+          if (vw->node == nn1) switchnode(&vw->node, nn2);
+          vw = vw->next;
+        }
+        g = gg.gbase[pg];
+        while (g != NULL) {
+          FORLIM1 = g->kind->numpins;
+          for (i = 0; i < FORLIM1; i++) {
+            if (g->pin[i] == nn1) switchnode(&g->pin[i], nn2);
+          }
+          g = g->next;
+        }
       }
       FORLIM = gg.lastsignal;
       for (i = 1; i <= FORLIM; i++) {
-	if (gg.signaltab[i - 1].np == nn1) {
-	  switchnode(&gg.signaltab[i - 1].np, nn2);
-	  if (oldsimtype->simtype < 8 && newsimtype->simtype >= 8) {
-	    hn = gg.hnbase;
-	    while (hn != NULL) {
-	      if (hn->sig == i)
-		newattrs(&hn->attr, newsimtype->hnumattrs, newsimtype->hattr);
-	      hn = hn->next;
-	    }
-	  }
-	}
+        if (gg.signaltab[i - 1].np == nn1) {
+          switchnode(&gg.signaltab[i - 1].np, nn2);
+          if (oldsimtype->simtype < 8 && newsimtype->simtype >= 8) {
+            hn = gg.hnbase;
+            while (hn != NULL) {
+              if (hn->sig == i)
+                newattrs(&hn->attr, newsimtype->hnumattrs, newsimtype->hattr);
+              hn = hn->next;
+            }
+          }
+        }
       }
       cn = cnbase;
       while (cn != NULL) {
-	if (cn->n == nn1)
-	  cn->n = nn2;
-	cn = cn->next;
+        if (cn->n == nn1) cn->n = nn2;
+        cn = cn->next;
       }
       if (nodeexists(nn1)) {
-	report(11, rtn);
-	disposenode(&nn1);
+        report(11, rtn);
+        disposenode(&nn1);
       }
     }
   }
@@ -8726,10 +7660,6 @@ cnrec *cnbase;
 }
 
 #undef rtn
-
-
-
-
 
 /* N is one of the nodes to be merged into N2, later.  If N is nil, says
    that N2 must be assigned a node, but we don't have anything to connect
@@ -8742,10 +7672,9 @@ log_nrec **n, **n2;
   cnrec *cn;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Queue-combine,  n = %ld,  np -> %ld\n",
-	    (long)(*n), (long)(*n2));
-  if (*n == NULL)
-    return;
+    fprintf(tracefile, "Queue-combine,  n = %ld,  np -> %ld\n", (long)(*n),
+            (long)(*n2));
+  if (*n == NULL) return;
   cn = (cnrec *)Malloc(sizeof(cnrec));
   cn->next = *cnbase;
   *cnbase = cn;
@@ -8753,16 +7682,15 @@ log_nrec **n, **n2;
   cn->np = n2;
 }
 
-
 /* Local variables for checkcombine: */
 struct LOC_checkcombine {
   cnrec **cnbase;
   short passcount;
   boolean good;
   log_tool *cursimtype;
-} ;
+};
 
-Local Void scancn PP((cnrec *cn, struct LOC_checkcombine *LINK));
+Local Void scancn PP((cnrec * cn, struct LOC_checkcombine *LINK));
 
 Local Void checknode(n, LINK)
 log_nrec *n;
@@ -8772,17 +7700,15 @@ struct LOC_checkcombine *LINK;
   Char STR1[94];
 
   newsimtype = n->simtype;
-  if (newsimtype->simtype < 8)
-    return;
+  if (newsimtype->simtype < 8) return;
   if (LINK->cursimtype->simtype < 8) {
     LINK->cursimtype = newsimtype;
     return;
   }
-  if (LINK->cursimtype->simtype == newsimtype->simtype)
-    return;
+  if (LINK->cursimtype->simtype == newsimtype->simtype) return;
   if (LINK->passcount == 2) {
-    sprintf(STR1, "Tried to connect %s signal to %s",
-	    newsimtype->shortname, LINK->cursimtype->shortname);
+    sprintf(STR1, "Tried to connect %s signal to %s", newsimtype->shortname,
+            LINK->cursimtype->shortname);
     message(STR1);
   }
   LINK->good = false;
@@ -8791,7 +7717,7 @@ struct LOC_checkcombine *LINK;
 /* Local variables for scancn: */
 struct LOC_scancn {
   struct LOC_checkcombine *LINK;
-} ;
+};
 
 Local Void scan(n, LINK)
 log_nrec **n;
@@ -8799,14 +7725,11 @@ struct LOC_scancn *LINK;
 {
   cnrec *cn;
 
-  if (!LINK->LINK->good)
-    return;
-  if (*n != NULL)
-    checknode(*n, LINK->LINK);
+  if (!LINK->LINK->good) return;
+  if (*n != NULL) checknode(*n, LINK->LINK);
   cn = *LINK->LINK->cnbase;
   while (cn != NULL && LINK->LINK->good) {
-    if ((cn->n == *n && *n != NULL) || cn->np == n)
-      scancn(cn, LINK->LINK);
+    if ((cn->n == *n && *n != NULL) || cn->np == n) scancn(cn, LINK->LINK);
     cn = cn->next;
   }
 }
@@ -8818,14 +7741,11 @@ struct LOC_checkcombine *LINK;
   struct LOC_scancn V;
 
   V.LINK = LINK;
-  if (cn->done)
-    return;
+  if (cn->done) return;
   cn->done = true;
   scan(&cn->n, &V);
   scan(cn->np, &V);
 }
-
-
 
 /* Merge all queued nodes.  If any simtype conflicts would result, don't
    merge any nodes.  If a node doesn't have anything merged into it, make
@@ -8855,14 +7775,14 @@ cnrec **cnbase_;
     if (!V.good && V.passcount == 1) {
       cn = *V.cnbase;
       while (cn != NULL) {
-	confirmsimtype(cn->n);
-	confirmsimtype(*cn->np);
-	cn = cn->next;
+        confirmsimtype(cn->n);
+        confirmsimtype(*cn->np);
+        cn = cn->next;
       }
     }
     if (gg.traceflag && *V.cnbase != NULL)
-      fprintf(tracefile, "Check-combine (pass %d) finds %s\n",
-	      V.passcount, V.good ? " TRUE" : "FALSE");
+      fprintf(tracefile, "Check-combine (pass %d) finds %s\n", V.passcount,
+              V.good ? " TRUE" : "FALSE");
     V.passcount++;
   } while (!(V.good || V.passcount > 2));
   if (V.good) {
@@ -8880,8 +7800,6 @@ cnrec **cnbase_;
   return V.good;
 }
 
-
-
 Static boolean trycombinenodes(n1, n2)
 log_nrec **n1, **n2;
 {
@@ -8891,10 +7809,6 @@ log_nrec **n1, **n2;
   queuecombine(&cnbase, n1, n2);
   return (checkcombine(&cnbase));
 }
-
-
-
-
 
 Static Void fryhwire(hw)
 log_hwrec *hw;
@@ -8914,7 +7828,6 @@ log_hwrec *hw;
   refreshsoon();
 }
 
-
 Static Void fryvwire(vw)
 log_vwrec *vw;
 {
@@ -8933,7 +7846,6 @@ log_vwrec *vw;
   refreshsoon();
 }
 
-
 Static Void frygate(g)
 log_grec *g;
 {
@@ -8949,7 +7861,6 @@ log_grec *g;
   clipoff();
   refreshsoon();
 }
-
 
 Static Void frysolder(x, y)
 short x, y;
@@ -8967,10 +7878,6 @@ short x, y;
   refreshsoon();
 }
 
-
-
-
-
 Static Void addblobs(blbase, x1, y1, x2, y2)
 blobrec **blbase;
 short x1, y1, x2, y2;
@@ -8981,7 +7888,7 @@ short x1, y1, x2, y2;
   s = gg.sbase[gg.curpage - 1];
   while (s != NULL) {
     if (P_ibetween((long)x1, (long)s->x, (long)x2) &&
-	P_ibetween((long)y1, (long)s->y, (long)y2)) {
+        P_ibetween((long)y1, (long)s->y, (long)y2)) {
       blp = (blobrec *)Malloc(sizeof(blobrec));
       blp->x = s->x;
       blp->y = s->y;
@@ -8991,7 +7898,6 @@ short x1, y1, x2, y2;
     s = s->next;
   }
 }
-
 
 Static Void doblobs(blp)
 blobrec *blp;
@@ -9006,22 +7912,21 @@ blobrec *blp;
       y = blp->y;
       hw = gg.hwbase[gg.curpage - 1];
       while (hw != NULL && (hw->y != y || hw->x1 > x || hw->x2 < x))
-	hw = hw->next;
+        hw = hw->next;
       vw = gg.vwbase[gg.curpage - 1];
       while (vw != NULL && (vw->x != x || vw->y1 > y || vw->y2 < y))
-	vw = vw->next;
+        vw = vw->next;
       if (hw != NULL && vw != NULL && hw->node != vw->node) {
-	if (trycombinenodes(&hw->node, &vw->node)) {
-	  clipon();
-	  addsolder(x, y, hw, NULL, vw, NULL);
-	  clipoff();
-	}
+        if (trycombinenodes(&hw->node, &vw->node)) {
+          clipon();
+          addsolder(x, y, hw, NULL, vw, NULL);
+          clipoff();
+        }
       }
     }
     blp = blp->next;
   }
 }
-
 
 Static Void dispblobs(blbase)
 blobrec **blbase;
@@ -9035,12 +7940,7 @@ blobrec **blbase;
   }
 }
 
-
-#define rtn             "ADDHWIRE"
-
-
-
-
+#define rtn "ADDHWIRE"
 
 /*==================  ADDHWIRE  ==================*/
 /*==================  ADDVWIRE  ==================*/
@@ -9066,15 +7966,13 @@ short x1, x2, y, colr;
   blobrec *blbase;
   short FORLIM;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Add hwire %d-%d, %d\n", x1, x2, y);
+  if (gg.traceflag) fprintf(tracefile, "Add hwire %d-%d, %d\n", x1, x2, y);
   sortshints(&x1, &x2);
   cnbase = NULL;
   remcursor();
   working();
   clipon();
-  if (!vlsi)
-    colr = log_wcol_normal;
+  if (!vlsi) colr = log_wcol_normal;
   newhw(&hw);
   hw->x1 = log_maxshint;
   hw->x2 = log_maxshint;
@@ -9090,10 +7988,10 @@ short x1, x2, y, colr;
     hcolr = hw1->wcolr;
     if (hy == y && hx1 <= x2 && hx2 >= x1) {
       if (hcolr == colr) {
-	x1 = P_imin2((long)x1, (long)hx1);
-	x2 = P_imax2((long)x2, (long)hx2);
-	addblobs(&blbase, hx1, hy, hx2, hy);
-	delhwire(hw1);
+        x1 = P_imin2((long)x1, (long)hx1);
+        x2 = P_imax2((long)x2, (long)hx2);
+        addblobs(&blbase, hx1, hy, hx2, hy);
+        delhwire(hw1);
       }
     }
     hw1 = hw2;
@@ -9106,12 +8004,12 @@ short x1, x2, y, colr;
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
     if (abs(g->y - y) <= g->kind->bbmax &&
-	P_ibetweenm((long)x1, (long)g->x, (long)x2, (long)g->kind->bbmax)) {
+        P_ibetweenm((long)x1, (long)g->x, (long)x2, (long)g->kind->bbmax)) {
       FORLIM = g->kind->numpins;
       for (i = 0; i < FORLIM; i++) {
-	xp = g->pinpos[i].x;
-	if (g->pinpos[i].y == y && x1 <= xp && xp <= x2)
-	  queuecombine(&cnbase, &g->pin[i], &hw->node);
+        xp = g->pinpos[i].x;
+        if (g->pinpos[i].y == y && x1 <= xp && xp <= x2)
+          queuecombine(&cnbase, &g->pin[i], &hw->node);
       }
     }
     g = g->next;
@@ -9124,20 +8022,19 @@ short x1, x2, y, colr;
     vcolr = vw1->wcolr;
     vw2 = vw1->next;
     if ((((vx == x1 || vx == x2) && vy1 <= y && y <= vy2) ||
-	 ((vy1 == y || vy2 == y) && x1 <= vx && vx <= x2)) &&
-	(colr == vcolr || colr == log_wcol_blue || vcolr == log_wcol_blue))
+         ((vy1 == y || vy2 == y) && x1 <= vx && vx <= x2)) &&
+        (colr == vcolr || colr == log_wcol_blue || vcolr == log_wcol_blue))
       queuecombine(&cnbase, &vw1->node, &hw->node);
     else if (vlsi && x1 < vx && vx < x2 && vy1 < y && y < vy2 && colr == vcolr)
       queuecombine(&cnbase, &vw1->node, &hw->node);
     vw1 = vw2;
   }
-  if (cnbase == NULL)
-    newnoderef(&hw->node, 0, 1L);
+  if (cnbase == NULL) newnoderef(&hw->node, 0, 1L);
   if (!checkcombine(&cnbase)) {
     fryhwire(hw);
     disphw(&hw);
     gg.nearhw = NULL;
-    goto _L1;   /*return*/
+    goto _L1; /*return*/
   }
   vw1 = gg.vwbase[gg.curpage - 1];
   while (vw1 != NULL) {
@@ -9147,18 +8044,18 @@ short x1, x2, y, colr;
     vcolr = vw1->wcolr;
     vw2 = vw1->next;
     if ((((vx == x1 || vx == x2) && vy1 <= y && y <= vy2) ||
-	 ((vy1 == y || vy2 == y) && x1 <= vx && vx <= x2)) &&
-	(colr == vcolr || colr == log_wcol_blue || vcolr == log_wcol_blue)) {
+         ((vy1 == y || vy2 == y) && x1 <= vx && vx <= x2)) &&
+        (colr == vcolr || colr == log_wcol_blue || vcolr == log_wcol_blue)) {
       clipon();
       if (!vlsi)
-	addsoldert(hw, vw1);
+        addsoldert(hw, vw1);
       else if (colr != vcolr)
-	addsolder(vx, y, hw, NULL, vw1, NULL);
+        addsolder(vx, y, hw, NULL, vw1, NULL);
     }
     vw1 = vw2;
   }
   clipon();
-  if (hw->node->conflict1 && hw->node->conflict2)   /*or hw^.node^.oconflict*/
+  if (hw->node->conflict1 && hw->node->conflict2) /*or hw^.node^.oconflict*/
     m_color((long)gg.color.conflict);
   else if (gg.glowmode)
     m_color(glowcol(hw->node, (long)gg.color.wire[colr - log_wcol_normal]));
@@ -9169,8 +8066,7 @@ short x1, x2, y, colr;
   gg.nearhw = hw;
   clipoff();
   refreshsoon();
-  if (gg.traceflag)
-    fprintf(tracefile, "Added hwire %ld\n", (long)hw);
+  if (gg.traceflag) fprintf(tracefile, "Added hwire %ld\n", (long)hw);
 _L1:
   dispblobs(&blbase);
 
@@ -9180,17 +8076,11 @@ _L1:
 
 #undef rtn
 
-
 Static Void addhwire2(x1, x2, y)
 short x1, x2, y;
-{
-  addhwire(x1, x2, y, log_wcol_normal);
-}
+{ addhwire(x1, x2, y, log_wcol_normal); }
 
-
-#define rtn             "ADDHWIRE"
-
-
+#define rtn "ADDHWIRE"
 
 Static Void addvwire(x, y1, y2, colr)
 short x, y1, y2, colr;
@@ -9203,15 +8093,13 @@ short x, y1, y2, colr;
   blobrec *blbase;
   short FORLIM;
 
-  if (gg.traceflag)
-    fprintf(tracefile, "Add vwire %d, %d-%d\n", x, y1, y2);
+  if (gg.traceflag) fprintf(tracefile, "Add vwire %d, %d-%d\n", x, y1, y2);
   sortshints(&y1, &y2);
   cnbase = NULL;
   remcursor();
   working();
   clipon();
-  if (!vlsi)
-    colr = log_wcol_normal;
+  if (!vlsi) colr = log_wcol_normal;
   newvw(&vw);
   vw->x = log_maxshint;
   vw->y1 = log_maxshint;
@@ -9227,10 +8115,10 @@ short x, y1, y2, colr;
     vcolr = vw1->wcolr;
     if (vx == x && vy1 <= y2 && vy2 >= y1) {
       if (vcolr == colr) {
-	y1 = P_imin2((long)y1, (long)vy1);
-	y2 = P_imax2((long)y2, (long)vy2);
-	addblobs(&blbase, vx, vy1, vx, vy2);
-	delvwire(vw1);
+        y1 = P_imin2((long)y1, (long)vy1);
+        y2 = P_imax2((long)y2, (long)vy2);
+        addblobs(&blbase, vx, vy1, vx, vy2);
+        delvwire(vw1);
       }
     }
     vw1 = vw2;
@@ -9243,12 +8131,12 @@ short x, y1, y2, colr;
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
     if (abs(g->x - x) <= g->kind->bbmax &&
-	P_ibetweenm((long)y1, (long)g->y, (long)y2, (long)g->kind->bbmax)) {
+        P_ibetweenm((long)y1, (long)g->y, (long)y2, (long)g->kind->bbmax)) {
       FORLIM = g->kind->numpins;
       for (i = 0; i < FORLIM; i++) {
-	yp = g->pinpos[i].y;
-	if (g->pinpos[i].x == x && y1 <= yp && yp <= y2)
-	  queuecombine(&cnbase, &g->pin[i], &vw->node);
+        yp = g->pinpos[i].y;
+        if (g->pinpos[i].x == x && y1 <= yp && yp <= y2)
+          queuecombine(&cnbase, &g->pin[i], &vw->node);
       }
     }
     g = g->next;
@@ -9261,20 +8149,19 @@ short x, y1, y2, colr;
     hcolr = hw1->wcolr;
     hw2 = hw1->next;
     if ((((hy == y1 || hy == y2) && hx1 <= x && x <= hx2) ||
-	 ((hx1 == x || hx2 == x) && y1 <= hy && hy <= y2)) &&
-	(colr == hcolr || colr == log_wcol_blue || hcolr == log_wcol_blue))
+         ((hx1 == x || hx2 == x) && y1 <= hy && hy <= y2)) &&
+        (colr == hcolr || colr == log_wcol_blue || hcolr == log_wcol_blue))
       queuecombine(&cnbase, &hw1->node, &vw->node);
     else if (vlsi && y1 < hy && hy < y2 && hx1 < x && x < hx2 && colr == hcolr)
       queuecombine(&cnbase, &hw1->node, &vw->node);
     hw1 = hw2;
   }
-  if (cnbase == NULL)
-    newnoderef(&vw->node, 0, 1L);
+  if (cnbase == NULL) newnoderef(&vw->node, 0, 1L);
   if (!checkcombine(&cnbase)) {
     fryvwire(vw);
     dispvw(&vw);
     gg.nearvw = NULL;
-    goto _L1;   /*return*/
+    goto _L1; /*return*/
   }
   hw1 = gg.hwbase[gg.curpage - 1];
   while (hw1 != NULL) {
@@ -9284,18 +8171,18 @@ short x, y1, y2, colr;
     hcolr = hw1->wcolr;
     hw2 = hw1->next;
     if ((((hy == y1 || hy == y2) && hx1 <= x && x <= hx2) ||
-	 ((hx1 == x || hx2 == x) && y1 <= hy && hy <= y2)) &&
-	(colr == hcolr || colr == log_wcol_blue || hcolr == log_wcol_blue)) {
+         ((hx1 == x || hx2 == x) && y1 <= hy && hy <= y2)) &&
+        (colr == hcolr || colr == log_wcol_blue || hcolr == log_wcol_blue)) {
       clipon();
       if (!vlsi)
-	addsoldert(hw1, vw);
+        addsoldert(hw1, vw);
       else if (colr != hcolr)
-	addsolder(x, hy, hw1, NULL, vw, NULL);
+        addsolder(x, hy, hw1, NULL, vw, NULL);
     }
     hw1 = hw2;
   }
   clipon();
-  if (vw->node->conflict1 && vw->node->conflict2)   /*or vw^.node^.oconflict*/
+  if (vw->node->conflict1 && vw->node->conflict2) /*or vw^.node^.oconflict*/
     m_color((long)gg.color.conflict);
   else if (gg.glowmode)
     m_color(glowcol(vw->node, (long)gg.color.wire[colr - log_wcol_normal]));
@@ -9306,8 +8193,7 @@ short x, y1, y2, colr;
   gg.nearvw = vw;
   clipoff();
   refreshsoon();
-  if (gg.traceflag)
-    fprintf(tracefile, "Added vwire %ld\n", (long)vw);
+  if (gg.traceflag) fprintf(tracefile, "Added vwire %ld\n", (long)vw);
 _L1:
   dispblobs(&blbase);
 
@@ -9317,15 +8203,9 @@ _L1:
 
 #undef rtn
 
-
 Static Void addvwire2(x, y1, y2)
 short x, y1, y2;
-{
-  addvwire(x, y1, y2, log_wcol_normal);
-}
-
-
-
+{ addvwire(x, y1, y2, log_wcol_normal); }
 
 /*================  CONNECTGATE  =================*/
 /*=                                              =*/
@@ -9352,7 +8232,6 @@ log_grec *g;
     g->pinpos[i].y = g->y + WITH->pin[i].x * rxy + WITH->pin[i].y * ryy;
   }
 }
-
 
 Static boolean connectgate(g)
 log_grec *g;
@@ -9383,13 +8262,13 @@ log_grec *g;
     if (ptrs[i - 1] == 0) {
       newnoderef(&g->pin[i - 1], g->kind->pin[i - 1].s, 1L);
       if (g->pin[i - 1] == NULL) {
-	Result = false;
-	goto _L1;   /*return*/
+        Result = false;
+        goto _L1; /*return*/
       }
       j = i;
       do {
-	ptrs[j - 1] = i;
-	j = g->kind->pin[j - 1].c;
+        ptrs[j - 1] = i;
+        j = g->kind->pin[j - 1].c;
       } while (j != i && j != 0);
     }
   }
@@ -9401,30 +8280,26 @@ log_grec *g;
     n1 = NULL;
     hw = gg.hwbase[gg.curpage - 1];
     while (hw != NULL && n1 == NULL) {
-      if (hw->x1 <= xp && xp <= hw->x2 && yp == hw->y)
-	n1 = &hw->node;
+      if (hw->x1 <= xp && xp <= hw->x2 && yp == hw->y) n1 = &hw->node;
       hw = hw->next;
     }
     vw = gg.vwbase[gg.curpage - 1];
     while (vw != NULL && n1 == NULL) {
-      if (vw->y1 <= yp && yp <= vw->y2 && xp == vw->x)
-	n1 = &vw->node;
+      if (vw->y1 <= yp && yp <= vw->y2 && xp == vw->x) n1 = &vw->node;
       vw = vw->next;
     }
     g1 = gg.gbase[gg.curpage - 1];
     while (g1 != NULL && n1 == NULL) {
       if (g1 != g && P_imax2((long)abs(g1->x - xp), (long)abs(g1->y - yp)) <=
-		     g1->kind->bbmax) {
-	FORLIM1 = g1->kind->numpins;
-	for (j = 0; j < FORLIM1; j++) {
-	  if (g1->pinpos[j].x == xp && g1->pinpos[j].y == yp)
-	    n1 = &g1->pin[j];
-	}
+                         g1->kind->bbmax) {
+        FORLIM1 = g1->kind->numpins;
+        for (j = 0; j < FORLIM1; j++) {
+          if (g1->pinpos[j].x == xp && g1->pinpos[j].y == yp) n1 = &g1->pin[j];
+        }
       }
       g1 = g1->next;
     }
-    if (n1 != NULL)
-      queuecombine(&cnbase, &g->pin[ptrs[i] - 1], n1);
+    if (n1 != NULL) queuecombine(&cnbase, &g->pin[ptrs[i] - 1], n1);
   }
   if (g->kind->simtype == simtype_common && g->sig != 0)
     queuecombine(&cnbase, &gg.signaltab[g->sig - 1].np, g->pin);
@@ -9434,8 +8309,7 @@ log_grec *g;
   if (success && checkcombine(&cnbase)) {
     FORLIM = g->kind->numpins;
     for (i = 0; i < FORLIM; i++) {
-      if (ptrs[i] != i + 1)
-	g->pin[i] = refnode(g->pin[ptrs[i] - 1]);
+      if (ptrs[i] != i + 1) g->pin[i] = refnode(g->pin[ptrs[i] - 1]);
     }
     Result = true;
   } else
@@ -9444,8 +8318,7 @@ log_grec *g;
     Result = false;
     FORLIM = g->kind->numpins;
     for (i = 1; i <= FORLIM; i++) {
-      if (ptrs[i - 1] == i)
-	unrefnode(&g->pin[i - 1]);
+      if (ptrs[i - 1] == i) unrefnode(&g->pin[i - 1]);
     }
     unlkgate(&g);
   }
@@ -9453,20 +8326,10 @@ _L1:
   return Result;
 }
 
-
-
 Static Void pconnectgate(g, success)
 log_grec *g;
 boolean *success;
-{
-  *success = connectgate(g);
-}
-
-
-
-
-
-
+{ *success = connectgate(g); }
 
 /*=================  CLEARBUF  ===================*/
 /*=                                              =*/
@@ -9486,7 +8349,6 @@ baseptrs *bases;
   bases->pgnum = 0;
   bases->valid = false;
 }
-
 
 Static Void clearbuf(bases)
 baseptrs *bases;
@@ -9532,40 +8394,31 @@ baseptrs *bases;
   bases->valid = false;
 }
 
-
-
 Static boolean bufempty(bases)
 baseptrs *bases;
 {
   return (bases->gcopy == NULL && bases->scopy == NULL &&
-	  bases->hwcopy == NULL && bases->vwcopy == NULL &&
-	  bases->lcopy == NULL && bases->bcopy == NULL);
+          bases->hwcopy == NULL && bases->vwcopy == NULL &&
+          bases->lcopy == NULL && bases->bcopy == NULL);
 }
-
-
 
 Static boolean bufissmall(bases)
 baseptrs *bases;
 {
   return ((bases->gcopy == NULL || bases->gcopy->next == NULL ||
-	   bases->gcopy->next->next == NULL ||
-	   bases->gcopy->next->next->next == NULL) &&
-	  (bases->hwcopy == NULL || bases->hwcopy->next == NULL ||
-	   bases->hwcopy->next->next == NULL ||
-	   bases->hwcopy->next->next->next == NULL) &&
-	  (bases->vwcopy == NULL || bases->vwcopy->next == NULL ||
-	   bases->vwcopy->next->next == NULL ||
-	   bases->vwcopy->next->next->next == NULL) &&
-	  (bases->lcopy == NULL || bases->lcopy->next == NULL ||
-	   bases->lcopy->next->next == NULL) &&
-	  (bases->bcopy == NULL || bases->bcopy->next == NULL ||
-	   bases->bcopy->next->next == NULL));
+           bases->gcopy->next->next == NULL ||
+           bases->gcopy->next->next->next == NULL) &&
+          (bases->hwcopy == NULL || bases->hwcopy->next == NULL ||
+           bases->hwcopy->next->next == NULL ||
+           bases->hwcopy->next->next->next == NULL) &&
+          (bases->vwcopy == NULL || bases->vwcopy->next == NULL ||
+           bases->vwcopy->next->next == NULL ||
+           bases->vwcopy->next->next->next == NULL) &&
+          (bases->lcopy == NULL || bases->lcopy->next == NULL ||
+           bases->lcopy->next->next == NULL) &&
+          (bases->bcopy == NULL || bases->bcopy->next == NULL ||
+           bases->bcopy->next->next == NULL));
 }
-
-
-
-
-
 
 /*==================  CUTCOPY  ===================*/
 /*=                                              =*/
@@ -9600,16 +8453,16 @@ boolean cut, tap;
     if (gg.nearlabel == NULL && gg.nearbox == NULL && gg.neargate == NULL) {
       closerwire(x1, y1);
       if (gg.nearhw != NULL) {
-	gg.nearvw = NULL;
-	x1 = gg.nearhw->x1;
-	x2 = gg.nearhw->x2;
-	y1 = gg.nearhw->y;
-	y2 = gg.nearhw->y;
+        gg.nearvw = NULL;
+        x1 = gg.nearhw->x1;
+        x2 = gg.nearhw->x2;
+        y1 = gg.nearhw->y;
+        y2 = gg.nearhw->y;
       } else if (gg.nearvw != NULL) {
-	x1 = gg.nearvw->x;
-	x2 = gg.nearvw->x;
-	y1 = gg.nearvw->y1;
-	y2 = gg.nearvw->y2;
+        x1 = gg.nearvw->x;
+        x2 = gg.nearvw->x;
+        y1 = gg.nearvw->y1;
+        y2 = gg.nearvw->y2;
       }
     } else {
       gg.nearhw = NULL;
@@ -9638,8 +8491,7 @@ boolean cut, tap;
       bases->gcopy = g2;
       g2->x = g->x - anchorx;
       g2->y = g->y - anchory;
-      if (cut)
-	delgate(g);
+      if (cut) delgate(g);
     }
     g = g1;
   }
@@ -9647,12 +8499,12 @@ boolean cut, tap;
   while (s != NULL) {
     if (tap)
       found = ((s->hwire == gg.nearhw && s->hwire != NULL) ||
-	       (s->vwire == gg.nearvw && s->vwire != NULL));
+               (s->vwire == gg.nearvw && s->vwire != NULL));
     else
       found = (x1 <= s->x && s->x <= x2 && y1 <= s->y && s->y <= y2);
     if (found &&
-	(s->hwire == NULL || (s->hwire->x1 != s->x && s->hwire->x2 != s->x)) &&
-	(s->vwire == NULL || (s->vwire->y1 != s->y && s->vwire->y2 != s->y))) {
+        (s->hwire == NULL || (s->hwire->x1 != s->x && s->hwire->x2 != s->x)) &&
+        (s->vwire == NULL || (s->vwire->y1 != s->y && s->vwire->y2 != s->y))) {
       s2 = (log_srec *)Malloc(sizeof(log_srec));
       s2->next = bases->scopy;
       bases->scopy = s2;
@@ -9678,24 +8530,20 @@ boolean cut, tap;
       hw2->y = yy1 - anchory;
       hw2->wcolr = hw->wcolr;
       if (hw2->x1 == hw2->x2)
-	Free(hw2);
+        Free(hw2);
       else {
-	hw2->next = bases->hwcopy;
-	bases->hwcopy = hw2;
-	if (cut) {
-	  blbase = NULL;
-	  if (xx1 < x1)
-	    addblobs(&blbase, xx1, yy1, x1, yy1);
-	  if (xx2 > x2)
-	    addblobs(&blbase, x2, yy1, xx2, yy1);
-	  delhwire(hw);
-	  if (xx1 < x1)
-	    addhwire(xx1, x1, yy1, hw2->wcolr);
-	  if (xx2 > x2)
-	    addhwire(x2, xx2, yy1, hw2->wcolr);
-	  doblobs(blbase);
-	  dispblobs(&blbase);
-	}
+        hw2->next = bases->hwcopy;
+        bases->hwcopy = hw2;
+        if (cut) {
+          blbase = NULL;
+          if (xx1 < x1) addblobs(&blbase, xx1, yy1, x1, yy1);
+          if (xx2 > x2) addblobs(&blbase, x2, yy1, xx2, yy1);
+          delhwire(hw);
+          if (xx1 < x1) addhwire(xx1, x1, yy1, hw2->wcolr);
+          if (xx2 > x2) addhwire(x2, xx2, yy1, hw2->wcolr);
+          doblobs(blbase);
+          dispblobs(&blbase);
+        }
       }
     }
     hw = hw1;
@@ -9717,24 +8565,20 @@ boolean cut, tap;
       vw2->y2 = P_imin2((long)yy2, (long)y2) - anchory;
       vw2->wcolr = vw->wcolr;
       if (vw2->y1 == vw2->y2)
-	Free(vw2);
+        Free(vw2);
       else {
-	vw2->next = bases->vwcopy;
-	bases->vwcopy = vw2;
-	if (cut) {
-	  blbase = NULL;
-	  if (yy1 < y1)
-	    addblobs(&blbase, xx1, y1, xx1, yy1);
-	  if (yy2 > y2)
-	    addblobs(&blbase, xx1, yy2, xx1, y2);
-	  delvwire(vw);
-	  if (yy1 < y1)
-	    addvwire(xx1, yy1, y1, vw2->wcolr);
-	  if (yy2 > y2)
-	    addvwire(xx1, y2, yy2, vw2->wcolr);
-	  doblobs(blbase);
-	  dispblobs(&blbase);
-	}
+        vw2->next = bases->vwcopy;
+        bases->vwcopy = vw2;
+        if (cut) {
+          blbase = NULL;
+          if (yy1 < y1) addblobs(&blbase, xx1, y1, xx1, yy1);
+          if (yy2 > y2) addblobs(&blbase, xx1, yy2, xx1, y2);
+          delvwire(vw);
+          if (yy1 < y1) addvwire(xx1, yy1, y1, vw2->wcolr);
+          if (yy2 > y2) addvwire(xx1, y2, yy2, vw2->wcolr);
+          doblobs(blbase);
+          dispblobs(&blbase);
+        }
       }
     }
     vw = vw1;
@@ -9746,9 +8590,9 @@ boolean cut, tap;
       found = (l == gg.nearlabel);
     else {
       found = (x1 <= l->x + m_strwidth(logfont_lfont, l->name) / gg.scale &&
-	       l->x <= x2 && y1 <= l->y + 2 && l->y <= y2);
-/* p2c: log.text, line 9208:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+               l->x <= x2 && y1 <= l->y + 2 && l->y <= y2);
+      /* p2c: log.text, line 9208:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     }
     if (found) {
       l2 = (log_lrec *)Malloc(sizeof(log_lrec));
@@ -9758,8 +8602,8 @@ boolean cut, tap;
       l2->y = l->y - anchory;
       strcpy(l2->name, l->name);
       if (cut) {
-	eralabel(l);
-	displabel(&l);
+        eralabel(l);
+        displabel(&l);
       }
     }
     l = l1;
@@ -9780,8 +8624,8 @@ boolean cut, tap;
       b2->x2 = b->x2 - anchorx;
       b2->y2 = b->y2 - anchory;
       if (cut) {
-	drawboxc(b, gg.color.backgr);
-	dispbox(&b);
+        drawboxc(b, gg.color.backgr);
+        dispbox(&b);
       }
     }
     b = b1;
@@ -9791,23 +8635,12 @@ boolean cut, tap;
     Free(curfilename[gg.curpage - 1]);
 }
 
-
-
-
-
-
-
-Static Void checkabort()
-{
+Static Void checkabort() {
   if (!gg.stillnear || (gg.t.dn && !gg.incircuit) || *gg.func != '\0')
     _Escape(5);
 }
 
-
-
-
-Static Void waitnear()
-{
+Static Void waitnear() {
   do {
     gg.stillnear = true;
     pass();
@@ -9817,11 +8650,7 @@ Static Void waitnear()
   checkabort();
 }
 
-
-
-
-Static Void getfirstpoint()
-{
+Static Void getfirstpoint() {
   checkabort();
   do {
     pass();
@@ -9833,9 +8662,6 @@ Static Void getfirstpoint()
   gg.posy = gg.gridy;
 }
 
-
-
-
 Static boolean getrectangle(x1, y1, x2, y2, first)
 short *x1, *y1, *x2, *y2;
 boolean first;
@@ -9843,8 +8669,7 @@ boolean first;
   boolean flag;
   long time;
 
-  if (first)
-    getfirstpoint();
+  if (first) getfirstpoint();
   *x1 = gg.posx;
   *y1 = gg.posy;
   time = timers_sysclock();
@@ -9855,34 +8680,27 @@ boolean first;
     m_colormode((long)m_xor);
     m_color((long)gg.color.select);
     flag = gg.incircuit;
-    if (flag)
-      rect(*x1, *y1, *x2, *y2);
+    if (flag) rect(*x1, *y1, *x2, *y2);
     m_colormode((long)m_normal);
     do {
       pass();
       trykbd();
       pen();
     } while (gg.gridx == *x2 && gg.gridy == *y2 && gg.t.depressed &&
-	     *gg.func == '\0');
+             *gg.func == '\0');
     m_colormode((long)m_xor);
     m_color((long)gg.color.select);
-    if (flag)
-      rect(*x1, *y1, *x2, *y2);
+    if (flag) rect(*x1, *y1, *x2, *y2);
     m_colormode((long)m_normal);
     scroll();
     gg.stillnear = true;
     checkabort();
   } while (gg.t.depressed);
   remcursor();
-  if (!gg.incircuit)
-    _Escape(5);
+  if (!gg.incircuit) _Escape(5);
   return (abs(*x1 - *x2) < 2 && abs(*y1 - *y2) < 2 &&
-	  timers_sysclock() - time < tapdelay);
+          timers_sysclock() - time < tapdelay);
 }
-
-
-
-
 
 /*==================  DELOBJECT  =================*/
 /*=                                              =*/
@@ -9891,8 +8709,7 @@ boolean first;
 /*=                                              =*/
 /*================================================*/
 
-Static Void delcommand()
-{
+Static Void delcommand() {
   short x1, y1, x2, y2;
   boolean flag;
 
@@ -9905,10 +8722,6 @@ Static Void delcommand()
     cutcopy(&copybuf, x1, y1, x2, y2, true, flag);
   } while (true);
 }
-
-
-
-
 
 Static boolean pagembb(pg, x1, y1, x2, y2)
 short pg, *x1, *y1, *x2, *y2;
@@ -9927,65 +8740,45 @@ short pg, *x1, *y1, *x2, *y2;
   g = gg.gbase[pg - 1];
   while (g != NULL) {
     max = g->kind->bbmax;
-    if (g->x - max < *x1)
-      *x1 = g->x - max;
-    if (g->x + max > *x2)
-      *x2 = g->x + max;
-    if (g->y - max < *y1)
-      *y1 = g->y - max;
-    if (g->y + max > *y2)
-      *y2 = g->y + max;
+    if (g->x - max < *x1) *x1 = g->x - max;
+    if (g->x + max > *x2) *x2 = g->x + max;
+    if (g->y - max < *y1) *y1 = g->y - max;
+    if (g->y + max > *y2) *y2 = g->y + max;
     g = g->next;
   }
   hw = gg.hwbase[pg - 1];
   while (hw != NULL) {
-    if (hw->x1 < *x1)
-      *x1 = hw->x1;
-    if (hw->x2 > *x2)
-      *x2 = hw->x2;
-    if (hw->y < *y1)
-      *y1 = hw->y;
-    if (hw->y > *y2)
-      *y2 = hw->y;
+    if (hw->x1 < *x1) *x1 = hw->x1;
+    if (hw->x2 > *x2) *x2 = hw->x2;
+    if (hw->y < *y1) *y1 = hw->y;
+    if (hw->y > *y2) *y2 = hw->y;
     hw = hw->next;
   }
   vw = gg.vwbase[pg - 1];
   while (vw != NULL) {
-    if (vw->x < *x1)
-      *x1 = vw->x;
-    if (vw->x > *x2)
-      *x2 = vw->x;
-    if (vw->y1 < *y1)
-      *y1 = vw->y1;
-    if (vw->y2 > *y2)
-      *y2 = vw->y2;
+    if (vw->x < *x1) *x1 = vw->x;
+    if (vw->x > *x2) *x2 = vw->x;
+    if (vw->y1 < *y1) *y1 = vw->y1;
+    if (vw->y2 > *y2) *y2 = vw->y2;
     vw = vw->next;
   }
   l = gg.lbase[pg - 1];
   while (l != NULL) {
-    if (l->x < *x1)
-      *x1 = l->x;
+    if (l->x < *x1) *x1 = l->x;
     max = m_strwidth(logfont_lfont, l->name) / gg.scale;
-/* p2c: log.text, line 9437:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-    if (l->x + max > *x2)
-      *x2 = l->x + max;
-    if (l->y < *y1)
-      *y1 = l->y;
-    if (l->y + 2 > *y2)
-      *y2 = l->y + 2;
+    /* p2c: log.text, line 9437:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    if (l->x + max > *x2) *x2 = l->x + max;
+    if (l->y < *y1) *y1 = l->y;
+    if (l->y + 2 > *y2) *y2 = l->y + 2;
     l = l->next;
   }
   b = gg.bbase[pg - 1];
   while (b != NULL) {
-    if (b->x1 < *x1)
-      *x1 = b->x1;
-    if (b->x2 > *x2)
-      *x2 = b->x2;
-    if (b->y1 < *y1)
-      *y1 = b->y1;
-    if (b->y2 > *y2)
-      *y2 = b->y2;
+    if (b->x1 < *x1) *x1 = b->x1;
+    if (b->x2 > *x2) *x2 = b->x2;
+    if (b->y1 < *y1) *y1 = b->y1;
+    if (b->y2 > *y2) *y2 = b->y2;
     b = b->next;
   }
   (*x1)--;
@@ -9995,21 +8788,12 @@ short pg, *x1, *y1, *x2, *y2;
   return (*x1 < *x2);
 }
 
-
-
-Static Void deleverything()
-{
+Static Void deleverything() {
   short x1, y1, x2, y2;
 
   if (pagembb((int)gg.curpage, &x1, &y1, &x2, &y2))
     cutcopy(&copybuf, x1, y1, x2, y2, true, false);
 }
-
-
-
-
-
-
 
 /*================  CHANGEKIND  ==================*/
 /*=                                              =*/
@@ -10032,16 +8816,12 @@ log_gattrrec *attrs;
     kindattr[i - 1] = NULL;
   }
   k = kind[(gtype & (log_kindoffset - 1)) - 1];
-  if (!k->flag.U3.named)
-    sig = 0;
+  if (!k->flag.U3.named) sig = 0;
   kindgroup[i - 1] = gtype;
   kindsig[i - 1] = sig;
-  if (attrs != NULL)
-    copyattrs(&kindattr[i - 1], attrs, k->numattrs, k->attr);
+  if (attrs != NULL) copyattrs(&kindattr[i - 1], attrs, k->numattrs, k->attr);
   kdrawgatec(i, gg.color.kindgate);
 }
-
-
 
 Static Void changekind(gtype, sig, attrs)
 short gtype, sig;
@@ -10054,7 +8834,6 @@ log_gattrrec *attrs;
     changekind2(i, gtype, sig, attrs);
   }
 }
-
 
 Local Void showstick(x1, y1, x2, y2, mode)
 long x1, y1, x2, y2, mode;
@@ -10071,15 +8850,7 @@ long x1, y1, x2, y2, mode;
   m_colormode((long)m_normal);
 }
 
-
-
-
-
-
-
-
-Static Void yardstick()
-{
+Static Void yardstick() {
   long x1, y1, x2, y2;
 
   x1 = gg.posx;
@@ -10093,7 +8864,7 @@ Static Void yardstick()
       trykbd();
       pen();
     } while (gg.gridx == x2 && gg.gridy == y2 && gg.t.depressed &&
-	     *gg.func == '\0');
+             *gg.func == '\0');
     showstick(x1, y1, x2, y2, (long)m_xor);
     scroll();
   } while (gg.t.depressed && *gg.func == '\0');
@@ -10107,21 +8878,18 @@ Static Void yardstick()
       y2 = gg.gridy;
       showstick(x2 + x1, y2 + y1, x2, y2, (long)m_xor);
       do {
-	pass();
-	trykbd();
-	pen();
+        pass();
+        trykbd();
+        pen();
       } while (gg.gridx == x2 && gg.gridy == y2 && gg.t.near_ && !gg.t.dn &&
-	       *gg.func == '\0');
+               *gg.func == '\0');
       showstick(x2 + x1, y2 + y1, x2, y2, (long)m_xor);
       scroll();
     } while (!gg.t.dn && gg.t.near_ && *gg.func == '\0');
   }
 }
 
-
-
-Static Void yardstickcommand()
-{
+Static Void yardstickcommand() {
   log_setmode("YARD");
   clearfunc();
   cursortype = copy_;
@@ -10131,10 +8899,6 @@ Static Void yardstickcommand()
   cursortype = normal;
   log_setmode("");
 }
-
-
-
-
 
 /*=================  ADDGATE1  ===================*/
 /*=                                              =*/
@@ -10160,9 +8924,8 @@ log_gattrrec *attrs;
       g1 = gg.gbase[gg.curpage - 1];
       flag = false;
       while (g1 != NULL && !flag) {
-	if (g1->gc > gmax)
-	  gmax = g1->gc;
-	flag = (g1->gc == i);
+        if (g1->gc > gmax) gmax = g1->gc;
+        flag = (g1->gc == i);
       }
     } while (flag);
     g->gc = i;
@@ -10184,15 +8947,9 @@ log_gattrrec *attrs;
   gg.neargate = g;
 }
 
-
-
 Static Void addgate1(x, y, gtype)
 short x, y, gtype;
-{
-  addgate2(x, y, gtype, 0, NULL);
-}
-
-
+{ addgate2(x, y, gtype, 0, NULL); }
 
 Static Void uaddgate(x, y, gtype)
 short x, y, gtype;
@@ -10209,23 +8966,18 @@ short x, y, gtype;
     yy = (y + gg.yoff) / gg.scale;
     g = gg.gbase[gg.curpage - 1];
     while (g != NULL && P_imax2((long)abs(g->x - xx), (long)abs(g->y - yy)) >
-			g->kind->bbmax + k->bbmax)
+                            g->kind->bbmax + k->bbmax)
       g = g->next;
     if (g != NULL) {
       x += gridcen * 2;
       if (x > across - gridcen * 3) {
-	x = gridcen * 2;
-	y += gridcen * 2;
+        x = gridcen * 2;
+        y += gridcen * 2;
       }
     }
   } while (g != NULL);
   addgate1(xx, yy, gtype);
 }
-
-
-
-
-
 
 /*==================  ADDGATE  ===================*/
 /*=                                              =*/
@@ -10241,18 +8993,17 @@ short x, y, g, sig, yy;
   m_colormode((long)m_xor);
   if (yy < baseline) {
     drawgatec(x, y, g, gg.color.gate);
-    signallabel((int)(x * gg.scale - gg.xoff), (int)(y * gg.scale - gg.yoff),
-		g, sig, gg.color.signal);
+    signallabel((int)(x * gg.scale - gg.xoff), (int)(y * gg.scale - gg.yoff), g,
+                sig, gg.color.signal);
   } else {
-    udrawgatec((int)(x * gg.scale - gg.xoff), (int)(y * gg.scale - gg.yoff),
-	       g, gg.color.gate);
+    udrawgatec((int)(x * gg.scale - gg.xoff), (int)(y * gg.scale - gg.yoff), g,
+               gg.color.gate);
     if (zoom == 0 &&
-	kind[(g & (log_kindoffset - 1)) - 1]->bbmax <= maxsafescale)
+        kind[(g & (log_kindoffset - 1)) - 1]->bbmax <= maxsafescale)
       drawgatedotsc(x, y, g, gg.color.gatepin);
   }
   m_colormode((long)m_normal);
 }
-
 
 Static boolean addgate(gtype, sig, attrs)
 short gtype, sig;
@@ -10268,34 +9019,32 @@ log_gattrrec *attrs;
     k = kind[(gtype & (log_kindoffset - 1)) - 1];
     if (k != NULL) {
       do {
-	yy = gg.t.y;
-	gg.posx = gg.gridx;
-	gg.posy = gg.gridy;
-	oo = gg.t.off;
-	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
-	do {
-	  pass();
-	  trykbd();
-	  pen();
-	} while (gg.gridx == gg.posx && gg.gridy == gg.posy &&
-		 gg.t.depressed && strcmp(gg.func, "REFR"));
-	movexorgate(gg.posx, gg.posy, gtype, sig, yy);
-	scroll();
+        yy = gg.t.y;
+        gg.posx = gg.gridx;
+        gg.posy = gg.gridy;
+        oo = gg.t.off;
+        movexorgate(gg.posx, gg.posy, gtype, sig, yy);
+        do {
+          pass();
+          trykbd();
+          pen();
+        } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
+                 strcmp(gg.func, "REFR"));
+        movexorgate(gg.posx, gg.posy, gtype, sig, yy);
+        scroll();
       } while (gg.t.depressed);
       if (!oo && !gg.t.off) {
-	if (gg.t.y < baseline) {
-	  addgate2(gg.posx, gg.posy, gtype, sig, attrs);
-	  Result = true;
-	} else
-	  changekind(gtype, sig, attrs);
+        if (gg.t.y < baseline) {
+          addgate2(gg.posx, gg.posy, gtype, sig, attrs);
+          Result = true;
+        } else
+          changekind(gtype, sig, attrs);
       }
     }
   }
   gg.startpoint = false;
   return Result;
 }
-
-
 
 Static Void nextkindsig(i)
 short i;
@@ -10304,12 +9053,10 @@ short i;
   short j;
   Char STR1[256];
 
-  if (kindsig[i - 1] == 0)
-    return;
+  if (kindsig[i - 1] == 0) return;
   strcpy(buf, gg.signaltab[kindsig[i - 1] - 1].name);
   j = strlen(buf);
-  if (!(j > 0 && isdigit(buf[j - 1])))
-    return;
+  if (!(j > 0 && isdigit(buf[j - 1]))) return;
   while (j > 0 && buf[j - 1] == '9') {
     buf[j - 1] = '0';
     j--;
@@ -10325,12 +9072,11 @@ short i;
   kdrawgatec(i, gg.color.kindgate);
 }
 
-
 /* Local variables for xorcopybuf: */
 struct LOC_xorcopybuf {
   long *count, max, time;
   boolean aborting;
-} ;
+};
 
 Local boolean abortit(LINK)
 struct LOC_xorcopybuf *LINK;
@@ -10343,18 +9089,12 @@ struct LOC_xorcopybuf *LINK;
     clipon();
     m_color((long)gg.color.select);
     if (gg.posx != gg.gridx || gg.posy != gg.gridy || gg.t.dn ||
-	!gg.stillnear || pollkbd2())
+        !gg.stillnear || pollkbd2())
       LINK->aborting = true;
     return LINK->aborting;
   } else
     return (*LINK->count >= LINK->max);
 }
-
-
-
-
-
-
 
 /*=================  XORCOPYBUF  =================*/
 /*=                                              =*/
@@ -10409,18 +9149,16 @@ long *count_;
   m_color((long)gg.color.select);
   l = bases->lcopy;
   while (l != NULL && !abortit(&V)) {
-/* p2c: log.text, line 9887:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 9887:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     m_drawstr((l->x + x) * gg.scale - gg.xoff,
-	      (l->y + y) * gg.scale - gg.yoff + 2, logfont_lfont, l->name);
+              (l->y + y) * gg.scale - gg.yoff + 2, logfont_lfont, l->name);
     (*V.count)++;
     l = l->next;
   }
   m_colormode((long)m_normal);
   clipoff();
 }
-
-
 
 /*==================  PASTEBUF  ==================*/
 /*=                                              =*/
@@ -10470,11 +9208,11 @@ short x, y;
     closerwire(s->x + x, s->y + y);
     if (gg.nearhw != NULL && gg.nearvw != NULL) {
       if (trycombinenodes(&gg.nearvw->node, &gg.nearhw->node)) {
-	clipon();
-	addsolder(s->x + x, s->y + y, gg.nearhw, NULL, gg.nearvw, NULL);
-	clipoff();
+        clipon();
+        addsolder(s->x + x, s->y + y, gg.nearhw, NULL, gg.nearvw, NULL);
+        clipoff();
       } else
-	frysolder(s->x + x, s->y + y);
+        frysolder(s->x + x, s->y + y);
     }
     s = s->next;
   }
@@ -10487,16 +9225,16 @@ short x, y;
     l1->y = l->y + y;
     strcpy(l1->name, l->name);
     l1->w = m_strwidth(logfont_lfont, l1->name) / log_scale0;
-/* p2c: log.text, line 9972:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 9972:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     l1->temp = (na_long)0;
     clipon();
     m_color((long)gg.color.labeltext);
     if (!gg.textinvisible) {
-/* p2c: log.text, line 9977:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+      /* p2c: log.text, line 9977:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
       m_drawstr(l1->x * gg.scale - gg.xoff, l1->y * gg.scale - gg.yoff + 2,
-		logfont_lfont, l1->name);
+                logfont_lfont, l1->name);
     }
     clipoff();
     chpageplace((int)gg.curpage, l1->x, l1->y, l1->x + l1->w, l1->y + 2);
@@ -10514,8 +9252,7 @@ short x, y;
     b1->y2 = b->y2 + y;
     b1->temp = (na_long)0;
     clipon();
-    if (!gg.textinvisible)
-      drawboxc(b1, gg.color.dashbox);
+    if (!gg.textinvisible) drawboxc(b1, gg.color.dashbox);
     clipoff();
     chpageplace((int)gg.curpage, b1->x1, b1->y1, b1->x2, b1->y2);
     stamp(&gg.boxstamp);
@@ -10523,9 +9260,7 @@ short x, y;
   }
 }
 
-
-Local Void xororiginal()
-{
+Local Void xororiginal() {
   remcursor();
   clipon();
   m_colormode((long)m_xor);
@@ -10536,8 +9271,6 @@ Local Void xororiginal()
   m_colormode((long)m_normal);
   clipoff();
 }
-
-
 
 /*=================  PASTEOBJECT  ================*/
 /*=                                              =*/
@@ -10559,8 +9292,7 @@ long movemode;
   boolean smallbuf;
 
   clearfunc();
-  if (!copybuf.valid)
-    return;
+  if (!copybuf.valid) return;
   log_setmode("PASTE");
   smallbuf = (bufissmall(&copybuf) && !bufempty(&copybuf));
   if (smallbuf)
@@ -10573,52 +9305,52 @@ long movemode;
   do {
     do {
       if (smallbuf) {
-	pen();
-	checkabort();
-	if (!gg.t.dn) {
-	  xororiginal();
-	  gg.posx = gg.gridx;
-	  gg.posy = gg.gridy;
-	  max = LONG_MAX;
-	  xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
-	  while (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn &&
-		 gg.stillnear && *gg.func == '\0') {
-	    pass();
-	    trykbd();
-	    pen();
-	  }
-	  xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
-	  xororiginal();
-	}
+        pen();
+        checkabort();
+        if (!gg.t.dn) {
+          xororiginal();
+          gg.posx = gg.gridx;
+          gg.posy = gg.gridy;
+          max = LONG_MAX;
+          xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
+          while (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn &&
+                 gg.stillnear && *gg.func == '\0') {
+            pass();
+            trykbd();
+            pen();
+          }
+          xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
+          xororiginal();
+        }
       } else {
-	xororiginal();
-	time = timers_sysclock();
-	do {
-	  gg.posx = gg.gridx;
-	  gg.posy = gg.gridy;
-	  pass();
-	  trykbd();
-	  pen();
-	  if (gg.posx != gg.gridx || gg.posy != gg.gridy)
-	    time = timers_sysclock();
-	} while (!(timers_sysclock() - time > 25 || smallbuf || gg.t.dn) &&
-		 gg.stillnear && *gg.func == '\0');
-	xororiginal();
-	scroll();
-	checkabort();
-	if (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn) {
-	  xororiginal();
-	  max = LONG_MAX;
-	  xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
-	  while (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn &&
-		 gg.stillnear && *gg.func == '\0') {
-	    pass();
-	    trykbd();
-	    pen();
-	  }
-	  xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
-	  xororiginal();
-	}
+        xororiginal();
+        time = timers_sysclock();
+        do {
+          gg.posx = gg.gridx;
+          gg.posy = gg.gridy;
+          pass();
+          trykbd();
+          pen();
+          if (gg.posx != gg.gridx || gg.posy != gg.gridy)
+            time = timers_sysclock();
+        } while (!(timers_sysclock() - time > 25 || smallbuf || gg.t.dn) &&
+                 gg.stillnear && *gg.func == '\0');
+        xororiginal();
+        scroll();
+        checkabort();
+        if (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn) {
+          xororiginal();
+          max = LONG_MAX;
+          xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
+          while (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn &&
+                 gg.stillnear && *gg.func == '\0') {
+            pass();
+            trykbd();
+            pen();
+          }
+          xorcopybuf(&copybuf, gg.posx, gg.posy, &max);
+          xororiginal();
+        }
       }
       scroll();
       checkabort();
@@ -10626,24 +9358,23 @@ long movemode;
     remcursor();
     if (movemode >= 1) {
       if (gg.posx != copybuf.x1copy || gg.posy != copybuf.y1copy ||
-	  gg.curpage != copybuf.pgnum) {
-	initbuf(&deleted);
-	thepage = gg.curpage;
-	if (thepage != copybuf.pgnum) {
-	  newpage(copybuf.pgnum);
-	  refrscreen1();
-	}
-	cutcopy(&deleted, copybuf.x1copy, copybuf.y1copy, copybuf.x2copy,
-		copybuf.y2copy, true, false);
-	if (thepage != copybuf.pgnum) {
-	  newpage(thepage);
-	  refrscreen1();
-	}
-	clearbuf(&deleted);
-	pastebuf(&copybuf, gg.posx, gg.posy);
+          gg.curpage != copybuf.pgnum) {
+        initbuf(&deleted);
+        thepage = gg.curpage;
+        if (thepage != copybuf.pgnum) {
+          newpage(copybuf.pgnum);
+          refrscreen1();
+        }
+        cutcopy(&deleted, copybuf.x1copy, copybuf.y1copy, copybuf.x2copy,
+                copybuf.y2copy, true, false);
+        if (thepage != copybuf.pgnum) {
+          newpage(thepage);
+          refrscreen1();
+        }
+        clearbuf(&deleted);
+        pastebuf(&copybuf, gg.posx, gg.posy);
       }
-      if (movemode == 2)
-	movemode = 0;
+      if (movemode == 2) movemode = 0;
     } else
       pastebuf(&copybuf, gg.posx, gg.posy);
     gg.refrflag = true;
@@ -10652,26 +9383,16 @@ long movemode;
   log_setmode("");
 }
 
-
-
-Static Void extract()
-{
+Static Void extract() {
   boolean okay;
   short x1, y1, x2, y2;
 
   okay = pagembb((int)gg.curpage, &x1, &y1, &x2, &y2);
-  if (okay)
-    cutcopy(&copybuf, x1, y1, x2, y2, true, false);
-  if (!strcmp(gg.funcarg, "*"))
-    dumpnodes();
-  if (okay)
-    pastebuf(&copybuf, x2, y2);
+  if (okay) cutcopy(&copybuf, x1, y1, x2, y2, true, false);
+  if (!strcmp(gg.funcarg, "*")) dumpnodes();
+  if (okay) pastebuf(&copybuf, x2, y2);
   clearfunc();
 }
-
-
-
-
 
 /*=================  COPYCOMMAND  ================*/
 /*=                                              =*/
@@ -10679,8 +9400,7 @@ Static Void extract()
 /*=                                              =*/
 /*================================================*/
 
-Static Void copycommand()
-{
+Static Void copycommand() {
   short x1, y1, x2, y2;
   boolean flag;
 
@@ -10691,14 +9411,9 @@ Static Void copycommand()
   do {
     flag = getrectangle(&x1, &y1, &x2, &y2, true);
     cutcopy(&copybuf, x1, y1, x2, y2, false, flag);
-    if (!bufempty(&copybuf))
-      pastecommand(0L);
+    if (!bufempty(&copybuf)) pastecommand(0L);
   } while (true);
 }
-
-
-
-
 
 /*=================  MOVECOMMAND  ================*/
 /*=                                              =*/
@@ -10717,26 +9432,21 @@ boolean waitflag;
   log_setmode("MOVE");
   clearfunc();
   cursortype = copy_;
-  if (waitflag)
-    waitnear();
+  if (waitflag) waitnear();
   do {
     flag = getrectangle(&x1, &y1, &x2, &y2, waitflag);
     cutcopy(&copybuf, x1, y1, x2, y2, false, flag);
     if (!bufempty(&copybuf)) {
       if (waitflag)
-	pastecommand(1L);
+        pastecommand(1L);
       else
-	pastecommand(2L);
+        pastecommand(2L);
     }
   } while (waitflag);
   _Escape(5);
 }
 
-
-
-
-Static Void OLDmovecommand()
-{
+Static Void OLDmovecommand() {
   short x1, y1, oldpg, stillhere;
   baseptrs buf;
   long max;
@@ -10764,23 +9474,23 @@ Static Void OLDmovecommand()
       rect(gg.posx, gg.posy, x1, y1);
       m_colormode((long)m_normal);
       do {
-	pass();
-	trykbd();
-	pen();
+        pass();
+        trykbd();
+        pen();
       } while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
-	       *gg.func == '\0');
+               *gg.func == '\0');
       m_colormode((long)m_xor);
       m_color((long)gg.color.select);
       rect(gg.posx, gg.posy, x1, y1);
       m_colormode((long)m_normal);
       scroll();
-    } while ((gg.t.depressed || abs(x1 - gg.posx) < 2 ||
-	      abs(y1 - gg.posy) < 2) && *gg.func == '\0');
+    } while (
+        (gg.t.depressed || abs(x1 - gg.posx) < 2 || abs(y1 - gg.posy) < 2) &&
+        *gg.func == '\0');
     sortshints(&gg.posx, &x1);
     sortshints(&gg.posy, &y1);
     remcursor();
-    if (!(gg.incircuit && *gg.func == '\0'))
-      continue;
+    if (!(gg.incircuit && *gg.func == '\0')) continue;
     buf.gcopy = NULL;
     buf.scopy = NULL;
     buf.hwcopy = NULL;
@@ -10799,39 +9509,39 @@ Static Void OLDmovecommand()
     do {
       stillhere = 50;
       do {
-	gg.posx = gg.gridx;
-	gg.posy = gg.gridy;
-	pass();
-	trykbd();
-	if (!strcmp(gg.func, "REFR")) {
-	  scroll();
-	  clipon();
-	  m_color((long)gg.color.dashbox);
-	  m_linestyle(1L);
-	  rect(buf.x1copy, buf.y1copy, buf.x2copy, buf.y2copy);
-	  m_linestyle(0L);
-	  clipoff();
-	}
-	pen();
-	stillhere--;
-      } while (!(gg.posx != gg.gridx || gg.posy != gg.gridy ||
-		 stillhere < 0 ||
-		 gg.t.dn) && gg.stillnear && *gg.func == '\0');
+        gg.posx = gg.gridx;
+        gg.posy = gg.gridy;
+        pass();
+        trykbd();
+        if (!strcmp(gg.func, "REFR")) {
+          scroll();
+          clipon();
+          m_color((long)gg.color.dashbox);
+          m_linestyle(1L);
+          rect(buf.x1copy, buf.y1copy, buf.x2copy, buf.y2copy);
+          m_linestyle(0L);
+          clipoff();
+        }
+        pen();
+        stillhere--;
+      } while (!(gg.posx != gg.gridx || gg.posy != gg.gridy || stillhere < 0 ||
+                 gg.t.dn) &&
+               gg.stillnear && *gg.func == '\0');
       if (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn &&
-	  gg.stillnear && *gg.func == '\0') {
-	remcursor();
-	max = LONG_MAX;
-	xorcopybuf(&buf, gg.posx, gg.posy, &max);
-	restorecursor();
-	while (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn &&
-	       gg.stillnear && *gg.func == '\0') {
-	  pass();
-	  trykbd();
-	  pen();
-	}
-	remcursor();
-	xorcopybuf(&buf, gg.posx, gg.posy, &max);
-	restorecursor();
+          gg.stillnear && *gg.func == '\0') {
+        remcursor();
+        max = LONG_MAX;
+        xorcopybuf(&buf, gg.posx, gg.posy, &max);
+        restorecursor();
+        while (gg.posx == gg.gridx && gg.posy == gg.gridy && !gg.t.dn &&
+               gg.stillnear && *gg.func == '\0') {
+          pass();
+          trykbd();
+          pen();
+        }
+        remcursor();
+        xorcopybuf(&buf, gg.posx, gg.posy, &max);
+        restorecursor();
       }
     } while (!gg.t.dn && gg.stillnear && *gg.func == '\0');
     remcursor();
@@ -10853,17 +9563,9 @@ Static Void OLDmovecommand()
   cursortype = normal;
 }
 
-
 Local boolean near_(x, y)
 short x, y;
-{
-  return (abs(x - y) < 2);
-}
-
-
-
-
-
+{ return (abs(x - y) < 2); }
 
 /*================  MOVEOBJECT  ==================*/
 /*=                                              =*/
@@ -10871,10 +9573,9 @@ short x, y;
 /*=                                              =*/
 /*================================================*/
 
-Static Void moveobject()
-{
+Static Void moveobject() {
   short gtype, x1, y1, yy, hx1, hx2, hy, vx, vy1, vy2, hc, vc, oldpg, newpg,
-	oldx1, oldy1, oldx2, oldy2;
+      oldx1, oldy1, oldx2, oldy2;
   boolean fh1, fv1, fh2, fv2, oo;
   log_srec *s;
   log_hwrec *hw1;
@@ -10886,7 +9587,7 @@ Static Void moveobject()
   gg.gridx = gg.posx;
   gg.gridy = gg.posy;
   if (gg.markers && ((gg.gridx == gg.markerx1 && gg.gridy == gg.markery1) ||
-		     (gg.gridx == gg.markerx2 && gg.gridy == gg.markery2))) {
+                     (gg.gridx == gg.markerx2 && gg.gridy == gg.markery2))) {
     remcursor();
     drawmarkersc(gg.color.backgr);
     gg.markers = false;
@@ -10898,23 +9599,23 @@ Static Void moveobject()
       drawmarkersc(gg.color.marker);
       m_colormode((long)m_normal);
       do {
-	pass();
-	trykbd();
-	pen();
+        pass();
+        trykbd();
+        pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
-	       strcmp(gg.func, "REFR"));
+               strcmp(gg.func, "REFR"));
       m_colormode((long)m_xor);
       drawmarkersc(gg.color.marker);
       m_colormode((long)m_normal);
       if (gg.posx == gg.markerx1 && gg.posy == gg.markery1 &&
-	  gg.gridx < gg.markerx2 && gg.gridy < gg.markery2 && gg.incircuit) {
-	gg.markerx1 = gg.gridx;
-	gg.markery1 = gg.gridy;
+          gg.gridx < gg.markerx2 && gg.gridy < gg.markery2 && gg.incircuit) {
+        gg.markerx1 = gg.gridx;
+        gg.markery1 = gg.gridy;
       } else if (gg.posx == gg.markerx2 && gg.posy == gg.markery2 &&
-		 gg.gridx > gg.markerx1 && gg.gridy > gg.markery1 &&
-		 gg.incircuit) {
-	gg.markerx2 = gg.gridx;
-	gg.markery2 = gg.gridy;
+                 gg.gridx > gg.markerx1 && gg.gridy > gg.markery1 &&
+                 gg.incircuit) {
+        gg.markerx2 = gg.gridx;
+        gg.markery2 = gg.gridy;
       }
       scroll();
     } while (gg.t.depressed);
@@ -10947,19 +9648,19 @@ Static Void moveobject()
       xorlabel(gg.posx + x1, gg.posy + y1, gg.nearlabel);
       clipoff();
       do {
-	pass();
-	trykbd();
-	pen();
+        pass();
+        trykbd();
+        pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
-	       strcmp(gg.func, "REFR"));
+               strcmp(gg.func, "REFR"));
       clipon();
       xorlabel(gg.posx + x1, gg.posy + y1, gg.nearlabel);
       clipoff();
       if (!strcmp(gg.func, "REFR")) {
-	scroll();
-	clipon();
-	eralabel(gg.nearlabel);
-	clipoff();
+        scroll();
+        clipon();
+        eralabel(gg.nearlabel);
+        clipoff();
       }
     } while (gg.t.depressed);
     remcursor();
@@ -10970,21 +9671,20 @@ Static Void moveobject()
       gg.nearlabel->x = gg.posx;
       gg.nearlabel->y = gg.posy;
       if (gg.curpage != oldpg) {
-	newpg = gg.curpage;
-	gg.curpage = oldpg;
-	unlinklabel(gg.nearlabel);
-	gg.curpage = newpg;
-	linklabel(gg.nearlabel);
+        newpg = gg.curpage;
+        gg.curpage = oldpg;
+        unlinklabel(gg.nearlabel);
+        gg.curpage = newpg;
+        linklabel(gg.nearlabel);
       }
       m_color((long)gg.color.labeltext);
-/* p2c: log.text, line 10502:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-      m_drawstr(gg.posx * gg.scale - gg.xoff,
-		gg.posy * gg.scale - gg.yoff + 2, logfont_lfont,
-		gg.nearlabel->name);
+      /* p2c: log.text, line 10502:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+      m_drawstr(gg.posx * gg.scale - gg.xoff, gg.posy * gg.scale - gg.yoff + 2,
+                logfont_lfont, gg.nearlabel->name);
       gg.refrflag = true;
       chpageplace((int)gg.curpage, gg.nearlabel->x, gg.nearlabel->y,
-		  gg.nearlabel->x + gg.nearlabel->w, gg.nearlabel->y + 2);
+                  gg.nearlabel->x + gg.nearlabel->w, gg.nearlabel->y + 2);
     } else {
       newpg = gg.curpage;
       gg.curpage = oldpg;
@@ -11021,39 +9721,39 @@ Static Void moveobject()
       m_colormode((long)m_normal);
       clipoff();
       do {
-	pass();
-	trykbd();
-	pen();
+        pass();
+        trykbd();
+        pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
-	       strcmp(gg.func, "REFR"));
+               strcmp(gg.func, "REFR"));
       clipon();
       m_colormode((long)m_xor);
       drawboxc0(hx1, vy1, hx2, vy2, gg.color.dashbox);
       m_colormode((long)m_normal);
       clipoff();
       if (near_(gg.posx, hx1) && near_(gg.posy, vy1)) {
-	hx1 = gg.gridx;
-	vy1 = gg.gridy;
+        hx1 = gg.gridx;
+        vy1 = gg.gridy;
       } else if (near_(gg.posx, hx1) && near_(gg.posy, vy2)) {
-	hx1 = gg.gridx;
-	vy2 = gg.gridy;
+        hx1 = gg.gridx;
+        vy2 = gg.gridy;
       } else if (near_(gg.posx, hx2) && near_(gg.posy, vy1)) {
-	hx2 = gg.gridx;
-	vy1 = gg.gridy;
+        hx2 = gg.gridx;
+        vy1 = gg.gridy;
       } else if (near_(gg.posx, hx2) && near_(gg.posy, vy2)) {
-	hx2 = gg.gridx;
-	vy2 = gg.gridy;
+        hx2 = gg.gridx;
+        vy2 = gg.gridy;
       } else {
-	hx1 += gg.gridx - gg.posx;
-	hx2 += gg.gridx - gg.posx;
-	vy1 += gg.gridy - gg.posy;
-	vy2 += gg.gridy - gg.posy;
+        hx1 += gg.gridx - gg.posx;
+        hx2 += gg.gridx - gg.posx;
+        vy1 += gg.gridy - gg.posy;
+        vy2 += gg.gridy - gg.posy;
       }
       if (!strcmp(gg.func, "REFR")) {
-	scroll();
-	clipon();
-	drawboxc(gg.nearbox, gg.color.backgr);
-	clipoff();
+        scroll();
+        clipon();
+        drawboxc(gg.nearbox, gg.color.backgr);
+        clipoff();
       }
     } while (gg.t.depressed);
     remcursor();
@@ -11066,17 +9766,17 @@ Static Void moveobject()
     chpageplace(oldpg, oldx1, oldy1, oldx2, oldy2);
     if (gg.incircuit && !oo && !gg.t.off) {
       if (gg.curpage != oldpg) {
-	newpg = gg.curpage;
-	gg.curpage = oldpg;
-	unlinkbox(gg.nearbox);
-	gg.curpage = newpg;
-	linkbox(gg.nearbox);
+        newpg = gg.curpage;
+        gg.curpage = oldpg;
+        unlinkbox(gg.nearbox);
+        gg.curpage = newpg;
+        linkbox(gg.nearbox);
       }
       clipon();
       drawboxc(gg.nearbox, gg.color.dashbox);
       clipoff();
       chpageplace((int)gg.curpage, gg.nearbox->x1, gg.nearbox->y1,
-		  gg.nearbox->x2, gg.nearbox->y2);
+                  gg.nearbox->x2, gg.nearbox->y2);
       gg.refrflag = true;
     } else {
       newpg = gg.curpage;
@@ -11105,11 +9805,11 @@ Static Void moveobject()
       oo = gg.t.off;
       movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
       do {
-	pass();
-	trykbd();
-	pen();
+        pass();
+        trykbd();
+        pen();
       } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
-	       strcmp(gg.func, "REFR"));
+               strcmp(gg.func, "REFR"));
       movexorgate(gg.posx + x1, gg.posy + y1, gtype, gg.neargate->sig, yy);
       scroll();
     } while (gg.t.depressed);
@@ -11123,8 +9823,8 @@ Static Void moveobject()
       drawgatex(gg.neargate);
       clipoff();
       if (!connectgate(gg.neargate)) {
-	frygate(gg.neargate);
-	disposegate(&gg.neargate);
+        frygate(gg.neargate);
+        disposegate(&gg.neargate);
       }
       gg.refrflag = true;
     } else if (gg.t.y >= baseline) {
@@ -11168,18 +9868,20 @@ Static Void moveobject()
   blbase = NULL;
   s = gg.sbase[gg.curpage - 1];
   while (s != NULL) {
-    if ((gg.nearhw != NULL && (s->hwire == gg.nearhw || s->hwire2 == gg.nearhw)) ||
-	(gg.nearvw != NULL && (s->vwire == gg.nearvw || s->vwire2 == gg.nearvw))) {
+    if ((gg.nearhw != NULL &&
+         (s->hwire == gg.nearhw || s->hwire2 == gg.nearhw)) ||
+        (gg.nearvw != NULL &&
+         (s->vwire == gg.nearvw || s->vwire2 == gg.nearvw))) {
       drawsolderc(s->x, s->y, gg.color.backgr);
       blp = (blobrec *)Malloc(sizeof(blobrec));
       if (s->hwire == gg.nearhw)
-	blp->hw = NULL;
+        blp->hw = NULL;
       else
-	blp->hw = s->hwire;
+        blp->hw = s->hwire;
       if (s->vwire == gg.nearvw)
-	blp->vw = NULL;
+        blp->vw = NULL;
       else
-	blp->vw = s->vwire;
+        blp->vw = s->vwire;
       blp->next = blbase;
       blbase = blp;
     }
@@ -11194,34 +9896,30 @@ Static Void moveobject()
     m_colormode((long)m_xor);
     if (gg.nearhw != NULL) {
       if (fh1) {
-	hx1 = gg.posx;
-	hy = gg.posy;
+        hx1 = gg.posx;
+        hy = gg.posy;
       } else if (fh2) {
-	hx2 = gg.posx;
-	hy = gg.posy;
+        hx2 = gg.posx;
+        hy = gg.posy;
       } else {
-	if (gg.posx < hx1)
-	  hx1 = gg.posx;
-	if (gg.posx > hx2)
-	  hx2 = gg.posx;
-	hy = gg.posy;
+        if (gg.posx < hx1) hx1 = gg.posx;
+        if (gg.posx > hx2) hx2 = gg.posx;
+        hy = gg.posy;
       }
       m_color((long)gg.color.wire[gg.nearhw->wcolr - log_wcol_normal]);
       hline(hx1, hx2, hy);
     }
     if (gg.nearvw != NULL) {
       if (fv1) {
-	vy1 = gg.posy;
-	vx = gg.posx;
+        vy1 = gg.posy;
+        vx = gg.posx;
       } else if (fv2) {
-	vy2 = gg.posy;
-	vx = gg.posx;
+        vy2 = gg.posy;
+        vx = gg.posx;
       } else {
-	if (gg.posy < vy1)
-	  vy1 = gg.posy;
-	if (gg.posy > vy2)
-	  vy2 = gg.posy;
-	vx = gg.posx;
+        if (gg.posy < vy1) vy1 = gg.posy;
+        if (gg.posy > vy2) vy2 = gg.posy;
+        vx = gg.posx;
       }
       m_color((long)gg.color.wire[gg.nearvw->wcolr - log_wcol_normal]);
       vline(vx, vy1, vy2);
@@ -11233,7 +9931,7 @@ Static Void moveobject()
       trykbd();
       pen();
     } while (gg.gridx == gg.posx && gg.gridy == gg.posy && gg.t.depressed &&
-	     strcmp(gg.func, "REFR"));
+             strcmp(gg.func, "REFR"));
     clipon();
     m_colormode((long)m_xor);
     if (gg.nearhw != NULL) {
@@ -11270,39 +9968,37 @@ Static Void moveobject()
     blp = blbase;
     while (blp != NULL) {
       if (blp->hw != NULL) {
-	hw1 = gg.hwbase[gg.curpage - 1];
-	while (hw1 != NULL &&
-	       (hw1->node != blp->hw->node ||
-		!P_ibetween((long)hw1->x1, (long)vx, (long)hw1->x2) ||
-		!P_ibetween((long)vy1, (long)hw1->y, (long)vy2)))
-	  hw1 = hw1->next;
-	if (hw1 != NULL) {
-	  blp->x = vx;
-	  blp->y = hw1->y;
-	} else
-	  blp->x = -32768L;
+        hw1 = gg.hwbase[gg.curpage - 1];
+        while (hw1 != NULL &&
+               (hw1->node != blp->hw->node ||
+                !P_ibetween((long)hw1->x1, (long)vx, (long)hw1->x2) ||
+                !P_ibetween((long)vy1, (long)hw1->y, (long)vy2)))
+          hw1 = hw1->next;
+        if (hw1 != NULL) {
+          blp->x = vx;
+          blp->y = hw1->y;
+        } else
+          blp->x = -32768L;
       } else if (blp->vw != NULL) {
-	vw1 = gg.vwbase[gg.curpage - 1];
-	while (vw1 != NULL &&
-	       (vw1->node != blp->vw->node ||
-		!P_ibetween((long)vw1->y1, (long)hy, (long)vw1->y2) ||
-		!P_ibetween((long)hx1, (long)vw1->x, (long)hx2)))
-	  vw1 = vw1->next;
-	if (vw1 != NULL) {
-	  blp->x = vw1->x;
-	  blp->y = hy;
-	} else
-	  blp->x = -32768L;
+        vw1 = gg.vwbase[gg.curpage - 1];
+        while (vw1 != NULL &&
+               (vw1->node != blp->vw->node ||
+                !P_ibetween((long)vw1->y1, (long)hy, (long)vw1->y2) ||
+                !P_ibetween((long)hx1, (long)vw1->x, (long)hx2)))
+          vw1 = vw1->next;
+        if (vw1 != NULL) {
+          blp->x = vw1->x;
+          blp->y = hy;
+        } else
+          blp->x = -32768L;
       } else {
-	blp->x = vx;
-	blp->y = hy;
+        blp->x = vx;
+        blp->y = hy;
       }
       blp = blp->next;
     }
-    if (hx1 != hx2)
-      addhwire(hx1, hx2, hy, hc);
-    if (vy1 != vy2)
-      addvwire(vx, vy1, vy2, vc);
+    if (hx1 != hx2) addhwire(hx1, hx2, hy, hc);
+    if (vy1 != vy2) addvwire(vx, vy1, vy2, vc);
     doblobs(blbase);
   }
   dispblobs(&blbase);
@@ -11312,12 +10008,6 @@ Static Void moveobject()
   /*thrown away*/
   /* move a wire */
 }
-
-
-
-
-
-
 
 Static Void shiftgate(g, dx, dy)
 log_grec *g;
@@ -11336,7 +10026,6 @@ short dx, dy;
   }
 }
 
-
 Local Void xorrect(x1, y1, x2, y2)
 short x1, y1, x2, y2;
 {
@@ -11354,19 +10043,13 @@ short x1, y1, x2, y2;
   m_colormode((long)m_normal);
 }
 
-
-
-
-
-
 /*==================  OPENHORIZ  =================*/
 /*=                                              =*/
 /*=  Open space horizontally.                    =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void openhoriz()
-{
+Static Void openhoriz() {
   log_grec *g;
   log_hwrec *hw;
   log_vwrec *vw;
@@ -11392,87 +10075,82 @@ Static Void openhoriz()
       x1 = gg.posx;
       y1 = gg.posy;
       do {
-	pen();
-	x1 = gg.gridx;
-	y1 = gg.gridy;
-	xorrect(gg.posx, gg.posy, x1, y1);
-	do {
-	  pass();
-	  trykbd();
-	  pen();
-	} while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
-		 *gg.func == '\0');
-	xorrect(gg.posx, gg.posy, x1, y1);
-	scroll();
+        pen();
+        x1 = gg.gridx;
+        y1 = gg.gridy;
+        xorrect(gg.posx, gg.posy, x1, y1);
+        do {
+          pass();
+          trykbd();
+          pen();
+        } while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
+                 *gg.func == '\0');
+        xorrect(gg.posx, gg.posy, x1, y1);
+        scroll();
       } while ((gg.t.depressed || x1 == gg.posx || y1 == gg.posy) &&
-	       *gg.func == '\0');
+               *gg.func == '\0');
       sortshints(&gg.posx, &x1);
       sortshints(&gg.posy, &y1);
       remcursor();
       if (gg.incircuit && *gg.func == '\0') {
-	chpage((int)gg.curpage);
-	vw = gg.vwbase[gg.curpage - 1];
-	flag = false;
-	while (vw != NULL) {
-	  if (vw->x > gg.posx &&
-	      ((vw->y1 < gg.posy && gg.posy < vw->y2) ||
-	       (vw->y1 < y1 && y1 < vw->y2)))
-	    flag = true;
-	  vw = vw->next;
-	}
-	if (!flag) {
-	  g = gg.gbase[gg.curpage - 1];
-	  while (g != NULL) {
-	    if (gg.posy <= g->y && g->y <= y1 && g->x >= gg.posx)
-	      shiftgate(g, x1 - gg.posx, 0);
-	    g = g->next;
-	  }
-	  s = gg.sbase[gg.curpage - 1];
-	  while (s != NULL) {
-	    if (!vlsi && gg.posy <= s->vwire->y2 && s->vwire->y1 <= y1 &&
-		s->vwire->x > gg.posx)
-	      s->x += x1 - gg.posx;
-	    s = s->next;
-	  }
-	  hw = gg.hwbase[gg.curpage - 1];
-	  while (hw != NULL) {
-	    if (gg.posy <= hw->y && hw->y <= y1) {
-	      if (hw->x1 > gg.posx)
-		hw->x1 += x1 - gg.posx;
-	      if (hw->x2 >= gg.posx)
-		hw->x2 += x1 - gg.posx;
-	    }
-	    hw = hw->next;
-	  }
-	  vw = gg.vwbase[gg.curpage - 1];
-	  while (vw != NULL) {
-	    if (gg.posy <= vw->y2 && vw->y1 <= y1 && vw->x > gg.posx)
-	      vw->x += x1 - gg.posx;
-	    vw = vw->next;
-	  }
-	  b = gg.bbase[gg.curpage - 1];
-	  while (b != NULL) {
-	    if (gg.posy <= b->y1 && b->y2 <= y1) {
-	      if (b->x1 >= gg.posx)
-		b->x1 += x1 - gg.posx;
-	      if (b->x2 >= gg.posx)
-		b->x2 += x1 - gg.posx;
-	    }
-	    b = b->next;
-	  }
-	  l = gg.lbase[gg.curpage - 1];
-	  while (l != NULL) {
-	    if (gg.posy <= l->y && l->y <= y1 && l->x >= gg.posx)
-	      l->x += x1 - gg.posx;
-	    l = l->next;
-	  }
-	  refrfunc();
-	  scroll();
-	} else {
-	  beginerror();
-	  printf("Can't Open: Blocked by vertical wires\n");
-	  enderror();
-	}
+        chpage((int)gg.curpage);
+        vw = gg.vwbase[gg.curpage - 1];
+        flag = false;
+        while (vw != NULL) {
+          if (vw->x > gg.posx && ((vw->y1 < gg.posy && gg.posy < vw->y2) ||
+                                  (vw->y1 < y1 && y1 < vw->y2)))
+            flag = true;
+          vw = vw->next;
+        }
+        if (!flag) {
+          g = gg.gbase[gg.curpage - 1];
+          while (g != NULL) {
+            if (gg.posy <= g->y && g->y <= y1 && g->x >= gg.posx)
+              shiftgate(g, x1 - gg.posx, 0);
+            g = g->next;
+          }
+          s = gg.sbase[gg.curpage - 1];
+          while (s != NULL) {
+            if (!vlsi && gg.posy <= s->vwire->y2 && s->vwire->y1 <= y1 &&
+                s->vwire->x > gg.posx)
+              s->x += x1 - gg.posx;
+            s = s->next;
+          }
+          hw = gg.hwbase[gg.curpage - 1];
+          while (hw != NULL) {
+            if (gg.posy <= hw->y && hw->y <= y1) {
+              if (hw->x1 > gg.posx) hw->x1 += x1 - gg.posx;
+              if (hw->x2 >= gg.posx) hw->x2 += x1 - gg.posx;
+            }
+            hw = hw->next;
+          }
+          vw = gg.vwbase[gg.curpage - 1];
+          while (vw != NULL) {
+            if (gg.posy <= vw->y2 && vw->y1 <= y1 && vw->x > gg.posx)
+              vw->x += x1 - gg.posx;
+            vw = vw->next;
+          }
+          b = gg.bbase[gg.curpage - 1];
+          while (b != NULL) {
+            if (gg.posy <= b->y1 && b->y2 <= y1) {
+              if (b->x1 >= gg.posx) b->x1 += x1 - gg.posx;
+              if (b->x2 >= gg.posx) b->x2 += x1 - gg.posx;
+            }
+            b = b->next;
+          }
+          l = gg.lbase[gg.curpage - 1];
+          while (l != NULL) {
+            if (gg.posy <= l->y && l->y <= y1 && l->x >= gg.posx)
+              l->x += x1 - gg.posx;
+            l = l->next;
+          }
+          refrfunc();
+          scroll();
+        } else {
+          beginerror();
+          printf("Can't Open: Blocked by vertical wires\n");
+          enderror();
+        }
       }
     }
   } while (gg.incircuit && gg.stillnear && *gg.func == '\0');
@@ -11484,7 +10162,6 @@ Static Void openhoriz()
   }
   cursortype = normal;
 }
-
 
 Local Void xorrect_(x1, y1, x2, y2)
 short x1, y1, x2, y2;
@@ -11503,16 +10180,13 @@ short x1, y1, x2, y2;
   m_colormode((long)m_normal);
 }
 
-
-
 /*==================  OPENVERT  ==================*/
 /*=                                              =*/
 /*=  Open space vertically.                      =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void openvert()
-{
+Static Void openvert() {
   log_grec *g;
   log_hwrec *hw;
   log_vwrec *vw;
@@ -11538,86 +10212,81 @@ Static Void openvert()
       x1 = gg.posx;
       y1 = gg.posy;
       do {
-	x1 = gg.gridx;
-	y1 = gg.gridy;
-	xorrect_(gg.posx, gg.posy, x1, y1);
-	do {
-	  pass();
-	  trykbd();
-	  pen();
-	} while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
-		 *gg.func == '\0');
-	xorrect_(gg.posx, gg.posy, x1, y1);
-	scroll();
+        x1 = gg.gridx;
+        y1 = gg.gridy;
+        xorrect_(gg.posx, gg.posy, x1, y1);
+        do {
+          pass();
+          trykbd();
+          pen();
+        } while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
+                 *gg.func == '\0');
+        xorrect_(gg.posx, gg.posy, x1, y1);
+        scroll();
       } while ((gg.t.depressed || x1 == gg.posx || y1 == gg.posy) &&
-	       *gg.func == '\0');
+               *gg.func == '\0');
       sortshints(&gg.posx, &x1);
       sortshints(&gg.posy, &y1);
       remcursor();
       if (gg.incircuit && *gg.func == '\0') {
-	chpage((int)gg.curpage);
-	hw = gg.hwbase[gg.curpage - 1];
-	flag = false;
-	while (hw != NULL) {
-	  if (hw->y > gg.posy &&
-	      ((hw->x1 < gg.posx && gg.posx < hw->x2) ||
-	       (hw->x1 < x1 && x1 < hw->x2)))
-	    flag = true;
-	  hw = hw->next;
-	}
-	if (!flag) {
-	  g = gg.gbase[gg.curpage - 1];
-	  while (g != NULL) {
-	    if (gg.posx <= g->x && g->x <= x1 && g->y >= gg.posy)
-	      shiftgate(g, 0, y1 - gg.posy);
-	    g = g->next;
-	  }
-	  s = gg.sbase[gg.curpage - 1];
-	  while (s != NULL) {
-	    if (!vlsi && gg.posx <= s->hwire->x2 && s->hwire->x1 <= x1 &&
-		s->hwire->y > gg.posy)
-	      s->y += y1 - gg.posy;
-	    s = s->next;
-	  }
-	  vw = gg.vwbase[gg.curpage - 1];
-	  while (vw != NULL) {
-	    if (gg.posx <= vw->x && vw->x <= x1) {
-	      if (vw->y1 > gg.posy)
-		vw->y1 += y1 - gg.posy;
-	      if (vw->y2 >= gg.posy)
-		vw->y2 += y1 - gg.posy;
-	    }
-	    vw = vw->next;
-	  }
-	  hw = gg.hwbase[gg.curpage - 1];
-	  while (hw != NULL) {
-	    if (gg.posx <= hw->x2 && hw->x1 <= x1 && hw->y > gg.posy)
-	      hw->y += y1 - gg.posy;
-	    hw = hw->next;
-	  }
-	  b = gg.bbase[gg.curpage - 1];
-	  while (b != NULL) {
-	    if (gg.posx <= b->x1 && b->x2 <= x1) {
-	      if (b->y1 >= gg.posy)
-		b->y1 += y1 - gg.posy;
-	      if (b->y2 >= gg.posy)
-		b->y2 += y1 - gg.posy;
-	    }
-	    b = b->next;
-	  }
-	  l = gg.lbase[gg.curpage - 1];
-	  while (l != NULL) {
-	    if (gg.posx <= l->x && l->x <= x1 && l->y >= gg.posy)
-	      l->y += y1 - gg.posy;
-	    l = l->next;
-	  }
-	  refrfunc();
-	  scroll();
-	} else {
-	  beginerror();
-	  printf("Can't Open: Blocked by horizontal wires\n");
-	  enderror();
-	}
+        chpage((int)gg.curpage);
+        hw = gg.hwbase[gg.curpage - 1];
+        flag = false;
+        while (hw != NULL) {
+          if (hw->y > gg.posy && ((hw->x1 < gg.posx && gg.posx < hw->x2) ||
+                                  (hw->x1 < x1 && x1 < hw->x2)))
+            flag = true;
+          hw = hw->next;
+        }
+        if (!flag) {
+          g = gg.gbase[gg.curpage - 1];
+          while (g != NULL) {
+            if (gg.posx <= g->x && g->x <= x1 && g->y >= gg.posy)
+              shiftgate(g, 0, y1 - gg.posy);
+            g = g->next;
+          }
+          s = gg.sbase[gg.curpage - 1];
+          while (s != NULL) {
+            if (!vlsi && gg.posx <= s->hwire->x2 && s->hwire->x1 <= x1 &&
+                s->hwire->y > gg.posy)
+              s->y += y1 - gg.posy;
+            s = s->next;
+          }
+          vw = gg.vwbase[gg.curpage - 1];
+          while (vw != NULL) {
+            if (gg.posx <= vw->x && vw->x <= x1) {
+              if (vw->y1 > gg.posy) vw->y1 += y1 - gg.posy;
+              if (vw->y2 >= gg.posy) vw->y2 += y1 - gg.posy;
+            }
+            vw = vw->next;
+          }
+          hw = gg.hwbase[gg.curpage - 1];
+          while (hw != NULL) {
+            if (gg.posx <= hw->x2 && hw->x1 <= x1 && hw->y > gg.posy)
+              hw->y += y1 - gg.posy;
+            hw = hw->next;
+          }
+          b = gg.bbase[gg.curpage - 1];
+          while (b != NULL) {
+            if (gg.posx <= b->x1 && b->x2 <= x1) {
+              if (b->y1 >= gg.posy) b->y1 += y1 - gg.posy;
+              if (b->y2 >= gg.posy) b->y2 += y1 - gg.posy;
+            }
+            b = b->next;
+          }
+          l = gg.lbase[gg.curpage - 1];
+          while (l != NULL) {
+            if (gg.posx <= l->x && l->x <= x1 && l->y >= gg.posy)
+              l->y += y1 - gg.posy;
+            l = l->next;
+          }
+          refrfunc();
+          scroll();
+        } else {
+          beginerror();
+          printf("Can't Open: Blocked by horizontal wires\n");
+          enderror();
+        }
       }
     }
   } while (gg.incircuit && gg.stillnear && *gg.func == '\0');
@@ -11629,7 +10298,6 @@ Static Void openvert()
   }
   cursortype = normal;
 }
-
 
 Local Void xorrect__(x1, y1, x2, y2)
 short x1, y1, x2, y2;
@@ -11648,16 +10316,13 @@ short x1, y1, x2, y2;
   m_colormode((long)m_normal);
 }
 
-
-
 /*==================  CLOSEHORIZ  ================*/
 /*=                                              =*/
 /*=  Close space horizontally.                   =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void closehoriz()
-{
+Static Void closehoriz() {
   log_grec *g, *g1;
   log_hwrec *hw, *hw1;
   log_vwrec *vw, *vw1;
@@ -11683,134 +10348,131 @@ Static Void closehoriz()
       x1 = gg.posx;
       y1 = gg.posy;
       do {
-	x1 = gg.gridx;
-	y1 = gg.gridy;
-	xorrect__(gg.posx, gg.posy, x1, y1);
-	do {
-	  pass();
-	  trykbd();
-	  pen();
-	} while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
-		 *gg.func == '\0');
-	xorrect__(gg.posx, gg.posy, x1, y1);
-	scroll();
+        x1 = gg.gridx;
+        y1 = gg.gridy;
+        xorrect__(gg.posx, gg.posy, x1, y1);
+        do {
+          pass();
+          trykbd();
+          pen();
+        } while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
+                 *gg.func == '\0');
+        xorrect__(gg.posx, gg.posy, x1, y1);
+        scroll();
       } while ((gg.t.depressed || x1 == gg.posx || y1 == gg.posy) &&
-	       *gg.func == '\0');
+               *gg.func == '\0');
       sortshints(&gg.posx, &x1);
       sortshints(&gg.posy, &y1);
       remcursor();
       if (gg.incircuit && *gg.func == '\0') {
-	chpage((int)gg.curpage);
-	vw = gg.vwbase[gg.curpage - 1];
-	flag = false;
-	while (vw != NULL) {
-	  if (vw->x >= gg.posx &&
-	      ((vw->y1 < gg.posy && gg.posy < vw->y2) ||
-	       (vw->y1 < y1 && y1 < vw->y2)))
-	    flag = true;
-	  vw = vw->next;
-	}
-	if (!flag) {
-	  g = gg.gbase[gg.curpage - 1];
-	  while (g != NULL) {
-	    g1 = g->next;
-	    if (gg.posy <= g->y && g->y <= y1 && g->x >= gg.posx) {
-	      if (g->x <= x1)
-		delgate(g);
-	      else
-		shiftgate(g, gg.posx - x1, 0);
-	    }
-	    g = g1;
-	  }
-	  s = gg.sbase[gg.curpage - 1];
-	  while (s != NULL) {
-	    s1 = s->next;
-	    if (!vlsi && gg.posy <= s->vwire->y2 && s->vwire->y1 <= y1 &&
-		s->vwire->x >= gg.posx) {
-	      if (s->vwire->x > x1)
-		s->x += gg.posx - x1;
-	    }
-	    s = s1;
-	  }
-	  hw = gg.hwbase[gg.curpage - 1];
-	  while (hw != NULL) {
-	    hw1 = hw->next;
-	    if (gg.posy <= hw->y && hw->y <= y1 && hw->x2 >= gg.posx) {
-	      if (hw->x1 >= gg.posx && hw->x2 < x1)
-		delhwire(hw);
-	    }
-	    hw = hw1;
-	  }
-	  vw = gg.vwbase[gg.curpage - 1];
-	  while (vw != NULL) {
-	    vw1 = vw->next;
-	    if (gg.posy <= vw->y2 && vw->y1 <= y1 && vw->x >= gg.posx &&
-		vw->x <= x1)
-	      delvwire(vw);
-	    vw = vw1;
-	  }
-	  hw = gg.hwbase[gg.curpage - 1];
-	  while (hw != NULL) {
-	    if (gg.posy <= hw->y && hw->y <= y1 && hw->x2 >= gg.posx) {
-	      if (hw->x1 >= gg.posx) {
-		if (hw->x1 < x1)
-		  hw->x1 = gg.posx;
-		else {
-		  hw->x1 += gg.posx - x1;
-		  hw->x2 += gg.posx - x1;
-		}
-	      } else if (hw->x2 >= x1)
-		hw->x2 += gg.posx - x1;
-	      else if (hw->x2 >= gg.posx)
-		hw->x2 = gg.posx;
-	    }
-	    hw = hw->next;
-	  }
-	  vw = gg.vwbase[gg.curpage - 1];
-	  while (vw != NULL) {
-	    if (gg.posy <= vw->y2 && vw->y1 <= y1 && vw->x >= gg.posx)
-	      vw->x += gg.posx - x1;
-	    vw = vw->next;
-	  }
-	  b = gg.bbase[gg.curpage - 1];
-	  while (b != NULL) {
-	    b1 = b->next;
-	    if (gg.posy <= b->y1 && b->y2 <= y1) {
-	      if (b->x1 >= x1) {
-		b->x1 += gg.posx - x1;
-		b->x2 += gg.posx - x1;
-	      } else if (b->x1 >= gg.posx) {
-		if (b->x2 < x1)
-		  dispbox(&b);
-		else {
-		  b->x1 = gg.posx;
-		  b->x2 += gg.posx - x1;
-		}
-	      } else if (b->x2 >= x1)
-		b->x2 += gg.posx - x1;
-	      else if (b->x2 >= gg.posx)
-		b->x2 = gg.posx;
-	    }
-	    b = b1;
-	  }
-	  l = gg.lbase[gg.curpage - 1];
-	  while (l != NULL) {
-	    l1 = l->next;
-	    if (gg.posy <= l->y && l->y <= y1 && l->x >= gg.posx) {
-	      if (l->x + strlen(gg.nearlabel->name) * 7 / gg.scale <= x1)
-		displabel(&l);
-	      else
-		l->x += gg.posx - x1;
-	    }
-	    l = l1;
-	  }
-	  refrfunc();
-	  scroll();
-	} else {
-	  beginerror();
-	  printf("Can't Close: Blocked by vertical wires\n");
-	  enderror();
-	}
+        chpage((int)gg.curpage);
+        vw = gg.vwbase[gg.curpage - 1];
+        flag = false;
+        while (vw != NULL) {
+          if (vw->x >= gg.posx && ((vw->y1 < gg.posy && gg.posy < vw->y2) ||
+                                   (vw->y1 < y1 && y1 < vw->y2)))
+            flag = true;
+          vw = vw->next;
+        }
+        if (!flag) {
+          g = gg.gbase[gg.curpage - 1];
+          while (g != NULL) {
+            g1 = g->next;
+            if (gg.posy <= g->y && g->y <= y1 && g->x >= gg.posx) {
+              if (g->x <= x1)
+                delgate(g);
+              else
+                shiftgate(g, gg.posx - x1, 0);
+            }
+            g = g1;
+          }
+          s = gg.sbase[gg.curpage - 1];
+          while (s != NULL) {
+            s1 = s->next;
+            if (!vlsi && gg.posy <= s->vwire->y2 && s->vwire->y1 <= y1 &&
+                s->vwire->x >= gg.posx) {
+              if (s->vwire->x > x1) s->x += gg.posx - x1;
+            }
+            s = s1;
+          }
+          hw = gg.hwbase[gg.curpage - 1];
+          while (hw != NULL) {
+            hw1 = hw->next;
+            if (gg.posy <= hw->y && hw->y <= y1 && hw->x2 >= gg.posx) {
+              if (hw->x1 >= gg.posx && hw->x2 < x1) delhwire(hw);
+            }
+            hw = hw1;
+          }
+          vw = gg.vwbase[gg.curpage - 1];
+          while (vw != NULL) {
+            vw1 = vw->next;
+            if (gg.posy <= vw->y2 && vw->y1 <= y1 && vw->x >= gg.posx &&
+                vw->x <= x1)
+              delvwire(vw);
+            vw = vw1;
+          }
+          hw = gg.hwbase[gg.curpage - 1];
+          while (hw != NULL) {
+            if (gg.posy <= hw->y && hw->y <= y1 && hw->x2 >= gg.posx) {
+              if (hw->x1 >= gg.posx) {
+                if (hw->x1 < x1)
+                  hw->x1 = gg.posx;
+                else {
+                  hw->x1 += gg.posx - x1;
+                  hw->x2 += gg.posx - x1;
+                }
+              } else if (hw->x2 >= x1)
+                hw->x2 += gg.posx - x1;
+              else if (hw->x2 >= gg.posx)
+                hw->x2 = gg.posx;
+            }
+            hw = hw->next;
+          }
+          vw = gg.vwbase[gg.curpage - 1];
+          while (vw != NULL) {
+            if (gg.posy <= vw->y2 && vw->y1 <= y1 && vw->x >= gg.posx)
+              vw->x += gg.posx - x1;
+            vw = vw->next;
+          }
+          b = gg.bbase[gg.curpage - 1];
+          while (b != NULL) {
+            b1 = b->next;
+            if (gg.posy <= b->y1 && b->y2 <= y1) {
+              if (b->x1 >= x1) {
+                b->x1 += gg.posx - x1;
+                b->x2 += gg.posx - x1;
+              } else if (b->x1 >= gg.posx) {
+                if (b->x2 < x1)
+                  dispbox(&b);
+                else {
+                  b->x1 = gg.posx;
+                  b->x2 += gg.posx - x1;
+                }
+              } else if (b->x2 >= x1)
+                b->x2 += gg.posx - x1;
+              else if (b->x2 >= gg.posx)
+                b->x2 = gg.posx;
+            }
+            b = b1;
+          }
+          l = gg.lbase[gg.curpage - 1];
+          while (l != NULL) {
+            l1 = l->next;
+            if (gg.posy <= l->y && l->y <= y1 && l->x >= gg.posx) {
+              if (l->x + strlen(gg.nearlabel->name) * 7 / gg.scale <= x1)
+                displabel(&l);
+              else
+                l->x += gg.posx - x1;
+            }
+            l = l1;
+          }
+          refrfunc();
+          scroll();
+        } else {
+          beginerror();
+          printf("Can't Close: Blocked by vertical wires\n");
+          enderror();
+        }
       }
     }
   } while (gg.incircuit && gg.stillnear && *gg.func == '\0');
@@ -11822,7 +10484,6 @@ Static Void closehoriz()
   }
   cursortype = normal;
 }
-
 
 Local Void xorrect___(x1, y1, x2, y2)
 short x1, y1, x2, y2;
@@ -11841,16 +10502,13 @@ short x1, y1, x2, y2;
   m_colormode((long)m_normal);
 }
 
-
-
 /*==================  CLOSEVERT  =================*/
 /*=                                              =*/
 /*=  Close space vertically.                     =*/
 /*=                                              =*/
 /*================================================*/
 
-Static Void closevert()
-{
+Static Void closevert() {
   log_grec *g, *g1;
   log_hwrec *hw, *hw1;
   log_vwrec *vw, *vw1;
@@ -11876,135 +10534,132 @@ Static Void closevert()
       x1 = gg.posx;
       y1 = gg.posy;
       do {
-	x1 = gg.gridx;
-	y1 = gg.gridy;
-	xorrect___(gg.posx, gg.posy, x1, y1);
-	do {
-	  pass();
-	  trykbd();
-	  pen();
-	} while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
-		 *gg.func == '\0');
-	xorrect___(gg.posx, gg.posy, x1, y1);
-	scroll();
+        x1 = gg.gridx;
+        y1 = gg.gridy;
+        xorrect___(gg.posx, gg.posy, x1, y1);
+        do {
+          pass();
+          trykbd();
+          pen();
+        } while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
+                 *gg.func == '\0');
+        xorrect___(gg.posx, gg.posy, x1, y1);
+        scroll();
       } while ((gg.t.depressed || x1 == gg.posx || y1 == gg.posy) &&
-	       *gg.func == '\0');
+               *gg.func == '\0');
       sortshints(&gg.posx, &x1);
       sortshints(&gg.posy, &y1);
       remcursor();
       if (gg.incircuit && *gg.func == '\0') {
-	chpage((int)gg.curpage);
-	hw = gg.hwbase[gg.curpage - 1];
-	flag = false;
-	while (hw != NULL) {
-	  if (hw->y >= gg.posy &&
-	      ((hw->x1 < gg.posx && gg.posx < hw->x2) ||
-	       (hw->x1 < x1 && x1 < hw->x2)))
-	    flag = true;
-	  hw = hw->next;
-	}
-	if (!flag) {
-	  g = gg.gbase[gg.curpage - 1];
-	  while (g != NULL) {
-	    g1 = g->next;
-	    if (gg.posx <= g->x && g->x <= x1 && g->y >= gg.posy) {
-	      if (g->y <= y1)
-		delgate(g);
-	      else
-		shiftgate(g, 0, gg.posy - y1);
-	    }
-	    g = g1;
-	  }
-	  s = gg.sbase[gg.curpage - 1];
-	  while (s != NULL) {
-	    s1 = s->next;
-	    if (!vlsi && gg.posx <= s->hwire->x2 && s->hwire->x1 <= x1 &&
-		s->hwire->y >= gg.posy) {
-	      if (s->hwire->y > y1)
-		s->y += gg.posy - y1;
-	    }
-	    s = s1;
-	  }
-	  vw = gg.vwbase[gg.curpage - 1];
-	  while (vw != NULL) {
-	    vw1 = vw->next;
-	    if (gg.posx <= vw->x && vw->x <= x1 && vw->y2 >= gg.posy) {
-	      if (vw->y1 >= gg.posy && vw->y2 < y1)
-		delvwire(vw);
-	    }
-	    vw = vw1;
-	  }
-	  hw = gg.hwbase[gg.curpage - 1];
-	  while (hw != NULL) {
-	    hw1 = hw->next;
-	    if (gg.posx <= hw->x2 && hw->x1 <= x1 && hw->y >= gg.posy &&
-		hw->y <= y1)
-	      delhwire(hw);
-	    hw = hw1;
-	  }
-	  vw = gg.vwbase[gg.curpage - 1];
-	  while (vw != NULL) {
-	    if (gg.posx <= vw->x && vw->x <= x1 && vw->y2 >= gg.posy) {
-	      if (vw->y1 >= gg.posy) {
-		if (vw->y1 < y1)
-		  vw->y1 = gg.posy;
-		else {
-		  vw->y1 += gg.posy - y1;
-		  vw->y2 += gg.posy - y1;
-		}
-	      } else if (vw->y2 >= y1)
-		vw->y2 += gg.posy - y1;
-	      else if (vw->y2 >= gg.posy)
-		vw->y2 = gg.posy;
-	    }
-	    vw = vw->next;
-	  }
-	  hw = gg.hwbase[gg.curpage - 1];
-	  while (hw != NULL) {
-	    if (gg.posx <= hw->x2 && hw->x1 <= x1 && hw->y >= gg.posy)
-	      hw->y += gg.posy - y1;
-	    hw = hw->next;
-	  }
-	  b = gg.bbase[gg.curpage - 1];
-	  while (b != NULL) {
-	    b1 = b->next;
-	    if (gg.posx <= b->x1 && b->x2 <= x1) {
-	      if (b->y1 >= y1) {
-		b->y1 += gg.posy - y1;
-		b->y2 += gg.posy - y1;
-	      } else if (b->y1 >= gg.posy) {
-		if (b->y2 < y1)
-		  dispbox(&b);
-		else {
-		  b->y1 = gg.posy;
-		  b->y2 += gg.posy - y1;
-		}
-	      } else if (b->y2 >= y1)
-		b->y2 += gg.posy - y1;
-	      else if (b->y2 >= gg.posy)
-		b->y2 = gg.posy;
-	    }
-	    b = b1;
-	  }
-	  l = gg.lbase[gg.curpage - 1];
-	  while (l != NULL) {
-	    l1 = l->next;
-	    if (gg.posx <= l->x && l->y >= gg.posy &&
-		l->x + strlen(gg.nearlabel->name) * 7 / gg.scale <= x1) {
-	      if (l->y <= y1)
-		displabel(&l);
-	      else
-		l->y += gg.posy - y1;
-	    }
-	    l = l1;
-	  }
-	  refrfunc();
-	  scroll();
-	} else {
-	  beginerror();
-	  printf("Can't Close: Blocked by horizontal wires\n");
-	  enderror();
-	}
+        chpage((int)gg.curpage);
+        hw = gg.hwbase[gg.curpage - 1];
+        flag = false;
+        while (hw != NULL) {
+          if (hw->y >= gg.posy && ((hw->x1 < gg.posx && gg.posx < hw->x2) ||
+                                   (hw->x1 < x1 && x1 < hw->x2)))
+            flag = true;
+          hw = hw->next;
+        }
+        if (!flag) {
+          g = gg.gbase[gg.curpage - 1];
+          while (g != NULL) {
+            g1 = g->next;
+            if (gg.posx <= g->x && g->x <= x1 && g->y >= gg.posy) {
+              if (g->y <= y1)
+                delgate(g);
+              else
+                shiftgate(g, 0, gg.posy - y1);
+            }
+            g = g1;
+          }
+          s = gg.sbase[gg.curpage - 1];
+          while (s != NULL) {
+            s1 = s->next;
+            if (!vlsi && gg.posx <= s->hwire->x2 && s->hwire->x1 <= x1 &&
+                s->hwire->y >= gg.posy) {
+              if (s->hwire->y > y1) s->y += gg.posy - y1;
+            }
+            s = s1;
+          }
+          vw = gg.vwbase[gg.curpage - 1];
+          while (vw != NULL) {
+            vw1 = vw->next;
+            if (gg.posx <= vw->x && vw->x <= x1 && vw->y2 >= gg.posy) {
+              if (vw->y1 >= gg.posy && vw->y2 < y1) delvwire(vw);
+            }
+            vw = vw1;
+          }
+          hw = gg.hwbase[gg.curpage - 1];
+          while (hw != NULL) {
+            hw1 = hw->next;
+            if (gg.posx <= hw->x2 && hw->x1 <= x1 && hw->y >= gg.posy &&
+                hw->y <= y1)
+              delhwire(hw);
+            hw = hw1;
+          }
+          vw = gg.vwbase[gg.curpage - 1];
+          while (vw != NULL) {
+            if (gg.posx <= vw->x && vw->x <= x1 && vw->y2 >= gg.posy) {
+              if (vw->y1 >= gg.posy) {
+                if (vw->y1 < y1)
+                  vw->y1 = gg.posy;
+                else {
+                  vw->y1 += gg.posy - y1;
+                  vw->y2 += gg.posy - y1;
+                }
+              } else if (vw->y2 >= y1)
+                vw->y2 += gg.posy - y1;
+              else if (vw->y2 >= gg.posy)
+                vw->y2 = gg.posy;
+            }
+            vw = vw->next;
+          }
+          hw = gg.hwbase[gg.curpage - 1];
+          while (hw != NULL) {
+            if (gg.posx <= hw->x2 && hw->x1 <= x1 && hw->y >= gg.posy)
+              hw->y += gg.posy - y1;
+            hw = hw->next;
+          }
+          b = gg.bbase[gg.curpage - 1];
+          while (b != NULL) {
+            b1 = b->next;
+            if (gg.posx <= b->x1 && b->x2 <= x1) {
+              if (b->y1 >= y1) {
+                b->y1 += gg.posy - y1;
+                b->y2 += gg.posy - y1;
+              } else if (b->y1 >= gg.posy) {
+                if (b->y2 < y1)
+                  dispbox(&b);
+                else {
+                  b->y1 = gg.posy;
+                  b->y2 += gg.posy - y1;
+                }
+              } else if (b->y2 >= y1)
+                b->y2 += gg.posy - y1;
+              else if (b->y2 >= gg.posy)
+                b->y2 = gg.posy;
+            }
+            b = b1;
+          }
+          l = gg.lbase[gg.curpage - 1];
+          while (l != NULL) {
+            l1 = l->next;
+            if (gg.posx <= l->x && l->y >= gg.posy &&
+                l->x + strlen(gg.nearlabel->name) * 7 / gg.scale <= x1) {
+              if (l->y <= y1)
+                displabel(&l);
+              else
+                l->y += gg.posy - y1;
+            }
+            l = l1;
+          }
+          refrfunc();
+          scroll();
+        } else {
+          beginerror();
+          printf("Can't Close: Blocked by horizontal wires\n");
+          enderror();
+        }
       }
     }
   } while (gg.incircuit && gg.stillnear && *gg.func == '\0');
@@ -12017,12 +10672,7 @@ Static Void closevert()
   cursortype = normal;
 }
 
-
-
-
-
-Static Void centercommand()
-{
+Static Void centercommand() {
   log_grec *g;
   log_hwrec *hw;
   log_vwrec *vw;
@@ -12080,13 +10730,6 @@ Static Void centercommand()
   refrfunc();
 }
 
-
-
-
-
-
-
-
 /*=================  SHOWCATALOG  ================*/
 /*=                                              =*/
 /*=  Switch screen to catalog (TRUE) or circuit  =*/
@@ -12094,8 +10737,7 @@ Static Void centercommand()
 /*=                                              =*/
 /*================================================*/
 
-Static Void showcatalog()
-{
+Static Void showcatalog() {
   short i;
   catboxrec *cb;
   short x1, y1, x2, y2, FORLIM;
@@ -12105,22 +10747,22 @@ Static Void showcatalog()
   FORLIM = maxkinds;
   for (i = 1; i <= FORLIM; i++) {
     if (kind[i - 1] != NULL) {
-/* p2c: log.text, line 11731:
- * Note: Using % for possibly-negative arguments [317] */
+      /* p2c: log.text, line 11731:
+       * Note: Using % for possibly-negative arguments [317] */
       udrawgatec((int)(((i - 1) % catwidth * 2 + 1) * gridcen),
-		 (int)(((i - 1) / catwidth * 2 + 1) * gridcen), i,
-		 gg.color.catgate);
+                 (int)(((i - 1) / catwidth * 2 + 1) * gridcen), i,
+                 gg.color.catgate);
     }
   }
   cb = catboxes;
   while (cb != NULL) {
     x1 = (cb->pos - 1) % catwidth * gridcen * 2;
-/* p2c: log.text, line 11738:
- * Note: Using % for possibly-negative arguments [317] */
+    /* p2c: log.text, line 11738:
+     * Note: Using % for possibly-negative arguments [317] */
     y1 = (cb->pos - 1) / catwidth * gridcen * 2;
     x2 = ((cb->pos + cb->count - 2) % catwidth + 1) * gridcen * 2;
-/* p2c: log.text, line 11740:
- * Note: Using % for possibly-negative arguments [317] */
+    /* p2c: log.text, line 11740:
+     * Note: Using % for possibly-negative arguments [317] */
     y2 = ((cb->pos + cb->count - 2) / catwidth + 1) * gridcen * 2;
     m_color((long)catboxcolor);
     m_linestyle(2L);
@@ -12135,9 +10777,6 @@ Static Void showcatalog()
     cb = cb->next;
   }
 }
-
-
-
 
 /*================  COMPARESTR  ==================*/
 /*=                                              =*/
@@ -12171,19 +10810,16 @@ Char *t_;
     if (ch == '*' || ch == '?' || ch == '=') {
       strcpy_overlap(t, t + 1);
       do {
-	match = comparestr(s, g, t);
-	if (!match && *s != '\0')
-	  strcpy_overlap(s, s + 1);
+        match = comparestr(s, g, t);
+        if (!match && *s != '\0') strcpy_overlap(s, s + 1);
       } while (!(match || *s == '\0'));
       return (match || comparestr(s, g, t));
     } else if (ch == ';') {
       Result = false;
-      if (*s != '\0')
-	return Result;
+      if (*s != '\0') return Result;
       FORLIM = strlen(t);
       for (i = 1; i < FORLIM; i++) {
-	if (t[i] == g + 48)
-	  Result = true;
+        if (t[i] == g + 48) Result = true;
       }
       return Result;
     } else if (*s != '\0' && (ch == '%' || ch == s[0])) {
@@ -12196,15 +10832,13 @@ Char *t_;
   return Result;
 }
 
-
-#define maxvars         16
-
+#define maxvars 16
 
 /* Local variables for readlibrary_at: */
 struct LOC_readlibrary_at {
   short p, f;
   long dist;
-} ;
+};
 
 Local Void readint(LINK)
 struct LOC_readlibrary_at *LINK;
@@ -12249,67 +10883,58 @@ log_krec *k;
 long x, y;
 struct LOC_readlibrary_at *LINK;
 {
-  if (x < k->bbx1)
-    k->bbx1 = x;
-  if (x > k->bbx2)
-    k->bbx2 = x;
-  if (y < k->bby1)
-    k->bby1 = y;
-  if (y > k->bby2)
-    k->bby2 = y;
+  if (x < k->bbx1) k->bbx1 = x;
+  if (x > k->bbx2) k->bbx2 = x;
+  if (y < k->bby1) k->bby1 = y;
+  if (y > k->bby2) k->bby2 = y;
 }
 
 Local long uncompress(i, LINK)
 long i;
 struct LOC_readlibrary_at *LINK;
 {
-  if (i < 0)
-    i += 256;
+  if (i < 0) i += 256;
   if (i == 0)
     return 0;
   else
     return (na_po2(i / 16) * ((i & 15) + 16) * 4);
 }
 
-
 Local descrec *readdesc(rec)
 char *rec;
 {
-       unsigned short i,j1,j2,s1,s2;
-       static descrec d;
-       d.ptr = getintsw(rec);
-       d.numvects = rec[4];
-       d.numpins = rec[5];
-       d.numpnums= rec[6];
-       d.lblsize = rec[7];
-       d.simtype = rec[8];
-       d.procsize= rec[9];
-       d.flag = getshortsw(&(rec[10]));
+  unsigned short i, j1, j2, s1, s2;
+  static descrec d;
+  d.ptr = getintsw(rec);
+  d.numvects = rec[4];
+  d.numpins = rec[5];
+  d.numpnums = rec[6];
+  d.lblsize = rec[7];
+  d.simtype = rec[8];
+  d.procsize = rec[9];
+  d.flag = getshortsw(&(rec[10]));
 
-       if (!bigendian)
-	 {
-	   /* d.flag.i = reverse(d.flag.i); */
-	   d.flag = reverse(d.flag); 
-	 }
-       d.xx1= rec[12];
-       d.yy1= rec[13];
-       d.xx2= rec[14];
-       d.yy2= rec[15];
-       return &d;
+  if (!bigendian) {
+    /* d.flag.i = reverse(d.flag.i); */
+    d.flag = reverse(d.flag);
+  }
+  d.xx1 = rec[12];
+  d.yy1 = rec[13];
+  d.xx2 = rec[14];
+  d.yy2 = rec[15];
+  return &d;
 }
-
 
 Local log_pnumrec readpnum(rec)
- char *rec;
+char *rec;
 {
-       static log_pnumrec p;
+  static log_pnumrec p;
 
-       p.x = rec[0];
-       p.y = rec[1];
-       p.num = getshortsw(&(rec[2]));
-       return p;
+  p.x = rec[0];
+  p.y = rec[1];
+  p.num = getshortsw(&(rec[2]));
+  return p;
 }
-
 
 /*==================  READLIBRARY  ===============*/
 /*=                                              =*/
@@ -12354,437 +10979,413 @@ boolean loadit;
     if (comparestr(index_[i0 - 1], indexgroup[i0 - 1], n)) {
       found = true;
       if (P_getbits_UB(loadedgates, i0 - 1, 0, 3)) {
-	i = 0;
-	FORLIM1 = maxkinds;
-	for (j = 1; j <= FORLIM1; j++) {
-	  if (kind[j - 1] != NULL && kind[j - 1]->code == i0)
-	    i = j;
-	}
-	goto _L1;
+        i = 0;
+        FORLIM1 = maxkinds;
+        for (j = 1; j <= FORLIM1; j++) {
+          if (kind[j - 1] != NULL && kind[j - 1]->code == i0) i = j;
+        }
+        goto _L1;
       }
       if (!loadit) {
-	count++;
-	goto _L1;
+        count++;
+        goto _L1;
       }
       i = where;
-      while (i <= maxkinds && kind[i - 1] != NULL)
-	i++;
+      while (i <= maxkinds && kind[i - 1] != NULL) i++;
       if (i > maxkinds) {
-	i = 1;
-	while (i <= maxkinds && kind[i - 1] != NULL)
-	  i++;
+        i = 1;
+        while (i <= maxkinds && kind[i - 1] != NULL) i++;
       }
-      if (i > maxkinds) {   /*garbage collection*/
-	i = libptr;
-	do {
-	  if (i >= maxkinds)
-	    i = 0;
-	  i++;
-	  flag = false;
-	  FORLIM1 = gg.numpages;
-	  for (j = 0; j < FORLIM1; j++) {
-	    g = gg.gbase[j];
-	    while (g != NULL) {
-	      flag = (flag || (g->g & (log_kindoffset - 1)) == i);
-	      g = g->next;
-	    }
-	  }
-	  FORLIM1 = kindgroupsize;
-	  for (j = 0; j < FORLIM1; j++)
-	    flag = (flag || (kindgroup[j] & (log_kindoffset - 1)) == i);
-	} while (flag && i != libptr);
-	if (flag) {
-	  beginerror();
-	  printf("Maximum of %d gate types are in use.\n", maxkinds);
-	  enderror();
-	  i = 0;
-	  goto _L1;
-	}
-	libptr = i;
-	clipoff();
-	if (gg.showpage == log_page_cat) {
-/* p2c: log.text, line 11958:
- * Note: Using % for possibly-negative arguments [317] */
-	  udrawgatec((int)(((i - 1) % catwidth * 2 + 1) * gridcen),
-		     (int)(((i - 1) / catwidth * 2 + 1) * gridcen), i,
-		     gg.color.backgr);
-	}
-	TEMP = kind[i - 1]->code - 1;
-	P_clrbits_B(loadedgates, TEMP, 0, 3);
-	WITH = kind[i - 1];
-	calltoolkind(kind[i - 1], act_disposekind);
-	if (WITH->proc != NULL)
-	  Free(WITH->proc);
-	if (WITH->lbl != NULL)
-	  strlist_empty(&WITH->lbl);
-	if (WITH->attr != NULL)
-	  Free(WITH->attr);
-	if (WITH->vector != NULL)
-	  Free(WITH->vector);
-	if (WITH->pin != NULL)
-	  Free(WITH->pin);
-	if (WITH->pnum != NULL)
-	  Free(WITH->pnum);
-	Free(kind[i - 1]);
-	kind[i - 1] = NULL;
+      if (i > maxkinds) { /*garbage collection*/
+        i = libptr;
+        do {
+          if (i >= maxkinds) i = 0;
+          i++;
+          flag = false;
+          FORLIM1 = gg.numpages;
+          for (j = 0; j < FORLIM1; j++) {
+            g = gg.gbase[j];
+            while (g != NULL) {
+              flag = (flag || (g->g & (log_kindoffset - 1)) == i);
+              g = g->next;
+            }
+          }
+          FORLIM1 = kindgroupsize;
+          for (j = 0; j < FORLIM1; j++)
+            flag = (flag || (kindgroup[j] & (log_kindoffset - 1)) == i);
+        } while (flag && i != libptr);
+        if (flag) {
+          beginerror();
+          printf("Maximum of %d gate types are in use.\n", maxkinds);
+          enderror();
+          i = 0;
+          goto _L1;
+        }
+        libptr = i;
+        clipoff();
+        if (gg.showpage == log_page_cat) {
+          /* p2c: log.text, line 11958:
+           * Note: Using % for possibly-negative arguments [317] */
+          udrawgatec((int)(((i - 1) % catwidth * 2 + 1) * gridcen),
+                     (int)(((i - 1) / catwidth * 2 + 1) * gridcen), i,
+                     gg.color.backgr);
+        }
+        TEMP = kind[i - 1]->code - 1;
+        P_clrbits_B(loadedgates, TEMP, 0, 3);
+        WITH = kind[i - 1];
+        calltoolkind(kind[i - 1], act_disposekind);
+        if (WITH->proc != NULL) Free(WITH->proc);
+        if (WITH->lbl != NULL) strlist_empty(&WITH->lbl);
+        if (WITH->attr != NULL) Free(WITH->attr);
+        if (WITH->vector != NULL) Free(WITH->vector);
+        if (WITH->pin != NULL) Free(WITH->pin);
+        if (WITH->pnum != NULL) Free(WITH->pnum);
+        Free(kind[i - 1]);
+        kind[i - 1] = NULL;
       }
       V.f = indexfile[i0 - 1];
       TRY(try15);
-	i00 = indexoffset[i0 - 1];
-	fseek(libf1[V.f - 1]->f,
-	      (libfstart[V.f - 1] + (i00 - 1L) / 16 - 1) * sizeof(filerec),
-	      0);
-	SETUPBUF(libf1[V.f - 1]->f, filerec);
-	GET(libf1[V.f - 1]->f, filerec);
-	WITH1 = readdesc((char*) &GETFBUF(libf1[V.f - 1]->f, filerec).b[16*((i00 - 1) &
-                15)]);
-	kind[i - 1] = (log_krec *)Malloc(sizeof(log_krec));
-	kind[i - 1]->simtype = findsimtype(WITH1->simtype);
-	kind[i - 1]->numvects = WITH1->numvects;
-	kind[i - 1]->numpins = WITH1->numpins;
-	kind[i - 1]->flag.i = WITH1->flag;
-	if (kind[i - 1]->flag.U3.expanded) {
-	  kind[i - 1]->bigprocsize = uncompress((long)WITH1->procsize, &V);
-	  kind[i - 1]->biglblsize = uncompress((long)WITH1->lblsize, &V);
-	  kind[i - 1]->numpnums = 0;
-	  kind[i - 1]->bigvectsize = uncompress((long)WITH1->numpnums, &V);
-	} else {
-	  kind[i - 1]->bigprocsize = WITH1->procsize * 4;
-	  kind[i - 1]->biglblsize = WITH1->lblsize * 4;
-	  kind[i - 1]->numpnums = WITH1->numpnums;
-	}
-	kind[i - 1]->x1 = WITH1->xx1;
-	kind[i - 1]->y1 = WITH1->yy1;
-	kind[i - 1]->x2 = WITH1->xx2;
-	kind[i - 1]->y2 = WITH1->yy2;
-	j1 = WITH1->ptr;
-	fseek(libf1[V.f - 1]->f, j1 / 64 * sizeof(filerec), 0);
-	SETUPBUF(libf1[V.f - 1]->f, filerec);
-	GET(libf1[V.f - 1]->f, filerec);
-	WITH = kind[i - 1];
-	WITH->code = i0;
-	strcpy(WITH->name, index_[i0 - 1]);
-	WITH->proc = NULL;
-	WITH->lbl = NULL;
-	WITH->attr = NULL;
-	WITH->vector = NULL;
-	WITH->pin = NULL;
-	WITH->pinnames = NULL;
-	WITH->pnum = NULL;
-	WITH->info = (na_long)0;
-	V.p = j1 & 63;
-	WITH->bbx1 = -log_scale0;
-	WITH->bby1 = -log_scale0;
-	WITH->bbx2 = log_scale0;
-	WITH->bby2 = log_scale0;
-	bound(kind[i - 1], (long)WITH->x1, (long)WITH->y1, &V);
-	bound(kind[i - 1], (long)WITH->x2, (long)WITH->y2, &V);
-	if (WITH->numvects != 0) {
-	  if (WITH->flag.U3.expanded) {
-	    tempvects = (log_vectorrec *)
-			Malloc(WITH->numvects * sizeof(log_vectorrec) * 2);
-	    j = 0;
-	    curcol = '1';
-	    V.dist = 0;
-	    V.p *= 4;
-	    FORLIM1 = WITH->numvects;
-	    for (j0 = 1; j0 <= FORLIM1; j0++) {
-	      ch = (Char)readnum(&V);
-	      if (ch >= '1' && ch <= '7') {
-		do {
-		  ch2 = ch;
-		  ch = (Char)readnum(&V);
-		} while (ch >= '1' && ch <= '7');
-		if (ch2 != curcol) {
-		  j++;
-		  tempvects[j - 1].vkind = ch2;
-		  tempvects[j - 1].numcoords = 0;
-		  curcol = ch2;
-		}
-	      }
-	      j++;
-	      WITH2 = &tempvects[j - 1];
-	      WITH2->vkind = ch;
-	      switch (ch) {
+      i00 = indexoffset[i0 - 1];
+      fseek(libf1[V.f - 1]->f,
+            (libfstart[V.f - 1] + (i00 - 1L) / 16 - 1) * sizeof(filerec), 0);
+      SETUPBUF(libf1[V.f - 1]->f, filerec);
+      GET(libf1[V.f - 1]->f, filerec);
+      WITH1 = readdesc((char *)&GETFBUF(libf1[V.f - 1]->f, filerec)
+                           .b[16 * ((i00 - 1) & 15)]);
+      kind[i - 1] = (log_krec *)Malloc(sizeof(log_krec));
+      kind[i - 1]->simtype = findsimtype(WITH1->simtype);
+      kind[i - 1]->numvects = WITH1->numvects;
+      kind[i - 1]->numpins = WITH1->numpins;
+      kind[i - 1]->flag.i = WITH1->flag;
+      if (kind[i - 1]->flag.U3.expanded) {
+        kind[i - 1]->bigprocsize = uncompress((long)WITH1->procsize, &V);
+        kind[i - 1]->biglblsize = uncompress((long)WITH1->lblsize, &V);
+        kind[i - 1]->numpnums = 0;
+        kind[i - 1]->bigvectsize = uncompress((long)WITH1->numpnums, &V);
+      } else {
+        kind[i - 1]->bigprocsize = WITH1->procsize * 4;
+        kind[i - 1]->biglblsize = WITH1->lblsize * 4;
+        kind[i - 1]->numpnums = WITH1->numpnums;
+      }
+      kind[i - 1]->x1 = WITH1->xx1;
+      kind[i - 1]->y1 = WITH1->yy1;
+      kind[i - 1]->x2 = WITH1->xx2;
+      kind[i - 1]->y2 = WITH1->yy2;
+      j1 = WITH1->ptr;
+      fseek(libf1[V.f - 1]->f, j1 / 64 * sizeof(filerec), 0);
+      SETUPBUF(libf1[V.f - 1]->f, filerec);
+      GET(libf1[V.f - 1]->f, filerec);
+      WITH = kind[i - 1];
+      WITH->code = i0;
+      strcpy(WITH->name, index_[i0 - 1]);
+      WITH->proc = NULL;
+      WITH->lbl = NULL;
+      WITH->attr = NULL;
+      WITH->vector = NULL;
+      WITH->pin = NULL;
+      WITH->pinnames = NULL;
+      WITH->pnum = NULL;
+      WITH->info = (na_long)0;
+      V.p = j1 & 63;
+      WITH->bbx1 = -log_scale0;
+      WITH->bby1 = -log_scale0;
+      WITH->bbx2 = log_scale0;
+      WITH->bby2 = log_scale0;
+      bound(kind[i - 1], (long)WITH->x1, (long)WITH->y1, &V);
+      bound(kind[i - 1], (long)WITH->x2, (long)WITH->y2, &V);
+      if (WITH->numvects != 0) {
+        if (WITH->flag.U3.expanded) {
+          tempvects = (log_vectorrec *)Malloc(WITH->numvects *
+                                              sizeof(log_vectorrec) * 2);
+          j = 0;
+          curcol = '1';
+          V.dist = 0;
+          V.p *= 4;
+          FORLIM1 = WITH->numvects;
+          for (j0 = 1; j0 <= FORLIM1; j0++) {
+            ch = (Char)readnum(&V);
+            if (ch >= '1' && ch <= '7') {
+              do {
+                ch2 = ch;
+                ch = (Char)readnum(&V);
+              } while (ch >= '1' && ch <= '7');
+              if (ch2 != curcol) {
+                j++;
+                tempvects[j - 1].vkind = ch2;
+                tempvects[j - 1].numcoords = 0;
+                curcol = ch2;
+              }
+            }
+            j++;
+            WITH2 = &tempvects[j - 1];
+            WITH2->vkind = ch;
+            switch (ch) {
+              case 'v':
+              case 'C':
+              case 'e':
+              case 'E':
+                WITH2->x1 = readcoord(&V);
+                WITH2->y1 = readcoord(&V);
+                WITH2->UU.U99.x2 = readcoord(&V);
+                WITH2->UU.U99.y2 = readcoord(&V);
+                WITH2->numcoords = 2;
+                bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
+                bound(kind[i - 1], (long)WITH2->UU.U99.x2,
+                      (long)WITH2->UU.U99.y2, &V);
+                break;
 
-	      case 'v':
-	      case 'C':
-	      case 'e':
-	      case 'E':
-		WITH2->x1 = readcoord(&V);
-		WITH2->y1 = readcoord(&V);
-		WITH2->UU.U99.x2 = readcoord(&V);
-		WITH2->UU.U99.y2 = readcoord(&V);
-		WITH2->numcoords = 2;
-		bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
-		bound(kind[i - 1], (long)WITH2->UU.U99.x2,
-		      (long)WITH2->UU.U99.y2, &V);
-		break;
+              case 'r':
+                WITH2->x1 = readcoord(&V);
+                WITH2->y1 = readcoord(&V);
+                WITH2->UU.U99.x2 = readcoord(&V);
+                WITH2->UU.U99.y2 = readcoord(&V);
+                WITH2->UU.U98.num = readcoord(&V);
+                WITH2->numcoords = 2;
+                bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
+                bound(kind[i - 1], (long)WITH2->UU.U99.x2,
+                      (long)WITH2->UU.U99.y2, &V);
+                break;
 
-	      case 'r':
-		WITH2->x1 = readcoord(&V);
-		WITH2->y1 = readcoord(&V);
-		WITH2->UU.U99.x2 = readcoord(&V);
-		WITH2->UU.U99.y2 = readcoord(&V);
-		WITH2->UU.U98.num = readcoord(&V);
-		WITH2->numcoords = 2;
-		bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
-		bound(kind[i - 1], (long)WITH2->UU.U99.x2,
-		      (long)WITH2->UU.U99.y2, &V);
-		break;
+              case 'F':
+              case 'c':
+                WITH2->x1 = readcoord(&V);
+                WITH2->y1 = readcoord(&V);
+                WITH2->UU.U99.x2 = readcoord(&V);
+                WITH2->UU.U99.y2 = readcoord(&V);
+                WITH2->UU.U99.x3 = readcoord(&V);
+                WITH2->UU.U99.y3 = readcoord(&V);
+                WITH2->UU.U99.x4 = readcoord(&V);
+                WITH2->UU.U99.y4 = readcoord(&V);
+                WITH2->numcoords = 4;
+                bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
+                bound(kind[i - 1], (long)WITH2->UU.U99.x2,
+                      (long)WITH2->UU.U99.y2, &V);
+                bound(kind[i - 1], (long)WITH2->UU.U99.x3,
+                      (long)WITH2->UU.U99.y3, &V);
+                bound(kind[i - 1], (long)WITH2->UU.U99.x4,
+                      (long)WITH2->UU.U99.y4, &V);
+                break;
 
-	      case 'F':
-	      case 'c':
-		WITH2->x1 = readcoord(&V);
-		WITH2->y1 = readcoord(&V);
-		WITH2->UU.U99.x2 = readcoord(&V);
-		WITH2->UU.U99.y2 = readcoord(&V);
-		WITH2->UU.U99.x3 = readcoord(&V);
-		WITH2->UU.U99.y3 = readcoord(&V);
-		WITH2->UU.U99.x4 = readcoord(&V);
-		WITH2->UU.U99.y4 = readcoord(&V);
-		WITH2->numcoords = 4;
-		bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
-		bound(kind[i - 1], (long)WITH2->UU.U99.x2,
-		      (long)WITH2->UU.U99.y2, &V);
-		bound(kind[i - 1], (long)WITH2->UU.U99.x3,
-		      (long)WITH2->UU.U99.y3, &V);
-		bound(kind[i - 1], (long)WITH2->UU.U99.x4,
-		      (long)WITH2->UU.U99.y4, &V);
-		break;
+              case 'p':
+                WITH2->UU.U98.num = readnum(&V);
+                WITH2->x1 = readcoord(&V);
+                WITH2->y1 = readcoord(&V);
+                WITH2->numcoords = 1;
+                bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
+                break;
 
-	      case 'p':
-		WITH2->UU.U98.num = readnum(&V);
-		WITH2->x1 = readcoord(&V);
-		WITH2->y1 = readcoord(&V);
-		WITH2->numcoords = 1;
-		bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
-		break;
+              case 'b':
+                WITH2->UU.U98.num = readnum(&V);
+                WITH2->x1 = readcoord(&V);
+                WITH2->y1 = readcoord(&V);
+                WITH2->UU.U99.x2 = readcoord(&V);
+                WITH2->UU.U99.y2 = readcoord(&V);
+                WITH2->numcoords = 2;
+                bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
+                bound(kind[i - 1], (long)WITH2->UU.U99.x2,
+                      (long)WITH2->UU.U99.y2, &V);
+                break;
 
-	      case 'b':
-		WITH2->UU.U98.num = readnum(&V);
-		WITH2->x1 = readcoord(&V);
-		WITH2->y1 = readcoord(&V);
-		WITH2->UU.U99.x2 = readcoord(&V);
-		WITH2->UU.U99.y2 = readcoord(&V);
-		WITH2->numcoords = 2;
-		bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
-		bound(kind[i - 1], (long)WITH2->UU.U99.x2,
-		      (long)WITH2->UU.U99.y2, &V);
-		break;
+              case 't':
+                WITH2->UU.U116.tsize = readnum(&V);
+                WITH2->UU.U116.torg = readnum(&V) - 1;
+                WITH2->x1 = readcoord(&V);
+                WITH2->y1 = readcoord(&V);
+                WITH2->numcoords = 1;
+                bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
+                j000 = readnum(&V);
+                buf[j000] = '\0';
+                /* p2c: log.text, line 12128:
+                 * Note: Modification of string length may translate
+                 * incorrectly [146] */
+                for (j00 = 0; j00 < j000; j00++) buf[j00] = (Char)readnum(&V);
+                WITH2->UU.U116.sp = strdup(buf);
+                break;
 
-	      case 't':
-		WITH2->UU.U116.tsize = readnum(&V);
-		WITH2->UU.U116.torg = readnum(&V) - 1;
-		WITH2->x1 = readcoord(&V);
-		WITH2->y1 = readcoord(&V);
-		WITH2->numcoords = 1;
-		bound(kind[i - 1], (long)WITH2->x1, (long)WITH2->y1, &V);
-		j000 = readnum(&V);
-		buf[j000] = '\0';
-/* p2c: log.text, line 12128:
- * Note: Modification of string length may translate incorrectly [146] */
-		for (j00 = 0; j00 < j000; j00++)
-		  buf[j00] = (Char)readnum(&V);
-		WITH2->UU.U116.sp = strdup(buf);
-		break;
-
-	      default:
-		j--;
-		break;
-	      }
-	    }
-	    WITH->numvects = j;
-	    WITH->vector = (log_vectorrec *)
-			   Malloc(WITH->numvects * sizeof(log_vectorrec));
-	    memmove((Anyptr)WITH->vector, (Anyptr)tempvects,
-		    WITH->numvects * sizeof(log_vectorrec));
-	    while (V.dist < WITH->bigvectsize)
-	      j0 = readnum(&V);
-	    V.p /= 4;
-	    Free(tempvects);
-	  } else {
-	    WITH->vector = (log_vectorrec *)
-			   Malloc(WITH->numvects * sizeof(log_vectorrec));
-	    FORLIM1 = WITH->numvects;
-	    for (j = 0; j < FORLIM1; j++) {
-	      readint(&V);
-	      WITH->vector[j].vkind = 'v';
-	      WITH->vector[j].numcoords = 2;
-	      WITH->vector[j].x1 = GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].x1;
-	      WITH->vector[j].y1 = GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].y1;
-	      WITH->vector[j].UU.U99.x2 =
-		GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].x2;
-	      WITH->vector[j].UU.U99.y2 =
-		GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].y2;
-	      bound(kind[i - 1], (long)WITH->vector[j].x1,
-		    (long)WITH->vector[j].y1, &V);
-	      bound(kind[i - 1], (long)WITH->vector[j].UU.U99.x2,
-		    (long)WITH->vector[j].UU.U99.y2, &V);
-	      V.p++;
-	    }
-	  }
-	}
-	if (WITH->numpins != 0) {
-	  WITH->pin = (log_pinrec *)Malloc(WITH->numpins * sizeof(log_pinrec));
-	  WITH->pinnames = (na_strlist **)
-			   Malloc(WITH->numpins * sizeof(na_strlist *));
-	  FORLIM1 = WITH->numpins;
-	  for (j = 0; j < FORLIM1; j++) {
-	    readint(&V);
-	    WITH->pin[j].x = GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].x /
-			     log_scale0;
-	    WITH->pin[j].y = GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].y /
-			     log_scale0;
-	    WITH->pin[j].s = GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].s;
-	    WITH->pin[j].c = GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].c;
-	    bound(kind[i - 1], (long)(WITH->pin[j].x * log_scale0),
-		  (long)(WITH->pin[j].y * log_scale0), &V);
-	    WITH->pinnames[j] = NULL;
-	    V.p++;
-	  }
-	}
-/* p2c: log.text, line 12164: Note: Can't interpret size in NA_NEW [174] */
-	if (WITH->numpnums != 0) {
-	  WITH->pnum = (log_pnumrec *)Malloc(WITH->numpnums * 
-                        sizeof(log_pnumrec));
-	  FORLIM1 = WITH->numpnums;
-	  for (j = 0; j < FORLIM1; j++) {
-	    readint(&V);
-            WITH->pnum[j] = readpnum((char *) &GETFBUF(libf1[V.f - 1]->f, filerec).b
-                            [4*V.p]);
-	    bound(kind[i - 1], (long)WITH->pnum[j].x, (long)WITH->pnum[j].y,
-		  &V);
-	    V.p++;
-	  }
-	}
-/* p2c: log.text, line 12180: Note: Can't interpret size in NA_NEW [174] */
-	WITH->numattrs = 0;
-	if (WITH->biglblsize != 0) {
-	  strlist_init(&WITH->lbl);
-	  *buf = '\0';
-	  ch = '\001';
-	  FORLIM2 = WITH->biglblsize / 4;
-	  for (j1 = 1; j1 <= FORLIM2; j1++) {
-	    readint(&V);
-	    for (j = 0; j <= 3; j++) {
-	      if (ch != '\0') {
-		ch = GETFBUF(libf1[V.f - 1]->f, filerec).c4[V.p][j];
-		if (ch == '\001') {
-		  if (*buf == '\002') {
-		    j0 = 0;
-		    while (*buf != '\0') {
-		      if (buf[0] == '\002')
-			j0++;
-		      strcpy_overlap(buf, buf + 1);
-		      j00 = strposc(buf, '\002', 1L);
-		      if (j00 == 0)
-			j00 = strlen(buf) + 1;
-		      j000 = strposc(buf, '\003', 1L);
-		      if (j000 == 0)
-			j000 = strlen(buf) + 1;
-		      j00 = P_imin2((long)j00, (long)j000);
-		      if (j00 > 1) {
-			if (j0 <= WITH->numpins) {
-			  sprintf(STR1, "%.*s", j00 - 1, buf);
-			  l2 = strlist_append(&WITH->pinnames[j0 - 1], STR1);
-			  l2->value = (na_long)((long)j0);
-			}
-		      }
-		      strcpy_overlap(buf, buf + j00 - 1);
-		    }
-		  } else
-		    l2 = strlist_append(&WITH->lbl, buf);
-		  *buf = '\0';
-		} else if (ch != '\0')
-		  sprintf(buf + strlen(buf), "%c", ch);
-	      }
-	    }
-	    V.p++;
-	  }
-	  parselabel(&WITH->lbl, &j, &WITH->attr);
-	  WITH->numattrs = j;
-	}
-	if (WITH->bigprocsize != 0) {
-	  WITH->proc = (uchar *)Malloc(WITH->bigprocsize);
-	  FORLIM2 = WITH->bigprocsize / 4;
-	  for (j1 = 1; j1 <= FORLIM2; j1++) {
-	    readint(&V);
-	    for (j0 = 0; j0 <= 3; j0++)
-	      WITH->proc[j1 * 4 + j0 - 4] = GETFBUF(libf1[V.f - 1]->f,
-						    filerec).c[V.p * 4 + j0];
-	    V.p++;
-	  }
-	} else {
-	  WITH->proc = (uchar *)Malloc(4L);
-	  WITH->proc[0] = '\0';
-	}
-	WITH->bbx1 = -((log_scale0 - WITH->bbx1 - 1) / log_scale0);
-	WITH->bby1 = -((log_scale0 - WITH->bby1 - 1) / log_scale0);
-	WITH->bbx2 = (log_scale0 + WITH->bbx2 - 1) / log_scale0;
-	WITH->bby2 = (log_scale0 + WITH->bby2 - 1) / log_scale0;
-	WITH->bbmax = P_imax2(P_imax2((long)(-WITH->bbx1), (long)WITH->bbx2),
-			      P_imax2((long)(-WITH->bby1), (long)WITH->bby2));
-	calltoolkind(kind[i - 1], act_newkind);
-	P_putbits_UB(loadedgates, i0 - 1, 1, 0, 3);
+              default:
+                j--;
+                break;
+            }
+          }
+          WITH->numvects = j;
+          WITH->vector =
+              (log_vectorrec *)Malloc(WITH->numvects * sizeof(log_vectorrec));
+          memmove((Anyptr)WITH->vector, (Anyptr)tempvects,
+                  WITH->numvects * sizeof(log_vectorrec));
+          while (V.dist < WITH->bigvectsize) j0 = readnum(&V);
+          V.p /= 4;
+          Free(tempvects);
+        } else {
+          WITH->vector =
+              (log_vectorrec *)Malloc(WITH->numvects * sizeof(log_vectorrec));
+          FORLIM1 = WITH->numvects;
+          for (j = 0; j < FORLIM1; j++) {
+            readint(&V);
+            WITH->vector[j].vkind = 'v';
+            WITH->vector[j].numcoords = 2;
+            WITH->vector[j].x1 =
+                GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].x1;
+            WITH->vector[j].y1 =
+                GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].y1;
+            WITH->vector[j].UU.U99.x2 =
+                GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].x2;
+            WITH->vector[j].UU.U99.y2 =
+                GETFBUF(libf1[V.f - 1]->f, filerec).vec[V.p].y2;
+            bound(kind[i - 1], (long)WITH->vector[j].x1,
+                  (long)WITH->vector[j].y1, &V);
+            bound(kind[i - 1], (long)WITH->vector[j].UU.U99.x2,
+                  (long)WITH->vector[j].UU.U99.y2, &V);
+            V.p++;
+          }
+        }
+      }
+      if (WITH->numpins != 0) {
+        WITH->pin = (log_pinrec *)Malloc(WITH->numpins * sizeof(log_pinrec));
+        WITH->pinnames =
+            (na_strlist **)Malloc(WITH->numpins * sizeof(na_strlist *));
+        FORLIM1 = WITH->numpins;
+        for (j = 0; j < FORLIM1; j++) {
+          readint(&V);
+          WITH->pin[j].x =
+              GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].x / log_scale0;
+          WITH->pin[j].y =
+              GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].y / log_scale0;
+          WITH->pin[j].s = GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].s;
+          WITH->pin[j].c = GETFBUF(libf1[V.f - 1]->f, filerec).pin[V.p].c;
+          bound(kind[i - 1], (long)(WITH->pin[j].x * log_scale0),
+                (long)(WITH->pin[j].y * log_scale0), &V);
+          WITH->pinnames[j] = NULL;
+          V.p++;
+        }
+      }
+      /* p2c: log.text, line 12164: Note: Can't interpret size in NA_NEW
+       * [174] */
+      if (WITH->numpnums != 0) {
+        WITH->pnum =
+            (log_pnumrec *)Malloc(WITH->numpnums * sizeof(log_pnumrec));
+        FORLIM1 = WITH->numpnums;
+        for (j = 0; j < FORLIM1; j++) {
+          readint(&V);
+          WITH->pnum[j] =
+              readpnum((char *)&GETFBUF(libf1[V.f - 1]->f, filerec).b[4 * V.p]);
+          bound(kind[i - 1], (long)WITH->pnum[j].x, (long)WITH->pnum[j].y, &V);
+          V.p++;
+        }
+      }
+      /* p2c: log.text, line 12180: Note: Can't interpret size in NA_NEW
+       * [174] */
+      WITH->numattrs = 0;
+      if (WITH->biglblsize != 0) {
+        strlist_init(&WITH->lbl);
+        *buf = '\0';
+        ch = '\001';
+        FORLIM2 = WITH->biglblsize / 4;
+        for (j1 = 1; j1 <= FORLIM2; j1++) {
+          readint(&V);
+          for (j = 0; j <= 3; j++) {
+            if (ch != '\0') {
+              ch = GETFBUF(libf1[V.f - 1]->f, filerec).c4[V.p][j];
+              if (ch == '\001') {
+                if (*buf == '\002') {
+                  j0 = 0;
+                  while (*buf != '\0') {
+                    if (buf[0] == '\002') j0++;
+                    strcpy_overlap(buf, buf + 1);
+                    j00 = strposc(buf, '\002', 1L);
+                    if (j00 == 0) j00 = strlen(buf) + 1;
+                    j000 = strposc(buf, '\003', 1L);
+                    if (j000 == 0) j000 = strlen(buf) + 1;
+                    j00 = P_imin2((long)j00, (long)j000);
+                    if (j00 > 1) {
+                      if (j0 <= WITH->numpins) {
+                        sprintf(STR1, "%.*s", j00 - 1, buf);
+                        l2 = strlist_append(&WITH->pinnames[j0 - 1], STR1);
+                        l2->value = (na_long)((long)j0);
+                      }
+                    }
+                    strcpy_overlap(buf, buf + j00 - 1);
+                  }
+                } else
+                  l2 = strlist_append(&WITH->lbl, buf);
+                *buf = '\0';
+              } else if (ch != '\0')
+                sprintf(buf + strlen(buf), "%c", ch);
+            }
+          }
+          V.p++;
+        }
+        parselabel(&WITH->lbl, &j, &WITH->attr);
+        WITH->numattrs = j;
+      }
+      if (WITH->bigprocsize != 0) {
+        WITH->proc = (uchar *)Malloc(WITH->bigprocsize);
+        FORLIM2 = WITH->bigprocsize / 4;
+        for (j1 = 1; j1 <= FORLIM2; j1++) {
+          readint(&V);
+          for (j0 = 0; j0 <= 3; j0++)
+            WITH->proc[j1 * 4 + j0 - 4] =
+                GETFBUF(libf1[V.f - 1]->f, filerec).c[V.p * 4 + j0];
+          V.p++;
+        }
+      } else {
+        WITH->proc = (uchar *)Malloc(4L);
+        WITH->proc[0] = '\0';
+      }
+      WITH->bbx1 = -((log_scale0 - WITH->bbx1 - 1) / log_scale0);
+      WITH->bby1 = -((log_scale0 - WITH->bby1 - 1) / log_scale0);
+      WITH->bbx2 = (log_scale0 + WITH->bbx2 - 1) / log_scale0;
+      WITH->bby2 = (log_scale0 + WITH->bby2 - 1) / log_scale0;
+      WITH->bbmax = P_imax2(P_imax2((long)(-WITH->bbx1), (long)WITH->bbx2),
+                            P_imax2((long)(-WITH->bby1), (long)WITH->bby2));
+      calltoolkind(kind[i - 1], act_newkind);
+      P_putbits_UB(loadedgates, i0 - 1, 1, 0, 3);
       RECOVER(try15);
-	kind[i - 1] = NULL;
-	if (P_escapecode == -20)
-	  _Escape(P_escapecode);
-	else {
-	  if (P_escapecode != 0) {
-	    beginerror();
-	    printf("%d/%d/%ld: ", P_escapecode, i, EXCP_LINE);
-	    printf("Unable to read file \"%s\"\n", gatesname[V.f - 1]);
-	    enderror();
-	  }
-	  i = 0;
-	  goto _L1;
-	}
+      kind[i - 1] = NULL;
+      if (P_escapecode == -20)
+        _Escape(P_escapecode);
+      else {
+        if (P_escapecode != 0) {
+          beginerror();
+          printf("%d/%d/%ld: ", P_escapecode, i, EXCP_LINE);
+          printf("Unable to read file \"%s\"\n", gatesname[V.f - 1]);
+          enderror();
+        }
+        i = 0;
+        goto _L1;
+      }
       ENDTRY(try15);
       clipoff();
       if (gg.showpage == log_page_cat) {
-/* p2c: log.text, line 12291:
- * Note: Using % for possibly-negative arguments [317] */
-	udrawgatec((int)(((i - 1) % catwidth * 2 + 1) * gridcen),
-		   (int)(((i - 1) / catwidth * 2 + 1) * gridcen), i,
-		   gg.color.catgate);
+        /* p2c: log.text, line 12291:
+         * Note: Using % for possibly-negative arguments [317] */
+        udrawgatec((int)(((i - 1) % catwidth * 2 + 1) * gridcen),
+                   (int)(((i - 1) / catwidth * 2 + 1) * gridcen), i,
+                   gg.color.catgate);
       }
-_L1:
+    _L1:
       Result = i;
     }
   }
-  if (!loadit)
-    return count;
-  if (found)
-    return Result;
+  if (!loadit) return count;
+  if (found) return Result;
   beginerror();
   printf("Can't find gate \"%s\"\n", n);
   enderror();
   Result = 0;
-  if (!gg.initdone)
-    _Escape(0);
+  if (!gg.initdone) _Escape(0);
   return Result;
 }
 
 #undef maxvars
 
-
-
 Static short readlibrary(n)
 Char *n;
-{
-  return (readlibrary_at(n, 1, true));
-}
-
+{ return (readlibrary_at(n, 1, true)); }
 
 Static Void getgate(name, gtype)
 Char *name;
 short *gtype;
-{
-  *gtype = readlibrary(name);
-}
-
+{ *gtype = readlibrary(name); }
 
 Static Void getgategroup(grp)
 na_strlist *grp;
@@ -12801,29 +11402,27 @@ na_strlist *grp;
     l1 = l1->next;
   }
   if (count != 0) {
-    if (count > maxkinds)
-      count = maxkinds;
+    if (count > maxkinds) count = maxkinds;
     pos = 0;
     do {
       pos++;
       if (count > catwidth) {
-	done = ((pos - 1) % catwidth == 0);
-/* p2c: log.text, line 12346:
- * Note: Using % for possibly-negative arguments [317] */
+        done = ((pos - 1) % catwidth == 0);
+        /* p2c: log.text, line 12346:
+         * Note: Using % for possibly-negative arguments [317] */
       } else
-	done = ((pos - 1) / catwidth == (pos + count - 2) / catwidth);
+        done = ((pos - 1) / catwidth == (pos + count - 2) / catwidth);
       for (i = pos - 1; i <= pos + count - 2; i++) {
-	if (kind[i] != NULL)
-	  done = false;
+        if (kind[i] != NULL) done = false;
       }
     } while (!(done || pos + count > maxkinds));
     if (done) {
       if (count <= catwidth) {
-	cb = (catboxrec *)Malloc(sizeof(catboxrec));
-	cb->pos = pos;
-	cb->count = count;
-	cb->next = catboxes;
-	catboxes = cb;
+        cb = (catboxrec *)Malloc(sizeof(catboxrec));
+        cb->pos = pos;
+        cb->count = count;
+        cb->next = catboxes;
+        catboxes = cb;
       }
     } else
       pos = 1;
@@ -12837,14 +11436,7 @@ na_strlist *grp;
   strlist_empty(&grp);
 }
 
-
-#define nummap          "0.,+123-456*789/.()^"
-
-
-
-
-
-
+#define nummap "0.,+123-456*789/.()^"
 
 Static Void showpinname(g, i, c, name)
 log_grec *g;
@@ -12863,11 +11455,11 @@ Char *name;
     for (j = 0; j < FORLIM; j++) {
       j2 = strposc(nummap, name[j], 1L);
       if (j2 > 0)
-	sprintf(buf + strlen(buf), "%c", j2 + 127);
+        sprintf(buf + strlen(buf), "%c", j2 + 127);
       else if (isupper(name[j]))
-	sprintf(buf + strlen(buf), "%c", name[j] + 103);
+        sprintf(buf + strlen(buf), "%c", name[j] + 103);
       else
-	small = false;
+        small = false;
     }
   } else
     small = false;
@@ -12884,27 +11476,24 @@ Char *name;
   x = g->pinpos[i - 1].x * gg.scale - gg.xoff;
   y = g->pinpos[i - 1].y * gg.scale - gg.yoff;
   w = m_strwidth(logfont_lfont, buf);
-/* p2c: log.text, line 12424:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 12424:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_color((long)c);
   if (c == gg.color.backgr)
     m_fillrect(x - w / 2L - 1, (long)(y + y1), x + w / 2L + 1, (long)(y + y2));
   else {
-/* p2c: log.text, line 12430:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 12430:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     m_centerstr((long)x, (long)(y + y0), logfont_lfont, buf);
   }
 }
 
 #undef nummap
 
-
-#define spc             12
-#define xdiff           30
-#define ydiff           20
-#define border          3
-
-
+#define spc 12
+#define xdiff 30
+#define ydiff 20
+#define border 3
 
 Static Void showgateinfo(info, g)
 na_strlist *info;
@@ -12920,10 +11509,9 @@ log_grec *g;
   l1 = info;
   while (l1 != NULL) {
     i = m_strwidth(logfont_lfont, l1->s);
-/* p2c: log.text, line 12451:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-    if (i > width)
-      width = i;
+    /* p2c: log.text, line 12451:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    if (i > width) width = i;
     height += spc;
     l1 = l1->next;
   }
@@ -12935,15 +11523,15 @@ log_grec *g;
     gy = g->y * gg.scale - gg.yoff;
     z = g->rot;
     WITH = g->kind;
-    gx1 = gx + (WITH->x1 * log_rotxx[z] + WITH->y1 * log_rotyx[z]) *
-	       gg.scale / log_scale0;
-    gx2 = gx + (WITH->x2 * log_rotxx[z] + WITH->y2 * log_rotyx[z]) *
-	       gg.scale / log_scale0;
+    gx1 = gx + (WITH->x1 * log_rotxx[z] + WITH->y1 * log_rotyx[z]) * gg.scale /
+                   log_scale0;
+    gx2 = gx + (WITH->x2 * log_rotxx[z] + WITH->y2 * log_rotyx[z]) * gg.scale /
+                   log_scale0;
     sortshints(&gx1, &gx2);
-    gy1 = gy + (WITH->x1 * log_rotxy[z] + WITH->y1 * log_rotyy[z]) *
-	       gg.scale / log_scale0;
-    gy2 = gy + (WITH->x2 * log_rotxy[z] + WITH->y2 * log_rotyy[z]) *
-	       gg.scale / log_scale0;
+    gy1 = gy + (WITH->x1 * log_rotxy[z] + WITH->y1 * log_rotyy[z]) * gg.scale /
+                   log_scale0;
+    gy2 = gy + (WITH->x2 * log_rotxy[z] + WITH->y2 * log_rotyy[z]) * gg.scale /
+                   log_scale0;
     sortshints(&gy1, &gy2);
     gx1 -= 2;
     gx2 += 2;
@@ -12968,18 +11556,18 @@ log_grec *g;
 
     if (false) {
       if (gx < across / 3)
-	mx = (gx2 + across - width) / 2;
+        mx = (gx2 + across - width) / 2;
       else if (gx > across * 2 / 3 || (gy >= baseline / 3 && gy <= baseline))
-	mx = (gx1 - width) / 2;
+        mx = (gx1 - width) / 2;
       else
-	mx = (across - width) / 2;
+        mx = (across - width) / 2;
       mx = P_imax2(P_imin2((long)mx, across - width), 0L);
       if (gy < baseline / 3)
-	my = (gy2 + baseline - height) / 2;
+        my = (gy2 + baseline - height) / 2;
       else if (gy > baseline * 2 / 3 || (gx >= across / 3 && gx <= across))
-	my = (gy1 - height) / 2;
+        my = (gy1 - height) / 2;
       else
-	my = (baseline - height) / 2;
+        my = (baseline - height) / 2;
       my = P_imax2(P_imin2((long)my, baseline - height), 0L);
     }
 
@@ -13007,8 +11595,8 @@ log_grec *g;
   y = my + border;
   l1 = info;
   while (l1 != NULL) {
-/* p2c: log.text, line 12541:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 12541:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     m_drawstr((long)(mx + border), (long)y, logfont_lfont, l1->s);
     y += spc;
     m_color((long)definetextcolor);
@@ -13021,8 +11609,6 @@ log_grec *g;
 #undef xdiff
 #undef ydiff
 #undef border
-
-
 
 Static Void showgatedef(k, g)
 log_krec *k;
@@ -13037,8 +11623,7 @@ log_grec *g;
     gg.actflag = false;
     send_gengate(g, "SHOWPINS");
   }
-  if (gg.actstrlist == NULL)
-    send_genkind(k, "DUMPKIND");
+  if (gg.actstrlist == NULL) send_genkind(k, "DUMPKIND");
   if (gg.actstrlist == NULL) {
     sprintf(STR1, "No definition available for gate %s", k->name);
     l1 = strlist_append(&gg.actstrlist, STR1);
@@ -13046,11 +11631,7 @@ log_grec *g;
   showgateinfo(gg.actstrlist, g);
 }
 
-
-
-
-Static Void gatedefinitioncommand()
-{
+Static Void gatedefinitioncommand() {
   long i;
   Char STR1[256];
 
@@ -13058,40 +11639,31 @@ Static Void gatedefinitioncommand()
     clearfunc();
     do {
       do {
-	beginbottom();
-	m_alpha_on();
-	nk_gotoxy(0, txdown - 1);
-	printf("Select a gate to view its simulator definition.");
-	do {
-	  pass();
-	  trykbd();
-	  pen();
-	  m_alpha_on();
-	} while (!(gg.t.dn || *gg.func != '\0'));
-	endbottom();
-	scroll();
+        beginbottom();
+        m_alpha_on();
+        nk_gotoxy(0, txdown - 1);
+        printf("Select a gate to view its simulator definition.");
+        do {
+          pass();
+          trykbd();
+          pen();
+          m_alpha_on();
+        } while (!(gg.t.dn || *gg.func != '\0'));
+        endbottom();
+        scroll();
       } while (!(gg.t.dn || *gg.func != '\0'));
       if (*gg.func == '\0') {
-	closergate(gg.gridx, gg.gridy);
-	if (gg.neargate != NULL)
-	  showgatedef(gg.neargate->kind, gg.neargate);
+        closergate(gg.gridx, gg.gridy);
+        if (gg.neargate != NULL) showgatedef(gg.neargate->kind, gg.neargate);
       } else
-	gg.neargate = NULL;
+        gg.neargate = NULL;
     } while (gg.neargate != NULL);
     return;
   }
   i = readlibrary(strupper(STR1, gg.funcarg));
   clearfunc();
-  if (i != 0)
-    showgatedef(kind[i - 1], NULL);
+  if (i != 0) showgatedef(kind[i - 1], NULL);
 }
-
-
-
-
-
-
-
 
 /*================  LISTLIBRARY  =================*/
 /*=                                              =*/
@@ -13109,11 +11681,9 @@ Char *Result, *s;
   Char s2[256];
 
   *s2 = '\0';
-  for (i = strlen(s) - 1; i >= 0; i--)
-    sprintf(s2 + strlen(s2), "%c", s[i]);
+  for (i = strlen(s) - 1; i >= 0; i--) sprintf(s2 + strlen(s2), "%c", s[i]);
   return strcpy(Result, s2);
 }
-
 
 Static librstrrec *findlibrstr(name_)
 Char *name_;
@@ -13134,17 +11704,15 @@ Char *name_;
   return lsp;
 }
 
-
-#define maxmaxi         12
-#define maxmaxj         45
-#define huge_           30000
-
+#define maxmaxi 12
+#define maxmaxj 45
+#define huge_ 30000
 
 /* Local variables for listlibrary: */
 struct LOC_listlibrary {
   short maxi, maxj;
   short karr[maxmaxi + 1][maxmaxj];
-} ;
+};
 
 Local short kfunc(i, j, LINK)
 short *i, *j;
@@ -13170,9 +11738,7 @@ struct LOC_listlibrary *LINK;
     return (LINK->karr[*i][*j - 1]);
 }
 
-
-Static Void listlibrary()
-{
+Static Void listlibrary() {
   struct LOC_listlibrary V;
   short i, j, ii, jj, k, nn0, nn;
   librstrrec *lsp;
@@ -13189,33 +11755,31 @@ Static Void listlibrary()
     clearshowalpha();
     printf("Listing of gates ");
     if (librgroupnames[curlistgroup] != NULL &&
-	strlen(librgroupnames[curlistgroup]) <= txacross - 26)
+        strlen(librgroupnames[curlistgroup]) <= txacross - 26)
       fputs(strcjust(STR1, librgroupnames[curlistgroup], txacross - 26L),
-	    stdout);
+            stdout);
     else
       printf("%*c", txacross - 26, ' ');
     printf("Group%2d\n", curlistgroup);
     FORLIM = V.maxi;
     for (i = 0; i <= FORLIM; i++) {
       FORLIM1 = V.maxj;
-      for (j = 0; j < FORLIM1; j++)
-	V.karr[i][j] = 0;
+      for (j = 0; j < FORLIM1; j++) V.karr[i][j] = 0;
     }
     i = 0;
     j = 1;
     nn = nn0;
     do {
       if (indexgroup[nn - 1] == curlistgroup) {
-	V.karr[i][j - 1] = nn;
-	nk_gotoxy(i * 10 + 2, j + 1);
-	if (P_getbits_UB(loadedgates, nn - 1, 0, 3))
-	  putchar(chryellow);
-	printf("%s%c", index_[nn - 1], chrgreen);
-	j++;
-	if (j > V.maxj) {
-	  j = 1;
-	  i++;
-	}
+        V.karr[i][j - 1] = nn;
+        nk_gotoxy(i * 10 + 2, j + 1);
+        if (P_getbits_UB(loadedgates, nn - 1, 0, 3)) putchar(chryellow);
+        printf("%s%c", index_[nn - 1], chrgreen);
+        j++;
+        if (j > V.maxj) {
+          j = 1;
+          i++;
+        }
       }
       nn++;
     } while (i <= V.maxi && nn <= idxsize);
@@ -13225,128 +11789,122 @@ Static Void listlibrary()
       k = kfunc(&i, &j, &V);
       lsp = NULL;
       if (k > 0) {
-	if (k < huge_) {
-	  lsp = findlibrstr(index_[k - 1]);
-	  if (lsp != NULL) {
-	    nk_gotoxy(0, txdown - 1);
-	    printf("%.*s", txacross, lsp->str);
-	  }
-	}
-	nk_gotoxy(i * 10 + 2, j + 1);
-	if (k < huge_) {
-	  if (P_getbits_UB(loadedgates, k - 1, 0, 3))
-	    putchar(chryellow);
-	  printf("%c%s%c%c", chrinverse, index_[k - 1], chrgreen, chrplain);
-	}
+        if (k < huge_) {
+          lsp = findlibrstr(index_[k - 1]);
+          if (lsp != NULL) {
+            nk_gotoxy(0, txdown - 1);
+            printf("%.*s", txacross, lsp->str);
+          }
+        }
+        nk_gotoxy(i * 10 + 2, j + 1);
+        if (k < huge_) {
+          if (P_getbits_UB(loadedgates, k - 1, 0, 3)) putchar(chryellow);
+          printf("%c%s%c%c", chrinverse, index_[k - 1], chrgreen, chrplain);
+        }
       } else {
-	switch (k) {
+        switch (k) {
+          case -1:
+            /* blank case */
+            break;
 
-	case -1:
-	  /* blank case */
-	  break;
+          case -2:
+            nk_gotoxy(49, txdown);
+            printf("%cquit%c.", chrinverse, chrplain);
+            break;
 
-	case -2:
-	  nk_gotoxy(49, txdown);
-	  printf("%cquit%c.", chrinverse, chrplain);
-	  break;
+          case -3:
+            nk_gotoxy(0, txdown);
+            printf("%c+%c", chrinverse, chrplain);
+            break;
 
-	case -3:
-	  nk_gotoxy(0, txdown);
-	  printf("%c+%c", chrinverse, chrplain);
-	  break;
-
-	case -4:
-	  nk_gotoxy(18, txdown);
-	  printf("%c-%c", chrinverse, chrplain);
-	  break;
-	}
+          case -4:
+            nk_gotoxy(18, txdown);
+            printf("%c-%c", chrinverse, chrplain);
+            break;
+        }
       }
       if (gg.t.near_ && gg.t.inalpha)
-	nk_gotoxy(gg.t.ax, gg.t.ay);
+        nk_gotoxy(gg.t.ax, gg.t.ay);
       else
-	noblink();
+        noblink();
       do {
-	pass();
-	pen();
+        pass();
+        pen();
       } while (!(pollkbd2() || gg.t.dn || k != kfunc(&ii, &jj, &V)));
       remcursor();
       if (k > 0) {
-	if (k < huge_) {
-	  if (lsp != NULL) {
-	    nk_gotoxy(0, txdown - 1);
-	    putchar('\t');
-	  }
-	  nk_gotoxy(i * 10 + 2, j + 1);
-	  if (P_getbits_UB(loadedgates, k - 1, 0, 3))
-	    putchar(chryellow);
-	  printf("%s%c", index_[k - 1], chrgreen);
-	}
+        if (k < huge_) {
+          if (lsp != NULL) {
+            nk_gotoxy(0, txdown - 1);
+            putchar('\t');
+          }
+          nk_gotoxy(i * 10 + 2, j + 1);
+          if (P_getbits_UB(loadedgates, k - 1, 0, 3)) putchar(chryellow);
+          printf("%s%c", index_[k - 1], chrgreen);
+        }
       } else {
-	switch (k) {
+        switch (k) {
+          case -1:
+            /* blank case */
+            break;
 
-	case -1:
-	  /* blank case */
-	  break;
+          case -2:
+            nk_gotoxy(49, txdown);
+            printf("quit.");
+            break;
 
-	case -2:
-	  nk_gotoxy(49, txdown);
-	  printf("quit.");
-	  break;
+          case -3:
+            nk_gotoxy(0, txdown);
+            putchar('+');
+            break;
 
-	case -3:
-	  nk_gotoxy(0, txdown);
-	  putchar('+');
-	  break;
-
-	case -4:
-	  nk_gotoxy(18, txdown);
-	  putchar('-');
-	  break;
-	}
+          case -4:
+            nk_gotoxy(18, txdown);
+            putchar('-');
+            break;
+        }
       }
     } while (!(pollkbd2() || gg.t.dn));
     ch = '\0';
-    if (pollkbd2())
-      ch = inkey2();
+    if (pollkbd2()) ch = inkey2();
     if (gg.t.dn) {
       if (k >= huge_)
-	ch = '\003';
+        ch = '\003';
       else if (k > 0) {
-	if (readlibrary(index_[k - 1]) != 0) {
-	  remcursor();
-	  nk_gotoxy(i * 10 + 2, j + 1);
-	  printf("%c%s%c", chryellow, index_[k - 1], chrgreen);
-	}
+        if (readlibrary(index_[k - 1]) != 0) {
+          remcursor();
+          nk_gotoxy(i * 10 + 2, j + 1);
+          printf("%c%s%c", chryellow, index_[k - 1], chrgreen);
+        }
       } else {
-	switch (k) {
+        switch (k) {
+          case -1:
+          case -2:
+            ch = '\003';
+            break;
 
-	case -1:
-	case -2:
-	  ch = '\003';
-	  break;
+          case -3:
+            ch = '+';
+            break;
 
-	case -3:
-	  ch = '+';
-	  break;
-
-	case -4:
-	  ch = '-';
-	  break;
-	}
+          case -4:
+            ch = '-';
+            break;
+        }
       }
     }
     if (ch >= '0' && ch <= '8')
       curlistgroup = ch - 48;
     else if (ch == '\b' || ch == '-') {
       curlistgroup = (curlistgroup + 8) % 9;
-/* p2c: log.text, line 12836:
- * Note: Using % for possibly-negative arguments [317] */
+      /* p2c: log.text, line 12836:
+       * Note: Using % for possibly-negative arguments [317] */
     } else if (ch == '\034' || ch == '+') {
       curlistgroup = (curlistgroup + 1) % 9;
-/* p2c: log.text, line 12838:
- * Note: Using % for possibly-negative arguments [317] */
+      /* p2c: log.text, line 12838:
+       * Note: Using % for possibly-negative arguments [317] */
     } else if (ch == '\003' || ch == '\015' || ch == 'Q' || ch == 'q' ||
-	       (ch & 255) == 171 || ch == ' ')
+               (ch & 255) == 171 || ch == ' ')
       exitflag = true;
   } while (!exitflag);
   clearscreen();
@@ -13357,8 +11915,6 @@ Static Void listlibrary()
 #undef maxmaxi
 #undef maxmaxj
 #undef huge_
-
-
 
 /*=================  GATECATALOG  ================*/
 /*=                                              =*/
@@ -13386,8 +11942,7 @@ boolean librmode;
   do {
     refrflag = false;
     if (librmode) {
-      if (ch >= '0' && ch <= '8')
-	curlistgroup = ch - 48;
+      if (ch >= '0' && ch <= '8') curlistgroup = ch - 48;
       listlibrary();
       librmode = false;
     } else {
@@ -13398,134 +11953,126 @@ boolean librmode;
       clearalpha();
       pen();
       do {
-	ch = '\0';
-	x0 = gg.t.x / (gridcen * 2);
-	y0 = gg.t.y / (gridcen * 2);
-	*bot1 = '\0';
-	*bot2 = '\0';
-	*bot3 = '\0';
-	botflag = false;
-	if ((unsigned)x0 < catwidth && y0 >= 0 &&
-	    y0 * catwidth + x0 < maxkinds &&
-	    gg.t.near_ && kind[y0 * catwidth + x0] != NULL) {
-	  flag = true;
-	  nm[8] = '\0';
-	  k = kind[y0 * catwidth + x0];
-	  strrtrim(strcpy(nm, k->name));
-	  w = m_strwidth(logfont_lfont, nm);
-/* p2c: log.text, line 12903:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	  x00 = (x0 * 2 + 1) * gridcen - w / 2;
-	  y00 = (y0 + 1) * gridcen * 2 + 2;
-	  remcursor();
-	  /*  m_getcpicture(imax(x00-2,0), y00-2, x00+w+4, y00+10, pic);
-	    m_color(gg.color.backgr);
-	    m_fillrect(x00-2, y00-2, x00+w+4, y00+10);
-	    m_color(gg.color.selword);
-	    m_centerstr((x0*2+1)*gridcen, y00, logfont_lfont, nm);*/
-	  m_colormode((long)m_xor);
-	  m_color((long)gg.color.selword);
-/* p2c: log.text, line 12914:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	  m_centerstr((x0 * 2L + 1) * gridcen, (long)y00, logfont_lfont, nm);
-	  m_colormode((long)m_normal);
-	  lp = k->lbl;
-	  while (lp != NULL && lp->kind != '\0')
-	    lp = lp->next;
-	  while (lp != NULL && *bot3 == '\0') {
-	    if (*bot1 == '\0')
-	      strcpy(bot1, lp->s);
-	    else if (*bot2 == '\0')
-	      strcpy(bot2, lp->s);
-	    else if (*bot3 == '\0')
-	      strcpy(bot3, lp->s);
-	    lp = lp->next;
-	  }
-	  if (*bot1 == '\0') {
-	    lsp = findlibrstr(k->name);
-	    if (lsp != NULL)
-	      strcpy(bot1, lsp->str);
-	  }
-	  bottime = timers_sysclock();
-	} else
-	  flag = false;
-	do {
-	  x = gg.t.x;
-	  y = gg.t.y;
-	  pass();
-	  pen();
-	  if (*bot1 != '\0' && !botflag) {
-	    if (labs(x - gg.t.x) > 10 || labs(y - gg.t.y) > 10)
-	      bottime = timers_sysclock();
-	    else if (timers_sysclock() > bottime + 10) {
-	      m_color((long)gg.color.selword);
-	      m_centerstr(across / 2L, down - 27L, NULL, bot1);
-	      if (*bot2 != '\0')
-		m_centerstr(across / 2L, down - 17L, NULL, bot2);
-	      if (*bot3 != '\0')
-		m_centerstr(across / 2L, down - 7L, NULL, bot3);
-	      botflag = true;
-	    }
-	  }
-	  if (pollkbd2())
-	    ch = inkey2();
-	  x1 = gg.t.x / (gridcen * 2);
-	  y1 = gg.t.y / (gridcen * 2);
-	} while (!gg.t.dn && gg.t.near_ && x0 == x1 && y0 == y1 && ch == '\0');
-	if (flag) {
-	  remcursor();
-	  /*  m_putcpicture(imax(x00-2,0), y00-2, pic);
-	    m_disposepicture(pic);  */
-	  m_colormode((long)m_xor);
-	  m_color((long)gg.color.selword);
-/* p2c: log.text, line 12972:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	  m_centerstr((x0 * 2L + 1) * gridcen, (long)y00, logfont_lfont, nm);
-	  m_colormode((long)m_normal);
-	  m_color((long)gg.color.backgr);
-	  if (botflag) {
-	    m_centerstr(across / 2L, down - 27L, NULL, bot1);
-	    if (*bot2 != '\0')
-	      m_centerstr(across / 2L, down - 17L, NULL, bot2);
-	    if (*bot3 != '\0')
-	      m_centerstr(across / 2L, down - 7L, NULL, bot3);
-	  }
-	}
-	if (gg.t.dn) {
-	  if ((x < 40 || x >= across - 37) && y >= down - 32)
-	    librmode = true;
-	  else
-	    done = true;
-	}
-	if (ch == 251 || ch == 250 || ch == ' ') {
-/* p2c: log.text, line 12989: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 12989: Note: Character >= 128 encountered [281] */
-	  refrflag = true;
-	} else if (ch == '\003' || ch == 171 || ch == 'Q' || ch == 'q')
-	  done = true;
-	else if ((ch >= '0' && ch <= '8') || ch == 'L' || ch == 'l')
-	  librmode = true;
-	else if (ch == 'D' || ch == 'd') {
-	  if ((unsigned)x0 < catwidth && y0 >= 0 &&
-	      y0 * catwidth + x0 < maxkinds &&
-	      gg.t.near_ && kind[y0 * catwidth + x0] != NULL)
-	    showgatedef(kind[y0 * catwidth + x0], NULL);
-	}
+        ch = '\0';
+        x0 = gg.t.x / (gridcen * 2);
+        y0 = gg.t.y / (gridcen * 2);
+        *bot1 = '\0';
+        *bot2 = '\0';
+        *bot3 = '\0';
+        botflag = false;
+        if ((unsigned)x0 < catwidth && y0 >= 0 &&
+            y0 * catwidth + x0 < maxkinds && gg.t.near_ &&
+            kind[y0 * catwidth + x0] != NULL) {
+          flag = true;
+          nm[8] = '\0';
+          k = kind[y0 * catwidth + x0];
+          strrtrim(strcpy(nm, k->name));
+          w = m_strwidth(logfont_lfont, nm);
+          /* p2c: log.text, line 12903:
+           * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+          x00 = (x0 * 2 + 1) * gridcen - w / 2;
+          y00 = (y0 + 1) * gridcen * 2 + 2;
+          remcursor();
+          /*  m_getcpicture(imax(x00-2,0), y00-2, x00+w+4, y00+10,
+            pic); m_color(gg.color.backgr); m_fillrect(x00-2, y00-2,
+            x00+w+4, y00+10); m_color(gg.color.selword);
+            m_centerstr((x0*2+1)*gridcen, y00, logfont_lfont, nm);*/
+          m_colormode((long)m_xor);
+          m_color((long)gg.color.selword);
+          /* p2c: log.text, line 12914:
+           * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+          m_centerstr((x0 * 2L + 1) * gridcen, (long)y00, logfont_lfont, nm);
+          m_colormode((long)m_normal);
+          lp = k->lbl;
+          while (lp != NULL && lp->kind != '\0') lp = lp->next;
+          while (lp != NULL && *bot3 == '\0') {
+            if (*bot1 == '\0')
+              strcpy(bot1, lp->s);
+            else if (*bot2 == '\0')
+              strcpy(bot2, lp->s);
+            else if (*bot3 == '\0')
+              strcpy(bot3, lp->s);
+            lp = lp->next;
+          }
+          if (*bot1 == '\0') {
+            lsp = findlibrstr(k->name);
+            if (lsp != NULL) strcpy(bot1, lsp->str);
+          }
+          bottime = timers_sysclock();
+        } else
+          flag = false;
+        do {
+          x = gg.t.x;
+          y = gg.t.y;
+          pass();
+          pen();
+          if (*bot1 != '\0' && !botflag) {
+            if (labs(x - gg.t.x) > 10 || labs(y - gg.t.y) > 10)
+              bottime = timers_sysclock();
+            else if (timers_sysclock() > bottime + 10) {
+              m_color((long)gg.color.selword);
+              m_centerstr(across / 2L, down - 27L, NULL, bot1);
+              if (*bot2 != '\0')
+                m_centerstr(across / 2L, down - 17L, NULL, bot2);
+              if (*bot3 != '\0')
+                m_centerstr(across / 2L, down - 7L, NULL, bot3);
+              botflag = true;
+            }
+          }
+          if (pollkbd2()) ch = inkey2();
+          x1 = gg.t.x / (gridcen * 2);
+          y1 = gg.t.y / (gridcen * 2);
+        } while (!gg.t.dn && gg.t.near_ && x0 == x1 && y0 == y1 && ch == '\0');
+        if (flag) {
+          remcursor();
+          /*  m_putcpicture(imax(x00-2,0), y00-2, pic);
+            m_disposepicture(pic);  */
+          m_colormode((long)m_xor);
+          m_color((long)gg.color.selword);
+          /* p2c: log.text, line 12972:
+           * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+          m_centerstr((x0 * 2L + 1) * gridcen, (long)y00, logfont_lfont, nm);
+          m_colormode((long)m_normal);
+          m_color((long)gg.color.backgr);
+          if (botflag) {
+            m_centerstr(across / 2L, down - 27L, NULL, bot1);
+            if (*bot2 != '\0') m_centerstr(across / 2L, down - 17L, NULL, bot2);
+            if (*bot3 != '\0') m_centerstr(across / 2L, down - 7L, NULL, bot3);
+          }
+        }
+        if (gg.t.dn) {
+          if ((x < 40 || x >= across - 37) && y >= down - 32)
+            librmode = true;
+          else
+            done = true;
+        }
+        if (ch == 251 || ch == 250 || ch == ' ') {
+          /* p2c: log.text, line 12989: Note: Character >= 128
+           * encountered [281] */
+          /* p2c: log.text, line 12989: Note: Character >= 128
+           * encountered [281] */
+          refrflag = true;
+        } else if (ch == '\003' || ch == 171 || ch == 'Q' || ch == 'q')
+          done = true;
+        else if ((ch >= '0' && ch <= '8') || ch == 'L' || ch == 'l')
+          librmode = true;
+        else if (ch == 'D' || ch == 'd') {
+          if ((unsigned)x0 < catwidth && y0 >= 0 &&
+              y0 * catwidth + x0 < maxkinds && gg.t.near_ &&
+              kind[y0 * catwidth + x0] != NULL)
+            showgatedef(kind[y0 * catwidth + x0], NULL);
+        }
       } while (!(done || librmode || refrflag));
       oo = gg.t.off;
       pen();
       pen();
       if (done && gg.t.depressed && !oo && !gg.t.off && flag) {
-	refrscreen();
-	addgate(y0 * catwidth + x0 + 1, 0, NULL);
+        refrscreen();
+        addgate(y0 * catwidth + x0 + 1, 0, NULL);
       }
     }
   } while (!done);
 }
-
-
-
-
 
 /*==================  VLSIMODE  ==================*/
 /*=                                              =*/
@@ -13582,9 +12129,6 @@ $end$*/
   vlsimode[gg.curpage - 1] = vlsi;
 }
 
-
-
-
 /*==================  REALSTR  ===================*/
 /*=                                              =*/
 /*=  Convert a real number to a string.          =*/
@@ -13604,8 +12148,8 @@ short p;
     sprintf(s, "% .13E", r);
     i = strlen(s) + 1;
     s[i - 1] = '\0';
-/* p2c: log.text, line 13092:
- * Note: Modification of string length may translate incorrectly [146] */
+    /* p2c: log.text, line 13092:
+     * Note: Modification of string length may translate incorrectly [146] */
     i = strposc(s, 'E', 1L) - 1;
     j = strposc(s, '.', 1L);
     while (s[i - 1] == '0' || (p != 0 && i > j + p)) {
@@ -13618,8 +12162,7 @@ short p;
     }
     while (strlen(s) > i + 3 && s[i + 2] == '0')
       strcpy_overlap(s + i + 2, s + i + 3);
-    if (s[i + 1] == '+')
-      strcpy_overlap(s + i + 1, s + i + 2);
+    if (s[i + 1] == '+') strcpy_overlap(s + i + 1, s + i + 2);
     return strcpy(Result, strltrim(s));
   }
   if (p == 0) {
@@ -13628,23 +12171,20 @@ short p;
     do {
       i--;
     } while (s[i - 1] == '0');
-    if (s[i - 1] == '.')
-      i--;
+    if (s[i - 1] == '.') i--;
     s[i] = '\0';
-/* p2c: log.text, line 13120:
- * Note: Modification of string length may translate incorrectly [146] */
+    /* p2c: log.text, line 13120:
+     * Note: Modification of string length may translate incorrectly [146] */
     return strcpy(Result, strltrim(s));
   }
   sprintf(s, "%25.*f", p, r);
   i = strlen(s) + 1;
   s[i - 1] = '\0';
-/* zfprintf(stdout, "realstr:%lf p: %d s:  %s\n", r, p, s); **MDG** */
-/* p2c: log.text, line 13125:
- * Note: Modification of string length may translate incorrectly [146] */
+  /* zfprintf(stdout, "realstr:%lf p: %d s:  %s\n", r, p, s); **MDG** */
+  /* p2c: log.text, line 13125:
+   * Note: Modification of string length may translate incorrectly [146] */
   return strcpy(Result, strltrim(s));
 }
-
-
 
 /*=================  REALUNIT  ===================*/
 /*=                                              =*/
@@ -13662,7 +12202,7 @@ boolean mu;
   Char s[81], STR1[81];
   Char STR2[162];
 
-/* zfprintf(stdout, "Realunit r: %le\n ", r);  ***MDG** */
+  /* zfprintf(stdout, "Realunit r: %le\n ", r);  ***MDG** */
   *s = '\0';
   if (r == 0 || fabs(r) >= 1.0e15 || fabs(r) < 1.0e-16)
     *s = '\0';
@@ -13673,7 +12213,7 @@ boolean mu;
     strcpy(s, "G");
     r /= 1e9;
   } else if (fabs(r) >= 1e6) {
-    strcpy(s, "Meg");  
+    strcpy(s, "Meg");
     r /= 1e6;
   } else if (fabs(r) >= 1e3) {
     strcpy(s, "K");
@@ -13698,32 +12238,25 @@ boolean mu;
   }
   sprintf(s, "%s%s", realstr(STR1, r, p), strcpy(STR2, s));
   sprintf(Result, "%s%s", s, u);
-/* zfprintf(stdout, "realunit Result: %s\n", Result); ***MDG** */ 
+  /* zfprintf(stdout, "realunit Result: %s\n", Result); ***MDG** */
   return Result;
 }
 
 /* was Static Void, cause gcc problems in some releases */
 
-extern void prealunit(r, p, u, s)
-double r;
+extern void prealunit(r, p, u, s) double r;
 short p;
 Char *u;
 Char *s;
-{
-  realunit(s, r, p, u, false);
-}
+{ realunit(s, r, p, u, false); }
 
 /* was Static Void, cause gcc problems in some releases */
 
-extern void prealunit2(r, p, u, s)
-double r;
+extern void prealunit2(r, p, u, s) double r;
 short p;
 Char *u;
 Char *s;
-{
-  realunit(s, r, p, u, true);
-}
-
+{ realunit(s, r, p, u, true); }
 
 /* Local variables for editattrs: */
 struct LOC_editattrs {
@@ -13732,12 +12265,12 @@ struct LOC_editattrs {
   log_kattrrec *kattr;
   na_strlist *lbl;
   Char name[256];
-  Void (*chproc) PV();
+  Void(*chproc) PV();
   log_tool *tool;
   log_grec *gate;
   log_nrec *node;
   short acty, p, ybase;
-} ;
+};
 
 Local Void drawlabelline(i, LINK)
 long i;
@@ -13748,15 +12281,12 @@ struct LOC_editattrs *LINK;
   long FORLIM;
 
   l1 = LINK->lbl;
-  while (l1 != NULL && l1->kind != '\0')
-    l1 = l1->next;
+  while (l1 != NULL && l1->kind != '\0') l1 = l1->next;
   FORLIM = i + LINK->ybase;
   for (j = 1; j <= FORLIM; j++) {
-    if (l1 != NULL)
-      l1 = l1->next;
+    if (l1 != NULL) l1 = l1->next;
   }
-  if (l1 != NULL)
-    nc_putStr(0, (int)i, l1->s);
+  if (l1 != NULL) nc_putStr(0, (int)i, l1->s);
 }
 
 Local Void eraselabelline(i, LINK)
@@ -13776,8 +12306,7 @@ struct LOC_editattrs *LINK;
   remcursor();
   nc_putStr(txacross - strlen(LINK->name), 0, LINK->name);
   FORLIM = txdown;
-  for (i = 0; i <= FORLIM; i++)
-    drawlabelline((long)i, LINK);
+  for (i = 0; i <= FORLIM; i++) drawlabelline((long)i, LINK);
 }
 
 Local Void drawvalue(i, highlight, LINK)
@@ -13791,82 +12320,78 @@ struct LOC_editattrs *LINK;
   Char STR4[256];
 
   WITH = &LINK->kattr[i - 1];
-  if (WITH->y < LINK->ybase || WITH->y > LINK->ybase + txdown)
-    return;
+  if (WITH->y < LINK->ybase || WITH->y > LINK->ybase + txdown) return;
   remcursor();
   nk_gotoxy(WITH->x, WITH->y - LINK->ybase);
-  if (highlight)
-    putchar(129);
-/* p2c: log.text, line 13282: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 13282:
- * Note: WRITE statement contains color/attribute characters [203] */
+  if (highlight) putchar(129);
+  /* p2c: log.text, line 13282: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 13282:
+   * Note: WRITE statement contains color/attribute characters [203] */
   if (!LINK->gattr[i - 1].blnk) {
     switch (WITH->dtype) {
+      case 'R':
+        fputs(realstr(STR1, LINK->gattr[i - 1].UU.r, WITH->prec), stdout);
+        break;
 
-    case 'R':
-      fputs(realstr(STR1, LINK->gattr[i - 1].UU.r, WITH->prec), stdout);
-      break;
+      case 'U':
+        fputs(realunit(STR1, LINK->gattr[i - 1].UU.r, WITH->prec,
+                       WITH->UU.U82.u, false),
+              stdout);
+        break;
 
-    case 'U':
-      fputs(realunit(STR1, LINK->gattr[i - 1].UU.r, WITH->prec,
-		     WITH->UU.U82.u, false), stdout);
-      break;
+      case 'F':
+        printf("%s%s", realstr(STR1, LINK->gattr[i - 1].UU.r, WITH->prec),
+               WITH->UU.U82.u);
+        break;
 
-    case 'F':
-      printf("%s%s",
-	     realstr(STR1, LINK->gattr[i - 1].UU.r, WITH->prec),
-	     WITH->UU.U82.u);
-      break;
+      case 'I':
+        printf("%*ld", WITH->prec, LINK->gattr[i - 1].UU.U73.i1);
+        break;
 
-    case 'I':
-      printf("%*ld", WITH->prec, LINK->gattr[i - 1].UU.U73.i1);
-      break;
+      case 'H':
+        fputs(strhex(STR4, LINK->gattr[i - 1].UU.U73.i1, (long)WITH->prec),
+              stdout);
+        break;
 
-    case 'H':
-      fputs(strhex(STR4, LINK->gattr[i - 1].UU.U73.i1, (long)WITH->prec),
-	    stdout);
-      break;
+      case 'C':
+        printf("%.*s", txacross - WITH->x + 1, LINK->gattr[i - 1].UU.c);
+        break;
 
-    case 'C':
-      printf("%.*s", txacross - WITH->x + 1, LINK->gattr[i - 1].UU.c);
-      break;
+      case 'A':
+        printf("%.*s", txacross - WITH->x + 1, LINK->gattr[i - 1].UU.sp);
+        break;
 
-    case 'A':
-      printf("%.*s", txacross - WITH->x + 1, LINK->gattr[i - 1].UU.sp);
-      break;
+      case 'B':
+        if (WITH->prec == 1) {
+          if (LINK->gattr[i - 1].UU.b)
+            printf("Yes");
+          else
+            printf("No");
+        } else {
+          if (LINK->gattr[i - 1].UU.b)
+            printf("True");
+          else
+            printf("False");
+        }
+        break;
 
-    case 'B':
-      if (WITH->prec == 1) {
-	if (LINK->gattr[i - 1].UU.b)
-	  printf("Yes");
-	else
-	  printf("No");
-      } else {
-	if (LINK->gattr[i - 1].UU.b)
-	  printf("True");
-	else
-	  printf("False");
-      }
-      break;
-
-    case 'V':
-      l1 = WITH->UU.U86.v;
-      while (l1 != NULL && (long)l1->value != LINK->gattr[i - 1].UU.nv)
-	l1 = l1->next;
-      if (l1 != NULL)
-	fputs(l1->s, stdout);
-      else
-	printf("(value not found)");
-      break;
+      case 'V':
+        l1 = WITH->UU.U86.v;
+        while (l1 != NULL && (long)l1->value != LINK->gattr[i - 1].UU.nv)
+          l1 = l1->next;
+        if (l1 != NULL)
+          fputs(l1->s, stdout);
+        else
+          printf("(value not found)");
+        break;
     }
   }
-  if (WITH->x == XPOS)
-    putchar(' ');
-  LINK->gattr[i - 1].x2 = XPOS - 1;   /*from CRT*/
+  if (WITH->x == XPOS) putchar(' ');
+  LINK->gattr[i - 1].x2 = XPOS - 1; /*from CRT*/
   /*prob. no longer used*/
-/* p2c: log.text, line 13317: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 13317:
- * Note: WRITE statement contains color/attribute characters [203] */
+  /* p2c: log.text, line 13317: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 13317:
+   * Note: WRITE statement contains color/attribute characters [203] */
   printf("\t\200");
   LINK->gattr[i - 1].changed = false;
 }
@@ -13879,14 +12404,13 @@ struct LOC_editattrs *LINK;
   FORLIM = LINK->numattrs;
   for (i = 0; i < FORLIM; i++) {
     if (LINK->kattr[i].vra != 0 &&
-	LINK->kattr[i].vr != LINK->gattr[LINK->kattr[i].vra - 1].UU.nv) {
-      if (!LINK->gattr[i].supr)
-	eraselabelline((long)LINK->kattr[i].y, LINK);
+        LINK->kattr[i].vr != LINK->gattr[LINK->kattr[i].vra - 1].UU.nv) {
+      if (!LINK->gattr[i].supr) eraselabelline((long)LINK->kattr[i].y, LINK);
       LINK->gattr[i].supr = true;
     } else {
       if (LINK->gattr[i].supr) {
-	drawlabelline((long)LINK->kattr[i].y, LINK);
-	drawvalue(i + 1, false, LINK);
+        drawlabelline((long)LINK->kattr[i].y, LINK);
+        drawvalue(i + 1, false, LINK);
       }
       LINK->gattr[i].supr = false;
     }
@@ -13907,8 +12431,8 @@ struct LOC_editattrs *LINK;
     sprintf(s, "%20.0f", r / r1);
     i = strlen(s) + 1;
     s[i - 1] = '\0';
-/* p2c: log.text, line 13360:
- * Note: Modification of string length may translate incorrectly [146] */
+    /* p2c: log.text, line 13360:
+     * Note: Modification of string length may translate incorrectly [146] */
     r = strtod(s, &STR1);
     i = STR1 - s + 1;
     return (r * r1);
@@ -13927,18 +12451,17 @@ struct LOC_editattrs *LINK;
 
   WITH = &LINK->kattr[p - 1];
   switch (WITH->dtype) {
+    case 'R':
+      realstr(s, LINK->gattr[p - 1].UU.r, WITH->prec);
+      break;
 
-  case 'R':
-    realstr(s, LINK->gattr[p - 1].UU.r, WITH->prec);
-    break;
+    case 'U':
+      realunit(s, LINK->gattr[p - 1].UU.r, WITH->prec, "", false);
+      break;
 
-  case 'U':
-    realunit(s, LINK->gattr[p - 1].UU.r, WITH->prec, "", false);
-    break;
-
-  case 'F':
-    realstr(s, LINK->gattr[p - 1].UU.r, WITH->prec);
-    break;
+    case 'F':
+      realstr(s, LINK->gattr[p - 1].UU.r, WITH->prec);
+      break;
   }
   strcat(s, " ");
   i = 0;
@@ -13949,15 +12472,13 @@ struct LOC_editattrs *LINK;
     else if (isdigit(s[i - 1]))
       s[i - 1] = '0';
   } while (s[i - 1] == '.' || s[i - 1] == '+' || s[i - 1] == '0');
-  if (i > 1)
-    s[i - 2] = '1';
+  if (i > 1) s[i - 2] = '1';
   r1 = 0.0;
   readreal(s, &r1);
   return r1;
 }
 
-Local Void callconfig(proc, LINK)
-Void (*proc) PV();
+Local Void callconfig(proc, LINK) Void(*proc) PV();
 struct LOC_editattrs *LINK;
 {
   gg.actx = LINK->p;
@@ -13978,18 +12499,14 @@ struct LOC_editattrs *LINK;
   return (gg.actflag);
 }
 
-
-
-
-
 Static Void editattrs(gattr_, numattrs_, kattr_, lbl_, name_, proc, chproc_,
-		      relproc, attrstamp)
+                      relproc, attrstamp)
 log_gattrrec *gattr_;
 short numattrs_;
 log_kattrrec *kattr_;
 na_strlist *lbl_;
 Char *name_;
-Void (*proc) PV(), (*chproc_) PV(), (*relproc) PV();
+Void(*proc) PV(), (*chproc_)PV(), (*relproc)PV();
 long *attrstamp;
 {
   struct LOC_editattrs V;
@@ -14012,8 +12529,7 @@ long *attrstamp;
   V.lbl = lbl_;
   strcpy(V.name, name_);
   V.chproc = chproc_;
-  if (V.lbl == NULL)
-    return;
+  if (V.lbl == NULL) return;
   V.tool = gg.acttool;
   V.gate = gg.actgate;
   V.node = gg.actnode;
@@ -14023,8 +12539,7 @@ long *attrstamp;
   ytotal = 0;
   l1 = V.lbl;
   while (l1 != NULL) {
-    if (l1->kind == '\0')
-      ytotal++;
+    if (l1->kind == '\0') ytotal++;
     l1 = l1->next;
   }
   drawlabel(&V);
@@ -14039,21 +12554,20 @@ long *attrstamp;
   maskvalues(&V);
   FORLIM = V.numattrs;
   for (i = 1; i <= FORLIM; i++) {
-    if (!V.gattr[i - 1].supr)
-      drawvalue(i, false, &V);
+    if (!V.gattr[i - 1].supr) drawvalue(i, false, &V);
   }
   showalpha();
   if (V.numattrs == 0) {
     do {
       noblink();
       do {
-	pass();
-	pen();
+        pass();
+        pen();
       } while (!(pollkbd2() || gg.t.dn));
       if (pollkbd2())
-	ch = inkey2();
+        ch = inkey2();
       else
-	ch = '\015';
+        ch = '\015';
     } while (ch != '\003' && ch != '\015' && ch != ' ');
   } else {
     V.p = 1;
@@ -14062,485 +12576,450 @@ long *attrstamp;
     do {
       noblink();
       if (V.kattr[V.p - 1].y <= V.ybase ||
-	  V.kattr[V.p - 1].y >= V.ybase + txdown) {
-	i1 = V.ybase;
-	if (V.kattr[V.p - 1].y <= V.ybase) {
-	  V.ybase = V.kattr[V.p - 1].y - 1;
-	  if (V.p == 1)
-	    V.ybase = P_imax2(0L, (long)(V.kattr[V.p - 1].y - txdown));
-	} else {
-	  V.ybase = V.kattr[V.p - 1].y - txdown + 1;
-	  if (V.p == V.numattrs)
-	    V.ybase = P_imin2(ytotal - txdown - 1L, (long)V.kattr[V.p - 1].y);
-	}
-	if (abs(V.ybase - i1) < txdown)
-	  nc_scrollXY(0, V.ybase - i1);
-	else
-	  clearshowalpha();
-	drawlabel(&V);
-	FORLIM = V.numattrs;
-	for (i = 0; i < FORLIM; i++)
-	  V.gattr[i].supr = false;
-	maskvalues(&V);
-	FORLIM = V.numattrs;
-	for (i = 1; i <= FORLIM; i++) {
-	  if (!V.gattr[i - 1].supr)
-	    drawvalue(i, i == V.p, &V);
-	}
+          V.kattr[V.p - 1].y >= V.ybase + txdown) {
+        i1 = V.ybase;
+        if (V.kattr[V.p - 1].y <= V.ybase) {
+          V.ybase = V.kattr[V.p - 1].y - 1;
+          if (V.p == 1)
+            V.ybase = P_imax2(0L, (long)(V.kattr[V.p - 1].y - txdown));
+        } else {
+          V.ybase = V.kattr[V.p - 1].y - txdown + 1;
+          if (V.p == V.numattrs)
+            V.ybase = P_imin2(ytotal - txdown - 1L, (long)V.kattr[V.p - 1].y);
+        }
+        if (abs(V.ybase - i1) < txdown)
+          nc_scrollXY(0, V.ybase - i1);
+        else
+          clearshowalpha();
+        drawlabel(&V);
+        FORLIM = V.numattrs;
+        for (i = 0; i < FORLIM; i++) V.gattr[i].supr = false;
+        maskvalues(&V);
+        FORLIM = V.numattrs;
+        for (i = 1; i <= FORLIM; i++) {
+          if (!V.gattr[i - 1].supr) drawvalue(i, i == V.p, &V);
+        }
       } else
-	drawvalue(V.p, true, &V);
+        drawvalue(V.p, true, &V);
       do {
-	ch = '\0';
-	pass();
-	gg.actflag = false;
-	callconfig(proc, &V);
-	FORLIM = V.numattrs;
-	for (i = 1; i <= FORLIM; i++) {
-	  if (V.gattr[i - 1].changed) {
-	    stamp(attrstamp);
-	    if (!V.gattr[i - 1].supr) {
-	      drawvalue(i, i == V.p, &V);
-	      if (V.kattr[i - 1].dtype == 'V')
-		maskvalues(&V);
-	      if (V.gattr[V.p - 1].supr)
-		ch = '\037';
-	      noblink();
-	    }
-	  }
-	}
-	pen();
-	/*  if gg.t.near and (gg.t.ay <> olday) then
-	     begin
-	        i := 1;
-	        while (i <= numattrs) and (kattr^[i].y <> gg.t.ay) do
-	           i := i + 1;
-	        if (i <= numattrs) and (not gattr^[i].supr) then
-	           if i < p then
-	              ch := #31
-	           else if i > p then
-	              ch := #10;
-	     end;  */
-	if (pollkbd2())
-	  ch = inkey2();
+        ch = '\0';
+        pass();
+        gg.actflag = false;
+        callconfig(proc, &V);
+        FORLIM = V.numattrs;
+        for (i = 1; i <= FORLIM; i++) {
+          if (V.gattr[i - 1].changed) {
+            stamp(attrstamp);
+            if (!V.gattr[i - 1].supr) {
+              drawvalue(i, i == V.p, &V);
+              if (V.kattr[i - 1].dtype == 'V') maskvalues(&V);
+              if (V.gattr[V.p - 1].supr) ch = '\037';
+              noblink();
+            }
+          }
+        }
+        pen();
+        /*  if gg.t.near and (gg.t.ay <> olday) then
+             begin
+                i := 1;
+                while (i <= numattrs) and (kattr^[i].y <> gg.t.ay) do
+                   i := i + 1;
+                if (i <= numattrs) and (not gattr^[i].supr) then
+                   if i < p then
+                      ch := #31
+                   else if i > p then
+                      ch := #10;
+             end;  */
+        if (pollkbd2()) ch = inkey2();
       } while (!(ch != '\0' || gg.t.dn));
       drawvalue(V.p, false, &V);
-      if (gg.t.dn)
-	ch = '\003';
+      if (gg.t.dn) ch = '\003';
       p0 = V.p;
       understood = true;
       WITH = &V.gattr[V.p - 1];
       if (ch == '\003' || ch == ' ')
-	exitflag = true;
+        exitflag = true;
       else if ((ch & 255) != 251 && (ch & 255) != 250) {
-	if (ch == '\n') {
-	  do {
-	    V.p++;
-	  } while (V.p <= V.numattrs && V.gattr[V.p - 1].supr);
-	  if (V.p > V.numattrs)
-	    V.p = p0;
-	} else if (ch == '\037') {
-	  do {
-	    V.p--;
-	  } while (V.p >= 1 && V.gattr[V.p - 1].supr);
-	  if (V.p < 1)   /*should never happen!*/
-	    V.p = p0;
-	} else if (ch == '\034') {
-	  gg.actflag = false;
-	  gg.actflag2 = true;
-	  callconfig(relproc, &V);
-	  if (!gg.actflag) {
-	    switch (V.kattr[V.p - 1].dtype) {
+        if (ch == '\n') {
+          do {
+            V.p++;
+          } while (V.p <= V.numattrs && V.gattr[V.p - 1].supr);
+          if (V.p > V.numattrs) V.p = p0;
+        } else if (ch == '\037') {
+          do {
+            V.p--;
+          } while (V.p >= 1 && V.gattr[V.p - 1].supr);
+          if (V.p < 1) /*should never happen!*/
+            V.p = p0;
+        } else if (ch == '\034') {
+          gg.actflag = false;
+          gg.actflag2 = true;
+          callconfig(relproc, &V);
+          if (!gg.actflag) {
+            switch (V.kattr[V.p - 1].dtype) {
+              case 'R':
+              case 'U':
+              case 'F':
+                if (!WITH->blnk) {
+                  r1 = scrnincr(V.p, &V);
+                  saver = WITH->UU.r;
+                  WITH->UU.r = cleanup(WITH->UU.r + r1, r1, &V);
+                  if (tryconfig(&V)) {
+                    drawvalue(V.p, false, &V);
+                    touched = true;
+                  } else
+                    WITH->UU.r = saver;
+                }
+                break;
 
-	    case 'R':
-	    case 'U':
-	    case 'F':
-	      if (!WITH->blnk) {
-		r1 = scrnincr(V.p, &V);
-		saver = WITH->UU.r;
-		WITH->UU.r = cleanup(WITH->UU.r + r1, r1, &V);
-		if (tryconfig(&V)) {
-		  drawvalue(V.p, false, &V);
-		  touched = true;
-		} else
-		  WITH->UU.r = saver;
-	      }
-	      break;
+              case 'I':
+              case 'H':
+                if (!WITH->blnk) {
+                  WITH->UU.U73.i1++;
+                  if (tryconfig(&V)) {
+                    drawvalue(V.p, false, &V);
+                    touched = true;
+                  } else
+                    WITH->UU.U73.i1--;
+                }
+                break;
 
-	    case 'I':
-	    case 'H':
-	      if (!WITH->blnk) {
-		WITH->UU.U73.i1++;
-		if (tryconfig(&V)) {
-		  drawvalue(V.p, false, &V);
-		  touched = true;
-		} else
-		  WITH->UU.U73.i1--;
-	      }
-	      break;
+              case 'C':
+              case 'A':
+                understood = false;
+                break;
 
-	    case 'C':
-	    case 'A':
-	      understood = false;
-	      break;
+              case 'B':
+                saveb = WITH->UU.b;
+                saveb2 = WITH->blnk;
+                WITH->UU.b = true;
+                WITH->blnk = false;
+                if (!tryconfig(&V)) {
+                  WITH->UU.b = saveb;
+                  WITH->blnk = saveb2;
+                }
+                if (WITH->UU.b != saveb || WITH->blnk != saveb2) {
+                  drawvalue(V.p, false, &V);
+                  touched = true;
+                }
+                break;
 
-	    case 'B':
-	      saveb = WITH->UU.b;
-	      saveb2 = WITH->blnk;
-	      WITH->UU.b = true;
-	      WITH->blnk = false;
-	      if (!tryconfig(&V)) {
-		WITH->UU.b = saveb;
-		WITH->blnk = saveb2;
-	      }
-	      if (WITH->UU.b != saveb || WITH->blnk != saveb2) {
-		drawvalue(V.p, false, &V);
-		touched = true;
-	      }
-	      break;
+              case 'V':
+                savei = WITH->UU.nv;
+                if (WITH->UU.nv < V.kattr[V.p - 1].UU.U86.nv - 1) WITH->UU.nv++;
+                if (!tryconfig(&V)) WITH->UU.nv = savei;
+                if (WITH->UU.nv != savei) {
+                  maskvalues(&V);
+                  drawvalue(V.p, false, &V);
+                  touched = true;
+                }
+                break;
+            }
+          }
+          stamp(attrstamp);
+          chpage((int)gg.curpage);
+        } else if (ch == '\b') {
+          gg.actflag = false;
+          gg.actflag2 = false;
+          callconfig(relproc, &V);
+          if (!gg.actflag) {
+            switch (V.kattr[V.p - 1].dtype) {
+              case 'R':
+              case 'U':
+              case 'F':
+                if (!WITH->blnk) {
+                  r1 = scrnincr(V.p, &V);
+                  saver = WITH->UU.r;
+                  WITH->UU.r = cleanup(WITH->UU.r - r1, r1, &V);
+                  if (tryconfig(&V)) {
+                    drawvalue(V.p, false, &V);
+                    touched = true;
+                  } else
+                    WITH->UU.r = saver;
+                }
+                break;
 
-	    case 'V':
-	      savei = WITH->UU.nv;
-	      if (WITH->UU.nv < V.kattr[V.p - 1].UU.U86.nv - 1)
-		WITH->UU.nv++;
-	      if (!tryconfig(&V))
-		WITH->UU.nv = savei;
-	      if (WITH->UU.nv != savei) {
-		maskvalues(&V);
-		drawvalue(V.p, false, &V);
-		touched = true;
-	      }
-	      break;
-	    }
-	  }
-	  stamp(attrstamp);
-	  chpage((int)gg.curpage);
-	} else if (ch == '\b') {
-	  gg.actflag = false;
-	  gg.actflag2 = false;
-	  callconfig(relproc, &V);
-	  if (!gg.actflag) {
-	    switch (V.kattr[V.p - 1].dtype) {
+              case 'I':
+              case 'H':
+                if (!WITH->blnk) {
+                  WITH->UU.U73.i1--;
+                  if (tryconfig(&V)) {
+                    drawvalue(V.p, false, &V);
+                    touched = true;
+                  } else
+                    WITH->UU.U73.i1++;
+                }
+                break;
 
-	    case 'R':
-	    case 'U':
-	    case 'F':
-	      if (!WITH->blnk) {
-		r1 = scrnincr(V.p, &V);
-		saver = WITH->UU.r;
-		WITH->UU.r = cleanup(WITH->UU.r - r1, r1, &V);
-		if (tryconfig(&V)) {
-		  drawvalue(V.p, false, &V);
-		  touched = true;
-		} else
-		  WITH->UU.r = saver;
-	      }
-	      break;
+              case 'C':
+              case 'A':
+                understood = false;
+                break;
 
-	    case 'I':
-	    case 'H':
-	      if (!WITH->blnk) {
-		WITH->UU.U73.i1--;
-		if (tryconfig(&V)) {
-		  drawvalue(V.p, false, &V);
-		  touched = true;
-		} else
-		  WITH->UU.U73.i1++;
-	      }
-	      break;
+              case 'B':
+                saveb = WITH->UU.b;
+                saveb2 = WITH->blnk;
+                WITH->UU.b = false;
+                WITH->blnk = false;
+                if (!tryconfig(&V)) {
+                  WITH->UU.b = saveb;
+                  WITH->blnk = saveb2;
+                }
+                if (WITH->UU.b != saveb || WITH->blnk != saveb2) {
+                  drawvalue(V.p, false, &V);
+                  touched = true;
+                }
+                break;
 
-	    case 'C':
-	    case 'A':
-	      understood = false;
-	      break;
-
-	    case 'B':
-	      saveb = WITH->UU.b;
-	      saveb2 = WITH->blnk;
-	      WITH->UU.b = false;
-	      WITH->blnk = false;
-	      if (!tryconfig(&V)) {
-		WITH->UU.b = saveb;
-		WITH->blnk = saveb2;
-	      }
-	      if (WITH->UU.b != saveb || WITH->blnk != saveb2) {
-		drawvalue(V.p, false, &V);
-		touched = true;
-	      }
-	      break;
-
-	    case 'V':
-	      savei = WITH->UU.nv;
-	      if (WITH->UU.nv > 0)
-		WITH->UU.nv--;
-	      if (!tryconfig(&V))
-		WITH->UU.nv = savei;
-	      if (WITH->UU.nv != savei) {
-		maskvalues(&V);
-		drawvalue(V.p, false, &V);
-		touched = true;
-	      }
-	      break;
-	    }
-	  }
-	  stamp(attrstamp);
-	  chpage((int)gg.curpage);
-	} else
-	  understood = false;
+              case 'V':
+                savei = WITH->UU.nv;
+                if (WITH->UU.nv > 0) WITH->UU.nv--;
+                if (!tryconfig(&V)) WITH->UU.nv = savei;
+                if (WITH->UU.nv != savei) {
+                  maskvalues(&V);
+                  drawvalue(V.p, false, &V);
+                  touched = true;
+                }
+                break;
+            }
+          }
+          stamp(attrstamp);
+          chpage((int)gg.curpage);
+        } else
+          understood = false;
       }
       if (!understood) {
-	nk_gotoxy(V.kattr[V.p - 1].x, V.kattr[V.p - 1].y - V.ybase);
-	putchar('\t');
-	if (ch == '\015')
-	  ungetkey2('\003');
-	else
-	  ungetkey2(ch);
-	switch (V.kattr[V.p - 1].dtype) {
+        nk_gotoxy(V.kattr[V.p - 1].x, V.kattr[V.p - 1].y - V.ybase);
+        putchar('\t');
+        if (ch == '\015')
+          ungetkey2('\003');
+        else
+          ungetkey2(ch);
+        switch (V.kattr[V.p - 1].dtype) {
+          case 'R':
+          case 'U':
+          case 'F':
+            readlnpass(buf, 2);
+            strcpy(STR1, strltrim(buf));
+            strcpy(buf, STR1);
+            saveb2 = touched;
+            saveb = WITH->blnk;
+            saver = WITH->UU.r;
+            if (*buf == '\0' || !(buf[0] == '-' || buf[0] == '+' ||
+                                  buf[0] == '.' || isdigit(buf[0]))) {
+              if (V.kattr[V.p - 1].opt)
+                WITH->blnk = true;
+              else {
+                WITH->blnk = false;
+                WITH->UU.r = V.kattr[V.p - 1].UU.U82.r;
+              }
+              touched = true;
+            } else {
+              TRY(try16);
+              readreal(buf, &r1);
+              WITH->UU.r = r1;
+              WITH->blnk = false;
+              touched = true;
+              RECOVER(try16);
+              if (P_escapecode == -20) _Escape(P_escapecode);
+              warning();
+              ENDTRY(try16);
+            }
+            if (!tryconfig(&V)) {
+              WITH->UU.r = saver;
+              WITH->blnk = saveb;
+              touched = saveb2;
+            }
+            break;
 
-	case 'R':
-	case 'U':
-	case 'F':
-	  readlnpass(buf, 2);
-	  strcpy(STR1, strltrim(buf));
-	  strcpy(buf, STR1);
-	  saveb2 = touched;
-	  saveb = WITH->blnk;
-	  saver = WITH->UU.r;
-	  if (*buf == '\0' ||
-	      !(buf[0] == '-' || buf[0] == '+' || buf[0] == '.' ||
-		isdigit(buf[0]))) {
-	    if (V.kattr[V.p - 1].opt)
-	      WITH->blnk = true;
-	    else {
-	      WITH->blnk = false;
-	      WITH->UU.r = V.kattr[V.p - 1].UU.U82.r;
-	    }
-	    touched = true;
-	  } else {
-	    TRY(try16);
-	      readreal(buf, &r1);
-	      WITH->UU.r = r1;
-	      WITH->blnk = false;
-	      touched = true;
-	    RECOVER(try16);
-	      if (P_escapecode == -20)
-		_Escape(P_escapecode);
-	      warning();
-	    ENDTRY(try16);
-	  }
-	  if (!tryconfig(&V)) {
-	    WITH->UU.r = saver;
-	    WITH->blnk = saveb;
-	    touched = saveb2;
-	  }
-	  break;
+          case 'I':
+            readlnpass(buf, 2);
+            strcpy(STR1, strltrim(buf));
+            strcpy(buf, STR1);
+            saveb2 = touched;
+            saveb = WITH->blnk;
+            savei = WITH->UU.U73.i1;
+            if (*buf == '\0' ||
+                !(buf[0] == '+' || buf[0] == '-' || isdigit(buf[0]))) {
+              if (V.kattr[V.p - 1].opt)
+                WITH->blnk = true;
+              else {
+                WITH->blnk = false;
+                WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
+              }
+              touched = true;
+            } else {
+              TRY(try17);
+              j1 = strtol(buf, &STR2, 10);
+              j = STR2 - buf + 1;
+              WITH->UU.U73.i1 = j1;
+              WITH->blnk = false;
+              touched = true;
+              RECOVER(try17);
+              if (P_escapecode == -20) _Escape(P_escapecode);
+              warning();
+              ENDTRY(try17);
+            }
+            if (!tryconfig(&V)) {
+              WITH->UU.U73.i1 = savei;
+              WITH->blnk = saveb;
+              touched = saveb2;
+            }
+            break;
 
-	case 'I':
-	  readlnpass(buf, 2);
-	  strcpy(STR1, strltrim(buf));
-	  strcpy(buf, STR1);
-	  saveb2 = touched;
-	  saveb = WITH->blnk;
-	  savei = WITH->UU.U73.i1;
-	  if (*buf == '\0' ||
-	      !(buf[0] == '+' || buf[0] == '-' || isdigit(buf[0]))) {
-	    if (V.kattr[V.p - 1].opt)
-	      WITH->blnk = true;
-	    else {
-	      WITH->blnk = false;
-	      WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
-	    }
-	    touched = true;
-	  } else {
-	    TRY(try17);
-	      j1 = strtol(buf, &STR2, 10);
-	      j = STR2 - buf + 1;
-	      WITH->UU.U73.i1 = j1;
-	      WITH->blnk = false;
-	      touched = true;
-	    RECOVER(try17);
-	      if (P_escapecode == -20)
-		_Escape(P_escapecode);
-	      warning();
-	    ENDTRY(try17);
-	  }
-	  if (!tryconfig(&V)) {
-	    WITH->UU.U73.i1 = savei;
-	    WITH->blnk = saveb;
-	    touched = saveb2;
-	  }
-	  break;
+          case 'H':
+            readlnpass(buf, 2);
+            strcpy(STR1, strltrim(buf));
+            strcpy(buf, STR1);
+            saveb2 = touched;
+            saveb = WITH->blnk;
+            savei = WITH->UU.U73.i1;
+            if (*buf == '\0' ||
+                !((buf[0] >= 'a' && buf[0] <= 'f') ||
+                  (buf[0] >= 'A' && buf[0] <= 'F') || isdigit(buf[0]))) {
+              if (V.kattr[V.p - 1].opt)
+                WITH->blnk = true;
+              else {
+                WITH->blnk = false;
+                WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
+              }
+              touched = true;
+            } else {
+              TRY(try18);
+              WITH->UU.U73.i1 = strtol(buf, NULL, 16);
+              WITH->blnk = false;
+              touched = true;
+              RECOVER(try18);
+              if (P_escapecode == -20) _Escape(P_escapecode);
+              warning();
+              ENDTRY(try18);
+            }
+            if (!tryconfig(&V)) {
+              WITH->UU.U73.i1 = savei;
+              WITH->blnk = saveb;
+              touched = saveb2;
+            }
+            break;
 
-	case 'H':
-	  readlnpass(buf, 2);
-	  strcpy(STR1, strltrim(buf));
-	  strcpy(buf, STR1);
-	  saveb2 = touched;
-	  saveb = WITH->blnk;
-	  savei = WITH->UU.U73.i1;
-	  if (*buf == '\0' ||
-	      !((buf[0] >= 'a' && buf[0] <= 'f') ||
-		(buf[0] >= 'A' && buf[0] <= 'F') || isdigit(buf[0]))) {
-	    if (V.kattr[V.p - 1].opt)
-	      WITH->blnk = true;
-	    else {
-	      WITH->blnk = false;
-	      WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
-	    }
-	    touched = true;
-	  } else {
-	    TRY(try18);
-	      WITH->UU.U73.i1 = strtol(buf, NULL, 16);
-	      WITH->blnk = false;
-	      touched = true;
-	    RECOVER(try18);
-	      if (P_escapecode == -20)
-		_Escape(P_escapecode);
-	      warning();
-	    ENDTRY(try18);
-	  }
-	  if (!tryconfig(&V)) {
-	    WITH->UU.U73.i1 = savei;
-	    WITH->blnk = saveb;
-	    touched = saveb2;
-	  }
-	  break;
+          case 'C':
+            strcpy(buf, WITH->UU.c);
+            readlnpass(buf, 3);
+            strcpy(savebuf, WITH->UU.c);
+            strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
+            strcpy(buf, STR1);
+            if (*buf == '\0' && !V.kattr[V.p - 1].opt)
+              strcpy(buf, V.kattr[V.p - 1].UU.c);
+            else if (strlen(buf) > V.kattr[V.p - 1].prec) {
+              buf[V.kattr[V.p - 1].prec] = '\0';
+              /* p2c: log.text, line 13845:
+               * Note: Modification of string length may translate
+               * incorrectly [146] */
+            }
+            strcpy(WITH->UU.c, buf);
+            if (tryconfig(&V))
+              touched = true;
+            else
+              strcpy(WITH->UU.c, savebuf);
+            WITH->blnk = (*WITH->UU.c == '\0');
+            break;
 
-	case 'C':
-	  strcpy(buf, WITH->UU.c);
-	  readlnpass(buf, 3);
-	  strcpy(savebuf, WITH->UU.c);
-	  strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
-	  strcpy(buf, STR1);
-	  if (*buf == '\0' && !V.kattr[V.p - 1].opt)
-	    strcpy(buf, V.kattr[V.p - 1].UU.c);
-	  else if (strlen(buf) > V.kattr[V.p - 1].prec) {
-	    buf[V.kattr[V.p - 1].prec] = '\0';
-/* p2c: log.text, line 13845:
- * Note: Modification of string length may translate incorrectly [146] */
-	  }
-	  strcpy(WITH->UU.c, buf);
-	  if (tryconfig(&V))
-	    touched = true;
-	  else
-	    strcpy(WITH->UU.c, savebuf);
-	  WITH->blnk = (*WITH->UU.c == '\0');
-	  break;
+          case 'A':
+            strcpy(buf, WITH->UU.c);
+            readlnpass(buf, 3);
+            strcpy(savebuf, WITH->UU.sp);
+            strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
+            strcpy(buf, STR1);
+            if (*buf == '\0' && !V.kattr[V.p - 1].opt)
+              strcpy(buf, V.kattr[V.p - 1].UU.sp);
+            strchange(&WITH->UU.sp, buf);
+            if (tryconfig(&V))
+              touched = true;
+            else
+              strchange(&WITH->UU.sp, savebuf);
+            WITH->blnk = (*WITH->UU.sp == '\0');
+            break;
 
-	case 'A':
-	  strcpy(buf, WITH->UU.c);
-	  readlnpass(buf, 3);
-	  strcpy(savebuf, WITH->UU.sp);
-	  strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
-	  strcpy(buf, STR1);
-	  if (*buf == '\0' && !V.kattr[V.p - 1].opt)
-	    strcpy(buf, V.kattr[V.p - 1].UU.sp);
-	  strchange(&WITH->UU.sp, buf);
-	  if (tryconfig(&V))
-	    touched = true;
-	  else
-	    strchange(&WITH->UU.sp, savebuf);
-	  WITH->blnk = (*WITH->UU.sp == '\0');
-	  break;
+          case 'B':
+            saveb = WITH->blnk;
+            saveb2 = WITH->UU.b;
+            ch = inkey2();
+            if (ch == '1' || ch == 'y' || ch == 'Y' || ch == 't' || ch == 'T') {
+              WITH->UU.b = true;
+              WITH->blnk = false;
+            } else if (ch == '0' || ch == 'n' || ch == 'N' || ch == 'f' ||
+                       ch == 'F') {
+              WITH->UU.b = false;
+              WITH->blnk = false;
+            } else if ((ch == '\003' || ch == '\015' || ch == 'x' ||
+                        ch == 'X') &&
+                       V.kattr[V.p - 1].opt)
+              WITH->blnk = true;
+            else if (ch == '\003' || ch == '\015' || ch == 'z' || ch == 'Z') {
+              WITH->UU.b = !WITH->UU.b;
+              WITH->blnk = false;
+            }
+            if (tryconfig(&V))
+              touched = true;
+            else {
+              WITH->blnk = saveb;
+              WITH->UU.b = saveb2;
+            }
+            break;
 
-	case 'B':
-	  saveb = WITH->blnk;
-	  saveb2 = WITH->UU.b;
-	  ch = inkey2();
-	  if (ch == '1' || ch == 'y' || ch == 'Y' || ch == 't' || ch == 'T') {
-	    WITH->UU.b = true;
-	    WITH->blnk = false;
-	  } else if (ch == '0' || ch == 'n' || ch == 'N' || ch == 'f' ||
-		     ch == 'F') {
-	    WITH->UU.b = false;
-	    WITH->blnk = false;
-	  } else if ((ch == '\003' || ch == '\015' || ch == 'x' || ch == 'X') &&
-		     V.kattr[V.p - 1].opt)
-	    WITH->blnk = true;
-	  else if (ch == '\003' || ch == '\015' || ch == 'z' || ch == 'Z') {
-	    WITH->UU.b = !WITH->UU.b;
-	    WITH->blnk = false;
-	  }
-	  if (tryconfig(&V))
-	    touched = true;
-	  else {
-	    WITH->blnk = saveb;
-	    WITH->UU.b = saveb2;
-	  }
-	  break;
-
-	case 'V':
-	  readlnpass(buf, 2);
-	  savei = WITH->UU.nv;
-	  strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
-	  strcpy(buf, STR1);
-	  l1 = V.kattr[V.p - 1].UU.U86.v;
-	  while (l1 != NULL && strcicmp(l1->s, buf) != 0)
-	    l1 = l1->next;
-	  if (l1 != NULL)
-	    WITH->UU.nv = (long)l1->value;
-	  if (tryconfig(&V)) {
-	    maskvalues(&V);
-	    touched = true;
-	  } else
-	    WITH->UU.nv = savei;
-	  break;
-	}
-	stamp(attrstamp);
-	chpage((int)gg.curpage);
-	drawvalue(V.p, false, &V);
+          case 'V':
+            readlnpass(buf, 2);
+            savei = WITH->UU.nv;
+            strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
+            strcpy(buf, STR1);
+            l1 = V.kattr[V.p - 1].UU.U86.v;
+            while (l1 != NULL && strcicmp(l1->s, buf) != 0) l1 = l1->next;
+            if (l1 != NULL) WITH->UU.nv = (long)l1->value;
+            if (tryconfig(&V)) {
+              maskvalues(&V);
+              touched = true;
+            } else
+              WITH->UU.nv = savei;
+            break;
+        }
+        stamp(attrstamp);
+        chpage((int)gg.curpage);
+        drawvalue(V.p, false, &V);
       }
     } while (!exitflag);
   }
   m_graphics_on();
   clearalpha();
 
-/* p2c: log.text, line 13543: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 13543: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 13543: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 13543: Note: Character >= 128 encountered [281] */
   /*ignore*/
 }
 
-
-
-Static Void editattrsx(gattr, numattrs, kattr, lbl, name, proc, chproc,
-		       relproc)
+Static Void editattrsx(gattr, numattrs, kattr, lbl, name, proc, chproc, relproc)
 log_gattrrec *gattr;
 short numattrs;
 log_kattrrec *kattr;
 na_strlist *lbl;
 Char *name;
-Void (*proc) PV(), (*chproc) PV(), (*relproc) PV();
+Void(*proc) PV(), (*chproc)PV(), (*relproc)PV();
 {
   long stamp;
 
   editattrs(gattr, numattrs, kattr, lbl, name, proc, chproc, relproc, &stamp);
 }
 
+Static Void gproc1() { calltool(gg.acttool, act_configgate); }
 
+Static Void gproc2() { calltool(gg.acttool, act_configchgate); }
 
-Static Void gproc1()
-{
-  calltool(gg.acttool, act_configgate);
-}
-
-
-Static Void gproc2()
-{
-  calltool(gg.acttool, act_configchgate);
-}
-
-
-Static Void gproc3()
-{
-  calltool(gg.acttool, act_configrelgate);
-}
-
+Static Void gproc3() { calltool(gg.acttool, act_configrelgate); }
 
 Static Void configgate(g)
 log_grec *g;
 {
-  Void (*TEMP) PV();
-  Void (*TEMP5) PV();
-  Void (*TEMP6) PV();
+  Void(*TEMP) PV();
+  Void(*TEMP5) PV();
+  Void(*TEMP6) PV();
 
   gg.actgate = g;
   gg.acttool = g->kind->simtype;
@@ -14548,49 +13027,31 @@ log_grec *g;
   TEMP5 = gproc2;
   TEMP6 = gproc3;
   editattrs(g->attr, g->kind->numattrs, g->kind->attr, g->kind->lbl,
-	    g->kind->name, TEMP, TEMP5, TEMP6, &gg.gattrstamp);
+            g->kind->name, TEMP, TEMP5, TEMP6, &gg.gattrstamp);
 }
 
+Static Void nproc1() { calltool(gg.acttool, act_confignode); }
 
+Static Void nproc2() { calltool(gg.acttool, act_configchnode); }
 
-
-Static Void nproc1()
-{
-  calltool(gg.acttool, act_confignode);
-}
-
-
-Static Void nproc2()
-{
-  calltool(gg.acttool, act_configchnode);
-}
-
-
-Static Void nproc3()
-{
-  calltool(gg.acttool, act_configrelnode);
-}
-
+Static Void nproc3() { calltool(gg.acttool, act_configrelnode); }
 
 Static Void confignode(n, name)
 log_nrec *n;
 Char *name;
 {
-  Void (*TEMP) PV();
-  Void (*TEMP5) PV();
-  Void (*TEMP6) PV();
+  Void(*TEMP) PV();
+  Void(*TEMP5) PV();
+  Void(*TEMP6) PV();
 
   gg.actnode = n;
   gg.acttool = n->simtype;
   TEMP = nproc1;
   TEMP5 = nproc2;
   TEMP6 = nproc3;
-  editattrs(n->attr, n->simtype->nnumattrs, n->simtype->nattr,
-	    n->simtype->nlbl, name, TEMP, TEMP5, TEMP6, &gg.nattrstamp);
+  editattrs(n->attr, n->simtype->nnumattrs, n->simtype->nattr, n->simtype->nlbl,
+            name, TEMP, TEMP5, TEMP6, &gg.nattrstamp);
 }
-
-
-
 
 Static Void configkind(i)
 short i;
@@ -14598,8 +13059,7 @@ short i;
   log_krec *k;
   log_grec *g;
 
-  if (kindgroup[i - 1] == 0)
-    return;
+  if (kindgroup[i - 1] == 0) return;
   k = kind[(kindgroup[i - 1] & (log_kindoffset - 1)) - 1];
   newgate(&g, kindgroup[i - 1]);
   if (kindattr[i - 1] != NULL) {
@@ -14613,13 +13073,12 @@ short i;
   disposegate(&g);
 }
 
-
 /* Local variables for setattr: */
 struct LOC_setattr {
   log_gattrrec *gattr;
   log_kattrrec *kattr;
   short p;
-} ;
+};
 
 Local boolean tryconfig_(LINK)
 struct LOC_setattr *LINK;
@@ -14631,10 +13090,6 @@ struct LOC_setattr *LINK;
   (*gg.acttool->proc)(&gg);
   return (gg.actflag);
 }
-
-
-
-
 
 Static boolean setattr(gattr_, kattr_, p_, buf)
 log_gattrrec *gattr_;
@@ -14661,188 +13116,181 @@ Char *buf;
   touched = false;
   WITH = &V.gattr[V.p - 1];
   switch (V.kattr[V.p - 1].dtype) {
-
-  case 'R':
-  case 'U':
-  case 'F':
-    strcpy(STR1, strltrim(buf));
-    strcpy(buf, STR1);
-    saveb2 = touched;
-    saveb = WITH->blnk;
-    saver = WITH->UU.r;
-    if (*buf == '\0' || !(buf[0] == '-' || buf[0] == '+' || buf[0] == '.' ||
-			  isdigit(buf[0]))) {
-      if (V.kattr[V.p - 1].opt)
-	WITH->blnk = true;
-      else {
-	WITH->blnk = false;
-	WITH->UU.r = V.kattr[V.p - 1].UU.U82.r;
+    case 'R':
+    case 'U':
+    case 'F':
+      strcpy(STR1, strltrim(buf));
+      strcpy(buf, STR1);
+      saveb2 = touched;
+      saveb = WITH->blnk;
+      saver = WITH->UU.r;
+      if (*buf == '\0' || !(buf[0] == '-' || buf[0] == '+' || buf[0] == '.' ||
+                            isdigit(buf[0]))) {
+        if (V.kattr[V.p - 1].opt)
+          WITH->blnk = true;
+        else {
+          WITH->blnk = false;
+          WITH->UU.r = V.kattr[V.p - 1].UU.U82.r;
+        }
+        touched = true;
+      } else {
+        TRY(try19);
+        readreal(buf, &r1);
+        WITH->UU.r = r1;
+        WITH->blnk = false;
+        touched = true;
+        RECOVER(try19);
+        if (P_escapecode == -20) _Escape(P_escapecode);
+        ENDTRY(try19);
       }
-      touched = true;
-    } else {
-      TRY(try19);
-	readreal(buf, &r1);
-	WITH->UU.r = r1;
-	WITH->blnk = false;
-	touched = true;
-      RECOVER(try19);
-	if (P_escapecode == -20)
-	  _Escape(P_escapecode);
-      ENDTRY(try19);
-    }
-    if (!tryconfig_(&V)) {
-      WITH->UU.r = saver;
-      WITH->blnk = saveb;
-      touched = saveb2;
-    }
-    break;
-
-  case 'I':
-    strcpy(STR1, strltrim(buf));
-    strcpy(buf, STR1);
-    saveb2 = touched;
-    saveb = WITH->blnk;
-    savei = WITH->UU.U73.i1;
-    if (*buf == '\0' || !(buf[0] == '+' || buf[0] == '-' || isdigit(buf[0]))) {
-      if (V.kattr[V.p - 1].opt)
-	WITH->blnk = true;
-      else {
-	WITH->blnk = false;
-	WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
+      if (!tryconfig_(&V)) {
+        WITH->UU.r = saver;
+        WITH->blnk = saveb;
+        touched = saveb2;
       }
-      touched = true;
-    } else {
-      TRY(try20);
-	j1 = strtol(buf, &STR2, 10);
-	j = STR2 - buf + 1;
-	WITH->UU.U73.i1 = j1;
-	WITH->blnk = false;
-	touched = true;
-      RECOVER(try20);
-	if (P_escapecode == -20)
-	  _Escape(P_escapecode);
-      ENDTRY(try20);
-    }
-    if (!tryconfig_(&V)) {
-      WITH->UU.U73.i1 = savei;
-      WITH->blnk = saveb;
-      touched = saveb2;
-    }
-    break;
+      break;
 
-  case 'H':
-    strcpy(STR1, strltrim(buf));
-    strcpy(buf, STR1);
-    saveb2 = touched;
-    saveb = WITH->blnk;
-    savei = WITH->UU.U73.i1;
-    if (*buf == '\0' ||
-	!((buf[0] >= 'a' && buf[0] <= 'f') || (buf[0] >= 'A' && buf[0] <= 'F') ||
-	  isdigit(buf[0]))) {
-      if (V.kattr[V.p - 1].opt)
-	WITH->blnk = true;
-      else {
-	WITH->blnk = false;
-	WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
+    case 'I':
+      strcpy(STR1, strltrim(buf));
+      strcpy(buf, STR1);
+      saveb2 = touched;
+      saveb = WITH->blnk;
+      savei = WITH->UU.U73.i1;
+      if (*buf == '\0' ||
+          !(buf[0] == '+' || buf[0] == '-' || isdigit(buf[0]))) {
+        if (V.kattr[V.p - 1].opt)
+          WITH->blnk = true;
+        else {
+          WITH->blnk = false;
+          WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
+        }
+        touched = true;
+      } else {
+        TRY(try20);
+        j1 = strtol(buf, &STR2, 10);
+        j = STR2 - buf + 1;
+        WITH->UU.U73.i1 = j1;
+        WITH->blnk = false;
+        touched = true;
+        RECOVER(try20);
+        if (P_escapecode == -20) _Escape(P_escapecode);
+        ENDTRY(try20);
       }
-      touched = true;
-    } else {
-      TRY(try21);
-	WITH->UU.U73.i1 = strtol(buf, NULL, 16);
-	WITH->blnk = false;
-	touched = true;
-      RECOVER(try21);
-	if (P_escapecode == -20)
-	  _Escape(P_escapecode);
-      ENDTRY(try21);
-    }
-    if (!tryconfig_(&V)) {
-      WITH->UU.U73.i1 = savei;
-      WITH->blnk = saveb;
-      touched = saveb2;
-    }
-    break;
+      if (!tryconfig_(&V)) {
+        WITH->UU.U73.i1 = savei;
+        WITH->blnk = saveb;
+        touched = saveb2;
+      }
+      break;
 
-  case 'C':
-    strcpy(savebuf, WITH->UU.c);
-    strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
-    strcpy(buf, STR1);
-    if (*buf == '\0' && !V.kattr[V.p - 1].opt)
-      strcpy(buf, V.kattr[V.p - 1].UU.c);
-    else if (strlen(buf) > V.kattr[V.p - 1].prec) {
-      buf[V.kattr[V.p - 1].prec] = '\0';
-/* p2c: log.text, line 14167:
- * Note: Modification of string length may translate incorrectly [146] */
-    }
-    strcpy(WITH->UU.c, buf);
-    if (tryconfig_(&V))
-      touched = true;
-    else
-      strcpy(WITH->UU.c, savebuf);
-    WITH->blnk = (*WITH->UU.c == '\0');
-    break;
+    case 'H':
+      strcpy(STR1, strltrim(buf));
+      strcpy(buf, STR1);
+      saveb2 = touched;
+      saveb = WITH->blnk;
+      savei = WITH->UU.U73.i1;
+      if (*buf == '\0' ||
+          !((buf[0] >= 'a' && buf[0] <= 'f') ||
+            (buf[0] >= 'A' && buf[0] <= 'F') || isdigit(buf[0]))) {
+        if (V.kattr[V.p - 1].opt)
+          WITH->blnk = true;
+        else {
+          WITH->blnk = false;
+          WITH->UU.U73.i1 = V.kattr[V.p - 1].UU.U73.i1;
+        }
+        touched = true;
+      } else {
+        TRY(try21);
+        WITH->UU.U73.i1 = strtol(buf, NULL, 16);
+        WITH->blnk = false;
+        touched = true;
+        RECOVER(try21);
+        if (P_escapecode == -20) _Escape(P_escapecode);
+        ENDTRY(try21);
+      }
+      if (!tryconfig_(&V)) {
+        WITH->UU.U73.i1 = savei;
+        WITH->blnk = saveb;
+        touched = saveb2;
+      }
+      break;
 
-  case 'A':
-    strcpy(savebuf, WITH->UU.sp);
-    strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
-    strcpy(buf, STR1);
-    if (*buf == '\0' && !V.kattr[V.p - 1].opt)
-      strcpy(buf, V.kattr[V.p - 1].UU.sp);
-    strchange(&WITH->UU.sp, buf);
-    if (tryconfig_(&V))
-      touched = true;
-    else
-      strchange(&WITH->UU.sp, savebuf);
-    WITH->blnk = (*WITH->UU.sp == '\0');
-    break;
+    case 'C':
+      strcpy(savebuf, WITH->UU.c);
+      strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
+      strcpy(buf, STR1);
+      if (*buf == '\0' && !V.kattr[V.p - 1].opt)
+        strcpy(buf, V.kattr[V.p - 1].UU.c);
+      else if (strlen(buf) > V.kattr[V.p - 1].prec) {
+        buf[V.kattr[V.p - 1].prec] = '\0';
+        /* p2c: log.text, line 14167:
+         * Note: Modification of string length may translate incorrectly
+         * [146] */
+      }
+      strcpy(WITH->UU.c, buf);
+      if (tryconfig_(&V))
+        touched = true;
+      else
+        strcpy(WITH->UU.c, savebuf);
+      WITH->blnk = (*WITH->UU.c == '\0');
+      break;
 
-  case 'B':
-    saveb = WITH->blnk;
-    saveb2 = WITH->UU.b;
-    if (*buf == '\0')
-      strcpy(buf, " ");
-    if (buf[0] == '1' || buf[0] == 'y' || buf[0] == 'Y' || buf[0] == 't' ||
-	buf[0] == 'T') {
-      WITH->UU.b = true;
-      WITH->blnk = false;
-    } else if (buf[0] == '0' || buf[0] == 'n' || buf[0] == 'N' ||
-	       buf[0] == 'f' || buf[0] == 'F') {
-      WITH->UU.b = false;
-      WITH->blnk = false;
-    } else if ((buf[0] == 'x' || buf[0] == 'X' || buf[0] == ' ') &&
-	       V.kattr[V.p - 1].opt)
-      WITH->blnk = true;
-    else if (buf[0] == 'z' || buf[0] == 'Z' || buf[0] == ' ') {
-      WITH->UU.b = !WITH->UU.b;
-      WITH->blnk = false;
-    }
-    if (tryconfig_(&V))
-      touched = true;
-    else {
-      WITH->blnk = saveb;
-      WITH->UU.b = saveb2;
-    }
-    break;
+    case 'A':
+      strcpy(savebuf, WITH->UU.sp);
+      strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
+      strcpy(buf, STR1);
+      if (*buf == '\0' && !V.kattr[V.p - 1].opt)
+        strcpy(buf, V.kattr[V.p - 1].UU.sp);
+      strchange(&WITH->UU.sp, buf);
+      if (tryconfig_(&V))
+        touched = true;
+      else
+        strchange(&WITH->UU.sp, savebuf);
+      WITH->blnk = (*WITH->UU.sp == '\0');
+      break;
 
-  case 'V':
-    savei = WITH->UU.nv;
-    strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
-    strcpy(buf, STR1);
-    l1 = V.kattr[V.p - 1].UU.U86.v;
-    while (l1 != NULL && strcicmp(l1->s, buf) != 0)
-      l1 = l1->next;
-    if (l1 != NULL)
-      WITH->UU.nv = (long)l1->value;
-    if (tryconfig_(&V))
-      touched = true;
-    else
-      WITH->UU.nv = savei;
-    break;
+    case 'B':
+      saveb = WITH->blnk;
+      saveb2 = WITH->UU.b;
+      if (*buf == '\0') strcpy(buf, " ");
+      if (buf[0] == '1' || buf[0] == 'y' || buf[0] == 'Y' || buf[0] == 't' ||
+          buf[0] == 'T') {
+        WITH->UU.b = true;
+        WITH->blnk = false;
+      } else if (buf[0] == '0' || buf[0] == 'n' || buf[0] == 'N' ||
+                 buf[0] == 'f' || buf[0] == 'F') {
+        WITH->UU.b = false;
+        WITH->blnk = false;
+      } else if ((buf[0] == 'x' || buf[0] == 'X' || buf[0] == ' ') &&
+                 V.kattr[V.p - 1].opt)
+        WITH->blnk = true;
+      else if (buf[0] == 'z' || buf[0] == 'Z' || buf[0] == ' ') {
+        WITH->UU.b = !WITH->UU.b;
+        WITH->blnk = false;
+      }
+      if (tryconfig_(&V))
+        touched = true;
+      else {
+        WITH->blnk = saveb;
+        WITH->UU.b = saveb2;
+      }
+      break;
+
+    case 'V':
+      savei = WITH->UU.nv;
+      strcpy(STR1, strltrim(strrtrim(strcpy(STR3, buf))));
+      strcpy(buf, STR1);
+      l1 = V.kattr[V.p - 1].UU.U86.v;
+      while (l1 != NULL && strcicmp(l1->s, buf) != 0) l1 = l1->next;
+      if (l1 != NULL) WITH->UU.nv = (long)l1->value;
+      if (tryconfig_(&V))
+        touched = true;
+      else
+        WITH->UU.nv = savei;
+      break;
   }
   return touched;
 }
-
-
 
 Static Void setgattr(g, num, value_)
 log_grec *g;
@@ -14855,8 +13303,7 @@ Char *value_;
   log_tool *saveacttool;
 
   strcpy(value, value_);
-  if (num < 1 || num > g->kind->numattrs)
-    return;
+  if (num < 1 || num > g->kind->numattrs) return;
   saveacttool = gg.acttool;
   gg.actgate = g;
   gg.actnode = NULL;
@@ -14869,16 +13316,12 @@ Char *value_;
     while (pg > 1 && g1 != NULL) {
       pg--;
       g1 = gg.gbase[pg - 1];
-      while (g1 != NULL && g1 != g)
-	g1 = g1->next;
+      while (g1 != NULL && g1 != g) g1 = g1->next;
     }
-    if (g1 != NULL)
-      chpage(pg);
+    if (g1 != NULL) chpage(pg);
   }
   gg.acttool = saveacttool;
 }
-
-
 
 Static Void setnattr(n, num, value_)
 log_nrec *n;
@@ -14889,48 +13332,27 @@ Char *value_;
   log_tool *saveacttool;
 
   strcpy(value, value_);
-  if (num < 1 || num > n->simtype->nnumattrs)
-    return;
+  if (num < 1 || num > n->simtype->nnumattrs) return;
   saveacttool = gg.acttool;
   gg.actgate = NULL;
   gg.actnode = n;
   gg.acttool = n->simtype;
   gg.action = act_configchnode;
-  if (setattr(n->attr, n->simtype->nattr, num, value))
-    stamp(&gg.nattrstamp);
+  if (setattr(n->attr, n->simtype->nattr, num, value)) stamp(&gg.nattrstamp);
   gg.acttool = saveacttool;
 }
-
 
 typedef short flipvec[8];
 typedef flipvec fliparr[4];
 
-
-Const fliparr flips = {
-  { 4, 5, 6, 7, 0, 1, 2, 3 },
-  { 1, 2, 3, 0, 5, 6, 7, 4 },
-  { 4, 7, 6, 5, 0, 3, 2, 1 },
-  { 6, 5, 4, 7, 2, 1, 0, 3 }
-};
-
-
-
-
-
-
-
-
-
-
+Const fliparr flips = {{4, 5, 6, 7, 0, 1, 2, 3},
+                       {1, 2, 3, 0, 5, 6, 7, 4},
+                       {4, 7, 6, 5, 0, 3, 2, 1},
+                       {6, 5, 4, 7, 2, 1, 0, 3}};
 
 Static short doflip(rot, mode)
 short rot, mode;
-{
-  return (flips[mode][rot]);
-}
-
-
-
+{ return (flips[mode][rot]); }
 
 /*==================  FLIPGATE  ==================*/
 /*=                                              =*/
@@ -14954,34 +13376,31 @@ log_grec *g;
   else
     i = cureditmode;
   switch (i) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      remcursor();
+      clipon();
+      eragate(g);
+      disconnectgate(g);
+      g->rot = doflip(g->rot, i);
+      g->g = g->rot * log_kindoffset + (g->g & (log_kindoffset - 1));
+      drawgatex(g);
+      clipoff();
+      if (!connectgate(g)) {
+        frygate(g);
+        disposegate(&g);
+      }
+      restorecursor();
+      refreshsoon();
+      break;
 
-  case 0:
-  case 1:
-  case 2:
-  case 3:
-    remcursor();
-    clipon();
-    eragate(g);
-    disconnectgate(g);
-    g->rot = doflip(g->rot, i);
-    g->g = g->rot * log_kindoffset + (g->g & (log_kindoffset - 1));
-    drawgatex(g);
-    clipoff();
-    if (!connectgate(g)) {
-      frygate(g);
-      disposegate(&g);
-    }
-    restorecursor();
-    refreshsoon();
-    break;
-
-  case 4:
-    configgate(g);
-    break;
+    case 4:
+      configgate(g);
+      break;
   }
 }
-
-
 
 /*==================  FLIPKIND  ==================*/
 /*=                                              =*/
@@ -14989,8 +13408,7 @@ log_grec *g;
 /*=                                              =*/
 /*================================================*/
 
-Static Void flipkind()
-{
+Static Void flipkind() {
   short i, z, k;
 
   remcursor();
@@ -15004,16 +13422,15 @@ Static Void flipkind()
       z = doflip(z, 2);
     else {
       switch (cureditmode) {
+        case 1:
+        case 2:
+        case 3:
+          z = doflip(z, cureditmode);
+          break;
 
-      case 1:
-      case 2:
-      case 3:
-	z = doflip(z, cureditmode);
-	break;
-
-      case 4:
-	z = doflip(z, 1);
-	break;
+        case 4:
+          z = doflip(z, 1);
+          break;
       }
     }
     kindgroup[i - 1] = z * log_kindoffset + k;
@@ -15021,9 +13438,6 @@ Static Void flipkind()
   }
   restorecursor();
 }
-
-
-
 
 /*==============  ADJUSTSIGNAL  ==================*/
 /*=                                              =*/
@@ -15035,8 +13449,7 @@ Static Void settofrom(g, name)
 log_grec **g;
 Char *name;
 {
-  if (!(*g)->kind->flag.U3.named)
-    return;
+  if (!(*g)->kind->flag.U3.named) return;
   disconnectgate(*g);
   clipon();
   eragate(*g);
@@ -15053,7 +13466,6 @@ Char *name;
   *g = NULL;
 }
 
-
 Static Void adjustsignal(g)
 log_grec *g;
 {
@@ -15068,72 +13480,69 @@ log_grec *g;
   gsignallabel(g->x, g->y, g, gg.color.backgr);
   *n = '\0';
   do {
-    if (strlen(n) < 256-1)
-      strcat(n, "_");
+    if (strlen(n) < 256 - 1) strcat(n, "_");
     remcursor();
     m_colormode((long)m_xor);
     m_color((long)gg.color.signal);
     if (rightface) {
-/* p2c: log.text, line 14457:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-      drawstr2((int)(g->x * gg.scale - gg.xoff - m_strwidth(logfont_lfont,
-		       strrtrim(strcpy(STR1, n))) + NAMEGAP),
-	       (int)(g->y * gg.scale - gg.yoff - 3),
-	       strrtrim(strcpy(STR2, n)));
+      /* p2c: log.text, line 14457:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+      drawstr2(
+          (int)(g->x * gg.scale - gg.xoff -
+                m_strwidth(logfont_lfont, strrtrim(strcpy(STR1, n))) + NAMEGAP),
+          (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR2, n)));
     } else
       drawstr2((int)(g->x * gg.scale - gg.xoff - NAMEGAP),
-	       (int)(g->y * gg.scale - gg.yoff - 3),
-	       strrtrim(strcpy(STR1, n)));
+               (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR1, n)));
     m_colormode((long)m_normal);
     if (!pollkbd2()) {
       do {
-	pass();
-	pen();
+        pass();
+        pen();
       } while (!(pollkbd2() || gg.t.dn));
     }
     remcursor();
     m_colormode((long)m_xor);
     m_color((long)gg.color.signal);
     if (rightface) {
-/* p2c: log.text, line 14471:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-      drawstr2((int)(g->x * gg.scale - gg.xoff - m_strwidth(logfont_lfont,
-		       strrtrim(strcpy(STR1, n))) + NAMEGAP),
-	       (int)(g->y * gg.scale - gg.yoff - 3),
-	       strrtrim(strcpy(STR2, n)));
+      /* p2c: log.text, line 14471:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+      drawstr2(
+          (int)(g->x * gg.scale - gg.xoff -
+                m_strwidth(logfont_lfont, strrtrim(strcpy(STR1, n))) + NAMEGAP),
+          (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR2, n)));
     } else
       drawstr2((int)(g->x * gg.scale - gg.xoff - NAMEGAP),
-	       (int)(g->y * gg.scale - gg.yoff - 3),
-	       strrtrim(strcpy(STR1, n)));
+               (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR1, n)));
     m_colormode((long)m_normal);
     n[strlen(n) - 1] = '\0';
     if (pollkbd2()) {
       ch = inkey2();
-      if ((strlen(n) < 256-2 && ch > ' ' && ch != 250 && ch != 251) 
-	  || (ch == ' ' && *n != '\0'))
-	sprintf(n + strlen(n), "%c", ch);
-/* p2c: log.text, line 14480: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 14480: Note: Character >= 128 encountered [281] */
-      if (ch == '\007' && *n != '\0')
-	n[strlen(n) - 1] = '\0';
+      if ((strlen(n) < 256 - 2 && ch > ' ' && ch != 250 && ch != 251) ||
+          (ch == ' ' && *n != '\0'))
+        sprintf(n + strlen(n), "%c", ch);
+      /* p2c: log.text, line 14480: Note: Character >= 128 encountered
+       * [281] */
+      /* p2c: log.text, line 14480: Note: Character >= 128 encountered
+       * [281] */
+      if (ch == '\007' && *n != '\0') n[strlen(n) - 1] = '\0';
     }
   } while (!((ch < 32 && ((1L << ch) & 0x2008) != 0) || gg.t.dn));
   remcursor();
   m_color((long)gg.color.signal);
   if (rightface) {
-/* p2c: log.text, line 14490:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-    drawstr2((int)(g->x * gg.scale - gg.xoff - m_strwidth(logfont_lfont,
-		     strrtrim(strcpy(STR1, n))) + NAMEGAP),
-	     (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR2, n)));
+    /* p2c: log.text, line 14490:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    drawstr2(
+        (int)(g->x * gg.scale - gg.xoff -
+              m_strwidth(logfont_lfont, strrtrim(strcpy(STR1, n))) + NAMEGAP),
+        (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR2, n)));
   } else
     drawstr2((int)(g->x * gg.scale - gg.xoff - NAMEGAP),
-	     (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR1, n)));
+             (int)(g->y * gg.scale - gg.yoff - 3), strrtrim(strcpy(STR1, n)));
   settofrom(&g, n);
   signalcaps = nk_setcapslock(savecaps);
 }
-
-
 
 Static Void touchgate(g)
 log_grec *g;
@@ -15156,17 +13565,12 @@ log_grec *g;
   calltoolgate(g, act_touchgate);
   if (gg.actflag)
     chpageplace((int)gg.curpage, g->x - g->kind->bbmax, g->y - g->kind->bbmax,
-		g->x + g->kind->bbmax, g->y + g->kind->bbmax);
+                g->x + g->kind->bbmax, g->y + g->kind->bbmax);
   else if (!gg.invisible || g->kind->flag.U3.visible)
     flipgate(g);
 }
 
-
-
-
-
-Static Void unsoldernear()
-{
+Static Void unsoldernear() {
   short oldx, oldy1, oldy2, oldcolr;
   blobrec *blbase;
 
@@ -15174,8 +13578,8 @@ Static Void unsoldernear()
   oldy1 = gg.nearvw->y1;
   oldy2 = gg.nearvw->y2;
   oldcolr = gg.nearvw->wcolr;
-  if (gg.nearhw->y == oldy1 || gg.nearhw->y == oldy2 ||
-      gg.nearhw->x1 == oldx || gg.nearhw->x2 == oldx)
+  if (gg.nearhw->y == oldy1 || gg.nearhw->y == oldy2 || gg.nearhw->x1 == oldx ||
+      gg.nearhw->x2 == oldx)
     return;
   remcursor();
   blbase = NULL;
@@ -15187,22 +13591,17 @@ Static Void unsoldernear()
   dispblobs(&blbase);
 }
 
-
 Static Void unsolderwires(hw, vw)
 log_hwrec *hw;
 log_vwrec *vw;
 {
-  if (hw == NULL || vw == NULL)
-    return;
+  if (hw == NULL || vw == NULL) return;
   gg.nearhw = hw;
   gg.nearvw = vw;
   unsoldernear();
 }
 
-
-
-Static Void soldernear()
-{
+Static Void soldernear() {
   if (!trycombinenodes(&gg.nearvw->node, &gg.nearhw->node)) {
     frysolder(gg.nearvw->x, gg.nearhw->y);
     return;
@@ -15212,21 +13611,15 @@ Static Void soldernear()
   clipoff();
 }
 
-
 Static Void solderat(x, y)
 short x, y;
 {
-  if (findsolder(x, y) != NULL)
-    return;
+  if (findsolder(x, y) != NULL) return;
   closerwire(x, y);
   if (gg.nearhw != NULL && gg.nearvw != NULL && gg.nearhw->x1 != x &&
       gg.nearhw->x2 != x && gg.nearvw->y1 != y && gg.nearvw->y2 != y)
     soldernear();
 }
-
-
-
-
 
 Static Void findattrnum2(numattrs, kattr, lbl, name, kinds, num)
 short numattrs;
@@ -15244,10 +13637,8 @@ short *num;
       *num = strtol(name, NULL, 0);
   } else {
     l1 = lbl;
-    while (l1 != NULL && l1->kind != '\001')
-      l1 = l1->next;
-    if (l1 != NULL)
-      l1 = strlist_find((na_strlist *)l1->value, name);
+    while (l1 != NULL && l1->kind != '\001') l1 = l1->next;
+    if (l1 != NULL) l1 = strlist_find((na_strlist *)l1->value, name);
     if (l1 != NULL)
       *num = (long)l1->value;
     else
@@ -15258,16 +13649,11 @@ short *num;
     *num = 0;
 }
 
-
 Static Void findattrnum(k, name, kinds, num)
 log_krec *k;
 Char *name, *kinds;
 short *num;
-{
-  findattrnum2(k->numattrs, k->attr, k->lbl, name, kinds, num);
-}
-
-
+{ findattrnum2(k->numattrs, k->attr, k->lbl, name, kinds, num); }
 
 Static Void findattrname2(numattrs, kattr, lbl, num, name)
 short numattrs;
@@ -15283,12 +13669,10 @@ Char *name;
     return;
   }
   l1 = lbl;
-  while (l1 != NULL && l1->kind != '\001')
-    l1 = l1->next;
+  while (l1 != NULL && l1->kind != '\001') l1 = l1->next;
   if (l1 != NULL) {
     l1 = (na_strlist *)l1->value;
-    while (l1 != NULL && (long)l1->value != num)
-      l1 = l1->next;
+    while (l1 != NULL && (long)l1->value != num) l1 = l1->next;
   }
   if (l1 != NULL)
     strcpy(name, l1->s);
@@ -15296,17 +13680,11 @@ Char *name;
     sprintf(name, "%d", num);
 }
 
-
 Static Void findattrname(k, num, name)
 log_krec *k;
 short num;
 Char *name;
-{
-  findattrname2(k->numattrs, k->attr, k->lbl, num, name);
-}
-
-
-
+{ findattrname2(k->numattrs, k->attr, k->lbl, num, name); }
 
 Static Void findpinnum(k, name_, num)
 log_krec *k;
@@ -15316,27 +13694,22 @@ short *num;
   Char name[256];
 
   strcpy(name, name_);
-  if (*name == '#')
-    strcpy_overlap(name, name + 1);
+  if (*name == '#') strcpy_overlap(name, name + 1);
   if (strsubset(name, "0123456789")) {
     if (*name == '\0') {
       *num = 0;
       return;
     }
     *num = strtol(name, NULL, 0);
-    if (*num < 1 || *num > k->numpins)
-      *num = 0;
+    if (*num < 1 || *num > k->numpins) *num = 0;
     return;
   }
   *num = 1;
   while (*num <= k->numpins &&
-	 strlist_find(k->pinnames[*num - 1], name) == NULL)
+         strlist_find(k->pinnames[*num - 1], name) == NULL)
     (*num)++;
-  if (*num > k->numpins)
-    *num = 0;
+  if (*num > k->numpins) *num = 0;
 }
-
-
 
 Static Void findpinname(k, num, name)
 log_krec *k;
@@ -15353,9 +13726,6 @@ Char *name;
     sprintf(name, "%d", num);
 }
 
-
-
-
 Static Void findpointmarker(k, num, x, y)
 log_krec *k;
 short num, *x, *y;
@@ -15363,16 +13733,14 @@ short num, *x, *y;
   long i;
 
   i = k->numvects;
-  while (i >= 1 && (k->vector[i - 1].vkind != 'p' ||
-		    k->vector[i - 1].UU.U98.num != num))
+  while (i >= 1 &&
+         (k->vector[i - 1].vkind != 'p' || k->vector[i - 1].UU.U98.num != num))
     i--;
   if (i >= 1) {
     *x = k->vector[i - 1].x1;
     *y = k->vector[i - 1].y1;
   }
 }
-
-
 
 Static Void findboxmarker(k, num, x1, y1, x2, y2)
 log_krec *k;
@@ -15381,24 +13749,15 @@ short num, *x1, *y1, *x2, *y2;
   long i;
 
   i = k->numvects;
-  while (i >= 1 && (k->vector[i - 1].vkind != 'b' ||
-		    k->vector[i - 1].UU.U98.num != num))
+  while (i >= 1 &&
+         (k->vector[i - 1].vkind != 'b' || k->vector[i - 1].UU.U98.num != num))
     i--;
-  if (i < 1)
-    return;
+  if (i < 1) return;
   k->x1 = k->vector[i - 1].x1;
   k->y1 = k->vector[i - 1].y1;
   k->x2 = k->vector[i - 1].UU.U99.x2;
   k->y2 = k->vector[i - 1].UU.U99.y2;
 }
-
-
-
-
-
-
-
-
 
 Static Void addlabelat(x, y, s)
 short x, y;
@@ -15411,21 +13770,19 @@ Char *s;
   l->x = x;
   l->y = y;
   l->w = m_strwidth(logfont_lfont, s) / log_scale0;
-/* p2c: log.text, line 14764:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 14764:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   chpageplace((int)gg.curpage, x, y, x + l->w, y + 2);
   remcursor();
   clipon();
   m_color((long)gg.color.labeltext);
-/* p2c: log.text, line 14769:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+  /* p2c: log.text, line 14769:
+   * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
   m_drawstr(x * gg.scale - gg.xoff, y * gg.scale - gg.yoff + 2, logfont_lfont,
-	    s);
+            s);
   clipoff();
   gg.nearlabel = l;
 }
-
-
 
 Static Void addlabel(l, s)
 log_lrec **l;
@@ -15443,32 +13800,26 @@ Char *s;
     l1 = gg.lbase[gg.curpage - 1];
     while (l1 != NULL) {
       if (l1->y * gg.scale - gg.yoff == y &&
-	  labs(l1->x * gg.scale - gg.xoff - x) < 20)
-	conflict = true;
+          labs(l1->x * gg.scale - gg.xoff - x) < 20)
+        conflict = true;
       l1 = l1->next;
     }
     if (conflict) {
       y -= gg.scale * 2;
       if (y < 10) {
-	y = baseline - 15;
-	x += gg.scale * 20;
+        y = baseline - 15;
+        x += gg.scale * 20;
       }
     }
   } while (conflict);
   x = (x + gg.xoff) / gg.scale;
   y = (y + gg.yoff) / gg.scale;
-  if (x * gg.scale < gg.xoff)
-    x++;
+  if (x * gg.scale < gg.xoff) x++;
   addlabelat(x, y, s);
   *l = gg.nearlabel;
 }
 
-
-#define blinkrate       25
-
-
-
-
+#define blinkrate 25
 
 /*================  EDITLABEL  ===================*/
 /*=                                              =*/
@@ -15492,18 +13843,17 @@ log_lrec *l;
   alert();
   savecaps = nk_setcapslock(labelcaps);
   touching = (l != NULL && l == gg.nearlabel);
-  if (l == NULL)
-    addlabel(&l, "");
+  if (l == NULL) addlabel(&l, "");
   x1 = l->x * gg.scale - gg.xoff;
   y1 = l->y * gg.scale - gg.yoff + 2;
   i = 1;
   strcpy(name, l->name);
   if (touching) {
     while (i <= strlen(name) &&
-	   gg.t.x - x1 > m_strwidth(logfont_lfont,
-				    (sprintf(STR1, "%.*s", i, name), STR1))) {
-/* p2c: log.text, line 14851:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+           gg.t.x - x1 > m_strwidth(logfont_lfont,
+                                    (sprintf(STR1, "%.*s", i, name), STR1))) {
+      /* p2c: log.text, line 14851:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
       i++;
     }
   }
@@ -15514,97 +13864,99 @@ log_lrec *l;
       m_colormode((long)m_xor);
       m_color((long)gg.color.labeltext);
       sprintf(STR1, "%.*s", i - 1, name);
-/* p2c: log.text, line 14860:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+      /* p2c: log.text, line 14860:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
       m_move(x1 + m_strwidth(logfont_lfont, STR1) - 1, y1 + 8L);
       if (i > strlen(name))
-	m_drawrel(6L, 0L);
+        m_drawrel(6L, 0L);
       else {
-	sprintf(STR1, "%.1s", name + i - 1);
-/* p2c: log.text, line 14864:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	m_drawrel(m_strwidth(logfont_lfont, STR1), 0L);
+        sprintf(STR1, "%.1s", name + i - 1);
+        /* p2c: log.text, line 14864:
+         * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+        m_drawrel(m_strwidth(logfont_lfont, STR1), 0L);
       }
       m_colormode((long)m_normal);
       clipoff();
       j = timers_sysclock() + blinkrate;
       if (!pollkbd2()) {
-	do {
-	  pass();
-	  pen();
-	} while (!(pollkbd2() || gg.t.dn || timers_sysclock() > j));
+        do {
+          pass();
+          pen();
+        } while (!(pollkbd2() || gg.t.dn || timers_sysclock() > j));
       }
       remcursor();
       clipon();
       m_colormode((long)m_xor);
       m_color((long)gg.color.labeltext);
       sprintf(STR1, "%.*s", i - 1, name);
-/* p2c: log.text, line 14877:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+      /* p2c: log.text, line 14877:
+       * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
       m_move(x1 + m_strwidth(logfont_lfont, STR1) - 1, y1 + 8L);
       if (i > strlen(name))
-	m_drawrel(6L, 0L);
+        m_drawrel(6L, 0L);
       else {
-	sprintf(STR1, "%.1s", name + i - 1);
-/* p2c: log.text, line 14881:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	m_drawrel(m_strwidth(logfont_lfont, STR1), 0L);
+        sprintf(STR1, "%.1s", name + i - 1);
+        /* p2c: log.text, line 14881:
+         * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+        m_drawrel(m_strwidth(logfont_lfont, STR1), 0L);
       }
       m_colormode((long)m_normal);
       clipoff();
       j = timers_sysclock() + blinkrate;
       if (!(pollkbd2() || gg.t.dn)) {
-	do {
-	  pass();
-	  pen();
-	} while (!(pollkbd2() || gg.t.dn || timers_sysclock() > j));
+        do {
+          pass();
+          pen();
+        } while (!(pollkbd2() || gg.t.dn || timers_sysclock() > j));
       }
     } while (!(pollkbd2() || gg.t.dn));
     if (!gg.t.dn) {
       ch = inkey2();
       if (ch >= 32 || ((1L << ch) & 0x10002108L) == 0) {
-	remcursor();
-	m_color((long)gg.color.backgr);
-/* p2c: log.text, line 14898:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	m_drawstr((long)x1, (long)y1, logfont_lfont, name);
-	redraw = true;
+        remcursor();
+        m_color((long)gg.color.backgr);
+        /* p2c: log.text, line 14898:
+         * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+        m_drawstr((long)x1, (long)y1, logfont_lfont, name);
+        redraw = true;
       } else
-	redraw = false;
+        redraw = false;
       if (ch >= ' ' && ch != 250 && ch != 251 && strlen(name) < log_lablen) {
-/* p2c: log.text, line 14903: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 14903: Note: Character >= 128 encountered [281] */
-	if (i <= strlen(name)) {
-	  sprintf(STR1, " %s", name + i - 1);
-	  strcpy(name + i - 1, STR1);
-	} else
-	  strcat(name, " ");
-	name[i - 1] = ch;
-	i++;
+        /* p2c: log.text, line 14903: Note: Character >= 128 encountered
+         * [281] */
+        /* p2c: log.text, line 14903: Note: Character >= 128 encountered
+         * [281] */
+        if (i <= strlen(name)) {
+          sprintf(STR1, " %s", name + i - 1);
+          strcpy(name + i - 1, STR1);
+        } else
+          strcat(name, " ");
+        name[i - 1] = ch;
+        i++;
       } else if (ch == '\007' && i > 1) {
-	i--;
-	strcpy_overlap(name + i - 1, name + i);
+        i--;
+        strcpy_overlap(name + i - 1, name + i);
       } else if (ch == '\030' && i <= strlen(name))
-	strcpy_overlap(name + i - 1, name + i);
+        strcpy_overlap(name + i - 1, name + i);
       else if (ch == '\b' && i > 1)
-	i--;
+        i--;
       else if (ch == '\034' && i <= strlen(name))
-	i++;
+        i++;
       else if (ch == '\031')
-	i = 1;
+        i = 1;
       else if (ch == '\032')
-	i = strlen(name) + 1;
+        i = strlen(name) + 1;
       else if (ch == '\n' && strlen(name) < log_lablen) {
-	sprintf(STR1, " %s", name + i - 1);
-	strcpy(name + i - 1, STR1);
+        sprintf(STR1, " %s", name + i - 1);
+        strcpy(name + i - 1, STR1);
       } else if (ch == '\037' && i <= strlen(name) && strlen(name) > 1)
-	strcpy_overlap(name + i - 1, name + i);
+        strcpy_overlap(name + i - 1, name + i);
       if (redraw) {
-	remcursor();
-	m_color((long)gg.color.labeltext);
-/* p2c: log.text, line 14950:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	m_drawstr((long)x1, (long)y1, logfont_lfont, name);
+        remcursor();
+        m_color((long)gg.color.labeltext);
+        /* p2c: log.text, line 14950:
+         * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+        m_drawstr((long)x1, (long)y1, logfont_lfont, name);
       }
     }
   } while (!((ch < 32 && ((1L << ch) & 0x2008) != 0) || gg.t.dn));
@@ -15613,8 +13965,8 @@ log_lrec *l;
   else if (strcmp(name, l->name)) {
     strcpy(l->name, name);
     l->w = m_strwidth(logfont_lfont, l->name) / log_scale0;
-/* p2c: log.text, line 14961:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 14961:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     stamp(&gg.labelstamp);
     chpageplace((int)gg.curpage, l->x, l->y, l->x + l->w, l->y + 2);
   }
@@ -15624,10 +13976,6 @@ log_lrec *l;
 }
 
 #undef blinkrate
-
-
-
-
 
 /*==================  ADDBOX  ====================*/
 /*=                                              =*/
@@ -15655,10 +14003,7 @@ short x1, y1, x2, y2;
   gg.nearbox = b;
 }
 
-
-
-Static Void addbox()
-{
+Static Void addbox() {
   short x1, y1;
 
   log_setmode("BOX");
@@ -15677,35 +14022,34 @@ Static Void addbox()
       x1 = gg.posx;
       y1 = gg.posy;
       do {
-	pen();
-	x1 = gg.gridx;
-	y1 = gg.gridy;
-	m_colormode((long)m_xor);
-	m_color((long)gg.color.dashbox);
-	m_linestyle(1L);
-	rect(gg.posx, gg.posy, x1, y1);
-	m_linestyle(0L);
-	m_colormode((long)m_normal);
-	do {
-	  pass();
-	  trykbd();
-	  pen();
-	} while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
-		 *gg.func == '\0');
-	m_colormode((long)m_xor);
-	m_color((long)gg.color.dashbox);
-	m_linestyle(1L);
-	rect(gg.posx, gg.posy, x1, y1);
-	m_linestyle(0L);
-	m_colormode((long)m_normal);
-	scroll();
+        pen();
+        x1 = gg.gridx;
+        y1 = gg.gridy;
+        m_colormode((long)m_xor);
+        m_color((long)gg.color.dashbox);
+        m_linestyle(1L);
+        rect(gg.posx, gg.posy, x1, y1);
+        m_linestyle(0L);
+        m_colormode((long)m_normal);
+        do {
+          pass();
+          trykbd();
+          pen();
+        } while (gg.gridx == x1 && gg.gridy == y1 && gg.t.depressed &&
+                 *gg.func == '\0');
+        m_colormode((long)m_xor);
+        m_color((long)gg.color.dashbox);
+        m_linestyle(1L);
+        rect(gg.posx, gg.posy, x1, y1);
+        m_linestyle(0L);
+        m_colormode((long)m_normal);
+        scroll();
       } while (gg.t.depressed || abs(x1 - gg.posx) < 2 ||
-	       abs(y1 - gg.posy) < 2);
+               abs(y1 - gg.posy) < 2);
       sortshints(&gg.posx, &x1);
       sortshints(&gg.posy, &y1);
       remcursor();
-      if (gg.incircuit && *gg.func == '\0')
-	addboxat(gg.posx, gg.posy, x1, y1);
+      if (gg.incircuit && *gg.func == '\0') addboxat(gg.posx, gg.posy, x1, y1);
     }
   } while (gg.incircuit && gg.stillnear && *gg.func == '\0');
   gg.startpoint = false;
@@ -15717,30 +14061,23 @@ Static Void addbox()
   cursortype = normal;
 }
 
-
-
-
-
-
 Static Void initcolors PV();
 
 /* Local variables for doshellescape: */
 struct LOC_doshellescape {
   long oldc;
-} ;
+};
 
 Local Void recov(LINK)
 struct LOC_doshellescape *LINK;
 {
   nk_settransarray(nk_ktsupplied, &curkeytrans);
   initscreen2();
-  if (m_maxcolor != LINK->oldc)
-    initcolormap();
+  if (m_maxcolor != LINK->oldc) initcolormap();
   m_init_pen(tabletaddr);
   initcolors();
   refrscreen();
 }
-
 
 Static Void doshellescape(arg)
 Char *arg;
@@ -15754,30 +14091,24 @@ Char *arg;
   m_alpha_on();
   V.oldc = m_maxcolor;
   TRY(try22);
-    closedumpfiles();
-    nk_settransarray(nk_ktstandard, &ktemp);
-    m_alpha_off();
-    m_graphics_on();
-    recov(&V);
+  closedumpfiles();
+  nk_settransarray(nk_ktstandard, &ktemp);
+  m_alpha_off();
+  m_graphics_on();
+  recov(&V);
   RECOVER(try22);
-    i = P_escapecode;
-    j = P_ioresult;
-    recov(&V);
-    if (i != -20) {
-      beginerror();
-      puts(_ShowEscape(STR1, i, j, "During shell escape"));
-      enderror();
-    }
+  i = P_escapecode;
+  j = P_ioresult;
+  recov(&V);
+  if (i != -20) {
+    beginerror();
+    puts(_ShowEscape(STR1, i, j, "During shell escape"));
+    enderror();
+  }
   ENDTRY(try22);
 }
 
-
-
-
-
-
-Static Void dumphistory()
-{
+Static Void dumphistory() {
   log_htrec *ht;
   log_hnrec *hn;
   short i, FORLIM;
@@ -15789,9 +14120,8 @@ Static Void dumphistory()
   i = 0;
   printf("Time               ");
   while (hn != NULL) {
-    printf("%s%*c",
-	   gg.signaltab[hn->sig - 1].name,
-	   (int)(15 - strlen(gg.signaltab[hn->sig - 1].name)), ' ');
+    printf("%s%*c", gg.signaltab[hn->sig - 1].name,
+           (int)(15 - strlen(gg.signaltab[hn->sig - 1].name)), ' ');
     hn = hn->next;
     i++;
   }
@@ -15800,8 +14130,7 @@ Static Void dumphistory()
   while (ht != NULL) {
     printf("% .5E   ", ht->time);
     FORLIM = hncount;
-    for (i = 0; i < FORLIM; i++)
-      printf("%12.6f   ", na_srtor(ht->val[i]));
+    for (i = 0; i < FORLIM; i++) printf("%12.6f   ", na_srtor(ht->val[i]));
     putchar('\n');
     ht = ht->next;
   }
@@ -15810,19 +14139,13 @@ Static Void dumphistory()
   gg.showpage = 0;
 }
 
-
-
-
-
 /*================  SHOWHISTORY  =================*/
 /*=                                              =*/
 /*=  Enter History (Scope) display mode.         =*/
 /*=                                              =*/
 /*================================================*/
 
-
-Static Void reshuffle()
-{
+Static Void reshuffle() {
   log_hnrec *hn;
   short i;
 
@@ -15837,9 +14160,7 @@ Static Void reshuffle()
   histreset = true;
 }
 
-
-Static Void histdelsignals()
-{
+Static Void histdelsignals() {
   log_hnrec *hn;
   log_tool *tool;
 
@@ -15851,14 +14172,11 @@ Static Void histdelsignals()
     gg.hnbase = hn;
   }
   histgridhn = NULL;
-  if (histgridwhich == 2)
-    histgridwhich = 0;
+  if (histgridwhich == 2) histgridwhich = 0;
   reshuffle();
 }
 
-
-#define unit            (histdivision / 2)
-
+#define unit (histdivision / 2)
 
 Static Void alignsigname(y)
 short *y;
@@ -15869,9 +14187,7 @@ short *y;
 
 #undef unit
 
-
-Static short histaddsignalpos()
-{
+Static short histaddsignalpos() {
   log_hnrec *hn;
   short y;
 
@@ -15879,7 +14195,7 @@ Static short histaddsignalpos()
   do {
     hn = gg.hnbase;
     while (hn != NULL && (hn->y + histvscale < y - histvscale ||
-			  hn->y - histvscale > y + histvscale))
+                          hn->y - histvscale > y + histvscale))
       hn = hn->next;
     y += histdivision;
   } while (hn != NULL && y <= histdown);
@@ -15887,7 +14203,6 @@ Static short histaddsignalpos()
   alignsigname(&y);
   return y;
 }
-
 
 Static Void histaddsignal(hn, sig, y)
 log_hnrec **hn;
@@ -15901,35 +14216,20 @@ short sig, y;
   tool = gg.signaltab[sig - 1].np->simtype;
   newattrs(&(*hn)->attr, tool->hnumattrs, tool->hattr);
   if (gg.traceflag)
-    fprintf(tracefile, "Histaddsignal: %ld, %d\n",
-	    (long)(*hn)->attr, tool->hnumattrs);
+    fprintf(tracefile, "Histaddsignal: %ld, %d\n", (long)(*hn)->attr,
+            tool->hnumattrs);
   (*hn)->next = gg.hnbase;
   gg.hnbase = *hn;
   reshuffle();
 }
 
+Static Void hnproc1() { calltool(gg.acttool, act_confighist); }
 
+Static Void hnproc2() { calltool(gg.acttool, act_configchhist); }
 
-Static Void hnproc1()
-{
-  calltool(gg.acttool, act_confighist);
-}
+Static Void hnproc3() { calltool(gg.acttool, act_configrelhist); }
 
-
-Static Void hnproc2()
-{
-  calltool(gg.acttool, act_configchhist);
-}
-
-
-Static Void hnproc3()
-{
-  calltool(gg.acttool, act_configrelhist);
-}
-
-
-Static Void haproc1()
-{
+Static Void haproc1() {
   log_gattrrec *WITH;
 
   WITH = &histgattr[histcurcount - 1];
@@ -15945,122 +14245,105 @@ Static Void haproc1()
     WITH->changed = true;
   }
   WITH = &histgattr[histcurtstep - 1];
-  if (WITH->UU.r == gg.prevtimestep)
-    return;
+  if (WITH->UU.r == gg.prevtimestep) return;
   WITH->UU.r = gg.prevtimestep;
   WITH->blnk = false;
   WITH->changed = true;
 }
 
-
-Static Void haproc2()
-{
+Static Void haproc2() {
   log_gattrrec *WITH;
 
   WITH = &histgattr[gg.actx - 1];
   switch (gg.actx) {
+    case histtrigsig:
+      if (!strcmp(WITH->UU.c, "(none)"))
+        histtrig = 0;
+      else
+        histtrig = getsignal(0, WITH->UU.c);
+      break;
 
-  case histtrigsig:
-    if (!strcmp(WITH->UU.c, "(none)"))
-      histtrig = 0;
-    else
-      histtrig = getsignal(0, WITH->UU.c);
-    break;
+    case histstarttime:
+      if (WITH->UU.r <= 0) WITH->blnk = true;
+      if (!WITH->blnk && WITH->UU.r >= histgattr[histstoptime - 1].UU.r) {
+        histgattr[histstoptime - 1].blnk = true;
+        histgattr[histstoptime - 1].changed = true;
+      }
+      break;
 
-  case histstarttime:
-    if (WITH->UU.r <= 0)
-      WITH->blnk = true;
-    if (!WITH->blnk && WITH->UU.r >= histgattr[histstoptime - 1].UU.r) {
-      histgattr[histstoptime - 1].blnk = true;
-      histgattr[histstoptime - 1].changed = true;
-    }
-    break;
+    case histstoptime:
+      if (WITH->UU.r < 0) WITH->blnk = true;
+      if (!WITH->blnk && WITH->UU.r <= histgattr[histstarttime - 1].UU.r) {
+        histgattr[histstarttime - 1].blnk = true;
+        histgattr[histstarttime - 1].changed = true;
+      }
+      break;
 
-  case histstoptime:
-    if (WITH->UU.r < 0)
-      WITH->blnk = true;
-    if (!WITH->blnk && WITH->UU.r <= histgattr[histstarttime - 1].UU.r) {
-      histgattr[histstarttime - 1].blnk = true;
-      histgattr[histstarttime - 1].changed = true;
-    }
-    break;
+    case histminstep:
+    case histmaxstep:
+      if (WITH->UU.r <= 0) WITH->blnk = true;
+      break;
 
-  case histminstep:
-  case histmaxstep:
-    if (WITH->UU.r <= 0)
-      WITH->blnk = true;
-    break;
+    case histsecdiv:
+      if (WITH->UU.r <= 0) gg.actflag = false;
+      break;
 
-  case histsecdiv:
-    if (WITH->UU.r <= 0)
+    case histmaxcount:
+      if (WITH->UU.U73.i1 < 2) WITH->UU.U73.i1 = 2;
+      break;
+
+    case histcurcount:
+    case histcurtime:
+    case histcurtstep:
       gg.actflag = false;
-    break;
-
-  case histmaxcount:
-    if (WITH->UU.U73.i1 < 2)
-      WITH->UU.U73.i1 = 2;
-    break;
-
-  case histcurcount:
-  case histcurtime:
-  case histcurtstep:
-    gg.actflag = false;
-    break;
+      break;
   }
 }
 
+Static Void haproc3() { /* nothing at all! */ }
 
-Static Void haproc3()
-{
-  /* nothing at all! */
-}
+#define quit1pos 2
 
+#define configpos (quit1pos + 44)
+#define triggerpos (configpos + 63)
+#define resetpos (triggerpos + 51)
+#define onoffpos (resetpos + 45)
+#define gridpos (onoffpos + 26)
+#define gridwpos (gridpos + 60)
+#define fastpos (gridwpos + 54)
+#define dumppos (fastpos + 40)
+#define nextpos (dumppos + 40)
 
-#define quit1pos        2
+#define quit2pos 484
 
-#define configpos       (quit1pos + 44)
-#define triggerpos      (configpos + 63)
-#define resetpos        (triggerpos + 51)
-#define onoffpos        (resetpos + 45)
-#define gridpos         (onoffpos + 26)
-#define gridwpos        (gridpos + 60)
-#define fastpos         (gridwpos + 54)
-#define dumppos         (fastpos + 40)
-#define nextpos         (dumppos + 40)
+#define otherpos (quit2pos - 50)
 
-#define quit2pos        484
+#define axiswidth 50
 
-#define otherpos        (quit2pos - 50)
+#define xaxispos (quit1pos + 44)
+#define yaxispos (xaxispos + axiswidth)
+#define exprpos (yaxispos + axiswidth + 20)
+#define timepos (exprpos + 65)
+#define plotpos (timepos + 80)
+#define next2pos (plotpos + 50)
 
-#define axiswidth       50
+#define nummenus 2
 
-#define xaxispos        (quit1pos + 44)
-#define yaxispos        (xaxispos + axiswidth)
-#define exprpos         (yaxispos + axiswidth + 20)
-#define timepos         (exprpos + 65)
-#define plotpos         (timepos + 80)
-#define next2pos        (plotpos + 50)
-
-#define nummenus        2
-
-
-#define tolerance       15
-
+#define tolerance 15
 
 typedef short ararr[log_million];
-
 
 /* Local variables for historycommand: */
 struct LOC_historycommand {
   boolean rflag, oldtrigger, oldreset, oldonoff, oldfast;
   short oldgridmode, oldgridwhich, gridx1, gridy1, gridx2, gridy2, valuey,
-	whichmenu, vmenu1, vmenu2;
+      whichmenu, vmenu1, vmenu2;
   boolean xactive, yactive;
   Char xexpr[256], yexpr[256];
   double gridval, gridval2, gridtime;
   Char gridstr[81];
   long stamp;
-} ;
+};
 
 Local double valueattime(hn, time, LINK)
 log_hnrec *hn;
@@ -16095,8 +14378,9 @@ struct LOC_historycommand *LINK;
   log_hnrec *hn, *besthn;
   short yy, besty;
 
-  time = (double)(x - histleft) / histdivision *
-	 histgattr[histsecdiv - 1].UU.r + histgattr[histfirsttime - 1].UU.r;
+  time =
+      (double)(x - histleft) / histdivision * histgattr[histsecdiv - 1].UU.r +
+      histgattr[histfirsttime - 1].UU.r;
   ht = gg.htbase;
   ht0 = NULL;
   while (ht != NULL && ht->time < time) {
@@ -16115,8 +14399,8 @@ struct LOC_historycommand *LINK;
       value = v1 + (v2 - v1) * alpha;
       historyvaluey(hn, value, &v1, &yy);
       if (abs(yy - y) < besty) {
-	besty = abs(yy - y);
-	besthn = hn;
+        besty = abs(yy - y);
+        besthn = hn;
       }
       hn = hn->next;
     }
@@ -16132,8 +14416,7 @@ struct LOC_historycommand *LINK;
 Local Void refrtrigger(LINK)
 struct LOC_historycommand *LINK;
 {
-  if (gg.histactive == LINK->oldtrigger || LINK->whichmenu != 0)
-    return;
+  if (gg.histactive == LINK->oldtrigger || LINK->whichmenu != 0) return;
   remcursor();
   clipoff();
   if (gg.histactive)
@@ -16147,8 +14430,7 @@ struct LOC_historycommand *LINK;
 Local Void refrreset(LINK)
 struct LOC_historycommand *LINK;
 {
-  if (gg.resetflag == LINK->oldreset || LINK->whichmenu != 0)
-    return;
+  if (gg.resetflag == LINK->oldreset || LINK->whichmenu != 0) return;
   remcursor();
   clipoff();
   if (gg.resetflag)
@@ -16162,8 +14444,7 @@ struct LOC_historycommand *LINK;
 Local Void refronoff(LINK)
 struct LOC_historycommand *LINK;
 {
-  if (gg.pwrflag == LINK->oldonoff || LINK->whichmenu != 0)
-    return;
+  if (gg.pwrflag == LINK->oldonoff || LINK->whichmenu != 0) return;
   remcursor();
   clipoff();
   if (gg.pwrflag) {
@@ -16184,45 +14465,42 @@ struct LOC_historycommand *LINK;
     clipoff();
     m_color((long)gg.color.selword);
     switch (histgridmode) {
+      case 0:
+        drawstr2((int)gridpos, LINK->vmenu1, "Delta:   ");
+        break;
 
-    case 0:
-      drawstr2((int)gridpos, LINK->vmenu1, "Delta:   ");
-      break;
+      case 1:
+        drawstr2((int)gridpos, LINK->vmenu1, "Absolute:");
+        break;
 
-    case 1:
-      drawstr2((int)gridpos, LINK->vmenu1, "Absolute:");
-      break;
+      case 2:
+        drawstr2((int)gridpos, LINK->vmenu1, "Value:   ");
+        break;
 
-    case 2:
-      drawstr2((int)gridpos, LINK->vmenu1, "Value:   ");
-      break;
-
-    case 3:
-      drawstr2((int)gridpos, LINK->vmenu1, "Slope:   ");
-      break;
+      case 3:
+        drawstr2((int)gridpos, LINK->vmenu1, "Slope:   ");
+        break;
     }
     LINK->oldgridmode = histgridmode;
   }
-  if (histgridwhich == LINK->oldgridwhich)
-    return;
+  if (histgridwhich == LINK->oldgridwhich) return;
   remcursor();
   clipoff();
   switch (histgridwhich) {
+    case 0:
+      m_color((long)gg.color.selword);
+      drawstr2((int)gridwpos, LINK->vmenu1, "Time  ");
+      break;
 
-  case 0:
-    m_color((long)gg.color.selword);
-    drawstr2((int)gridwpos, LINK->vmenu1, "Time  ");
-    break;
+    case 1:
+      m_color((long)gg.color.selword);
+      drawstr2((int)gridwpos, LINK->vmenu1, "Freq  ");
+      break;
 
-  case 1:
-    m_color((long)gg.color.selword);
-    drawstr2((int)gridwpos, LINK->vmenu1, "Freq  ");
-    break;
-
-  case 2:
-    m_color((long)gg.color.menuword);
-    drawstr2((int)gridwpos, LINK->vmenu1, "Signal");
-    break;
+    case 2:
+      m_color((long)gg.color.menuword);
+      drawstr2((int)gridwpos, LINK->vmenu1, "Signal");
+      break;
   }
   LINK->oldgridwhich = histgridwhich;
 }
@@ -16233,8 +14511,7 @@ struct LOC_historycommand *LINK;
   boolean fast;
 
   fast = (gg.fastspeed == gg.fastmax);
-  if (fast == LINK->oldfast || LINK->whichmenu != 0)
-    return;
+  if (fast == LINK->oldfast || LINK->whichmenu != 0) return;
   remcursor();
   clipoff();
   if (fast)
@@ -16272,7 +14549,7 @@ struct LOC_drawhistory {
   short x, y, oldx;
   log_htrec *ht;
   short *ar;
-} ;
+};
 
 Local Void drawtrace(hn, i, LINK)
 log_hnrec *hn;
@@ -16304,18 +14581,14 @@ struct LOC_historycommand *LINK;
   V.LINK = LINK;
   hn = gg.hnbase;
   while (hn != NULL) {
-    if (histgridhn != hn)
-      drawsigname(hn, 0, LINK);
+    if (histgridhn != hn) drawsigname(hn, 0, LINK);
     hn = hn->next;
   }
-  if (histgridhn != NULL)
-    drawsigname(histgridhn, 0, LINK);
-  if (gg.htbase == NULL)
-    return;
+  if (histgridhn != NULL) drawsigname(histgridhn, 0, LINK);
+  if (gg.htbase == NULL) return;
   V.ar = (short *)Malloc(hncount * 2);
   FORLIM = hncount;
-  for (i = 0; i < FORLIM; i++)
-    V.ar[i] = log_maxshint;
+  for (i = 0; i < FORLIM; i++) V.ar[i] = log_maxshint;
   m_clip((long)histleft, 0L, (long)across, (long)histdown);
   V.ht = gg.htbase;
   ht1 = gg.htbase;
@@ -16330,13 +14603,12 @@ struct LOC_historycommand *LINK;
     while (hn != NULL) {
       i++;
       if (histgridhn != hn)
-	drawtrace(hn, i, &V);
+        drawtrace(hn, i, &V);
       else
-	gridi = i;
+        gridi = i;
       hn = hn->next;
     }
-    if (histgridhn != NULL)
-      drawtrace(histgridhn, gridi, &V);
+    if (histgridhn != NULL) drawtrace(histgridhn, gridi, &V);
     V.oldx = V.x;
     V.ht = V.ht->next;
   } while (V.ht != NULL && V.x <= across);
@@ -16348,15 +14620,13 @@ Local Void setgridwhich(hn, LINK)
 log_hnrec *hn;
 struct LOC_historycommand *LINK;
 {
-  if (histgridhn != NULL)
-    drawsigname(histgridhn, 1, LINK);
+  if (histgridhn != NULL) drawsigname(histgridhn, 1, LINK);
   histgridhn = hn;
   if (hn != NULL)
     histgridwhich = 2;
   else if (histgridwhich == 2)
     histgridwhich = 0;
-  if (histgridhn != NULL)
-    drawsigname(histgridhn, 0, LINK);
+  if (histgridhn != NULL) drawsigname(histgridhn, 0, LINK);
 }
 
 Local Void nextgridwhich(LINK)
@@ -16365,31 +14635,27 @@ struct LOC_historycommand *LINK;
   log_hnrec *nexthn;
 
   nexthn = histgridhn;
-  if (nexthn != NULL)
-    drawsigname(nexthn, 1, LINK);
+  if (nexthn != NULL) drawsigname(nexthn, 1, LINK);
   switch (histgridwhich) {
+    case 0:
+      histgridwhich = 1;
+      break;
 
-  case 0:
-    histgridwhich = 1;
-    break;
+    case 1:
+      nexthn = gg.hnbase;
+      if (nexthn != NULL)
+        histgridwhich = 2;
+      else
+        histgridwhich = 0;
+      break;
 
-  case 1:
-    nexthn = gg.hnbase;
-    if (nexthn != NULL)
-      histgridwhich = 2;
-    else
-      histgridwhich = 0;
-    break;
-
-  case 2:
-    nexthn = nexthn->next;
-    if (nexthn == NULL)
-      histgridwhich = 0;
-    break;
+    case 2:
+      nexthn = nexthn->next;
+      if (nexthn == NULL) histgridwhich = 0;
+      break;
   }
   histgridhn = nexthn;
-  if (histgridhn != NULL)
-    drawsigname(histgridhn, 0, LINK);
+  if (histgridhn != NULL) drawsigname(histgridhn, 0, LINK);
 }
 
 Local Void nextgridmode(LINK)
@@ -16406,18 +14672,17 @@ struct LOC_historycommand *LINK;
 {
   boolean flag;
   log_hnrec *hn;
-  Void (*TEMP) PV();
-  Void (*TEMP5) PV();
-  Void (*TEMP6) PV();
+  Void(*TEMP) PV();
+  Void(*TEMP5) PV();
+  Void(*TEMP6) PV();
 
   flag = histgattr[histalignsigs - 1].UU.b;
   TEMP = haproc1;
   TEMP5 = haproc2;
   TEMP6 = haproc3;
   editattrs(histgattr, histnumattrs, histkattr, histlbl, "Scope", TEMP, TEMP5,
-	    TEMP6, &LINK->stamp);
-  if (flag)
-    return;
+            TEMP6, &LINK->stamp);
+  if (flag) return;
   hn = gg.hnbase;
   while (hn != NULL) {
     alignsigname(&hn->y);
@@ -16461,15 +14726,13 @@ struct LOC_historycommand *LINK;
   Char STR2[256], STR3[256];
   short FORLIM;
 
-  if (gg.htbase == NULL)
-    return;
+  if (gg.htbase == NULL) return;
   m_color((long)gg.color.selword);
   drawstr2((int)dumppos, LINK->vmenu1, "Dump");
   beginbottom();
   m_alpha_on();
   printf("Dump file name");
-  if (*dumpfname != '\0')
-    printf(" [%s]", dumpfname);
+  if (*dumpfname != '\0') printf(" [%s]", dumpfname);
   printf(": ");
   readlnpass(fn, 0);
   endbottom();
@@ -16482,59 +14745,57 @@ struct LOC_historycommand *LINK;
   if (*dumpfname != '\0') {
     TRY(try23);
 
-      /* Procedure to write the scope data to the dump file.
+    /* Procedure to write the scope data to the dump file.
 
-         GG.HNBASE points to a linked list of History Names.  HN is a temp. variable.
-         HNCOUNT is a count of the number of things in this list.
-         The name of a trace is given by:  gg.signaltab^[hn^.sig].name^
+       GG.HNBASE points to a linked list of History Names.  HN is a temp.
+       variable. HNCOUNT is a count of the number of things in this list. The
+       name of a trace is given by:  gg.signaltab^[hn^.sig].name^
 
-         GG.HTBASE points to a list of History Timesteps.  HT is a temp. variable.
-         For each entry, the time is stored in:  ht^.time
-         and the value of the I'th history trace is:  na_srtor(ht^.val[i])
-       */
-      dumpmessage("");
-      sprintf(STR2, "%s (", dumpfname);
-      dumpmessage(STR2);   /*file name in header*/
-      dumpmessage("(DATA:");
-      dumpmessage("(TITLE: TIME )");
+       GG.HTBASE points to a list of History Timesteps.  HT is a temp.
+       variable. For each entry, the time is stored in:  ht^.time and the
+       value of the I'th history trace is:  na_srtor(ht^.val[i])
+     */
+    dumpmessage("");
+    sprintf(STR2, "%s (", dumpfname);
+    dumpmessage(STR2); /*file name in header*/
+    dumpmessage("(DATA:");
+    dumpmessage("(TITLE: TIME )");
+    dumpmessage("(POINTS:");
+    ht = gg.htbase;
+    while (ht != NULL) { /*list of time values*/
+      sprintf(STR2, "%g", ht->time);
+      dumpmessage(STR2);
+      ht = ht->next;
+    }
+    dumpmessage("))");
+    hn = gg.hnbase;
+    FORLIM = hncount;
+    for (i = 0; i < FORLIM; i++) { /*for each trace...*/
+      dumpmessage("(DATA:");       /*write its name*/
+      sprintf(STR3, "(TITLE: \\\\%s\\)", gg.signaltab[hn->sig - 1].name);
+      dumpmessage(STR3);
       dumpmessage("(POINTS:");
       ht = gg.htbase;
-      while (ht != NULL) {   /*list of time values*/
-	sprintf(STR2, "%g", ht->time);
-	dumpmessage(STR2);
-	ht = ht->next;
+      while (ht != NULL) { /*and list of values*/
+        sprintf(STR3, "%g", na_srtor(ht->val[i]));
+        dumpmessage(STR3);
+        ht = ht->next;
       }
       dumpmessage("))");
-      hn = gg.hnbase;
-      FORLIM = hncount;
-      for (i = 0; i < FORLIM; i++) {   /*for each trace...*/
-	dumpmessage("(DATA:");   /*write its name*/
-	sprintf(STR3, "(TITLE: \\\\%s\\)", gg.signaltab[hn->sig - 1].name);
-	dumpmessage(STR3);
-	dumpmessage("(POINTS:");
-	ht = gg.htbase;
-	while (ht != NULL) {  /*and list of values*/
-	  sprintf(STR3, "%g", na_srtor(ht->val[i]));
-	  dumpmessage(STR3);
-	  ht = ht->next;
-	}
-	dumpmessage("))");
-	hn = hn->next;
-      }
-      dumpmessage(")");
-      /* End of Dump routine.*/
+      hn = hn->next;
+    }
+    dumpmessage(")");
+    /* End of Dump routine.*/
 
-      closedump();
+    closedump();
     RECOVER(try23);
-      if (P_escapecode == -20)
-	_Escape(P_escapecode);
-      i = P_ioresult;
-      j = P_escapecode;
-      beginerror();
-      if (Debugging || debugprint)
-	printf("%ld/%d/%ld   ", j, i, EXCP_LINE);
-      printf("Unable to write dump file \"%s\"\n", dumpfname);
-      enderror();
+    if (P_escapecode == -20) _Escape(P_escapecode);
+    i = P_ioresult;
+    j = P_escapecode;
+    beginerror();
+    if (Debugging || debugprint) printf("%ld/%d/%ld   ", j, i, EXCP_LINE);
+    printf("Unable to write dump file \"%s\"\n", dumpfname);
+    enderror();
     ENDTRY(try23);
   }
   endbottom();
@@ -16553,7 +14814,7 @@ struct LOC_historycommand *LINK;
     m_color((long)gg.color.menuword);
   drawstr2((int)pos, LINK->vmenu1, name);
   uerase((int)pos, LINK->vmenu2 - 2, (int)(pos + axiswidth - 3),
-	 LINK->vmenu2 + 12);
+         LINK->vmenu2 + 12);
   m_clip(pos, LINK->vmenu2 - 2L, pos + axiswidth - 3, LINK->vmenu2 + 12L);
   m_color((long)gg.color.menuword);
   drawstr2((int)pos, LINK->vmenu2, expr);
@@ -16574,17 +14835,14 @@ struct LOC_historycommand *LINK;
   if (LINK->xactive) {
     LINK->xactive = false;
     strcpy(LINK->xexpr, expr);
-    if (*LINK->yexpr == '\0')
-      LINK->yactive = true;
+    if (*LINK->yexpr == '\0') LINK->yactive = true;
     refraxes(LINK);
     return;
   }
-  if (!LINK->yactive)
-    return;
+  if (!LINK->yactive) return;
   LINK->yactive = false;
   strcpy(LINK->yexpr, expr);
-  if (*LINK->xexpr == '\0')
-    LINK->xactive = true;
+  if (*LINK->xexpr == '\0') LINK->xactive = true;
   refraxes(LINK);
 }
 
@@ -16593,16 +14851,14 @@ struct LOC_historycommand *LINK;
 {
   Char expr[256];
 
-  if (!(LINK->xactive || LINK->yactive))
-    return;
+  if (!(LINK->xactive || LINK->yactive)) return;
   beginbottom();
   m_alpha_on();
   printf("Expression to plot: ");
   readlnpass(expr, 0);
   endbottom();
   strcompress(expr, " ", true);
-  if (*expr != '\0')
-    setaxis(expr, LINK);
+  if (*expr != '\0') setaxis(expr, LINK);
 }
 
 Local Void plotcmd(LINK)
@@ -16610,8 +14866,7 @@ struct LOC_historycommand *LINK;
 {
   Char STR1[256];
 
-  if (*LINK->xexpr == '\0' || *LINK->yexpr == '\0')
-    return;
+  if (*LINK->xexpr == '\0' || *LINK->yexpr == '\0') return;
   sprintf(STR1, "PLOT SCOPE %s %s", LINK->xexpr, LINK->yexpr);
   assertfunc(STR1);
   dofunction();
@@ -16625,8 +14880,7 @@ struct LOC_historycommand *LINK;
   Char STR1[81];
 
   do {
-    while ((gg.t.x < histleft || gg.t.y > histdown) && gg.t.depressed)
-      pen();
+    while ((gg.t.x < histleft || gg.t.y > histdown) && gg.t.depressed) pen();
     LINK->gridx2 = gg.t.x;
     LINK->gridy2 = gg.t.y;
     m_colormode((long)m_xor);
@@ -16639,107 +14893,109 @@ struct LOC_historycommand *LINK;
     *gg.actstr = '\0';
     gg.acty = histgridmode;
     switch (histgridwhich * 100 + histgridmode) {
+      case 0:
+        m_drawline((long)LINK->gridx1, 0L, (long)LINK->gridx1, (long)histdown);
+        m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
+        gg.actval = (double)abs(LINK->gridx2 - LINK->gridx1) / histdivision;
+        realunit(LINK->gridstr, gg.actval * histgattr[histsecdiv - 1].UU.r, 4,
+                 "s", true);
+        break;
 
-    case 0:
-      m_drawline((long)LINK->gridx1, 0L, (long)LINK->gridx1, (long)histdown);
-      m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
-      gg.actval = (double)abs(LINK->gridx2 - LINK->gridx1) / histdivision;
-      realunit(LINK->gridstr, gg.actval * histgattr[histsecdiv - 1].UU.r, 4,
-	       "s", true);
-      break;
+      case 1:
+      case 101:
+      case 2:
+      case 102:
+        m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
+        gg.actval = (double)(LINK->gridx2 - histleft) / histdivision;
+        realunit(LINK->gridstr,
+                 gg.actval * histgattr[histsecdiv - 1].UU.r +
+                     histgattr[histfirsttime - 1].UU.r,
+                 4, "s", true);
+        break;
 
-    case 1:
-    case 101:
-    case 2:
-    case 102:
-      m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
-      gg.actval = (double)(LINK->gridx2 - histleft) / histdivision;
-      realunit(LINK->gridstr, gg.actval * histgattr[histsecdiv - 1].UU.r +
-			      histgattr[histfirsttime - 1].UU.r, 4, "s",
-	       true);
-      break;
+      case 3:
+      case 103:
+        m_drawline((long)LINK->gridx1, (long)LINK->gridy1, (long)LINK->gridx2,
+                   (long)LINK->gridy2);
+        break;
 
-    case 3:
-    case 103:
-      m_drawline((long)LINK->gridx1, (long)LINK->gridy1, (long)LINK->gridx2,
-		 (long)LINK->gridy2);
-      break;
+      case 100:
+        m_drawline((long)LINK->gridx1, 0L, (long)LINK->gridx1, (long)histdown);
+        m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
+        gg.actval = (double)abs(LINK->gridx2 - LINK->gridx1) / histdivision;
+        if (gg.actval != 0)
+          realunit(LINK->gridstr,
+                   1 / (gg.actval * histgattr[histsecdiv - 1].UU.r), 4, "Hz",
+                   true);
+        break;
 
-    case 100:
-      m_drawline((long)LINK->gridx1, 0L, (long)LINK->gridx1, (long)histdown);
-      m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
-      gg.actval = (double)abs(LINK->gridx2 - LINK->gridx1) / histdivision;
-      if (gg.actval != 0)
-	realunit(LINK->gridstr,
-		 1 / (gg.actval * histgattr[histsecdiv - 1].UU.r), 4, "Hz",
-		 true);
-      break;
+      case 200:
+        m_drawline((long)histleft, (long)LINK->gridy1, (long)across,
+                   (long)LINK->gridy1);
+        m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
+                   (long)LINK->gridy2);
+        gg.actval2 = (double)LINK->gridy1 / histdivision;
+        gg.actval3 = (double)LINK->gridy2 / histdivision;
+        gg.actval = fabs(gg.actval3 - gg.actval2);
+        calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
+        if (*gg.actstr == '\0')
+          realunit(LINK->gridstr, gg.actval, 4, "", true);
+        else
+          strcpy(LINK->gridstr, gg.actstr);
+        break;
 
-    case 200:
-      m_drawline((long)histleft, (long)LINK->gridy1, (long)across,
-		 (long)LINK->gridy1);
-      m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
-		 (long)LINK->gridy2);
-      gg.actval2 = (double)LINK->gridy1 / histdivision;
-      gg.actval3 = (double)LINK->gridy2 / histdivision;
-      gg.actval = fabs(gg.actval3 - gg.actval2);
-      calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
-      if (*gg.actstr == '\0')
-	realunit(LINK->gridstr, gg.actval, 4, "", true);
-      else
-	strcpy(LINK->gridstr, gg.actstr);
-      break;
+      case 201:
+        m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
+                   (long)LINK->gridy2);
+        gg.actval = (double)(histgridhn->y - LINK->gridy2) / histdivision;
+        calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
+        if (*gg.actstr == '\0')
+          realunit(LINK->gridstr, gg.actval, 4, "", true);
+        else
+          strcpy(LINK->gridstr, gg.actstr);
+        break;
 
-    case 201:
-      m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
-		 (long)LINK->gridy2);
-      gg.actval = (double)(histgridhn->y - LINK->gridy2) / histdivision;
-      calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
-      if (*gg.actstr == '\0')
-	realunit(LINK->gridstr, gg.actval, 4, "", true);
-      else
-	strcpy(LINK->gridstr, gg.actstr);
-      break;
+      case 202:
+        LINK->gridtime = (double)(LINK->gridx2 - histleft) / histdivision *
+                             histgattr[histsecdiv - 1].UU.r +
+                         histgattr[histfirsttime - 1].UU.r;
+        LINK->gridval2 = valueattime(histgridhn, LINK->gridtime, LINK);
+        historyvaluey(histgridhn, LINK->gridval2, &LINK->gridval,
+                      &LINK->valuey);
+        m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
+        m_drawline((long)histleft, (long)LINK->valuey, (long)across,
+                   (long)LINK->valuey);
+        gg.actval = LINK->gridval;
+        gg.actval2 = LINK->gridval2;
+        gg.actval3 = LINK->gridtime;
+        *gg.actstr = '\0';
+        gg.acty = histgridmode;
+        gg.actx = histgridhn->sig;
+        gg.actgattr = histgridhn->attr;
+        calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
+        if (*gg.actstr == '\0')
+          strcpy(gg.actstr, realunit(STR1, gg.actval, 4, "", true));
+        sprintf(LINK->gridstr, "%s  ->  %s",
+                realunit(STR1, LINK->gridtime, 4, "s", true), gg.actstr);
+        break;
 
-    case 202:
-      LINK->gridtime =
-	(double)(LINK->gridx2 - histleft) / histdivision *
-	histgattr[histsecdiv - 1].UU.r + histgattr[histfirsttime - 1].UU.r;
-      LINK->gridval2 = valueattime(histgridhn, LINK->gridtime, LINK);
-      historyvaluey(histgridhn, LINK->gridval2, &LINK->gridval, &LINK->valuey);
-      m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
-      m_drawline((long)histleft, (long)LINK->valuey, (long)across,
-		 (long)LINK->valuey);
-      gg.actval = LINK->gridval;
-      gg.actval2 = LINK->gridval2;
-      gg.actval3 = LINK->gridtime;
-      *gg.actstr = '\0';
-      gg.acty = histgridmode;
-      gg.actx = histgridhn->sig;
-      gg.actgattr = histgridhn->attr;
-      calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
-      if (*gg.actstr == '\0')
-	strcpy(gg.actstr, realunit(STR1, gg.actval, 4, "", true));
-      sprintf(LINK->gridstr, "%s  ->  %s",
-	      realunit(STR1, LINK->gridtime, 4, "s", true), gg.actstr);
-      break;
-
-    case 203:
-      m_drawline((long)LINK->gridx1, (long)LINK->gridy1, (long)LINK->gridx2,
-		 (long)LINK->gridy2);
-      if (LINK->gridx1 != LINK->gridx2) {
-	gg.actval2 = (LINK->gridx2 - LINK->gridx1) * histgattr[histsecdiv - 1].UU.r;
-	gg.actval = (LINK->gridy1 - LINK->gridy2) / gg.actval2;
-	gg.actval2 /= histdivision;
-	gg.actval3 = (double)LINK->gridy1 / histdivision;
-	calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
-	if (*gg.actstr == '\0')
-	  realunit(LINK->gridstr, gg.actval, 4, "", true);
-	else
-	  strcpy(LINK->gridstr, gg.actstr);
-	strcat(LINK->gridstr, "/s");
-      }
-      break;
+      case 203:
+        m_drawline((long)LINK->gridx1, (long)LINK->gridy1, (long)LINK->gridx2,
+                   (long)LINK->gridy2);
+        if (LINK->gridx1 != LINK->gridx2) {
+          gg.actval2 =
+              (LINK->gridx2 - LINK->gridx1) * histgattr[histsecdiv - 1].UU.r;
+          gg.actval = (LINK->gridy1 - LINK->gridy2) / gg.actval2;
+          gg.actval2 /= histdivision;
+          gg.actval3 = (double)LINK->gridy1 / histdivision;
+          calltoolnode(gg.signaltab[gg.actx - 1].np, act_histstr);
+          if (*gg.actstr == '\0')
+            realunit(LINK->gridstr, gg.actval, 4, "", true);
+          else
+            strcpy(LINK->gridstr, gg.actstr);
+          strcat(LINK->gridstr, "/s");
+        }
+        break;
     }
     m_color((long)gg.color.selword);
     m_colormode((long)m_normal);
@@ -16754,52 +15010,49 @@ struct LOC_historycommand *LINK;
     drawstr2((int)gridpos, LINK->vmenu2, LINK->gridstr);
     m_color((long)gg.color.scroll);
     switch (histgridwhich * 100 + histgridmode) {
+      case 0:
+      case 100:
+        m_drawline((long)LINK->gridx1, 0L, (long)LINK->gridx1, (long)histdown);
+        m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
+        break;
 
-    case 0:
-    case 100:
-      m_drawline((long)LINK->gridx1, 0L, (long)LINK->gridx1, (long)histdown);
-      m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
-      break;
+      case 1:
+      case 101:
+      case 2:
+      case 102:
+        m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
+        break;
 
-    case 1:
-    case 101:
-    case 2:
-    case 102:
-      m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
-      break;
+      case 3:
+      case 103:
+      case 203:
+        m_drawline((long)LINK->gridx1, (long)LINK->gridy1, (long)LINK->gridx2,
+                   (long)LINK->gridy2);
+        break;
 
-    case 3:
-    case 103:
-    case 203:
-      m_drawline((long)LINK->gridx1, (long)LINK->gridy1, (long)LINK->gridx2,
-		 (long)LINK->gridy2);
-      break;
+      case 200:
+        m_drawline((long)histleft, (long)LINK->gridy1, (long)across,
+                   (long)LINK->gridy1);
+        m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
+                   (long)LINK->gridy2);
+        break;
 
-    case 200:
-      m_drawline((long)histleft, (long)LINK->gridy1, (long)across,
-		 (long)LINK->gridy1);
-      m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
-		 (long)LINK->gridy2);
-      break;
+      case 201:
+        m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
+                   (long)LINK->gridy2);
+        break;
 
-    case 201:
-      m_drawline((long)histleft, (long)LINK->gridy2, (long)across,
-		 (long)LINK->gridy2);
-      break;
-
-    case 202:
-      m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
-      m_drawline((long)histleft, (long)LINK->valuey, (long)across,
-		 (long)LINK->valuey);
-      break;
+      case 202:
+        m_drawline((long)LINK->gridx2, 0L, (long)LINK->gridx2, (long)histdown);
+        m_drawline((long)histleft, (long)LINK->valuey, (long)across,
+                   (long)LINK->valuey);
+        break;
     }
     m_colormode((long)m_normal);
   } while (gg.t.depressed);
 }
 
-
-Static Void historycommand()
-{
+Static Void historycommand() {
   struct LOC_historycommand V;
   short y, i;
   long t;
@@ -16811,9 +15064,9 @@ Static Void historycommand()
   short scrollpos, scrollmin;
   double newhistfirsttime;
   boolean gridflag;
-  Void (*TEMP) PV();
-  Void (*TEMP5) PV();
-  Void (*TEMP6) PV();
+  Void(*TEMP) PV();
+  Void(*TEMP5) PV();
+  Void(*TEMP6) PV();
   Char STR2[256];
   Char STR3[256];
   Char TEMP7;
@@ -16833,8 +15086,7 @@ Static Void historycommand()
   rmflag = true;
   hn = gg.hnbase;
   while (hn != NULL) {
-    if (hn->y > histdown)
-      hn->y = histaddsignalpos();
+    if (hn->y > histdown) hn->y = histaddsignalpos();
     hn = hn->next;
   }
   do {
@@ -16851,32 +15103,31 @@ Static Void historycommand()
       drawstr2(quit1pos, V.vmenu1, "QUIT");
       drawstr2(quit2pos, V.vmenu1, "QUIT");
       switch (V.whichmenu) {
+        case 0:
+          drawstr2((int)configpos, V.vmenu1, "Configure");
+          V.oldfast = (gg.fastspeed != gg.fastmax);
+          refrfast(&V);
+          m_color((long)gg.color.menuword);
+          drawstr2((int)dumppos, V.vmenu1, "Dump");
+          drawstr2((int)otherpos, V.vmenu1, "PLOT");
+          V.oldtrigger = !gg.histactive;
+          refrtrigger(&V);
+          V.oldreset = !gg.resetflag;
+          refrreset(&V);
+          V.oldonoff = !gg.pwrflag;
+          refronoff(&V);
+          V.oldgridmode = histgridmode - 1;
+          V.oldgridwhich = histgridwhich - 1;
+          refrgridmode(&V);
+          break;
 
-      case 0:
-	drawstr2((int)configpos, V.vmenu1, "Configure");
-	V.oldfast = (gg.fastspeed != gg.fastmax);
-	refrfast(&V);
-	m_color((long)gg.color.menuword);
-	drawstr2((int)dumppos, V.vmenu1, "Dump");
-	drawstr2((int)otherpos, V.vmenu1, "PLOT");
-	V.oldtrigger = !gg.histactive;
-	refrtrigger(&V);
-	V.oldreset = !gg.resetflag;
-	refrreset(&V);
-	V.oldonoff = !gg.pwrflag;
-	refronoff(&V);
-	V.oldgridmode = histgridmode - 1;
-	V.oldgridwhich = histgridwhich - 1;
-	refrgridmode(&V);
-	break;
-
-      case 1:
-	drawstr2((int)exprpos, V.vmenu1, "Expression");
-	drawstr2((int)timepos, V.vmenu1, "Time");
-	drawstr2((int)plotpos, V.vmenu1, "Plot");
-	drawstr2((int)otherpos, V.vmenu1, "SCOPE");
-	refraxes(&V);
-	break;
+        case 1:
+          drawstr2((int)exprpos, V.vmenu1, "Expression");
+          drawstr2((int)timepos, V.vmenu1, "Time");
+          drawstr2((int)plotpos, V.vmenu1, "Plot");
+          drawstr2((int)otherpos, V.vmenu1, "SCOPE");
+          refraxes(&V);
+          break;
       }
     }
     if (V.rflag) {
@@ -16889,22 +15140,21 @@ Static Void historycommand()
     ch = '\0';
     do {
       if (histgattr[histsweeptype - 1].UU.nv == histsweep_contin &&
-	  gg.histactive) {
-	passetc(&V);
-	flag = (gg.time < histgattr[histfirsttime - 1].UU.r +
-			  histdivsacross * histgattr[histsecdiv - 1].UU.r);
-	if (!flag && histonscreen) {
-	  histgattr[histfirsttime - 1].UU.r =
-	    gg.time - histdivsacross * histgattr[histsecdiv - 1].UU.r * 0.1;
-	  ch = ' ';
-	}
-	histonscreen = flag;
+          gg.histactive) {
+        passetc(&V);
+        flag = (gg.time < histgattr[histfirsttime - 1].UU.r +
+                              histdivsacross * histgattr[histsecdiv - 1].UU.r);
+        if (!flag && histonscreen) {
+          histgattr[histfirsttime - 1].UU.r =
+              gg.time - histdivsacross * histgattr[histsecdiv - 1].UU.r * 0.1;
+          ch = ' ';
+        }
+        histonscreen = flag;
       } else {
-	passetc(&V);
-	histonscreen = false;
+        passetc(&V);
+        histonscreen = false;
       }
-      if (pollkbd2())
-	ch = inkey2();
+      if (pollkbd2()) ch = inkey2();
     } while (!(gg.t.dn || ch != '\0'));
     if (gg.t.dn) {
       remcursor();
@@ -16912,238 +15162,230 @@ Static Void historycommand()
       V.gridx1 = gg.t.x;
       V.gridy1 = gg.t.y;
       if (gg.t.y > histdown) {
-	if (gg.t.x < configpos - 3)
-	  ch = '\003';
-	else if (gg.t.x >= quit2pos - 3)
-	  ch = '\003';
-	else if (gg.t.x >= otherpos - 3) {
-	  V.whichmenu = (V.whichmenu + 1) & (nummenus - 1);
-	  rmflag = true;
-	} else {
-	  switch (V.whichmenu) {
+        if (gg.t.x < configpos - 3)
+          ch = '\003';
+        else if (gg.t.x >= quit2pos - 3)
+          ch = '\003';
+        else if (gg.t.x >= otherpos - 3) {
+          V.whichmenu = (V.whichmenu + 1) & (nummenus - 1);
+          rmflag = true;
+        } else {
+          switch (V.whichmenu) {
+            case 0:
+              if (gg.t.x < triggerpos - 3) {
+                confighistmode(&V);
+                V.rflag = true;
+              } else if (gg.t.x < resetpos - 3) {
+                if (gg.histactive)
+                  gg.histactive = false;
+                else {
+                  gg.histactive = true;
+                  histreset = true;
+                }
+              } else if (gg.t.x < onoffpos - 3)
+                gg.resetflag = true;
+              else if (gg.t.x < gridpos - 3)
+                gg.pwrflag = !gg.pwrflag;
+              else if (gg.t.x < gridwpos - 3)
+                nextgridmode(&V);
+              else if (gg.t.x < fastpos - 3)
+                nextgridwhich(&V);
+              else if (gg.t.x < dumppos - 3)
+                fastmode(&V);
+              else if (gg.t.x < nextpos - 3)
+                dumpcmd(&V);
+              break;
 
-	  case 0:
-	    if (gg.t.x < triggerpos - 3) {
-	      confighistmode(&V);
-	      V.rflag = true;
-	    } else if (gg.t.x < resetpos - 3) {
-	      if (gg.histactive)
-		gg.histactive = false;
-	      else {
-		gg.histactive = true;
-		histreset = true;
-	      }
-	    } else if (gg.t.x < onoffpos - 3)
-	      gg.resetflag = true;
-	    else if (gg.t.x < gridpos - 3)
-	      gg.pwrflag = !gg.pwrflag;
-	    else if (gg.t.x < gridwpos - 3)
-	      nextgridmode(&V);
-	    else if (gg.t.x < fastpos - 3)
-	      nextgridwhich(&V);
-	    else if (gg.t.x < dumppos - 3)
-	      fastmode(&V);
-	    else if (gg.t.x < nextpos - 3)
-	      dumpcmd(&V);
-	    break;
-
-	  case 1:
-	    if (gg.t.x < yaxispos - 3) {
-	      V.xactive = !V.xactive;
-	      V.yactive = false;
-	      refraxes(&V);
-	    } else if (gg.t.x < exprpos - 3) {
-	      V.xactive = false;
-	      V.yactive = !V.yactive;
-	      refraxes(&V);
-	    } else if (gg.t.x < timepos - 3)
-	      getexpr(&V);
-	    else if (gg.t.x < plotpos - 3)
-	      setaxis("Time", &V);
-	    else if (gg.t.x < next2pos - 3)
-	      plotcmd(&V);
-	    break;
-	  }
-	}
+            case 1:
+              if (gg.t.x < yaxispos - 3) {
+                V.xactive = !V.xactive;
+                V.yactive = false;
+                refraxes(&V);
+              } else if (gg.t.x < exprpos - 3) {
+                V.xactive = false;
+                V.yactive = !V.yactive;
+                refraxes(&V);
+              } else if (gg.t.x < timepos - 3)
+                getexpr(&V);
+              else if (gg.t.x < plotpos - 3)
+                setaxis("Time", &V);
+              else if (gg.t.x < next2pos - 3)
+                plotcmd(&V);
+              break;
+          }
+        }
       } else if (gg.t.x < histleft - 3) {
-	hn = gg.hnbase;
-	hn0 = NULL;
-	hn1 = NULL;
-	hn2 = NULL;
-	hn1a = NULL;
-	hn2a = NULL;
-	while (hn != NULL) {
-	  if (hn->y > gg.t.y - histvscale && hn->y < gg.t.y + histvscale) {
-	    if (histgridhn == hn) {
-	      hn2 = hn;
-	      hn2a = hn0;
-	    } else {
-	      hn1 = hn;
-	      hn1a = hn0;
-	    }
-	  }
-	  hn0 = hn;
-	  hn = hn->next;
-	}
-	if (hn2 != NULL) {
-	  hn = hn2;
-	  hn0 = hn2a;
-	} else {
-	  hn = hn1;
-	  hn0 = hn1a;
-	}
-	if (hn != NULL) {
-	  switch (V.whichmenu) {
+        hn = gg.hnbase;
+        hn0 = NULL;
+        hn1 = NULL;
+        hn2 = NULL;
+        hn1a = NULL;
+        hn2a = NULL;
+        while (hn != NULL) {
+          if (hn->y > gg.t.y - histvscale && hn->y < gg.t.y + histvscale) {
+            if (histgridhn == hn) {
+              hn2 = hn;
+              hn2a = hn0;
+            } else {
+              hn1 = hn;
+              hn1a = hn0;
+            }
+          }
+          hn0 = hn;
+          hn = hn->next;
+        }
+        if (hn2 != NULL) {
+          hn = hn2;
+          hn0 = hn2a;
+        } else {
+          hn = hn1;
+          hn0 = hn1a;
+        }
+        if (hn != NULL) {
+          switch (V.whichmenu) {
+            case 0:
+              if (justtap()) {
+                gg.actnode = gg.signaltab[hn->sig - 1].np;
+                gg.acty = hn->sig;
+                gg.acttool = gg.actnode->simtype;
+                TEMP = hnproc1;
+                TEMP5 = hnproc2;
+                TEMP6 = hnproc3;
+                editattrs(hn->attr, gg.acttool->hnumattrs, gg.acttool->hattr,
+                          gg.acttool->hlbl, gg.signaltab[hn->sig - 1].name,
+                          TEMP, TEMP5, TEMP6, &V.stamp);
+                V.rflag = true;
+              } else {
+                movinghn = hn;
+                drawsigname(hn, 2, &V);
+                do {
+                  hn->y = gg.t.y;
+                  flag = (gg.t.y > 0 && gg.t.y < histdown + 3);
+                  alignsigname(&hn->y);
+                  if (gg.t.y >= histdown) gg.t.y = histdown;
+                  if (flag) drawsigname(hn, 3, &V);
+                  do {
+                    passetc(&V);
+                  } while (gg.t.depressed && gg.t.y == gg.t0.y);
+                  if (flag) drawsigname(hn, 3, &V);
+                } while (gg.t.depressed);
+                if (!flag) {
+                  if (gg.traceflag)
+                    fprintf(tracefile, "Delete trace %ld\n", (long)hn);
+                  if (hn == histgridhn) {
+                    histgridwhich = 0;
+                    histgridhn = NULL;
+                  }
+                  tool = gg.signaltab[hn->sig - 1].np->simtype;
+                  disposeattrs(&hn->attr, tool->hnumattrs, tool->hattr);
+                  if (hn0 == NULL)
+                    gg.hnbase = hn->next;
+                  else
+                    hn0->next = hn->next;
+                  Free(hn);
+                  reshuffle();
+                }
+                V.rflag = true;
+              }
+              break;
 
-	  case 0:
-	    if (justtap()) {
-	      gg.actnode = gg.signaltab[hn->sig - 1].np;
-	      gg.acty = hn->sig;
-	      gg.acttool = gg.actnode->simtype;
-	      TEMP = hnproc1;
-	      TEMP5 = hnproc2;
-	      TEMP6 = hnproc3;
-	      editattrs(hn->attr, gg.acttool->hnumattrs, gg.acttool->hattr,
-			gg.acttool->hlbl, gg.signaltab[hn->sig - 1].name,
-			TEMP, TEMP5, TEMP6, &V.stamp);
-	      V.rflag = true;
-	    } else {
-	      movinghn = hn;
-	      drawsigname(hn, 2, &V);
-	      do {
-		hn->y = gg.t.y;
-		flag = (gg.t.y > 0 && gg.t.y < histdown + 3);
-		alignsigname(&hn->y);
-		if (gg.t.y >= histdown)
-		  gg.t.y = histdown;
-		if (flag)
-		  drawsigname(hn, 3, &V);
-		do {
-		  passetc(&V);
-		} while (gg.t.depressed && gg.t.y == gg.t0.y);
-		if (flag)
-		  drawsigname(hn, 3, &V);
-	      } while (gg.t.depressed);
-	      if (!flag) {
-		if (gg.traceflag)
-		  fprintf(tracefile, "Delete trace %ld\n", (long)hn);
-		if (hn == histgridhn) {
-		  histgridwhich = 0;
-		  histgridhn = NULL;
-		}
-		tool = gg.signaltab[hn->sig - 1].np->simtype;
-		disposeattrs(&hn->attr, tool->hnumattrs, tool->hattr);
-		if (hn0 == NULL)
-		  gg.hnbase = hn->next;
-		else
-		  hn0->next = hn->next;
-		Free(hn);
-		reshuffle();
-	      }
-	      V.rflag = true;
-	    }
-	    break;
-
-	  case 1:
-	    setaxis(gg.signaltab[hn->sig - 1].name, &V);
-	    break;
-	  }
-	}
+            case 1:
+              setaxis(gg.signaltab[hn->sig - 1].name, &V);
+              break;
+          }
+        }
       } else {
-	switch (V.whichmenu) {
+        switch (V.whichmenu) {
+          case 0:
+            if (justtap()) {
+              hn = findtrace(V.gridx1, V.gridy1, &V);
+              if (hn != NULL) setgridwhich(hn, &V);
+            } else
+              measurecmd(&V);
+            break;
 
-	case 0:
-	  if (justtap()) {
-	    hn = findtrace(V.gridx1, V.gridy1, &V);
-	    if (hn != NULL)
-	      setgridwhich(hn, &V);
-	  } else
-	    measurecmd(&V);
-	  break;
-
-	case 1:
-	  hn = findtrace((int)gg.t.x, (int)gg.t.y, &V);
-	  if (hn != NULL)
-	    setaxis(gg.signaltab[hn->sig - 1].name, &V);
-	  break;
-	}
+          case 1:
+            hn = findtrace((int)gg.t.x, (int)gg.t.y, &V);
+            if (hn != NULL) setaxis(gg.signaltab[hn->sig - 1].name, &V);
+            break;
+        }
       }
     } else if (ch == 251 || ch == 250 || ch == ' ') {
-/* p2c: log.text, line 16367: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 16367: Note: Character >= 128 encountered [281] */
+      /* p2c: log.text, line 16367: Note: Character >= 128 encountered
+       * [281] */
+      /* p2c: log.text, line 16367: Note: Character >= 128 encountered
+       * [281] */
       V.rflag = true;
     } else if (ch == '<') {
       do {
-	histgattr[histsecdiv - 1].UU.r *= 2;
-	t = timers_sysclock() + knobwait;
-	do {
-	} while (!(timers_sysclock() > t || pollkbd2()));
-	if (testkey2() == '<')
-	  ch = inkey2();
-	else
-	  V.rflag = true;
+        histgattr[histsecdiv - 1].UU.r *= 2;
+        t = timers_sysclock() + knobwait;
+        do {
+        } while (!(timers_sysclock() > t || pollkbd2()));
+        if (testkey2() == '<')
+          ch = inkey2();
+        else
+          V.rflag = true;
       } while (!V.rflag);
     } else if (ch == '>') {
       do {
-	histgattr[histsecdiv - 1].UU.r /= 2;
-	t = timers_sysclock() + knobwait;
-	do {
-	} while (!(timers_sysclock() > t || pollkbd2()));
-	if (testkey2() == '>')
-	  ch = inkey2();
-	else
-	  V.rflag = true;
+        histgattr[histsecdiv - 1].UU.r /= 2;
+        t = timers_sysclock() + knobwait;
+        do {
+        } while (!(timers_sysclock() > t || pollkbd2()));
+        if (testkey2() == '>')
+          ch = inkey2();
+        else
+          V.rflag = true;
       } while (!V.rflag);
     } else if (ch < 32 && ((1L << ch) & 0x10000100L) != 0) {
       scrollpos = 0;
-      gg.actval = -histgattr[histfirsttime - 1].UU.r /
-		  histgattr[histsecdiv - 1].UU.r;
+      gg.actval =
+          -histgattr[histfirsttime - 1].UU.r / histgattr[histsecdiv - 1].UU.r;
       if (gg.actval < -histdivsacross)
-	scrollmin = -across * 2;
+        scrollmin = -across * 2;
       else
-	scrollmin = (long)floor(gg.actval * histdivision + 0.5);
+        scrollmin = (long)floor(gg.actval * histdivision + 0.5);
       do {
-	if (ch == '\b')
-	  scrollpos -= hscrollspd * 5;
-	if (ch == '\034')
-	  scrollpos += hscrollspd * 5;
-	if (scrollpos < scrollmin)
-	  scrollpos = scrollmin;
-	m_colormode((long)m_xor);
-	m_color((long)gg.color.scroll);
-	if (scrollpos > 0)
-	  m_drawline(scrollpos + histleft - 1L, 0L, scrollpos + histleft - 1L,
-		     (long)histdown);
-	m_drawline(scrollpos + across + 1L, 0L, scrollpos + across + 1L,
-		   (long)histdown);
-	m_colormode((long)m_normal);
-	t = timers_sysclock() + knobwait;
-	do {
-	} while (!(timers_sysclock() > t || pollkbd2()));
-	TEMP7 = testkey2();
-	if ((uchar)TEMP7 < 32 && ((1L << TEMP7) & 0x10000100L) != 0)
-	  ch = inkey2();
-	else
-	  ch = ' ';
-	m_colormode((long)m_xor);
-	m_color((long)gg.color.scroll);
-	if (scrollpos > 0)
-	  m_drawline(scrollpos + histleft - 1L, 0L, scrollpos + histleft - 1L,
-		     (long)histdown);
-	m_drawline(scrollpos + across + 1L, 0L, scrollpos + across + 1L,
-		   (long)histdown);
-	m_colormode((long)m_normal);
+        if (ch == '\b') scrollpos -= hscrollspd * 5;
+        if (ch == '\034') scrollpos += hscrollspd * 5;
+        if (scrollpos < scrollmin) scrollpos = scrollmin;
+        m_colormode((long)m_xor);
+        m_color((long)gg.color.scroll);
+        if (scrollpos > 0)
+          m_drawline(scrollpos + histleft - 1L, 0L, scrollpos + histleft - 1L,
+                     (long)histdown);
+        m_drawline(scrollpos + across + 1L, 0L, scrollpos + across + 1L,
+                   (long)histdown);
+        m_colormode((long)m_normal);
+        t = timers_sysclock() + knobwait;
+        do {
+        } while (!(timers_sysclock() > t || pollkbd2()));
+        TEMP7 = testkey2();
+        if ((uchar)TEMP7 < 32 && ((1L << TEMP7) & 0x10000100L) != 0)
+          ch = inkey2();
+        else
+          ch = ' ';
+        m_colormode((long)m_xor);
+        m_color((long)gg.color.scroll);
+        if (scrollpos > 0)
+          m_drawline(scrollpos + histleft - 1L, 0L, scrollpos + histleft - 1L,
+                     (long)histdown);
+        m_drawline(scrollpos + across + 1L, 0L, scrollpos + across + 1L,
+                   (long)histdown);
+        m_colormode((long)m_normal);
       } while (ch < 32 && ((1L << ch) & 0x10000100L) != 0 &&
-	       abs(scrollpos) <= across - histleft - 10);
+               abs(scrollpos) <= across - histleft - 10);
       if (scrollpos == scrollmin)
-	newhistfirsttime = 0.0;
+        newhistfirsttime = 0.0;
       else
-	newhistfirsttime = histgattr[histfirsttime - 1].UU.r +
-	    (double)scrollpos / histdivision * histgattr[histsecdiv - 1].UU.r;
+        newhistfirsttime =
+            histgattr[histfirsttime - 1].UU.r +
+            (double)scrollpos / histdivision * histgattr[histsecdiv - 1].UU.r;
       if (histgattr[histfirsttime - 1].UU.r != newhistfirsttime) {
-	histgattr[histfirsttime - 1].UU.r = newhistfirsttime;
-	histgattr[histfirsttime - 1].changed = true;
-	V.rflag = true;
+        histgattr[histfirsttime - 1].UU.r = newhistfirsttime;
+        histgattr[histfirsttime - 1].changed = true;
+        V.rflag = true;
       }
       histonscreen = false;
     } else if (ch == '!') {
@@ -17151,60 +15393,58 @@ Static Void historycommand()
       V.rflag = true;
     } else if (ch > ' ') {
       switch (V.whichmenu) {
-
-      case 0:
-	y = histaddsignalpos();
-	*name = '\0';
-	keyflag = true;
-	do {
-	  strcat(name, "_");
-	  remcursor();
+        case 0:
+          y = histaddsignalpos();
+          *name = '\0';
+          keyflag = true;
+          do {
+            strcat(name, "_");
+            remcursor();
+            clipoff();
+            m_colormode((long)m_xor);
+            m_color((long)gg.color.signal);
+            drawstr2(0, y - 4, name);
+            m_colormode((long)m_normal);
+            while (!gg.t.dn && !keyflag) {
+              passetc(&V);
+              if (pollkbd2()) {
+                ch = inkey2();
+                keyflag = true;
+              }
+            }
+            m_colormode((long)m_xor);
+            m_color((long)gg.color.signal);
+            clipoff();
+            drawstr2(0, y - 4, name);
+            m_colormode((long)m_normal);
+            name[strlen(name) - 1] = '\0';
+            if (keyflag) {
+              keyflag = false;
+              if (ch > ' ' || (ch == ' ' && *name != '\0'))
+                sprintf(name + strlen(name), "%c", ch);
+              if (ch == '\007' && *name != '\0') name[strlen(name) - 1] = '\0';
+            }
+          } while (!((ch < 32 && ((1L << ch) & 0x2008) != 0) || gg.t.dn));
+          sprintf(STR2, "%c", ch);
+          if (!strcmp(STR2, EXEC))
+            *name = '\0';
+          else
+            strcpy(name, strrtrim(strcpy(STR3, name)));
+          remcursor();
           clipoff();
-	  m_colormode((long)m_xor);
-	  m_color((long)gg.color.signal);
-	  drawstr2(0, y - 4, name);
-	  m_colormode((long)m_normal);
-	  while (!gg.t.dn && !keyflag) {
-	    passetc(&V);
-	    if (pollkbd2()) {
-	      ch = inkey2();
-	      keyflag = true;
-	    }
-	  }
-	  m_colormode((long)m_xor);
-	  m_color((long)gg.color.signal);
-	  clipoff();
-          drawstr2(0, y - 4, name);
-	  m_colormode((long)m_normal);
-	  name[strlen(name) - 1] = '\0';
-	  if (keyflag) {
-	    keyflag = false;
-	    if (ch > ' ' || (ch == ' ' && *name != '\0'))
-	      sprintf(name + strlen(name), "%c", ch);
-	    if (ch == '\007' && *name != '\0')
-	      name[strlen(name) - 1] = '\0';
-	  }
-	} while (!((ch < 32 && ((1L << ch) & 0x2008) != 0) || gg.t.dn));
-	sprintf(STR2, "%c", ch);
-	if (!strcmp(STR2, EXEC))
-	  *name = '\0';
-	else
-	  strcpy(name, strrtrim(strcpy(STR3, name)));
-	remcursor();
-        clipoff();
-	i = getsignal(0, name);
-	if (i != 0) {
-	  histaddsignal(&hn, i, y);
-	  V.rflag = true;
-	}
-	break;
+          i = getsignal(0, name);
+          if (i != 0) {
+            histaddsignal(&hn, i, y);
+            V.rflag = true;
+          }
+          break;
 
-      case 1:
-	if (V.xactive || V.yactive) {
-	  ungetkey2(realkey);
-	  getexpr(&V);
-	}
-	break;
+        case 1:
+          if (V.xactive || V.yactive) {
+            ungetkey2(realkey);
+            getexpr(&V);
+          }
+          break;
       }
     }
   } while (strcmp((sprintf(STR2, "%c", ch), STR2), EXEC));
@@ -17232,14 +15472,13 @@ Static Void historycommand()
 #undef next2pos
 #undef nummenus
 
-
 /* Local variables for savepage: */
 struct LOC_savepage {
   log_hwrec *firsthwire;
   log_vwrec *firstvwire;
   log_nrec *firstnode;
   short numhw, maxunat;
-} ;
+};
 
 Local short countnode(n, LINK)
 log_nrec *n;
@@ -17270,8 +15509,7 @@ struct LOC_savepage *LINK;
     i++;
     hw1 = (log_hwrec *)hw1->temp;
   }
-  if (hw1 == NULL)
-    printf("\007Unable to find hwire %ld\n", (long)hw);
+  if (hw1 == NULL) printf("\007Unable to find hwire %ld\n", (long)hw);
   return i;
 }
 
@@ -17288,8 +15526,7 @@ struct LOC_savepage *LINK;
     i++;
     vw1 = (log_vwrec *)vw1->temp;
   }
-  if (vw1 == NULL)
-    printf("\007Unable to find vwire %ld\n", (long)vw);
+  if (vw1 == NULL) printf("\007Unable to find vwire %ld\n", (long)vw);
   return (i + LINK->numhw);
 }
 
@@ -17301,33 +15538,32 @@ struct LOC_savepage *LINK;
   boolean Result;
 
   switch (ka->dtype) {
+    case 'R':
+    case 'U':
+    case 'F':
+      Result = (ga->blnk == ka->blnk && ga->UU.r == ka->UU.U82.r);
+      break;
 
-  case 'R':
-  case 'U':
-  case 'F':
-    Result = (ga->blnk == ka->blnk && ga->UU.r == ka->UU.U82.r);
-    break;
+    case 'I':
+    case 'H':
+      Result = (ga->blnk == ka->blnk && ga->UU.U73.i1 == ka->UU.U73.i1);
+      break;
 
-  case 'I':
-  case 'H':
-    Result = (ga->blnk == ka->blnk && ga->UU.U73.i1 == ka->UU.U73.i1);
-    break;
+    case 'C':
+      Result = (strcmp(ga->UU.c, ka->UU.c) == 0);
+      break;
 
-  case 'C':
-    Result = (strcmp(ga->UU.c, ka->UU.c) == 0);
-    break;
+    case 'A':
+      Result = (strcmp(ga->UU.sp, ka->UU.sp) == 0);
+      break;
 
-  case 'A':
-    Result = (strcmp(ga->UU.sp, ka->UU.sp) == 0);
-    break;
+    case 'B':
+      Result = (ga->blnk == ka->blnk && ga->UU.b == ka->UU.b);
+      break;
 
-  case 'B':
-    Result = (ga->blnk == ka->blnk && ga->UU.b == ka->UU.b);
-    break;
-
-  case 'V':
-    Result = (ga->UU.nv == ka->UU.U86.dv);
-    break;
+    case 'V':
+      Result = (ga->UU.nv == ka->UU.U86.dv);
+      break;
   }
   return Result;
 }
@@ -17340,13 +15576,10 @@ struct LOC_savepage *LINK;
   na_strlist *l1;
 
   l1 = lbl;
-  while (l1 != NULL && l1->kind != '\001')
-    l1 = l1->next;
-  if (l1 == NULL)
-    return l1;
+  while (l1 != NULL && l1->kind != '\001') l1 = l1->next;
+  if (l1 == NULL) return l1;
   l1 = (na_strlist *)l1->value;
-  while (l1 != NULL && (long)l1->value != i)
-    l1 = l1->next;
+  while (l1 != NULL && (long)l1->value != i) l1 = l1->next;
   return l1;
 }
 
@@ -17362,13 +15595,12 @@ struct LOC_savepage *LINK;
   j = 0;
   for (i = 1; i <= numattrs; i++) {
     if (!eqattr(&kattr[i - 1], &gattr[i - 1], LINK) &&
-	attrname(i, lbl, LINK) == NULL)
+        attrname(i, lbl, LINK) == NULL)
       j = i;
   }
   LINK->maxunat = j;
   for (i = j; i < numattrs; i++) {
-    if (!eqattr(&kattr[i], &gattr[i], LINK))
-      j++;
+    if (!eqattr(&kattr[i], &gattr[i], LINK)) j++;
   }
   return j;
 }
@@ -17381,7 +15613,7 @@ log_kattrrec *kattr;
 na_strlist *lbl;
 struct LOC_savepage *LINK;
 {
-  short num, i;   /*reads maxunat from last call to countattrs*/
+  short num, i; /*reads maxunat from last call to countattrs*/
   na_strlist *l1;
   Char STR2[81];
 
@@ -17389,54 +15621,44 @@ struct LOC_savepage *LINK;
   for (i = 1; i <= numattrs; i++) {
     if (i <= LINK->maxunat || !eqattr(&kattr[i - 1], &gattr[i - 1], LINK)) {
       l1 = attrname(i, lbl, LINK);
-      if (l1 != NULL)
-	fprintf(*f, "[%s] ", l1->s);
+      if (l1 != NULL) fprintf(*f, "[%s] ", l1->s);
       if (gattr[i - 1].blnk)
-	fprintf(*f, "X\n");
+        fprintf(*f, "X\n");
       else {
-	putc(kattr[i - 1].dtype, *f);
-	switch (kattr[i - 1].dtype) {
+        putc(kattr[i - 1].dtype, *f);
+        switch (kattr[i - 1].dtype) {
+          case 'R':
+          case 'U':
+          case 'F':
+            fprintf(*f, "%s\n",
+                    realstr(STR2, gattr[i - 1].UU.r, kattr[i - 1].prec));
+            break;
 
-	case 'R':
-	case 'U':
-	case 'F':
-	  fprintf(*f, "%s\n",
-		  realstr(STR2, gattr[i - 1].UU.r, kattr[i - 1].prec));
-	  break;
+          case 'I':
+          case 'H':
+            fprintf(*f, "%ld\n", gattr[i - 1].UU.U73.i1);
+            break;
 
-	case 'I':
-	case 'H':
-	  fprintf(*f, "%ld\n", gattr[i - 1].UU.U73.i1);
-	  break;
+          case 'C':
+            fprintf(*f, "%s\n", gattr[i - 1].UU.c);
+            break;
 
-	case 'C':
-	  fprintf(*f, "%s\n", gattr[i - 1].UU.c);
-	  break;
+          case 'A':
+            fprintf(*f, "%s\n", gattr[i - 1].UU.sp);
+            break;
 
-	case 'A':
-	  fprintf(*f, "%s\n", gattr[i - 1].UU.sp);
-	  break;
+          case 'B':
+            fprintf(*f, "%d\n", gattr[i - 1].UU.b);
+            break;
 
-	case 'B':
-	  fprintf(*f, "%d\n", gattr[i - 1].UU.b);
-	  break;
-
-	case 'V':
-	  fprintf(*f, "%d\n", gattr[i - 1].UU.nv);
-	  break;
-	}
+          case 'V':
+            fprintf(*f, "%d\n", gattr[i - 1].UU.nv);
+            break;
+        }
       }
     }
   }
 }
-
-
-
-
-
-
-
-
 
 Static Void savepage(pgnum, filename_)
 short pgnum;
@@ -17470,19 +15692,17 @@ Char *filename_;
   }
   if (*filename != '\0') {
     TRY(try24);
-      strcpy(buf, filename);
-      newci_forcefname(buf, "lfo", "");
-      fp_change(filename, buf);
+    strcpy(buf, filename);
+    newci_forcefname(buf, "lfo", "");
+    fp_change(filename, buf);
     RECOVER(try24);
-      if (P_escapecode == -20)
-	_Escape(P_escapecode);
+    if (P_escapecode == -20) _Escape(P_escapecode);
     ENDTRY(try24);
     if (f != NULL)
       f = freopen(filename, "wb", f);
     else
       f = fopen(filename, "wb");
-    if (f == NULL)
-      _EscIO(FileNotFound);
+    if (f == NULL) _EscIO(FileNotFound);
     fprintf(f, "-5\n");
     /* if vlsi then
         writeln(f, 'f v')
@@ -17506,8 +15726,7 @@ Char *filename_;
     g = gg.gbase[pgnum - 1];
     while (g != NULL) {
       FORLIM = g->kind->numpins;
-      for (i = 0; i < FORLIM; i++)
-	g->pin[i]->flag = true;
+      for (i = 0; i < FORLIM; i++) g->pin[i]->flag = true;
       g = g->next;
     }
     numnodes = 0;
@@ -17516,15 +15735,15 @@ Char *filename_;
     n1 = gg.nbase;
     while (n1 != NULL) {
       if (n1->flag) {
-	numnodes++;
-	/* n1^.temp.p := firstnode;
-	 firstnode := n1; */
-	if (lastnode != NULL)
-	  lastnode->temp = (Anyptr)n1;
-	else
-	  V.firstnode = n1;
-	n1->temp = NULL;
-	lastnode = n1;
+        numnodes++;
+        /* n1^.temp.p := firstnode;
+         firstnode := n1; */
+        if (lastnode != NULL)
+          lastnode->temp = (Anyptr)n1;
+        else
+          V.firstnode = n1;
+        n1->temp = NULL;
+        lastnode = n1;
       }
       n1 = n1->next;
     }
@@ -17533,10 +15752,10 @@ Char *filename_;
     while (n1 != NULL) {
       fprintf(f, "%d ", n1->simtype->simtype);
       fprintf(f, "%d\n",
-	      countattrs(n1->attr, n1->simtype->nnumattrs, n1->simtype->nattr,
-			 n1->simtype->nlbl, &V));
+              countattrs(n1->attr, n1->simtype->nnumattrs, n1->simtype->nattr,
+                         n1->simtype->nlbl, &V));
       writeattrs(&f, n1->attr, n1->simtype->nnumattrs, n1->simtype->nattr,
-		 n1->simtype->nlbl, &V);
+                 n1->simtype->nlbl, &V);
       gg.actfile = &f;
       gg.actflag = false;
       calltoolnode(n1, act_writenode);
@@ -17544,31 +15763,29 @@ Char *filename_;
       n1 = (log_nrec *)n1->temp;
     }
 
-    /* ensure that each signal has a named gate on this page. */ 
+    /* ensure that each signal has a named gate on this page. */
     FORLIM = gg.lastsignal;
-    for (i = 0; i < FORLIM; i++)
-      gg.signaltab[i].f = false;
+    for (i = 0; i < FORLIM; i++) gg.signaltab[i].f = false;
 
     g = gg.gbase[pgnum - 1];
     while (g != NULL) {
-      if (g->sig > 0 && g->sig <= gg.lastsignal && 
-               gg.signaltab[g->sig -1].np != NULL &&
-               gg.signaltab[g->sig -1].np->flag)
-        gg.signaltab[g->sig -1].f = true;
+      if (g->sig > 0 && g->sig <= gg.lastsignal &&
+          gg.signaltab[g->sig - 1].np != NULL &&
+          gg.signaltab[g->sig - 1].np->flag)
+        gg.signaltab[g->sig - 1].f = true;
       g = g->next;
     }
 
     count = 0;
     for (i = 0; i < FORLIM; i++) {
-      if (gg.signaltab[i].f)
-	count++;
+      if (gg.signaltab[i].f) count++;
     }
 
     fprintf(f, "s %d\n", count);
     for (i = 0; i < FORLIM; i++) {
       if (gg.signaltab[i].f)
-	fprintf(f, "%d %s\n",
-		countnode(gg.signaltab[i].np, &V), gg.signaltab[i].name);
+        fprintf(f, "%d %s\n", countnode(gg.signaltab[i].np, &V),
+                gg.signaltab[i].name);
     }
     V.numhw = 0;
     hw = gg.hwbase[pgnum - 1];
@@ -17591,16 +15808,14 @@ Char *filename_;
     fprintf(f, "w %d\n", V.numhw + numvw);
     hw = V.firsthwire;
     while (hw != NULL) {
-      fprintf(f, "%d %d %d %d %d %s\n",
-	      hw->x1, hw->y, hw->x2, hw->y, countnode(hw->node, &V),
-	      colorname(STR1, hw->wcolr));
+      fprintf(f, "%d %d %d %d %d %s\n", hw->x1, hw->y, hw->x2, hw->y,
+              countnode(hw->node, &V), colorname(STR1, hw->wcolr));
       hw = (log_hwrec *)hw->temp;
     }
     vw = V.firstvwire;
     while (vw != NULL) {
-      fprintf(f, "%d %d %d %d %d %s\n",
-	      vw->x, vw->y1, vw->x, vw->y2, countnode(vw->node, &V),
-	      colorname(STR1, vw->wcolr));
+      fprintf(f, "%d %d %d %d %d %s\n", vw->x, vw->y1, vw->x, vw->y2,
+              countnode(vw->node, &V), colorname(STR1, vw->wcolr));
       vw = (log_vwrec *)vw->temp;
     }
     count = 0;
@@ -17616,14 +15831,10 @@ Char *filename_;
     s = firstsolder;
     while (s != NULL) {
       fprintf(f, "%d %d", s->x, s->y);
-      if (s->hwire != NULL)
-	fprintf(f, " %d", counthw(s->hwire, &V));
-      if (s->hwire2 != NULL)
-	fprintf(f, " %d", counthw(s->hwire2, &V));
-      if (s->vwire != NULL)
-	fprintf(f, " %d", countvw(s->vwire, &V));
-      if (s->vwire2 != NULL)
-	fprintf(f, " %d", countvw(s->vwire2, &V));
+      if (s->hwire != NULL) fprintf(f, " %d", counthw(s->hwire, &V));
+      if (s->hwire2 != NULL) fprintf(f, " %d", counthw(s->hwire2, &V));
+      if (s->vwire != NULL) fprintf(f, " %d", countvw(s->vwire, &V));
+      if (s->vwire2 != NULL) fprintf(f, " %d", countvw(s->vwire2, &V));
       putc('\n', f);
       s = (log_srec *)s->temp;
     }
@@ -17639,13 +15850,12 @@ Char *filename_;
     fprintf(f, "l %d\n", count);
     l = firstlabel;
     while (l != NULL) {
-      fprintf(f, "%d %d %ld %s\n",
-	      l->x, l->y, m_strwidth(logfont_lfont, l->name) / log_scale0,
-	      l->name);
+      fprintf(f, "%d %d %ld %s\n", l->x, l->y,
+              m_strwidth(logfont_lfont, l->name) / log_scale0, l->name);
       l = (log_lrec *)l->temp;
     }
-/* p2c: log.text, line 16829:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 16829:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     count = 0;
     b = gg.bbase[pgnum - 1];
     firstbox = NULL;
@@ -17674,21 +15884,18 @@ Char *filename_;
       fprintf(f, "%s\n", k->name);
       i = 0;
       if (g->sig != 0) {
-	FORLIM = g->sig;
-	for (j = 0; j < FORLIM; j++) {
-	  if (gg.signaltab[j].f)
-	    i++;
-	}
+        FORLIM = g->sig;
+        for (j = 0; j < FORLIM; j++) {
+          if (gg.signaltab[j].f) i++;
+        }
       }
       fprintf(f, "%d %d %d ", g->x, g->y, g->rot);
       fprintf(f, "%d %ld %d ", g->gc, (long)g->vars, i);
-      fprintf(f, "%d\n",
-	      countattrs(g->attr, k->numattrs, k->attr, k->lbl, &V));
+      fprintf(f, "%d\n", countattrs(g->attr, k->numattrs, k->attr, k->lbl, &V));
       FORLIM = k->numpins;
       for (i = 1; i <= FORLIM; i++) {
-	if (i != 1)
-	  putc(' ', f);
-	fprintf(f, "%d", countnode(g->pin[i - 1], &V));
+        if (i != 1) putc(' ', f);
+        fprintf(f, "%d", countnode(g->pin[i - 1], &V));
       }
       putc('\n', f);
       writeattrs(&f, g->attr, k->numattrs, k->attr, k->lbl, &V);
@@ -17703,28 +15910,24 @@ Char *filename_;
     while (hn != NULL) {
       n1 = gg.signaltab[hn->sig - 1].np;
       fprintf(f, "%d ", hn->y);
-      fprintf(f, "%d", countattrs(hn->attr, n1->simtype->hnumattrs,
-				  n1->simtype->hattr, n1->simtype->hlbl, &V));
+      fprintf(f, "%d",
+              countattrs(hn->attr, n1->simtype->hnumattrs, n1->simtype->hattr,
+                         n1->simtype->hlbl, &V));
       fprintf(f, " %s\n", gg.signaltab[hn->sig - 1].name);
       writeattrs(&f, hn->attr, n1->simtype->hnumattrs, n1->simtype->hattr,
-		 n1->simtype->hlbl, &V);
+                 n1->simtype->hlbl, &V);
       hn = hn->next;
     }
     fprintf(f, ".\n");
-    if (f != NULL)
-      fclose(f);
+    if (f != NULL) fclose(f);
     f = NULL;
     gg.pagechanged[pgnum - 1] = false;
     if (curfilename[pgnum - 1] == NULL)
       curfilename[pgnum - 1] = (Char *)Malloc(256);
     strcpy(curfilename[pgnum - 1], filename);
   }
-  if (f != NULL)
-    fclose(f);
+  if (f != NULL) fclose(f);
 }
-
-
-
 
 Static Void emergencysave(pgnum)
 short pgnum;
@@ -17732,21 +15935,20 @@ short pgnum;
   Char filename[256];
 
   TRY(try25);
-    printf("File name");
-    if (curfilename[pgnum - 1] != NULL)
-      printf("(was %s)", curfilename[pgnum - 1]);
-    printf(": ");
-    gets(filename);
-    if (*filename != '\0')
-      savepage(pgnum, filename);
+  printf("File name");
+  if (curfilename[pgnum - 1] != NULL)
+    printf("(was %s)", curfilename[pgnum - 1]);
+  printf(": ");
+  gets(filename);
+  if (*filename != '\0') savepage(pgnum, filename);
   RECOVER(try25);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    printf("Saving page %d failed.\n", pgnum);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  printf("Saving page %d failed.\n", pgnum);
   ENDTRY(try25);
 }
 
-void jssave(char const *filename, char const *mime_type, void const *buffer, size_t buffer_size);
+void jssave(char const *filename, char const *mime_type, void const *buffer,
+            size_t buffer_size);
 
 Local Void safesavepage(pgnum, fn)
 short pgnum;
@@ -17754,47 +15956,42 @@ Char *fn;
 {
   long i, j;
 
-  if (*fn == '\0')
-    return; 
+  if (*fn == '\0') return;
 #if __EMSCRIPTEN__
   char fn1[256];
-  strcpy(fn1,curfilename[pgnum - 1]);
+  strcpy(fn1, curfilename[pgnum - 1]);
   savepage(pgnum, "tmp.lgf");
-  strcpy(curfilename[pgnum - 1],fn1);
-  FILE *fin=fopen("tmp.lgf","rb");
+  strcpy(curfilename[pgnum - 1], fn1);
+  FILE *fin = fopen("tmp.lgf", "rb");
   fseek(fin, 0L, SEEK_END);
   int sz = ftell(fin);
   fseek(fin, 0L, SEEK_SET);
-  char *buffer=malloc(sz);
-  fread(buffer,1,sz,fin);
+  char *buffer = malloc(sz);
+  fread(buffer, 1, sz, fin);
   fclose(fin);
-  jssave(fn,"",buffer,sz);
+  jssave(fn, "", buffer, sz);
   free(buffer);
   return;
 #endif
   beginbottom();
   TRY(try26);
-    printf("Saving file %s\n", fn);
-    m_alpha_on();
-    savepage(pgnum, fn);
-    endbottom();
+  printf("Saving file %s\n", fn);
+  m_alpha_on();
+  savepage(pgnum, fn);
+  endbottom();
   RECOVER(try26);
-    i = P_escapecode;
-    j = P_ioresult;
-    endbottom();
-    beginerror();
-    if (Debugging || debugprint || gg.traceflag)
-      printf("%ld/%ld/%ld   ", i, j, EXCP_LINE);
-    printf("Unable to save file %s\n", fn);
-    enderror();
+  i = P_escapecode;
+  j = P_ioresult;
+  endbottom();
+  beginerror();
+  if (Debugging || debugprint || gg.traceflag)
+    printf("%ld/%ld/%ld   ", i, j, EXCP_LINE);
+  printf("Unable to save file %s\n", fn);
+  enderror();
   ENDTRY(try26);
 }
 
-
-
-
-Static Void savecommand()
-{
+Static Void savecommand() {
   short pgnum;
   Char filename[256];
   short FORLIM;
@@ -17806,15 +16003,15 @@ Static Void savecommand()
     FORLIM = gg.numpages;
     for (pgnum = 1; pgnum <= FORLIM; pgnum++) {
       if (!pagechanged(pgnum)) {
-	sprintf(STR2, "No changes to page %d", pgnum);
-	message(STR2);
+        sprintf(STR2, "No changes to page %d", pgnum);
+        message(STR2);
       } else if (curfilename[pgnum - 1] == NULL) {
-	sprintf(STR2, "Page %d: no file name!", pgnum);
-	message(STR2);
+        sprintf(STR2, "Page %d: no file name!", pgnum);
+        message(STR2);
       } else {
-	sprintf(STR1, "Saving page %d", pgnum);
-	message(STR1);
-	safesavepage(pgnum, curfilename[pgnum - 1]);
+        sprintf(STR1, "Saving page %d", pgnum);
+        message(STR1);
+        safesavepage(pgnum, curfilename[pgnum - 1]);
       }
     }
   } else if (!strcmp(gg.funcarg, "*")) {
@@ -17824,27 +16021,22 @@ Static Void savecommand()
       strcpy(filename, curfilename[gg.curpage - 1]);
     else
       *filename = '\0';
-    #if __EMSCRIPTEN__
-      safesavepage((int)gg.curpage, filename);
-      endbottom();
-      clearfunc();
-      refrscreen();
-      return;
-    #endif
+#if __EMSCRIPTEN__
+    safesavepage((int)gg.curpage, filename);
+    endbottom();
+    clearfunc();
+    refrscreen();
+    return;
+#endif
     readlnpass(filename, 3);
     endbottom();
-    if (*filename != '\0')
-      safesavepage((int)gg.curpage, filename);
+    if (*filename != '\0') safesavepage((int)gg.curpage, filename);
   } else
     safesavepage((int)gg.curpage, gg.funcarg);
   clearfunc();
 }
 
-
-
-
-Static Void namecommand()
-{
+Static Void namecommand() {
   Char filename[256];
   Char STR2[256], STR3[256];
 
@@ -17866,7 +16058,7 @@ Static Void namecommand()
     else {
       newci_fixfname(filename, "lgf", "");
       if (curfilename[gg.curpage - 1] == NULL)
-	curfilename[gg.curpage - 1] = (Char *)Malloc(256);
+        curfilename[gg.curpage - 1] = (Char *)Malloc(256);
       strcpy(curfilename[gg.curpage - 1], filename);
     }
   }
@@ -17880,15 +16072,6 @@ Static Void namecommand()
   clearfunc();
 }
 
-
-
-
-
-
-
-
-
-
 Static Void loadlog30(f, ver)
 FILE **f;
 short ver;
@@ -17900,25 +16083,23 @@ short ver;
   log_brec *b;
   Char *TEMP;
 
-  fscanf(*f, "%*[^\n]");   /*version number*/
+  fscanf(*f, "%*[^\n]"); /*version number*/
   getc(*f);
   fscanf(*f, "%c%*[^\n]", &ch);
   getc(*f);
-  if (ch == '\n')
-    ch = ' ';
+  if (ch == '\n') ch = ' ';
   switch (ch) {
+    case 'V':
+    case 'v':
+      vlsi = true;
+      break;
 
-  case 'V':
-  case 'v':
-    vlsi = true;
-    break;
-
-  case 'T':
-  case 't':
-    vlsi = false;
-    break;
+    case 'T':
+    case 't':
+      vlsi = false;
+      break;
   }
-  fscanf(*f, "%*[^\n]");   /*numnodes, nullnode*/
+  fscanf(*f, "%*[^\n]"); /*numnodes, nullnode*/
   getc(*f);
   setvlsimode(vlsi);
   j = gg.color.wire[0];
@@ -17962,31 +16143,27 @@ short ver;
     closerwire(x, y);
     if (gg.nearhw != NULL && gg.nearvw != NULL) {
       if (trycombinenodes(&gg.nearvw->node, &gg.nearhw->node)) {
-	clipon();
-	addsolder(x, y, gg.nearhw, NULL, gg.nearvw, NULL);
-	clipoff();
+        clipon();
+        addsolder(x, y, gg.nearhw, NULL, gg.nearvw, NULL);
+        clipoff();
       } else
-	frysolder(x, y);
+        frysolder(x, y);
     }
     fscanf(*f, "%hd%hd%hd%hd%*[^\n]", &x, &y, &i, &j);
     getc(*f);
   }
   if (ver >= 3) {
     fscanf(*f, "%hd%hd%hd%c", &x, &y, &i, &ch);
-    if (ch == '\n')
-      ch = ' ';
+    if (ch == '\n') ch = ' ';
     fgets(nam, 81, *f);
     TEMP = (char *)strchr(nam, '\n');
-    if (TEMP != NULL)
-      *TEMP = 0;
+    if (TEMP != NULL) *TEMP = 0;
   } else {
     fscanf(*f, "%hd%hd%c", &x, &y, &ch);
-    if (ch == '\n')
-      ch = ' ';
+    if (ch == '\n') ch = ' ';
     fgets(nam, 81, *f);
     TEMP = (char *)strchr(nam, '\n');
-    if (TEMP != NULL)
-      *TEMP = 0;
+    if (TEMP != NULL) *TEMP = 0;
   }
   while (x != -9999) {
     newlabel(&l);
@@ -17994,27 +16171,22 @@ short ver;
     l->y = y;
     strcpy(l->name, nam);
     l->w = m_strwidth(logfont_lfont, l->name) / log_scale0;
-/* p2c: log.text, line 17118:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+    /* p2c: log.text, line 17118:
+     * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
     if (ver >= 3) {
       fscanf(*f, "%hd%hd%hd%c", &x, &y, &i, &ch);
-      if (ch == '\n')
-	ch = ' ';
+      if (ch == '\n') ch = ' ';
       fgets(nam, 81, *f);
       TEMP = (char *)strchr(nam, '\n');
-      if (TEMP != NULL)
-	*TEMP = 0;
+      if (TEMP != NULL) *TEMP = 0;
     } else {
       fscanf(*f, "%hd%hd%c", &x, &y, &ch);
-      if (ch == '\n')
-	ch = ' ';
+      if (ch == '\n') ch = ' ';
       fgets(nam, 81, *f);
       TEMP = (char *)strchr(nam, '\n');
-      if (TEMP != NULL)
-	*TEMP = 0;
+      if (TEMP != NULL) *TEMP = 0;
     }
-    if (ch != ':')
-      _Escape(0);
+    if (ch != ':') _Escape(0);
   }
   fscanf(*f, "%hd%hd%hd%hd%*[^\n]", &x, &y, &x1, &y1);
   getc(*f);
@@ -18028,41 +16200,34 @@ short ver;
     getc(*f);
   }
   fscanf(*f, "%hd%hd%hd%hd%hd%hd%hd%c", &i, &x, &y, &y1, &x1, &y2, &x2, &ch);
-  if (ch == '\n')
-    ch = ' ';
+  if (ch == '\n') ch = ' ';
   fgets(nam, 81, *f);
   TEMP = (char *)strchr(nam, '\n');
-  if (TEMP != NULL)
-    *TEMP = 0;
+  if (TEMP != NULL) *TEMP = 0;
   while (i != -9999) {
     if ((unsigned)(i & 127) < 32 && ((1L << (i & 127)) & 0x1800) != 0) {
       if (i == 11)
-	j = readlibrary("TO");
+        j = readlibrary("TO");
       else
-	j = readlibrary("FROM");
+        j = readlibrary("FROM");
       addgate1(x, y, j + i / 128 * 128);
       gg.neargate->sig = getsignal(0, nam);
     } else {
       j = readlibrary(nam);
       addgate1(x, y, j + i / 128 * 128);
     }
-    for (i = 1; i <= y2 + x2; i++) {   /*ignore all pins, attributes!*/
+    for (i = 1; i <= y2 + x2; i++) { /*ignore all pins, attributes!*/
       fscanf(*f, "%*[^\n]");
       getc(*f);
     }
     fscanf(*f, "%hd%hd%hd%hd%hd%hd%hd%c", &i, &x, &y, &y1, &x1, &y2, &x2, &ch);
-    if (ch == '\n')
-      ch = ' ';
+    if (ch == '\n') ch = ' ';
     fgets(nam, 81, *f);
     TEMP = (char *)strchr(nam, '\n');
-    if (TEMP != NULL)
-      *TEMP = 0;
+    if (TEMP != NULL) *TEMP = 0;
   }
   chpage((int)gg.curpage);
 }
-
-
-
 
 Static Void readattrs(f, gattr, numattrs, kattr, lbl, count)
 FILE **f;
@@ -18078,107 +16243,97 @@ short count;
   na_strlist *l1, *names;
 
   l1 = lbl;
-  while (l1 != NULL && l1->kind != '\001')
-    l1 = l1->next;
+  while (l1 != NULL && l1->kind != '\001') l1 = l1->next;
   if (l1 != NULL)
     names = (na_strlist *)l1->value;
   else
     names = NULL;
   for (j = 1; j <= count; j++) {
     ch = getc(*f);
-    if (ch == '\n')
-      ch = ' ';
+    if (ch == '\n') ch = ' ';
     if (ch == '[') {
       *buf = '\0';
       ch = getc(*f);
-      if (ch == '\n')
-	ch = ' ';
+      if (ch == '\n') ch = ' ';
       while (ch != ']' && !P_eoln(*f)) {
-	sprintf(buf + strlen(buf), "%c", ch);
-	ch = getc(*f);
-	if (ch == '\n')
-	  ch = ' ';
+        sprintf(buf + strlen(buf), "%c", ch);
+        ch = getc(*f);
+        if (ch == '\n') ch = ' ';
       }
       jj = -1;
       if (!P_eoln(*f)) {
-	l1 = names;
-	while (l1 != NULL && strcmp(buf, l1->s))
-	  l1 = l1->next;
-	if (l1 != NULL)
-	  jj = (long)l1->value;
-	do {
-	  ch = getc(*f);
-	  if (ch == '\n')
-	    ch = ' ';
-	} while (ch == ' ');
+        l1 = names;
+        while (l1 != NULL && strcmp(buf, l1->s)) l1 = l1->next;
+        if (l1 != NULL) jj = (long)l1->value;
+        do {
+          ch = getc(*f);
+          if (ch == '\n') ch = ' ';
+        } while (ch == ' ');
       }
     } else
       jj = j;
     if (jj >= 1 && jj <= numattrs) {
       ch = toupper(ch);
       if (ch == 'X') {
-	(*gattr)[jj - 1].blnk = true;
-	switch (kattr[jj - 1].dtype) {
+        (*gattr)[jj - 1].blnk = true;
+        switch (kattr[jj - 1].dtype) {
+          case 'C':
+            *(*gattr)[jj - 1].UU.c = '\0';
+            break;
 
-	case 'C':
-	  *(*gattr)[jj - 1].UU.c = '\0';
-	  break;
-
-	case 'A':
-	  strchange(&(*gattr)[jj - 1].UU.sp, "");
-	  break;
-	}
+          case 'A':
+            strchange(&(*gattr)[jj - 1].UU.sp, "");
+            break;
+        }
       } else {
-	(*gattr)[jj - 1].blnk = false;
-	switch (kattr[jj - 1].dtype) {
+        (*gattr)[jj - 1].blnk = false;
+        switch (kattr[jj - 1].dtype) {
+          case 'R':
+          case 'U':
+          case 'F':
+            if (ch == 'F' || ch == 'U' || ch == 'R')
+              fscanf(*f, "%lg", &(*gattr)[jj - 1].UU.r);
+            break;
 
-	case 'R':
-	case 'U':
-	case 'F':
-	  if (ch == 'F' || ch == 'U' || ch == 'R')
-	    fscanf(*f, "%lg", &(*gattr)[jj - 1].UU.r);
-	  break;
+          case 'I':
+          case 'H':
+            if (ch == 'H' || ch == 'I')
+              fscanf(*f, "%ld", &(*gattr)[jj - 1].UU.U73.i1);
+            break;
 
-	case 'I':
-	case 'H':
-	  if (ch == 'H' || ch == 'I')
-	    fscanf(*f, "%ld", &(*gattr)[jj - 1].UU.U73.i1);
-	  break;
+          case 'C':
+            if (ch == 'A' || ch == 'C') {
+              *buf = '\0';
+              fscanf(*f, "%[^\n]", buf);
+              if (strlen(buf) <= kattr[jj - 1].prec)
+                strcpy((*gattr)[jj - 1].UU.c, buf);
+            }
+            break;
 
-	case 'C':
-	  if (ch == 'A' || ch == 'C') {
-	    *buf = '\0';
-	    fscanf(*f, "%[^\n]", buf);
-	    if (strlen(buf) <= kattr[jj - 1].prec)
-	      strcpy((*gattr)[jj - 1].UU.c, buf);
-	  }
-	  break;
+          case 'A':
+            if (ch == 'A' || ch == 'C') {
+              *buf = '\0';
+              fscanf(*f, "%[^\n]", buf);
+              strchange(&(*gattr)[jj - 1].UU.sp, buf);
+            }
+            break;
 
-	case 'A':
-	  if (ch == 'A' || ch == 'C') {
-	    *buf = '\0';
-	    fscanf(*f, "%[^\n]", buf);
-	    strchange(&(*gattr)[jj - 1].UU.sp, buf);
-	  }
-	  break;
+          case 'B':
+            if (ch == 'B') {
+              ch = getc(*f);
+              if (ch == '\n') ch = ' ';
+              (*gattr)[jj - 1].UU.b = (ch == 't' || ch == 'T' || ch == '1');
+            }
+            break;
 
-	case 'B':
-	  if (ch == 'B') {
-	    ch = getc(*f);
-	    if (ch == '\n')
-	      ch = ' ';
-	    (*gattr)[jj - 1].UU.b = (ch == 't' || ch == 'T' || ch == '1');
-	  }
-	  break;
-
-	case 'V':
-	  if (ch == 'V') {
-	    fscanf(*f, "%hd", &(*gattr)[jj - 1].UU.nv);
-	    if ((*gattr)[jj - 1].UU.nv >= kattr[jj - 1].UU.U86.nv)
-	      (*gattr)[jj - 1].UU.nv = 0;
-	  }
-	  break;
-	}
+          case 'V':
+            if (ch == 'V') {
+              fscanf(*f, "%hd", &(*gattr)[jj - 1].UU.nv);
+              if ((*gattr)[jj - 1].UU.nv >= kattr[jj - 1].UU.U86.nv)
+                (*gattr)[jj - 1].UU.nv = 0;
+            }
+            break;
+        }
       }
     }
     fscanf(*f, "%*[^\n]");
@@ -18186,9 +16341,7 @@ short count;
   }
 }
 
-
-#define rtn             "LOADPAGE"
-
+#define rtn "LOADPAGE"
 
 typedef log_nrec *nodearray[log_million];
 
@@ -18203,7 +16356,6 @@ typedef struct wirerec {
 typedef wirerec wirearray[log_million];
 typedef long intarray[log_million];
 
-
 /* Local variables for loadpage: */
 struct LOC_loadpage {
   Char *reason;
@@ -18211,18 +16363,15 @@ struct LOC_loadpage {
   long *ip;
   short numnodes;
   log_nrec **np;
-} ;
+};
 
 Local Void loadfail(msg, LINK)
 Char *msg;
 struct LOC_loadpage *LINK;
 {
-  if (LINK->f)
-    fclose(LINK->f);
-  if (LINK->ip)
-    Free(LINK->ip);
-  if (msg == NULL) 
-    _Escape(0);
+  if (LINK->f) fclose(LINK->f);
+  if (LINK->ip) Free(LINK->ip);
+  if (msg == NULL) _Escape(0);
   strcpy(LINK->reason, msg);
   _Escape(1);
 }
@@ -18233,15 +16382,12 @@ struct LOC_loadpage *LINK;
 {
   Char STR2[256];
 
-  if (i >= 1 && i <= LINK->numnodes)
-    return (refnode(LINK->np[i - 1]));
+  if (i >= 1 && i <= LINK->numnodes) return (refnode(LINK->np[i - 1]));
   sprintf(STR2, "Bad node number: %d", i);
   loadfail(STR2, LINK);
 
   return NULL; /* should never happen */
 }
-
-
 
 /* Local variables for initialize: */
 struct LOC_initialize {
@@ -18249,8 +16395,7 @@ struct LOC_initialize {
   na_strlist *loadgates, *logmenu;
   Char cmdbuf[81];
   cnfrec *cnflast;
-} ;
-
+};
 
 Local boolean tryfindfile(name, path, LINK)
 Char *name;
@@ -18264,35 +16409,32 @@ struct LOC_initialize *LINK;
 
   f = NULL;
   Result = false;
-  if (*name != '\0' &&
-      (*path == '\0' || (name[0] != '*' && name[0] != '/' && name[0] != '%' &&
-			 name[0] != '~'))) {
+  if (*name != '\0' && (*path == '\0' || (name[0] != '*' && name[0] != '/' &&
+                                          name[0] != '%' && name[0] != '~'))) {
     TRY(try31);
-      if (name[0] == '~') {
-        ep = tilde_expand(name);
-        strncpy(fname, ep, 256);
-        Free(ep);
-      } else
-        sprintf(fname, "%s%s", path, name);
-      /*  writeln('Looking for "', fname, '"');  */
-      if (f != NULL)
-	f = freopen(fname, "r", f);
-      else
-	f = fopen(fname, "r");
-      if (f == NULL) {
-	P_escapecode = -10;
-	P_ioresult = FileNotFound;
-	goto _Ltry31;
-      }
-      strcpy(name, fname);
-      Result = true;
-    RECOVER2(try31,_Ltry31);
-      if (P_escapecode == -20)
-	_Escape(P_escapecode);
+    if (name[0] == '~') {
+      ep = tilde_expand(name);
+      strncpy(fname, ep, 256);
+      Free(ep);
+    } else
+      sprintf(fname, "%s%s", path, name);
+    /*  writeln('Looking for "', fname, '"');  */
+    if (f != NULL)
+      f = freopen(fname, "r", f);
+    else
+      f = fopen(fname, "r");
+    if (f == NULL) {
+      P_escapecode = -10;
+      P_ioresult = FileNotFound;
+      goto _Ltry31;
+    }
+    strcpy(name, fname);
+    Result = true;
+    RECOVER2(try31, _Ltry31);
+    if (P_escapecode == -20) _Escape(P_escapecode);
     ENDTRY(try31);
   }
-  if (f != NULL)
-    fclose(f);
+  if (f != NULL) fclose(f);
   return Result;
 }
 
@@ -18304,11 +16446,9 @@ struct LOC_initialize *LINK;
 
   sprintf(path, "%s/", GetChipmunkPath("LOGLIB", LOGLIB));
   return (tryfindfile(name, "", LINK) ||
-	  tryfindfile(name, gg.homedirname, LINK) ||
-	  tryfindfile(name, path, LINK));
+          tryfindfile(name, gg.homedirname, LINK) ||
+          tryfindfile(name, path, LINK));
 }
-
-
 
 Static Void loadpage(filename_, reason_)
 Char *filename_;
@@ -18350,8 +16490,7 @@ Char *reason_;
       V.f = freopen(filename, "r", V.f);
     else
       V.f = fopen(filename, "r");
-    if (V.f == NULL)
-      _EscIO(FileNotFound);
+    if (V.f == NULL) _EscIO(FileNotFound);
     fscanf(V.f, "%hd", &ver);
     ver = -ver;
     gg.actx = gg.curpage;
@@ -18384,16 +16523,14 @@ Char *reason_;
       g = gg.gbase[gg.curpage - 1];
     }
     l = gg.lbase[gg.curpage - 1];
-    if (l != NULL)
-      stamp(&gg.labelstamp);
+    if (l != NULL) stamp(&gg.labelstamp);
     while (l != NULL) {
       gg.lbase[gg.curpage - 1] = l->next;
       Free(l);
       l = gg.lbase[gg.curpage - 1];
     }
     b = gg.bbase[gg.curpage - 1];
-    if (b != NULL)
-      stamp(&gg.boxstamp);
+    if (b != NULL) stamp(&gg.boxstamp);
     while (b != NULL) {
       gg.bbase[gg.curpage - 1] = b->next;
       Free(b);
@@ -18410,318 +16547,276 @@ Char *reason_;
       getc(V.f);
       fscanf(V.f, "%c%c%c%*[^\n]", &ch, &ch1, &ch2);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (ch1 == '\n')
-	ch1 = ' ';
-      if (ch2 == '\n')
-	ch2 = ' ';
-      if (tolower(ch) != 'f' || ch1 != ' ')
-	loadfail("Bad format line", &V);
+      if (ch == '\n') ch = ' ';
+      if (ch1 == '\n') ch1 = ' ';
+      if (ch2 == '\n') ch2 = ' ';
+      if (tolower(ch) != 'f' || ch1 != ' ') loadfail("Bad format line", &V);
       if (tolower(ch2) != 's') {
-	sprintf(STR2, "Bad format name: %c", ch2);
-	loadfail(STR2, &V);
+        sprintf(STR2, "Bad format name: %c", ch2);
+        loadfail(STR2, &V);
       }
       vlsi = false;
       setvlsimode(vlsi);
       fscanf(V.f, "%c%hd%*[^\n]", &ch, &V.numnodes);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (tolower(ch) != 'n')
-	loadfail("No node-count line", &V);
+      if (ch == '\n') ch = ' ';
+      if (tolower(ch) != 'n') loadfail("No node-count line", &V);
       V.np = (log_nrec **)Malloc(V.numnodes * sizeof(log_nrec *));
       n = gg.nbase;
-      while (n != NULL && n->next != NULL)
-	n = n->next;
+      while (n != NULL && n->next != NULL) n = n->next;
       FORLIM = V.numnodes;
       for (i = 0; i < FORLIM; i++) {
-	fscanf(V.f, "%hd%hd%*[^\n]", &j, &x1);
-	getc(V.f);
-	n1 = n;
-	newnode(&n, j);
-	gg.nbase = n->next;
-	if (n1 == NULL)
-	  gg.nbase = n;
-	else
-	  n1->next = n;
-	n->next = NULL;
-	readattrs(&V.f, &n->attr, n->simtype->nnumattrs, n->simtype->nattr,
-		  n->simtype->nlbl, x1);
-	V.np[i] = n;
-	gg.actfile = &V.f;
-	calltoolnode(n, act_readnode);
-	stamp(&n->simtype->netstamp);
-	while (!P_eoln(V.f) && !P_eof(V.f)) {
-	  fscanf(V.f, "%*[^\n]");
-	  getc(V.f);
-	}
-	if (P_eof(V.f))
-	  loadfail("End-of-file while reading nodes", &V);
-	fscanf(V.f, "%*[^\n]");
-	getc(V.f);
+        fscanf(V.f, "%hd%hd%*[^\n]", &j, &x1);
+        getc(V.f);
+        n1 = n;
+        newnode(&n, j);
+        gg.nbase = n->next;
+        if (n1 == NULL)
+          gg.nbase = n;
+        else
+          n1->next = n;
+        n->next = NULL;
+        readattrs(&V.f, &n->attr, n->simtype->nnumattrs, n->simtype->nattr,
+                  n->simtype->nlbl, x1);
+        V.np[i] = n;
+        gg.actfile = &V.f;
+        calltoolnode(n, act_readnode);
+        stamp(&n->simtype->netstamp);
+        while (!P_eoln(V.f) && !P_eof(V.f)) {
+          fscanf(V.f, "%*[^\n]");
+          getc(V.f);
+        }
+        if (P_eof(V.f)) loadfail("End-of-file while reading nodes", &V);
+        fscanf(V.f, "%*[^\n]");
+        getc(V.f);
       }
       fscanf(V.f, "%c%hd%*[^\n]", &ch, &count);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (tolower(ch) != 's')
-	loadfail("No signal-count line", &V);
-      V.ip = (long *) Malloc(count * sizeof(long));
+      if (ch == '\n') ch = ' ';
+      if (tolower(ch) != 's') loadfail("No signal-count line", &V);
+      V.ip = (long *)Malloc(count * sizeof(long));
       for (i = 0; i < count; i++) {
-	fscanf(V.f, "%hd%c", &j, &ch);
-	if (ch == '\n')
-	  ch = ' ';
-	fgets(tempname, 256, V.f);
-	TEMP = (char *)strchr(tempname, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	n = V.np[j - 1];
-	x = getsignal(0, tempname);
-	if (x == 0)
-	  loadfail(NULL, &V);
-	V.ip[i] = x;
-	queuecombine(&cnbase, &V.np[j - 1], &gg.signaltab[x - 1].np);
+        fscanf(V.f, "%hd%c", &j, &ch);
+        if (ch == '\n') ch = ' ';
+        fgets(tempname, 256, V.f);
+        TEMP = (char *)strchr(tempname, '\n');
+        if (TEMP != NULL) *TEMP = 0;
+        n = V.np[j - 1];
+        x = getsignal(0, tempname);
+        if (x == 0) loadfail(NULL, &V);
+        V.ip[i] = x;
+        queuecombine(&cnbase, &V.np[j - 1], &gg.signaltab[x - 1].np);
       }
       fscanf(V.f, "%c%hd%*[^\n]", &ch, &count);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (tolower(ch) != 'w')
-	loadfail("No wire-count line", &V);
+      if (ch == '\n') ch = ' ';
+      if (tolower(ch) != 'w') loadfail("No wire-count line", &V);
       numwires = count;
       wp = (wirerec *)Malloc(numwires * sizeof(wirerec));
       for (i = 0; i < numwires; i++) {
-	fscanf(V.f, "%hd%hd%hd%hd%hd%c%c%*[^\n]", &x1, &y1, &x2, &y2, &j, &ch,
-	       &ch1);
-	getc(V.f);
-	if (ch == '\n')
-	  ch = ' ';
-	if (ch1 == '\n')
-	  ch1 = ' ';
-	switch (ch1) {
+        fscanf(V.f, "%hd%hd%hd%hd%hd%c%c%*[^\n]", &x1, &y1, &x2, &y2, &j, &ch,
+               &ch1);
+        getc(V.f);
+        if (ch == '\n') ch = ' ';
+        if (ch1 == '\n') ch1 = ' ';
+        switch (ch1) {
+          case 'U':
+            x = log_wcol_normal;
+            break;
 
-	case 'U':
-	  x = log_wcol_normal;
-	  break;
+          case 'G':
+            x = log_wcol_green;
+            break;
 
-	case 'G':
-	  x = log_wcol_green;
-	  break;
+          case 'R':
+            x = log_wcol_red;
+            break;
 
-	case 'R':
-	  x = log_wcol_red;
-	  break;
+          case 'B':
+            x = log_wcol_blue;
+            break;
 
-	case 'B':
-	  x = log_wcol_blue;
-	  break;
+          case 'Y':
+            x = log_wcol_yellow;
+            break;
 
-	case 'Y':
-	  x = log_wcol_yellow;
-	  break;
-
-	default:
-	  sprintf(STR3, "Bad color name: %c", ch1);
-	  loadfail(STR3, &V);
-	  break;
-	}
-	n = countnode_(j, &V);
-	if (y1 == y2) {
-	  newhw(&hw);
-	  hw->x1 = x1;
-	  hw->x2 = x2;
-	  hw->y = y1;
-	  hw->node = n;
-	  hw->wcolr = x;
-	  wp[i].horiz = true;
-	  wp[i].UU.hw = hw;
-	} else if (x1 == x2) {
-	  newvw(&vw);
-	  vw->x = x1;
-	  vw->y1 = y1;
-	  vw->y2 = y2;
-	  vw->node = n;
-	  vw->wcolr = x;
-	  wp[i].horiz = false;
-	  wp[i].UU.vw = vw;
-	} else
-	  loadfail("Wire is not horizontal or vertical", &V);
+          default:
+            sprintf(STR3, "Bad color name: %c", ch1);
+            loadfail(STR3, &V);
+            break;
+        }
+        n = countnode_(j, &V);
+        if (y1 == y2) {
+          newhw(&hw);
+          hw->x1 = x1;
+          hw->x2 = x2;
+          hw->y = y1;
+          hw->node = n;
+          hw->wcolr = x;
+          wp[i].horiz = true;
+          wp[i].UU.hw = hw;
+        } else if (x1 == x2) {
+          newvw(&vw);
+          vw->x = x1;
+          vw->y1 = y1;
+          vw->y2 = y2;
+          vw->node = n;
+          vw->wcolr = x;
+          wp[i].horiz = false;
+          wp[i].UU.vw = vw;
+        } else
+          loadfail("Wire is not horizontal or vertical", &V);
       }
       fscanf(V.f, "%c%hd%*[^\n]", &ch, &count);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (tolower(ch) != 'p')
-	loadfail("No solder-count line", &V);
+      if (ch == '\n') ch = ' ';
+      if (tolower(ch) != 'p') loadfail("No solder-count line", &V);
       for (i = 1; i <= count; i++) {
-	fscanf(V.f, "%hd%hd", &x, &y);
-	newsolder(&s);
-	s->x = x;
-	s->y = y;
-	while (!P_eoln(V.f)) {
-	  fscanf(V.f, "%hd", &j);
-	  if (wp[j - 1].horiz) {
-	    if (s->hwire == NULL)
-	      s->hwire = wp[j - 1].UU.hw;
-	    else
-	      s->hwire2 = wp[j - 1].UU.hw;
-	  } else {
-	    if (s->vwire == NULL)
-	      s->vwire = wp[j - 1].UU.vw;
-	    else
-	      s->vwire2 = wp[j - 1].UU.vw;
-	  }
-	}
-	fscanf(V.f, "%*[^\n]");
-	getc(V.f);
+        fscanf(V.f, "%hd%hd", &x, &y);
+        newsolder(&s);
+        s->x = x;
+        s->y = y;
+        while (!P_eoln(V.f)) {
+          fscanf(V.f, "%hd", &j);
+          if (wp[j - 1].horiz) {
+            if (s->hwire == NULL)
+              s->hwire = wp[j - 1].UU.hw;
+            else
+              s->hwire2 = wp[j - 1].UU.hw;
+          } else {
+            if (s->vwire == NULL)
+              s->vwire = wp[j - 1].UU.vw;
+            else
+              s->vwire2 = wp[j - 1].UU.vw;
+          }
+        }
+        fscanf(V.f, "%*[^\n]");
+        getc(V.f);
       }
       fscanf(V.f, "%c%hd%*[^\n]", &ch, &count);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (tolower(ch) != 'l')
-	loadfail("No label-count line", &V);
-      if (count > 0)
-	stamp(&gg.labelstamp);
+      if (ch == '\n') ch = ' ';
+      if (tolower(ch) != 'l') loadfail("No label-count line", &V);
+      if (count > 0) stamp(&gg.labelstamp);
       for (i = 1; i <= count; i++) {
-	fscanf(V.f, "%hd%hd%hd%c", &x, &y, &j, &ch);
-	if (ch == '\n')
-	  ch = ' ';
-	fgets(labelname, log_lablen + 1, V.f);
-	TEMP = (char *)strchr(labelname, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	if (ch != ' ')
-	  loadfail("Bad label name", &V);
-	newlabel(&l);
-	l->x = x;
-	l->y = y;
-	strcpy(l->name, labelname);
-	l->w = m_strwidth(logfont_lfont, l->name) / log_scale0;
-/* p2c: log.text, line 17510:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+        fscanf(V.f, "%hd%hd%hd%c", &x, &y, &j, &ch);
+        if (ch == '\n') ch = ' ';
+        fgets(labelname, log_lablen + 1, V.f);
+        TEMP = (char *)strchr(labelname, '\n');
+        if (TEMP != NULL) *TEMP = 0;
+        if (ch != ' ') loadfail("Bad label name", &V);
+        newlabel(&l);
+        l->x = x;
+        l->y = y;
+        strcpy(l->name, labelname);
+        l->w = m_strwidth(logfont_lfont, l->name) / log_scale0;
+        /* p2c: log.text, line 17510:
+         * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
       }
       fscanf(V.f, "%c%hd%*[^\n]", &ch, &count);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (tolower(ch) != 'b')
-	loadfail("No box-count line", &V);
-      if (count > 0)
-	stamp(&gg.boxstamp);
+      if (ch == '\n') ch = ' ';
+      if (tolower(ch) != 'b') loadfail("No box-count line", &V);
+      if (count > 0) stamp(&gg.boxstamp);
       for (i = 1; i <= count; i++) {
-	fscanf(V.f, "%hd%hd%hd%hd%*[^\n]", &x1, &y1, &x2, &y2);
-	getc(V.f);
-	newbox(&b);
-	b->x1 = x1;
-	b->y1 = y1;
-	b->x2 = x2;
-	b->y2 = y2;
+        fscanf(V.f, "%hd%hd%hd%hd%*[^\n]", &x1, &y1, &x2, &y2);
+        getc(V.f);
+        newbox(&b);
+        b->x1 = x1;
+        b->y1 = y1;
+        b->x2 = x2;
+        b->y2 = y2;
       }
       fscanf(V.f, "%c%hd%*[^\n]", &ch, &count);
       getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
-      if (tolower(ch) != 'g')
-	loadfail("No gate-count line", &V);
+      if (ch == '\n') ch = ' ';
+      if (tolower(ch) != 'g') loadfail("No gate-count line", &V);
       g = NULL;
       for (i = 1; i <= count; i++) {
-	fgets(tempname, 256, V.f);
-	TEMP = (char *)strchr(tempname, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	j = readlibrary(tempname);
-	if (j != 0) {
-	  fscanf(V.f, "%hd%hd%hd%hd%ld%hd%hd%*[^\n]", &x, &y, &x1, &y1, &ii,
-		 &x2, &y2);
-	  getc(V.f);
-	  g1 = g;
-	  newgate(&g, j + x1 * log_kindoffset);
-	  if (g1 == NULL)
-	    gg.gbase[gg.curpage - 1] = g;
-	  else
-	    g1->next = g;
-	  g->next = NULL;
-	  g->rot = x1;
-	  g->x = x;
-	  g->y = y;
-	  g->gc = y1;
-	  g->vars = (na_long)ii;
-	  if (x2 == 0)
-	    g->sig = 0;
-	  else
-	    g->sig = V.ip[x2 - 1];
-	  stamp(&g->kind->simtype->netstamp);
-	  j = 1;
-	  while (j <= g->kind->numpins && !P_eoln(V.f)) {
-	    fscanf(V.f, "%hd", &k);
-	    g->pin[j - 1] = countnode_(k, &V);
-	    j++;
-	  }
-	  while (j <= g->kind->numpins) {
-	    newnode(&g->pin[j - 1], g->kind->pin[j - 1].s);
-	    j++;
-	  }
-	  fscanf(V.f, "%*[^\n]");
-	  getc(V.f);
-	  readattrs(&V.f, &g->attr, g->kind->numattrs, g->kind->attr,
-		    g->kind->lbl, y2);
-	  initpinpos(g);
-	  gg.actflag = true;
-	  calltoolgate(g, act_connectgate);
-	  if (!gg.actflag)
-	    report(11, rtn);
-	  gg.actfile = &V.f;
-	  gg.actflag = true;
-	  calltoolgate(g, act_readgate);
-	}
-	while (!P_eoln(V.f) && !P_eof(V.f)) {
-	  fscanf(V.f, "%*[^\n]");
-	  getc(V.f);
-	}
-	if (P_eof(V.f))
-	  loadfail("End-of-file while reading gates", &V);
-	fscanf(V.f, "%*[^\n]");
-	getc(V.f);
+        fgets(tempname, 256, V.f);
+        TEMP = (char *)strchr(tempname, '\n');
+        if (TEMP != NULL) *TEMP = 0;
+        j = readlibrary(tempname);
+        if (j != 0) {
+          fscanf(V.f, "%hd%hd%hd%hd%ld%hd%hd%*[^\n]", &x, &y, &x1, &y1, &ii,
+                 &x2, &y2);
+          getc(V.f);
+          g1 = g;
+          newgate(&g, j + x1 * log_kindoffset);
+          if (g1 == NULL)
+            gg.gbase[gg.curpage - 1] = g;
+          else
+            g1->next = g;
+          g->next = NULL;
+          g->rot = x1;
+          g->x = x;
+          g->y = y;
+          g->gc = y1;
+          g->vars = (na_long)ii;
+          if (x2 == 0)
+            g->sig = 0;
+          else
+            g->sig = V.ip[x2 - 1];
+          stamp(&g->kind->simtype->netstamp);
+          j = 1;
+          while (j <= g->kind->numpins && !P_eoln(V.f)) {
+            fscanf(V.f, "%hd", &k);
+            g->pin[j - 1] = countnode_(k, &V);
+            j++;
+          }
+          while (j <= g->kind->numpins) {
+            newnode(&g->pin[j - 1], g->kind->pin[j - 1].s);
+            j++;
+          }
+          fscanf(V.f, "%*[^\n]");
+          getc(V.f);
+          readattrs(&V.f, &g->attr, g->kind->numattrs, g->kind->attr,
+                    g->kind->lbl, y2);
+          initpinpos(g);
+          gg.actflag = true;
+          calltoolgate(g, act_connectgate);
+          if (!gg.actflag) report(11, rtn);
+          gg.actfile = &V.f;
+          gg.actflag = true;
+          calltoolgate(g, act_readgate);
+        }
+        while (!P_eoln(V.f) && !P_eof(V.f)) {
+          fscanf(V.f, "%*[^\n]");
+          getc(V.f);
+        }
+        if (P_eof(V.f)) loadfail("End-of-file while reading gates", &V);
+        fscanf(V.f, "%*[^\n]");
+        getc(V.f);
       }
       if (!checkcombine(&cnbase))
-	loadfail("Simtype collision on signal names", &V);
+        loadfail("Simtype collision on signal names", &V);
       ch = getc(V.f);
-      if (ch == '\n')
-	ch = ' ';
+      if (ch == '\n') ch = ' ';
       if (tolower(ch) == 'h') {
-	fscanf(V.f, "%hd%*[^\n]", &count);
-	getc(V.f);
-	histdelsignals();
-	for (i = 1; i <= count; i++) {
-	  fscanf(V.f, "%hd%hd%c", &y, &x1, &ch);
-	  if (ch == '\n')
-	    ch = ' ';
-	  fgets(tempname, 256, V.f);
-	  TEMP = (char *)strchr(tempname, '\n');
-	  if (TEMP != NULL)
-	    *TEMP = 0;
-	  x = getsignal(0, tempname);
-	  if (x == 0)
-	    loadfail(NULL, &V);
-	  n = gg.signaltab[x - 1].np;
-	  histaddsignal(&hn, x, y);
-	  readattrs(&V.f, &hn->attr, n->simtype->hnumattrs, n->simtype->hattr,
-		    n->simtype->hlbl, x1);
-	}
-	ch = getc(V.f);
-	if (ch == '\n')
-	  ch = ' ';
+        fscanf(V.f, "%hd%*[^\n]", &count);
+        getc(V.f);
+        histdelsignals();
+        for (i = 1; i <= count; i++) {
+          fscanf(V.f, "%hd%hd%c", &y, &x1, &ch);
+          if (ch == '\n') ch = ' ';
+          fgets(tempname, 256, V.f);
+          TEMP = (char *)strchr(tempname, '\n');
+          if (TEMP != NULL) *TEMP = 0;
+          x = getsignal(0, tempname);
+          if (x == 0) loadfail(NULL, &V);
+          n = gg.signaltab[x - 1].np;
+          histaddsignal(&hn, x, y);
+          readattrs(&V.f, &hn->attr, n->simtype->hnumattrs, n->simtype->hattr,
+                    n->simtype->hlbl, x1);
+        }
+        ch = getc(V.f);
+        if (ch == '\n') ch = ' ';
       }
-      if (tolower(ch) != '.')
-	loadfail("No end line in file", &V);
+      if (tolower(ch) != '.') loadfail("No end line in file", &V);
     }
-    if (V.f != NULL)
-      fclose(V.f);
+    if (V.f != NULL) fclose(V.f);
     V.f = NULL;
-    if (V.ip != NULL)
-      Free(V.ip);
+    if (V.ip != NULL) Free(V.ip);
     chpage((int)gg.curpage);
     gg.pagechanged[gg.curpage - 1] = false;
     if (curfilename[gg.curpage - 1] == NULL)
@@ -18732,19 +16827,12 @@ Char *reason_;
 
 #undef rtn
 
-
-#define catsize         21
-#define maxdirmax       45
-#define maxdircol       8
-
+#define catsize 21
+#define maxdirmax 45
+#define maxdircol 8
 
 typedef misc_catentry catarray[catsize];
 typedef Char dirarray[maxdirmax + 1][fidleng + 1];
-
-
-
-
-
 
 /*=================  LOADCOMMAND  ================*/
 /*=                                              =*/
@@ -18755,35 +16843,32 @@ typedef Char dirarray[maxdirmax + 1][fidleng + 1];
 void startjsload();
 void initload();
 
-Static Void loadcommand()
-{
+Static Void loadcommand() {
   short i, j, x, y, x1, y1, dirmax, dircol;
   Char filename[256];
   Char ch;
   Char name[fidleng + 1];
   misc_catentry *cat;
-  Char (*dirs[maxdircol + 1])[fidleng + 1];
+  Char(*dirs[maxdircol + 1])[fidleng + 1];
   Char STR3[256];
 
   dircol = P_imin2((txacross - 14L) / 15, (long)maxdircol);
   dirmax = -1;
   cat = NULL;
-  for (i = 0; i <= dircol; i++)
-    dirs[i] = NULL;
+  for (i = 0; i <= dircol; i++) dirs[i] = NULL;
   if (!strcmp(gg.funcarg, "*")) {
     beginbottom();
     printf("Name of file to load: ");
     readlnpass(filename, 0);
     endbottom();
-  } else if (*gg.funcarg == '\0') { 
-  #ifdef __EMSCRIPTEN__
+  } else if (*gg.funcarg == '\0') {
+#ifdef __EMSCRIPTEN__
     startjsload();
     clearfunc();
     return;
-  #endif
+#endif
     clearshowalpha();
-    if (cat != NULL)
-      Free(cat);
+    if (cat != NULL) Free(cat);
     nk_gotoxy(5, txdown - 1);
     printf("Press ENTER alone to abort command.\n");
     nk_gotoxy(2, txdown - 2);
@@ -18792,104 +16877,99 @@ Static Void loadcommand()
     ch = '\015';
     do {
       do {
-	x = (gg.t.ax - 2) / 15;
-	y = gg.t.ay - 2;
-	/*  x := (gg.t.x-22) div 90;
-	  y := (gg.t.y-46) div 15;
-	  if gg.t.x < 22 then x := 0;
-	  if gg.t.y < 46 then y := 0; */
-	if (x < 0 || (unsigned)y > dirmax || x > dircol || dirs[x] == NULL ||
-	    *dirs[x][y] == '\0')
-	  x = -1;
-	else {
-	  nk_gotoxy(x * 15 + 2, y + 2);
-	  printf("%c%s%c", chrinverse, dirs[x][y], chrplain);
-	}
-	if (gg.t.near_ && gg.t.inalpha)
-	  nk_gotoxy(gg.t.ax, gg.t.ay);
-	else
-	  nk_gotoxy((int)(strlen(filename) + 24), txdown - 2);
-	nc_cursor_on();
-	do {
-	  pass();
-	  pen();
-	  x1 = (gg.t.ax - 2) / 15;
-	  y1 = gg.t.ay - 2;
-	  /* x1 := (gg.t.x-22) div 90;
-	   y1 := (gg.t.y-46) div 15;
-	   if gg.t.x < 22 then x1 := 0;
-	   if gg.t.y < 46 then y1 := 0; */
-	  if (y1 < 0 || x1 < 0 || y1 > dirmax || x1 > dircol ||
-	      dirs[x1] == NULL || *dirs[x1][y1] == '\0')
-	    x1 = -1;
-	} while (!(pollkbd2() || gg.t.dn || x != x1 || y != y1) && gg.t.near_);
-	nc_cursor_off();
-	remcursor();
-	if (x != -1) {
-	  nk_gotoxy(x * 15 + 2, y + 2);
-	  fputs(dirs[x][y], stdout);
-	}
+        x = (gg.t.ax - 2) / 15;
+        y = gg.t.ay - 2;
+        /*  x := (gg.t.x-22) div 90;
+          y := (gg.t.y-46) div 15;
+          if gg.t.x < 22 then x := 0;
+          if gg.t.y < 46 then y := 0; */
+        if (x < 0 || (unsigned)y > dirmax || x > dircol || dirs[x] == NULL ||
+            *dirs[x][y] == '\0')
+          x = -1;
+        else {
+          nk_gotoxy(x * 15 + 2, y + 2);
+          printf("%c%s%c", chrinverse, dirs[x][y], chrplain);
+        }
+        if (gg.t.near_ && gg.t.inalpha)
+          nk_gotoxy(gg.t.ax, gg.t.ay);
+        else
+          nk_gotoxy((int)(strlen(filename) + 24), txdown - 2);
+        nc_cursor_on();
+        do {
+          pass();
+          pen();
+          x1 = (gg.t.ax - 2) / 15;
+          y1 = gg.t.ay - 2;
+          /* x1 := (gg.t.x-22) div 90;
+           y1 := (gg.t.y-46) div 15;
+           if gg.t.x < 22 then x1 := 0;
+           if gg.t.y < 46 then y1 := 0; */
+          if (y1 < 0 || x1 < 0 || y1 > dirmax || x1 > dircol ||
+              dirs[x1] == NULL || *dirs[x1][y1] == '\0')
+            x1 = -1;
+        } while (!(pollkbd2() || gg.t.dn || x != x1 || y != y1) && gg.t.near_);
+        nc_cursor_off();
+        remcursor();
+        if (x != -1) {
+          nk_gotoxy(x * 15 + 2, y + 2);
+          fputs(dirs[x][y], stdout);
+        }
       } while (!(pollkbd2() || gg.t.dn));
       if (gg.t.dn && x != -1) {
-	strcpy(filename, dirs[x][y]);
-	nk_gotoxy(24, txdown - 2);
-	printf("%s\t", filename);
+        strcpy(filename, dirs[x][y]);
+        nk_gotoxy(24, txdown - 2);
+        printf("%s\t", filename);
       }
       if (gg.t.dn)
-	ch = '\015';
+        ch = '\015';
       else
-	ch = inkey2();
+        ch = inkey2();
       if (ch == '\007' && *filename != '\0') {
-	nk_gotoxy((int)(strlen(filename) + 23), txdown - 2);
-	putchar(' ');
-	filename[strlen(filename) - 1] = '\0';
+        nk_gotoxy((int)(strlen(filename) + 23), txdown - 2);
+        putchar(' ');
+        filename[strlen(filename) - 1] = '\0';
       } else if (ch >= ' ' && ch <= '~' && strlen(filename) < 255) {
-	nk_gotoxy((int)(strlen(filename) + 24), txdown - 2);
-	putchar(ch);
-	strcat(filename, " ");
-	filename[strlen(filename) - 1] = ch;
+        nk_gotoxy((int)(strlen(filename) + 24), txdown - 2);
+        putchar(ch);
+        strcat(filename, " ");
+        filename[strlen(filename) - 1] = ch;
       }
     } while ((uchar)ch >= 32 || ((1L << ch) & 0x2008) == 0);
     for (i = 0; i <= dircol; i++) {
-      if (dirs[i] != NULL)
-	Free(dirs[i]);
+      if (dirs[i] != NULL) Free(dirs[i]);
     }
     sprintf(STR3, "%c", ch);
-    if (!strcmp(STR3, EXEC))
-      *filename = '\0';
+    if (!strcmp(STR3, EXEC)) *filename = '\0';
     clearalpha();
-    if (m_autoraise)
-      {
-      }
-    else
-      {
-	m_graphics_on(); 
-      }
+    if (m_autoraise) {
+    } else {
+      m_graphics_on();
+    }
   } else
     strcpy(filename, gg.funcarg);
   if (*filename != '\0') {
     beginbottom();
     TRY(try27);
-      printf("Loading file %s\n", filename);
-      m_alpha_on();
-      loadpage(filename, name);
-      endbottom();
+    printf("Loading file %s\n", filename);
+    m_alpha_on();
+    loadpage(filename, name);
+    endbottom();
     RECOVER(try27);
-      i = P_escapecode;
-      j = P_ioresult;
-      endbottom();
-      beginerror();
-      if (Debugging || debugprint || gg.traceflag)
-	printf("%d/%d/%ld  ", i, j, EXCP_LINE);
-      if (i == -10 && (unsigned)j < 32 && ((1L << j) & 0x600) != 0)
-	printf("Can't find file \"%s\"\n", filename);
-      else if (i == -20)
-	printf("STOP key pressed while loading file.\n");
-      else if (i > 0)
-	printf("Format error in file \"%s\" (%s)\n", filename, name);
-      else
-	printf("Unable to load file \"%s\"\n", filename);
-      enderror();
+    i = P_escapecode;
+    j = P_ioresult;
+    endbottom();
+    beginerror();
+    if (Debugging || debugprint || gg.traceflag)
+      printf("%d/%d/%ld  ", i, j, EXCP_LINE);
+    if (i == -10 && (unsigned)j < 32 && ((1L << j) & 0x600) != 0)
+      printf("Can't find file \"%s\"\n", filename);
+    else if (i == -20)
+      printf("STOP key pressed while loading file.\n");
+    else if (i > 0)
+      printf("Format error in file \"%s\" (%s)\n", filename, name);
+    else
+      printf("Unable to load file \"%s\"\n", filename);
+    enderror();
     ENDTRY(try27);
   }
   clearfunc();
@@ -18900,34 +16980,25 @@ Static Void loadcommand()
 #undef maxdirmax
 #undef maxdircol
 
-
 typedef long intarray_[log_million];
-
 
 /* Local variables for readlgf: */
 struct LOC_readlgf {
   Char *reason;
   FILE **f;
   long *ip;
-} ;
+};
 
 Local Void loadfail_(msg, LINK)
 Char *msg;
 struct LOC_readlgf *LINK;
 {
-  if (*LINK->f)
-    fclose(*LINK->f);
-  if (LINK->ip)
-    Free(LINK->ip);
-  if (msg == NULL)
-    _Escape(0);
+  if (*LINK->f) fclose(*LINK->f);
+  if (LINK->ip) Free(LINK->ip);
+  if (msg == NULL) _Escape(0);
   strcpy(LINK->reason, msg);
   _Escape(1);
 }
-
-
-
-
 
 Static Void readlgf(f, reason_)
 FILE **f;
@@ -18949,10 +17020,8 @@ Char *reason_;
   V.ip = NULL;
   fgets(buf, 256, *V.f);
   TEMP = (char *)strchr(buf, '\n');
-  if (TEMP != NULL)
-    *TEMP = 0;
-  if (strcmp(buf, "f s"))
-    loadfail_("Not an LGF file", &V);
+  if (TEMP != NULL) *TEMP = 0;
+  if (strcmp(buf, "f s")) loadfail_("Not an LGF file", &V);
   do {
     while (P_eoln(*V.f) && !P_eof(*V.f)) {
       fscanf(*V.f, "%*[^\n]");
@@ -18960,186 +17029,170 @@ Char *reason_;
     }
     do {
       if (P_eof(*V.f))
-	ch = '.';
+        ch = '.';
       else {
-	ch = getc(*V.f);
-	if (ch == '\n')
-	  ch = ' ';
+        ch = getc(*V.f);
+        if (ch == '\n') ch = ' ';
       }
     } while (ch == ' ');
     switch (tolower(ch)) {
+      case '#': /*comment*/
+        fscanf(*V.f, "%*[^\n]");
+        getc(*V.f);
+        break;
 
-    case '#':   /*comment*/
-      fscanf(*V.f, "%*[^\n]");
-      getc(*V.f);
-      break;
+      case 'n': /*nodes*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        for (j = 1; j <= i; j++) {
+          fscanf(*V.f, "%ld%ld%*[^\n]", &m, &n);
+          getc(*V.f);                /*simtype, num attrs*/
+          for (m = 1; m <= n; m++) { /*skip attributes*/
+            fscanf(*V.f, "%*[^\n]");
+            getc(*V.f);
+          }
+          while (!P_eoln(*V.f) && !P_eof(*V.f)) { /*skip simtype info*/
+            fscanf(*V.f, "%*[^\n]");
+            getc(*V.f);
+          }
+        }
+        break;
 
-    case 'n':   /*nodes*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      for (j = 1; j <= i; j++) {
-	fscanf(*V.f, "%ld%ld%*[^\n]", &m, &n);
-	getc(*V.f);   /*simtype, num attrs*/
-	for (m = 1; m <= n; m++) {   /*skip attributes*/
-	  fscanf(*V.f, "%*[^\n]");
-	  getc(*V.f);
-	}
-	while (!P_eoln(*V.f) && !P_eof(*V.f)) {   /*skip simtype info*/
-	  fscanf(*V.f, "%*[^\n]");
-	  getc(*V.f);
-	}
-      }
-      break;
+      case 's': /*signal names*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        V.ip = (long *)Malloc(i * sizeof(long));
+        for (j = 0; j < i; j++) {
+          fscanf(*V.f, "%ld%c", &n, &ch);
+          if (ch == '\n') ch = ' ';
+          fgets(buf, 256, *V.f);
+          TEMP = (char *)strchr(buf, '\n');
+          if (TEMP != NULL) *TEMP = 0;
+          V.ip[j] = getsignal(0, buf);
+          if (V.ip[j] == 0) loadfail_(NULL, &V);
+        }
+        break;
 
-    case 's':   /*signal names*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      V.ip = (long *)Malloc(i * sizeof(long) );
-      for (j = 0; j < i; j++) {
-	fscanf(*V.f, "%ld%c", &n, &ch);
-	if (ch == '\n')
-	  ch = ' ';
-	fgets(buf, 256, *V.f);
-	TEMP = (char *)strchr(buf, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	V.ip[j] = getsignal(0, buf);
-	if (V.ip[j] == 0)
-	  loadfail_(NULL, &V);
-      }
-      break;
+      case 'w': /*wires*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        for (j = 1; j <= i; j++) {
+          fscanf(*V.f, "%hd%hd%hd%hd%*[^\n]", &x1, &y1, &x2, &y2);
+          getc(*V.f); /*skip node & color info*/
+          if (x1 != x2)
+            addhwire2(x1, x2, y1);
+          else if (y1 != y2)
+            addvwire2(x1, y1, y2);
+        }
+        break;
 
-    case 'w':   /*wires*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      for (j = 1; j <= i; j++) {
-	fscanf(*V.f, "%hd%hd%hd%hd%*[^\n]", &x1, &y1, &x2, &y2);
-	getc(*V.f);   /*skip node & color info*/
-	if (x1 != x2)
-	  addhwire2(x1, x2, y1);
-	else if (y1 != y2)
-	  addvwire2(x1, y1, y2);
-      }
-      break;
+      case 'p': /*solder*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        for (j = 1; j <= i; j++) {
+          fscanf(*V.f, "%hd%hd%*[^\n]", &x1, &y1);
+          getc(*V.f); /*skip over wire numbers*/
+          solderat(x1, y1);
+        }
+        break;
 
-    case 'p':   /*solder*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      for (j = 1; j <= i; j++) {
-	fscanf(*V.f, "%hd%hd%*[^\n]", &x1, &y1);
-	getc(*V.f);   /*skip over wire numbers*/
-	solderat(x1, y1);
-      }
-      break;
+      case 'l': /*labels*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        for (j = 1; j <= i; j++) {
+          fscanf(*V.f, "%hd%hd%ld%c", &x1, &y1, &k, &ch);
+          if (ch == '\n') ch = ' ';
+          fgets(buf, 256, *V.f);
+          TEMP = (char *)strchr(buf, '\n');
+          if (TEMP != NULL) *TEMP = 0;
+          if (ch != ' ') loadfail_("Bad label name", &V);
+          addlabelat(x1, y1, buf);
+        }
+        break;
 
-    case 'l':   /*labels*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      for (j = 1; j <= i; j++) {
-	fscanf(*V.f, "%hd%hd%ld%c", &x1, &y1, &k, &ch);
-	if (ch == '\n')
-	  ch = ' ';
-	fgets(buf, 256, *V.f);
-	TEMP = (char *) strchr(buf, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	if (ch != ' ')
-	  loadfail_("Bad label name", &V);
-	addlabelat(x1, y1, buf);
-      }
-      break;
+      case 'b': /*boxes*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        for (j = 1; j <= i; j++) {
+          fscanf(*V.f, "%hd%hd%hd%hd%*[^\n]", &x1, &y1, &x2, &y2);
+          getc(*V.f);
+          addboxat(x1, y1, x2, y2);
+        }
+        break;
 
-    case 'b':   /*boxes*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      for (j = 1; j <= i; j++) {
-	fscanf(*V.f, "%hd%hd%hd%hd%*[^\n]", &x1, &y1, &x2, &y2);
-	getc(*V.f);
-	addboxat(x1, y1, x2, y2);
-      }
-      break;
+      case 'g': /*gates*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        for (j = 1; j <= i; j++) {
+          fgets(buf, 256, *V.f);
+          TEMP = (char *)strchr(buf, '\n');
+          if (TEMP != NULL) *TEMP = 0;
+          k = readlibrary(buf);
+          if (k != 0) {
+            fscanf(*V.f, "%hd%hd%hd%hd%ld%ld%ld%*[^\n]", &x1, &y1, &x2, &y2,
+                   &ii, &m, &n);
+            getc(*V.f);
+            addgate1(x1, y1, (int)(k + x2 * log_kindoffset));
+            if (gg.neargate != NULL) {
+              g = gg.neargate;
+              g->gc = y2;
+              g->vars = (na_long)ii;
+              if (m != 0) settofrom(&g, gg.signaltab[V.ip[m - 1] - 1].name);
+              fscanf(*V.f, "%*[^\n]"); /*ignore pins*/
+              getc(*V.f);
+              readattrs(V.f, &g->attr, g->kind->numattrs, g->kind->attr,
+                        g->kind->lbl, (int)n);
+              gg.actfile = V.f;
+              gg.actflag = false;
+              calltoolgate(g, act_readgate);
+            }
+          }
+          while (!P_eoln(*V.f) && !P_eof(*V.f)) {
+            fscanf(*V.f, "%*[^\n]");
+            getc(*V.f);
+          }
+          if (P_eof(*V.f)) loadfail_("End-of-file while reading gates", &V);
+          fscanf(*V.f, "%*[^\n]");
+          getc(*V.f);
+        }
+        break;
 
-    case 'g':   /*gates*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      for (j = 1; j <= i; j++) {
-	fgets(buf, 256, *V.f);
-	TEMP = (char *)strchr(buf, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	k = readlibrary(buf);
-	if (k != 0) {
-	  fscanf(*V.f, "%hd%hd%hd%hd%ld%ld%ld%*[^\n]", &x1, &y1, &x2, &y2, &ii,
-		 &m, &n);
-	  getc(*V.f);
-	  addgate1(x1, y1, (int)(k + x2 * log_kindoffset));
-	  if (gg.neargate != NULL) {
-	    g = gg.neargate;
-	    g->gc = y2;
-	    g->vars = (na_long)ii;
-	    if (m != 0)
-	      settofrom(&g, gg.signaltab[ V.ip[m - 1] - 1].name);
-	    fscanf(*V.f, "%*[^\n]");   /*ignore pins*/
-	    getc(*V.f);
-	    readattrs(V.f, &g->attr, g->kind->numattrs, g->kind->attr,
-		      g->kind->lbl, (int)n);
-	    gg.actfile = V.f;
-	    gg.actflag = false;
-	    calltoolgate(g, act_readgate);
-	  }
-	}
-	while (!P_eoln(*V.f) && !P_eof(*V.f)) {
-	  fscanf(*V.f, "%*[^\n]");
-	  getc(*V.f);
-	}
-	if (P_eof(*V.f))
-	  loadfail_("End-of-file while reading gates", &V);
-	fscanf(*V.f, "%*[^\n]");
-	getc(*V.f);
-      }
-      break;
+      case 'h': /*history names*/
+        fscanf(*V.f, "%ld%*[^\n]", &i);
+        getc(*V.f);
+        histdelsignals();
+        for (j = 1; j <= i; j++) {
+          fscanf(*V.f, "%hd%hd%c", &y1, &x1, &ch);
+          if (ch == '\n') ch = ' ';
+          fgets(buf, 256, *V.f);
+          TEMP = (char *)strchr(buf, '\n');
+          if (TEMP != NULL) *TEMP = 0;
+          x2 = getsignal(0, buf);
+          if (x2 == 0) loadfail_(NULL, &V);
+          n1 = gg.signaltab[x2 - 1].np;
+          histaddsignal(&hn, x2, y1);
+          readattrs(V.f, &hn->attr, n1->simtype->hnumattrs, n1->simtype->hattr,
+                    n1->simtype->hlbl, x1);
+        }
+        break;
 
-    case 'h':   /*history names*/
-      fscanf(*V.f, "%ld%*[^\n]", &i);
-      getc(*V.f);
-      histdelsignals();
-      for (j = 1; j <= i; j++) {
-	fscanf(*V.f, "%hd%hd%c", &y1, &x1, &ch);
-	if (ch == '\n')
-	  ch = ' ';
-	fgets(buf, 256, *V.f);
-	TEMP = (char *)strchr(buf, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	x2 = getsignal(0, buf);
-	if (x2 == 0)
-	  loadfail_(NULL, &V);
-	n1 = gg.signaltab[x2 - 1].np;
-	histaddsignal(&hn, x2, y1);
-	readattrs(V.f, &hn->attr, n1->simtype->hnumattrs, n1->simtype->hattr,
-		  n1->simtype->hlbl, x1);
-      }
-      break;
+      case '.':
+        /* blank case */
+        break;
 
-    case '.':
-      /* blank case */
-      break;
-
-    default:
-      sprintf(STR2, "Don't understand header character: %c", ch);
-      loadfail_(STR2, &V);
-      break;
+      default:
+        sprintf(STR2, "Don't understand header character: %c", ch);
+        loadfail_(STR2, &V);
+        break;
     }
   } while (ch != '.');
-  if (V.ip != NULL)
-    Free(V.ip);
+  if (V.ip != NULL) Free(V.ip);
 }
-
 
 /* Local variables for readpage: */
 struct LOC_readpage {
   Char *reason;
-} ;
+};
 
 Local Void loadfail__(msg, LINK)
 Char *msg;
@@ -19148,8 +17201,6 @@ struct LOC_readpage *LINK;
   strcpy(LINK->reason, msg);
   _Escape(1);
 }
-
-
 
 Static Void readpage(filename_, reason_)
 Char *filename_;
@@ -19170,34 +17221,27 @@ Char *reason_;
     f = freopen(filename, "r", f);
   else
     f = fopen(filename, "r");
-  if (f == NULL)
-    _EscIO(FileNotFound);
+  if (f == NULL) _EscIO(FileNotFound);
   fgets(buf, 256, f);
   TEMP = (char *)strchr(buf, '\n');
-  if (TEMP != NULL)
-    *TEMP = 0;
+  if (TEMP != NULL) *TEMP = 0;
   if (!strcmp(buf, "-5"))
     readlgf(&f, V.reason);
   else if (*buf == '-')
     loadfail__("Unable to read old-format files", &V);
   else
     loadfail__("Not an LGF file", &V);
-  if (f != NULL)
-    fclose(f);
+  if (f != NULL) fclose(f);
   f = NULL;
   chpage((int)gg.curpage);
   gg.pagechanged[gg.curpage - 1] = false;
   if (curfilename[gg.curpage - 1] == NULL)
     curfilename[gg.curpage - 1] = (Char *)Malloc(256);
   strcpy(curfilename[gg.curpage - 1], filename);
-  if (f != NULL)
-    fclose(f);
+  if (f != NULL) fclose(f);
 }
 
-
-
-Static Void readcommand()
-{
+Static Void readcommand() {
   Char filename[256], reason[256];
   long i, j;
   if (*gg.funcarg == '\0' || !strcmp(gg.funcarg, "*")) {
@@ -19213,64 +17257,49 @@ Static Void readcommand()
     deleverything();
     garbagecoll();
     TRY(try28);
-      m_alpha_on();
-      readpage(filename, reason);
-      endbottom();
+    m_alpha_on();
+    readpage(filename, reason);
+    endbottom();
     RECOVER(try28);
-      i = P_escapecode;
-      j = P_ioresult;
-      endbottom();
-      beginerror();
-      if (Debugging || debugprint || gg.traceflag)
-	printf("%ld/%ld/%ld  ", i, j, EXCP_LINE);
-      if (i == -10 && (unsigned long)j < 32 && ((1L << j) & 0x600) != 0)
-	printf("Can't find file \"%s\"\n", filename);
-      else if (i == -20)
-	printf("STOP key pressed while reading file.\n");
-      else if (i > 0)
-	printf("Format error in file \"%s\" (%s)\n", filename, reason);
-      else
-	printf("Unable to read file \"%s\"\n", filename);
-      enderror();
+    i = P_escapecode;
+    j = P_ioresult;
+    endbottom();
+    beginerror();
+    if (Debugging || debugprint || gg.traceflag)
+      printf("%ld/%ld/%ld  ", i, j, EXCP_LINE);
+    if (i == -10 && (unsigned long)j < 32 && ((1L << j) & 0x600) != 0)
+      printf("Can't find file \"%s\"\n", filename);
+    else if (i == -20)
+      printf("STOP key pressed while reading file.\n");
+    else if (i > 0)
+      printf("Format error in file \"%s\" (%s)\n", filename, reason);
+    else
+      printf("Unable to read file \"%s\"\n", filename);
+    enderror();
     ENDTRY(try28);
   }
   clearfunc();
 }
 
-
-
-
-
-Static Void singlestep()
-{
+Static Void singlestep() {
   gg.singlestepcount = getint(gg.funcarg, 1L);
   steppingoff = gg.pwrflag;
   gg.pwrflag = true;
   gg.refrflag = true;
 }
 
-
-
-
-
-Static Void getgatecmd()
-{
+Static Void getgatecmd() {
   short i;
   Char name[9];
 
   do {
     getword(gg.funcarg, name);
-    if (*name != '\0')
-      i = readlibrary(name);
+    if (*name != '\0') i = readlibrary(name);
   } while (*name != '\0');
   clearfunc();
 }
 
-
-
-
-Static Void makegatecmd()
-{
+Static Void makegatecmd() {
   short i;
   Char name[9];
 
@@ -19278,33 +17307,28 @@ Static Void makegatecmd()
     getword(gg.funcarg, name);
     if (*name != '\0') {
       i = readlibrary(name);
-      if (i != 0)
-	uaddgate(0, 0, i);
+      if (i != 0) uaddgate(0, 0, i);
     }
   } while (*name != '\0');
   clearfunc();
 }
 
-
-#define maxtools        23
-
+#define maxtools 23
 
 /* Local variables for toolcommand: */
 struct LOC_toolcommand {
   log_tool *ta[maxtools + 1];
   boolean refrflag, wasselected;
-} ;
+};
 
 Local Void describe(i, LINK)
 long i;
 struct LOC_toolcommand *LINK;
 {
-  if (LINK->ta[i] == NULL)
-    return;
+  if (LINK->ta[i] == NULL) return;
   remcursor();
   nk_gotoxy(4, (int)i);
-  if (LINK->ta[i]->ready)
-    putchar(chryellow);
+  if (LINK->ta[i]->ready) putchar(chryellow);
   printf("%16s   ", LINK->ta[i]->name);
   fputs(LINK->ta[i]->comment, stdout);
   printf("%c\n", chrgreen);
@@ -19331,18 +17355,12 @@ struct LOC_toolcommand *LINK;
     return;
   }
   calltool(tp, act_select);
-  if (!tp->keep)
-    closetool(tp);
+  if (!tp->keep) closetool(tp);
   LINK->refrflag = true;
   LINK->wasselected = true;
 }
 
-
-
-
-
-Static Void toolcommand()
-{
+Static Void toolcommand() {
   struct LOC_toolcommand V;
   log_tool *tp;
   long i, j, numtools;
@@ -19354,69 +17372,64 @@ Static Void toolcommand()
     selecttool(gg.funcarg, &V);
   else {
     do {
-      for (i = 0; i <= maxtools; i++)
-	V.ta[i] = NULL;
+      for (i = 0; i <= maxtools; i++) V.ta[i] = NULL;
       numtools = 0;
       tp = gg.toolbase;
       while (tp != NULL) {
-	if (*tp->comment != '\0' && numtools < maxtools) {
-	  numtools++;
-	  V.ta[numtools + 1] = tp;
-	}
-	tp = tp->next;
+        if (*tp->comment != '\0' && numtools < maxtools) {
+          numtools++;
+          V.ta[numtools + 1] = tp;
+        }
+        tp = tp->next;
       }
       clearshowalpha();
       printf("LOG tools available:\n");
-      for (i = 0; i <= maxtools; i++)
-	describe(i, &V);
+      for (i = 0; i <= maxtools; i++) describe(i, &V);
       exitflag = false;
       V.refrflag = false;
       do {
-	do {
-	  j = which(&V);
-	  if (j >= 0) {
-	    putchar(chrinverse);
-	    describe(j, &V);
-	    putchar(chrplain);
-	  }
-	  if (gg.t.near_ && gg.t.inalpha)
-	    nk_gotoxy(gg.t.ax, gg.t.ay);
-	  else
-	    noblink();
-	  do {
-	    pass();
-	    pen();
-	  } while (!(which(&V) != j || gg.t.dn || pollkbd2()));
-	  if (j >= 0)
-	    describe(j, &V);
-	} while (!(gg.t.dn || pollkbd2()));
-	nk_gotoxy(0, txdown);
-	if (pollkbd2())
-	  ch = toupper(inkey2());
-	else
-	  ch = '\0';
-	if (gg.t.dn) {
-	  switch (j) {
+        do {
+          j = which(&V);
+          if (j >= 0) {
+            putchar(chrinverse);
+            describe(j, &V);
+            putchar(chrplain);
+          }
+          if (gg.t.near_ && gg.t.inalpha)
+            nk_gotoxy(gg.t.ax, gg.t.ay);
+          else
+            noblink();
+          do {
+            pass();
+            pen();
+          } while (!(which(&V) != j || gg.t.dn || pollkbd2()));
+          if (j >= 0) describe(j, &V);
+        } while (!(gg.t.dn || pollkbd2()));
+        nk_gotoxy(0, txdown);
+        if (pollkbd2())
+          ch = toupper(inkey2());
+        else
+          ch = '\0';
+        if (gg.t.dn) {
+          switch (j) {
+            case -1:
+              ch = '\003';
+              break;
 
-	  case -1:
-	    ch = '\003';
-	    break;
-
-	  default:
-	    ch = (Char)(j + 64);
-	    if (V.ta[ch - 64] == NULL)
-	      ch = '\003';
-	    break;
-	  }
-	}
-	if (ch >= 'A' && ch <= 'X') {
-	  tp = V.ta[ch - 64];
-	  if (tp != NULL) {
-	    selecttool(tp->name, &V);
-	    exitflag = true;
-	  }
-	} else if (ch == '\003' || ch == '\015' || ch == ' ')
-	  exitflag = true;
+            default:
+              ch = (Char)(j + 64);
+              if (V.ta[ch - 64] == NULL) ch = '\003';
+              break;
+          }
+        }
+        if (ch >= 'A' && ch <= 'X') {
+          tp = V.ta[ch - 64];
+          if (tp != NULL) {
+            selecttool(tp->name, &V);
+            exitflag = true;
+          }
+        } else if (ch == '\003' || ch == '\015' || ch == ' ')
+          exitflag = true;
       } while (!(V.refrflag || exitflag));
     } while (!exitflag);
   }
@@ -19430,9 +17443,7 @@ Static Void toolcommand()
 
 #undef maxtools
 
-
-#define whichmin        (-2)
-
+#define whichmin (-2)
 
 Local log_tool *counttool(i)
 long i;
@@ -19440,12 +17451,10 @@ long i;
   log_tool *tp;
 
   tp = gg.toolbase;
-  while (tp->nostatus)
-    tp = tp->next;
+  while (tp->nostatus) tp = tp->next;
   while (i > 1) {
     tp = tp->next;
-    if (!tp->nostatus)
-      i--;
+    if (!tp->nostatus) i--;
   }
   return tp;
 }
@@ -19460,19 +17469,18 @@ boolean b;
     return strcpy(Result, "OFF");
 }
 
-Local Void status_log()
-{
+Local Void status_log() {
   timerec time;
   daterec date;
   Char STR2[9];
   Char STR3[81];
-  char * months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-		       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+  char *months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
   if (gg.actflag) {
     sysdate(&date);
-    printf("   Date %2d-%s-%02d   Time\n",
-	   date.day, months[date.month - 1], date.year);
+    printf("   Date %2d-%s-%02d   Time\n", date.day, months[date.month - 1],
+           date.year);
     printf("   Available memory:   \n\n");
     printf("   Simulation time:    \n");
     printf("   Simulation timestep:\n");
@@ -19487,7 +17495,9 @@ Local Void status_log()
     printf("         Verbose mode %s", onoff(STR2, gg.verbose));
     printf("       Trace mode %s\n", onoff(STR2, gg.traceflag));
     nk_gotoxy(0, txdown - 3);
-    printf("Use the arrow keys to view status pages.  Press the space bar to quit.\n");
+    printf(
+        "Use the arrow keys to view status pages.  Press the space bar "
+        "to quit.\n");
     status_oldtime = -1.0;
     status_oldtstep = -1.0;
     status_oldmem = -1;
@@ -19517,34 +17527,31 @@ Local Void status_log()
     return;
   nk_gotoxy(23, 9);
   switch (gg.simstate) {
+    case simst_off:
+      printf("Off\t");
+      break;
 
-  case simst_off:
-    printf("Off\t");
-    break;
+    case simst_notactive:
+      printf("Not active\t");
+      break;
 
-  case simst_notactive:
-    printf("Not active\t");
-    break;
+    case simst_notready:
+      printf("Halted (%s)\t", gg.simstatetool->shortname);
+      break;
 
-  case simst_notready:
-    printf("Halted (%s)\t", gg.simstatetool->shortname);
-    break;
+    case simst_running:
+      if (gg.simstatetool == NULL)
+        printf("Running (scope-mode interpolation)\t");
+      else
+        printf("Running (%s)\t", gg.simstatetool->shortname);
+      break;
 
-  case simst_running:
-    if (gg.simstatetool == NULL)
-      printf("Running (scope-mode interpolation)\t");
-    else
-      printf("Running (%s)\t", gg.simstatetool->shortname);
-    break;
-
-  default:
-    break;
+    default:
+      break;
   }
 }
 
-
-Local Void status_mem()
-{
+Local Void status_mem() {
   long i, j;
   log_grec *g;
   log_hwrec *hw;
@@ -19554,53 +17561,50 @@ Local Void status_mem()
   log_nrec *n;
   long FORLIM;
 
-  if (!gg.actflag)
-    return;
+  if (!gg.actflag) return;
   printf("          gates  wires labels  boxes  changed  filename\n");
   for (i = 0; i <= 8; i++) {
-    if (i + 1 == gg.curpage)
-      putchar(chryellow);
+    if (i + 1 == gg.curpage) putchar(chryellow);
     printf("Page %ld -- ", i + 1);
     if (i + 1 <= gg.numpages) {
       g = gg.gbase[i];
       j = 0;
       while (g != NULL) {
-	j++;
-	g = g->next;
+        j++;
+        g = g->next;
       }
       printf("%4ld", j);
       hw = gg.hwbase[i];
       j = 0;
       while (hw != NULL) {
-	j++;
-	hw = hw->next;
+        j++;
+        hw = hw->next;
       }
       vw = gg.vwbase[i];
       while (vw != NULL) {
-	j++;
-	vw = vw->next;
+        j++;
+        vw = vw->next;
       }
       printf("%7ld", j);
       l = gg.lbase[i];
       j = 0;
       while (l != NULL) {
-	j++;
-	l = l->next;
+        j++;
+        l = l->next;
       }
       printf("%7ld", j);
       b = gg.bbase[i];
       j = 0;
       while (b != NULL) {
-	j++;
-	b = b->next;
+        j++;
+        b = b->next;
       }
       printf("%7ld     ", j);
       if (pagechanged((int)(i + 1)))
-	printf("Yes    ");
+        printf("Yes    ");
       else
-	printf("No     ");
-      if (curfilename[i] != NULL)
-	fputs(curfilename[i], stdout);
+        printf("No     ");
+      if (curfilename[i] != NULL) fputs(curfilename[i], stdout);
     } else
       printf("Empty.");
     printf("%c\n", chrgreen);
@@ -19653,14 +17657,12 @@ Local Void status_mem()
   j = 0;
   FORLIM = gg.lastsignal;
   for (i = 0; i < FORLIM; i++) {
-    if (gg.signaltab[i].np != NULL)
-      j++;
+    if (gg.signaltab[i].np != NULL) j++;
   }
   printf("Total signal names:  %12ld\n", j);
 }
 
-Local Void status_macro(int v)
-{
+Local Void status_macro(int v) {
   macrorec *mp;
   Char ch;
   long i, j;
@@ -19671,76 +17673,63 @@ Local Void status_macro(int v)
   int n_macros;
   int n_to_print;
 
-  if (!gg.actflag)
-    return;
-  for (k=0,mp = macrobase; mp != NULL; mp = mp->next, k++)
-    ;
+  if (!gg.actflag) return;
+  for (k = 0, mp = macrobase; mp != NULL; mp = mp->next, k++);
   n_macros = k;
-  n_displayed = ((txacross / 40)+1) * (txdown -4);
+  n_displayed = ((txacross / 40) + 1) * (txdown - 4);
 
   half = k / 2;
-  if (k & 1)
-    half++;
+  if (k & 1) half++;
   if (v > 0)
-    n += (txdown -4);
+    n += (txdown - 4);
   else if (v < 0)
-    n -= (txdown -4);
-  if (n > half)
-    n -= (txdown -4);
-  if (n < 0)
-    n = 0;
+    n -= (txdown - 4);
+  if (n > half) n -= (txdown - 4);
+  if (n < 0) n = 0;
   mp = macrobase;
   i = 2;
-  n_to_print = P_min(half-n,txdown-4);
+  n_to_print = P_min(half - n, txdown - 4);
   do {
     j = 4;
-    for (k=0; k < n && mp != NULL; k++)
-      mp = mp->next;
+    for (k = 0; k < n && mp != NULL; k++) mp = mp->next;
     do {
       if (mp != NULL) {
-	nk_gotoxy((int)i, (int)j);
-	ch = mp->key;
-	if (ch == '\007')
-	  printf("bs ");
-	else if (ch == '\t')
-	  printf("tab");
-	else if (ch == '\015')
-	  printf("cr ");
-	else if (ch == ' ')
-	  printf("sp ");
-	else if ((ch & 255) >= 168 && (ch & 255) <= 193)
-	  printf("^%c ", (Char)((uchar)ch - 'g'));
-	else if (ch <= '\037' || (ch & (~127)) != 0)
-	  printf("%3d", ch);
-	else
-	  printf("%c  ", ch);
-	printf("  %s", mp->name);
+        nk_gotoxy((int)i, (int)j);
+        ch = mp->key;
+        if (ch == '\007')
+          printf("bs ");
+        else if (ch == '\t')
+          printf("tab");
+        else if (ch == '\015')
+          printf("cr ");
+        else if (ch == ' ')
+          printf("sp ");
+        else if ((ch & 255) >= 168 && (ch & 255) <= 193)
+          printf("^%c ", (Char)((uchar)ch - 'g'));
+        else if (ch <= '\037' || (ch & (~127)) != 0)
+          printf("%3d", ch);
+        else
+          printf("%c  ", ch);
+        printf("  %s", mp->name);
         mp = mp->next;
       }
       j++;
-    } while (j < txdown && j < n_to_print+4 && mp != NULL);
+    } while (j < txdown && j < n_to_print + 4 && mp != NULL);
     if (i < 40) {
-      for (k = 0, mp = macrobase; mp != NULL && k < half ; k++)	
-        mp = mp->next;
+      for (k = 0, mp = macrobase; mp != NULL && k < half; k++) mp = mp->next;
     }
     i += 40;
   } while (i <= txacross && mp != NULL);
 
-  for (k=0; mp != NULL; k++, mp = mp->next)
-   ;   
+  for (k = 0; mp != NULL; k++, mp = mp->next);
   nk_gotoxy((int)2, (int)txdown);
-  printf("[%d of %d]",((n+1)/(n_displayed/2))+1,(n_macros/n_displayed)+1);
+  printf("[%d of %d]", ((n + 1) / (n_displayed / 2)) + 1,
+         (n_macros / n_displayed) + 1);
 
-/* p2c: log.text, line 18560: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 18560: Note: Character >= 128 encountered [281] */
-/* p2c: log.text, line 18562: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 18560: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 18560: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 18562: Note: Character >= 128 encountered [281] */
 }
-
-
-
-
-
-
 
 Static Void statusdisplay(name_)
 Char *name_;
@@ -19759,8 +17748,7 @@ Char *name_;
   whichmax = 0;
   tp = gg.toolbase;
   while (tp != NULL) {
-    if (!tp->nostatus)
-      whichmax++;
+    if (!tp->nostatus) whichmax++;
     tp = tp->next;
   }
   strupper(name, strcpy(STR2, strltrim(strrtrim(strcpy(STR3, name)))));
@@ -19774,39 +17762,35 @@ Char *name_;
     tp = gg.toolbase;
     which = 1;
     while (tp != NULL && strcmp(tp->name, name)) {
-      if (!tp->nostatus)
-	which++;
+      if (!tp->nostatus) which++;
       tp = tp->next;
     }
-    if (tp == NULL)
-      which = whichmin;
+    if (tp == NULL) which = whichmin;
   }
   exitflag = false;
   do {
     clearshowalpha();
     printf("                           LOG V%s    Status Display\n\n",
-	   log_version);
+           log_version);
     printf("Status:  ");
     switch (which) {
+      case -2:
+        printf("LOG");
+        break;
 
-    case -2:
-      printf("LOG");
-      break;
+      case -1:
+        printf("Memory");
+        break;
 
-    case -1:
-      printf("Memory");
-      break;
+      case 0:
+        printf("Keyboard assignments");
+        break;
 
-    case 0:
-      printf("Keyboard assignments");
-      break;
-
-    default:
-      tp = counttool((long)which);
-      fputs(tp->name, stdout);
-      if (*tp->comment != '\0')
-	printf(" (%s)", tp->comment);
-      break;
+      default:
+        tp = counttool((long)which);
+        fputs(tp->name, stdout);
+        if (*tp->comment != '\0') printf(" (%s)", tp->comment);
+        break;
     }
     savex = 0;
     savey = 0;
@@ -19817,96 +17801,82 @@ Char *name_;
       gg.actx = savex;
       gg.acty = savey;
       switch (which) {
+        case -2:
+          status_log();
+          break;
 
-      case -2:
-	status_log();
-	break;
+        case -1:
+          status_mem();
+          break;
 
-      case -1:
-	status_mem();
-	break;
+        case 0:
+          status_macro(n);
+          n = 0;
+          break;
 
-      case 0:
-	status_macro(n);
-        n = 0;
-	break;
-
-      default:
-	if (tp->ready)
-	  calltool(tp, act_status);
-	if (gg.actflag) {
-	  if (tp->ready)
-	    printf("   (No status for this tool)\n");
-	  else
-	    printf("   (Not yet activated)\n");
-	}
-	break;
+        default:
+          if (tp->ready) calltool(tp, act_status);
+          if (gg.actflag) {
+            if (tp->ready)
+              printf("   (No status for this tool)\n");
+            else
+              printf("   (Not yet activated)\n");
+          }
+          break;
       }
       savex = gg.actx;
       savey = gg.acty;
       pen();
       pass();
       ch = '\0';
-      if (gg.t.dn)
-	ch = '\003';
-      if (pollkbd2())
-	ch = inkey2();
+      if (gg.t.dn) ch = '\003';
+      if (pollkbd2()) ch = inkey2();
       switch (ch) {
-      case 31:
-              n = -1;
-              refrflag = true;
-              break;
+        case 31:
+          n = -1;
+          refrflag = true;
+          break;
 
-      case 10:
-              n = 1;
-              refrflag = true;
-              break;
+        case 10:
+          n = 1;
+          refrflag = true;
+          break;
 
-      case '+':
-      case '\034':
-	if (which < whichmax) {
-	  which++;
-	  refrflag = true;
-	}
-	break;
+        case '+':
+        case '\034':
+          if (which < whichmax) {
+            which++;
+            refrflag = true;
+          }
+          break;
 
-      case '-':
-      case '\b':
-	if (which > whichmin) {
-	  which--;
-	  refrflag = true;
-	}
-	break;
+        case '-':
+        case '\b':
+          if (which > whichmin) {
+            which--;
+            refrflag = true;
+          }
+          break;
 
-      case ' ':
-      case '\003':
-      case '\015':
-	exitflag = true;
-	break;
+        case ' ':
+        case '\003':
+        case '\015':
+          exitflag = true;
+          break;
       }
       gg.actflag = false;
       nk_gotoxy(9, 2);
     } while (!(refrflag || exitflag));
   } while (!exitflag);
-  if (m_autoraise)
-    {
-      m_graphics_on();  /* fix from WES */
-    }
+  if (m_autoraise) {
+    m_graphics_on(); /* fix from WES */
+  }
   clearalpha();
 }
 
 #undef whichmin
 
-
-#define cols            4
-
-
-
-
-
-
-
-
+#define cols 4
 
 /*==================  POPUPMENU  =================*/
 /*=                                              =*/
@@ -19929,15 +17899,15 @@ short num;
   clipoff();
   /*  if menupicture <> nil then
        m_disposepicture(menupicture);
-    m_getcpicture(kindgroupleft+1, baseline, kindgroupright-1, down, menupicture);  */
+    m_getcpicture(kindgroupleft+1, baseline, kindgroupright-1, down,
+    menupicture);  */
   m_color((long)gg.color.backgr);
   m_fillrect(kindgroupleft + 1L, (long)baseline, kindgroupright - 1L,
-	     (long)down);
+             (long)down);
   m_color((long)gg.color.popupbox);
   m_drawrect(kindgroupleft + 3L, (long)baseline, kindgroupright - 3L,
-	     down - 2L);
-  m_drawrect(kindgroupleft + 5L, baseline + 2L, kindgroupright - 5L,
-	     down - 4L);
+             down - 2L);
+  m_drawrect(kindgroupleft + 5L, baseline + 2L, kindgroupright - 5L, down - 4L);
   xx = (kindgroupsize * kindgroupspacing - 10) / (cols + 1);
   x = across / 2 - xx * (cols - 1) / 2;
   x0 = x;
@@ -19945,25 +17915,25 @@ short num;
     y = line1 + 2;
     for (j = i * 2 - 2; j < i * 2; j++) {
       if (*menu[j].name != '\0') {
-	if (menu[j].bool != NULL && *menu[j].bool)
-	  m_color((long)gg.color.selword);
-	else if (menu[j].name[0] == '*')
-	  m_color((long)gg.color.redword);
-	else if (menu[j].name[0] == '#')
-	  m_color((long)gg.color.blueword);
-	else
-	  m_color((long)gg.color.popupword);
-	if (menu[j].name[0] == '#' || menu[j].name[0] == '*') {
-	  sprintf(STR1, "%.*s",
-		  (int)(strlen(menu[j].name) - 1L), menu[j].name + 1);
-/* p2c: log.text, line 18734:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	  m_centerstr((long)x0, (long)y, logfont_lfont, STR1);
-	} else {
-/* p2c: log.text, line 18737:
- * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
-	  m_centerstr((long)x0, (long)y, logfont_lfont, menu[j].name);
-	}
+        if (menu[j].bool != NULL && *menu[j].bool)
+          m_color((long)gg.color.selword);
+        else if (menu[j].name[0] == '*')
+          m_color((long)gg.color.redword);
+        else if (menu[j].name[0] == '#')
+          m_color((long)gg.color.blueword);
+        else
+          m_color((long)gg.color.popupword);
+        if (menu[j].name[0] == '#' || menu[j].name[0] == '*') {
+          sprintf(STR1, "%.*s", (int)(strlen(menu[j].name) - 1L),
+                  menu[j].name + 1);
+          /* p2c: log.text, line 18734:
+           * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+          m_centerstr((long)x0, (long)y, logfont_lfont, STR1);
+        } else {
+          /* p2c: log.text, line 18737:
+           * Warning: Symbol 'LOGFONT_LFONT' is not defined [221] */
+          m_centerstr((long)x0, (long)y, logfont_lfont, menu[j].name);
+        }
       }
       y += line2 - line1 - 4;
     }
@@ -19988,8 +17958,8 @@ short num;
       x1 = (gg.t.x - x + xx / 2) / xx;
       y1 = (gg.t.y - baseline) / 26;
       if (gg.t.x + xx / 2 < x || gg.incircuit || x1 > 3 || y1 > 1) {
-	x1 = -1;
-	y1 = 0;
+        x1 = -1;
+        y1 = 0;
       }
     } while (gg.t.depressed && x0 == x1 && y0 == y1);
     remcursor();
@@ -20001,13 +17971,10 @@ short num;
   } while (gg.t.depressed);
   /*  m_putcpicture(kindgroupleft+1, baseline, menupicture);  */
   refrmenu();
-  if (x0 == -1)
-    return;
+  if (x0 == -1) return;
   i = x0 * 2 + 1;
-  if (y0 != 0)
-    i++;
-  if (*menu[i - 1].name == '\0')
-    return;
+  if (y0 != 0) i++;
+  if (*menu[i - 1].name == '\0') return;
   immedscroll = true;
   assertfunc(menu[i - 1].cmd);
   immedscroll = false;
@@ -20016,67 +17983,59 @@ short num;
 
 #undef cols
 
-
-
-
-
 Static short reducecolor8(c)
 short c;
 {
   short Result;
 
-  if (!eightcolors)
-    return c;
+  if (!eightcolors) return c;
   switch (c) {
+    case log_mred:
+      Result = log_red;
+      break;
 
-  case log_mred:
-    Result = log_red;
-    break;
+    case log_orange:
+      Result = log_red;
+      break;
 
-  case log_orange:
-    Result = log_red;
-    break;
+    case log_black:
+      Result = log_black8;
+      break;
 
-  case log_black:
-    Result = log_black8;
-    break;
+    case log_pink:
+      Result = log_red;
+      break;
 
-  case log_pink:
-    Result = log_red;
-    break;
+    case log_dyellow:
+      Result = log_yellow;
+      break;
 
-  case log_dyellow:
-    Result = log_yellow;
-    break;
+    case log_xgreen:
+      Result = log_green;
+      break;
 
-  case log_xgreen:
-    Result = log_green;
-    break;
+    case log_dcyan:
+      Result = log_black8;
+      break;
 
-  case log_dcyan:
-    Result = log_black8;
-    break;
+    case log_dred:
+      Result = log_black8;
+      break;
 
-  case log_dred:
-    Result = log_black8;
-    break;
+    case log_lgray:
+      Result = log_white;
+      break;
 
-  case log_lgray:
-    Result = log_white;
-    break;
+    case log_cred:
+      Result = log_cred8;
+      break;
 
-  case log_cred:
-    Result = log_cred8;
-    break;
-
-  default:
-    Result = c;
-    break;
+    default:
+      Result = c;
+      break;
   }
   return Result;
 }
-
-
 
 Static Void setcmap(n, r, g, b)
 short n, r, g, b;
@@ -20087,8 +18046,6 @@ short n, r, g, b;
   bcolormap[n] = b;
   m_vsetcolors((long)n, 1L, &rcolormap[n], &gcolormap[n], &bcolormap[n]);
 }
-
-
 
 Static Void getcolor(name_, val, def)
 Char *name_;
@@ -20108,80 +18065,76 @@ short *val, def;
     *val = reducecolor8(def);
 }
 
-
-
-
-Static Void initcolors()
-{
-  getcolor("BACKGR", &gg.color.backgr, log_gray);   /* Color of background */
-  getcolor("CURSOR", &gg.color.cursor, log_white);   /* Color of cursors */
+Static Void initcolors() {
+  getcolor("BACKGR", &gg.color.backgr, log_gray);  /* Color of background */
+  getcolor("CURSOR", &gg.color.cursor, log_white); /* Color of cursors */
   recolor_log_cursors(gg.color.cursor, false);
-  getcolor("GATE", &gg.color.gate, log_cyan);   /* Color of gate in circuit */
+  getcolor("GATE", &gg.color.gate, log_cyan); /* Color of gate in circuit */
   getcolor("DIMGATE", &gg.color.dimgate, log_dcyan);
-      /* Color of dimmed gate */
+  /* Color of dimmed gate */
   getcolor("KINDGATE", &gg.color.kindgate, log_green);
-      /* Color of gate in menu area */
+  /* Color of gate in menu area */
   getcolor("CATGATE", &gg.color.catgate, log_cyan);
-      /* Color of gate in catalog */
+  /* Color of gate in catalog */
   getcolor("GATEPIN", &gg.color.gatepin, log_red);
-      /* Color of pins on gates */
+  /* Color of pins on gates */
   getcolor("PINNUM", &gg.color.pinnum, log_yellow);
-      /* Color of pin numbers on gates */
+  /* Color of pin numbers on gates */
   getcolor("WIRE", gg.color.wire, log_green);
   getcolor("VLSIGREEN", &gg.color.wire[log_wcol_green - log_wcol_normal],
-	   log_green);
+           log_green);
   getcolor("VLSIYELLOW", &gg.color.wire[log_wcol_yellow - log_wcol_normal],
-	   log_yellow);
+           log_yellow);
   getcolor("VLSIRED", &gg.color.wire[log_wcol_red - log_wcol_normal], log_red);
   getcolor("VLSIBLUE", &gg.color.wire[log_wcol_blue - log_wcol_normal],
-	   log_cyan);
+           log_cyan);
   getcolor("XWIRE", &gg.color.xwire, log_xgreen);
-      /* Color of wires while moving */
+  /* Color of wires while moving */
   getcolor("SOLDER", &gg.color.solder, log_green);
-      /* Color of solder point in circuit */
+  /* Color of solder point in circuit */
   getcolor("CONFLICT", &gg.color.conflict, log_cred);
-      /* Color of wire during node conflict */
+  /* Color of wire during node conflict */
   getcolor("MENUWORD", &gg.color.menuword, log_green);
-      /* Color of words in menu area */
+  /* Color of words in menu area */
   getcolor("SELWORD", &gg.color.selword, log_yellow);
-      /* Color of highlighted words */
+  /* Color of highlighted words */
   getcolor("MESSAGE", &gg.color.message, log_yellow);
-      /* Color of messages */
+  /* Color of messages */
   getcolor("BASELINE", &gg.color.baseline, log_cyan);
-      /* Color of baseline (default) */
-  getcolor("PAGE1", &gg.color.page1, log_green);   /* Color of word "PAGE" */
-  getcolor("PAGE2", &gg.color.page2, log_yellow);   /* Color of page number */
-  getcolor("PAGE3", &gg.color.page3, log_green);   /* Color of word "OF" */
+  /* Color of baseline (default) */
+  getcolor("PAGE1", &gg.color.page1, log_green);  /* Color of word "PAGE" */
+  getcolor("PAGE2", &gg.color.page2, log_yellow); /* Color of page number */
+  getcolor("PAGE3", &gg.color.page3, log_green);  /* Color of word "OF" */
   getcolor("PAGE4", &gg.color.page4, log_yellow);
-      /* Color of number of pages */
+  /* Color of number of pages */
   getcolor("SELECT", &gg.color.select, log_white);
-      /* Color of selected areas */
+  /* Color of selected areas */
   getcolor("SCROLL", &gg.color.scroll, log_white);
-      /* Color of scroll feedback */
+  /* Color of scroll feedback */
   getcolor("SIGNAL", &gg.color.signal, log_pink);
-      /* Color of TO/FROM node name */
+  /* Color of TO/FROM node name */
   getcolor("LABELTEXT", &gg.color.labeltext, log_white);
-      /* Color of text labels */
+  /* Color of text labels */
   getcolor("DASHBOX", &gg.color.dashbox, log_dyellow);
-      /* Color of dashed boxes */
+  /* Color of dashed boxes */
   getcolor("MARKER", &gg.color.marker, log_pink);
-      /* Color of printing markers */
+  /* Color of printing markers */
   getcolor("CHART", &gg.color.chart, log_yellow);
-      /* Color of node history trace */
+  /* Color of node history trace */
   getcolor("DIVISION", &gg.color.division, log_white);
-      /* Color of scope divisions */
+  /* Color of scope divisions */
   getcolor("POPUPBOX", &gg.color.popupbox, log_white);
-      /* Color of pop-up menu outline */
+  /* Color of pop-up menu outline */
   getcolor("POPUPWORD", &gg.color.popupword, log_green);
-      /* Color of text in pop-up menus */
+  /* Color of text in pop-up menus */
   getcolor("POPUPSEL", &gg.color.popupsel, log_pink);
-      /* Color of selection in pop-up menus */
+  /* Color of selection in pop-up menus */
   getcolor("REDWORD", &gg.color.redword, log_pink);
-      /* Color of special menu items */
+  /* Color of special menu items */
   getcolor("BLUEWORD", &gg.color.blueword, log_cyan);
-      /* Color of experimental menu items */
+  /* Color of experimental menu items */
   getcolor("VLSICUT", &gg.color.vlsicut, log_white);
-      /* Color of VLSI contact cuts */
+  /* Color of VLSI contact cuts */
   getcolor("GATEGREEN", &gategreen, log_green);
   getcolor("GATEYELLOW", &gateyellow, log_yellow);
   getcolor("GATERED", &gatered, log_red);
@@ -20189,19 +18142,16 @@ Static Void initcolors()
   getcolor("GATEBLACK", &gateblack, log_black);
   getcolor("GATEORANGE", &gateorange, log_orange);
   getcolor("DEFINEBOX", &defineboxcolor, log_cyan);
-      /* Color of DEFINE command's box */
+  /* Color of DEFINE command's box */
   getcolor("DEFINEBACK", &definebackcolor, log_black);
-      /* Color of background of DEFINE box */
+  /* Color of background of DEFINE box */
   getcolor("DEFINETEXT", &definetextcolor, log_green);
-      /* Color of text in DEFINE box */
+  /* Color of text in DEFINE box */
   getcolor("CATALOGBOX", &catboxcolor, log_dyellow);
-      /* Color of Catalog grouping box */
+  /* Color of Catalog grouping box */
   calltools(act_color);
   stamp(&gg.colorstamp);
 }
-
-
-
 
 Static Void echomacro(key)
 Char key;
@@ -20213,7 +18163,7 @@ Char key;
   if (isupper(key))
     sprintf(name, "Shift-%c key", key);
   else if (key > ' ' && (key & (~127)) == 0) {
-/* p2c: log.text, line 18917: Note: Character >= 128 encountered [281] */
+    /* p2c: log.text, line 18917: Note: Character >= 128 encountered [281] */
     sprintf(name, "%c key", key);
   } else if (key == ' ')
     strcpy(name, "Space bar");
@@ -20226,8 +18176,7 @@ Char key;
   else
     sprintf(name, "Key #%d", key);
   mp = macrobase;
-  while (mp != NULL && mp->key != key)
-    mp = mp->next;
+  while (mp != NULL && mp->key != key) mp = mp->next;
   if (mp == NULL) {
     sprintf(STR1, "%s is not defined.", name);
     message(STR1);
@@ -20236,8 +18185,6 @@ Char key;
     message(STR1);
   }
 }
-
-
 
 Static Void definemacro(key, name)
 Char key;
@@ -20251,8 +18198,8 @@ Char *name;
     mp2 = mp;
     mp = mp->next;
   }
-/* p2c: log.text, line 18951:
- * Note: Suspicious mixture of sizes in NA_NEW [173] */
+  /* p2c: log.text, line 18951:
+   * Note: Suspicious mixture of sizes in NA_NEW [173] */
   mp3 = (macrorec *)Malloc(sizeof(macrorec));
   if (mp != NULL && mp->key == key) {
     mp3->next = mp->next;
@@ -20267,11 +18214,7 @@ Char *name;
   strcpy(mp3->name, name);
 }
 
-
-
-
-Static Void definemenu(num, part, name, cmd, bool)
-short num, part;
+Static Void definemenu(num, part, name, cmd, bool) short num, part;
 Char *name, *cmd;
 short bool;
 {
@@ -20281,58 +18224,53 @@ short bool;
   strcpy(menu[part - 1].name, name);
   strcpy(menu[part - 1].cmd, cmd);
   switch (bool) {
+    case 1:
+      menu[part - 1].bool = &gg.invisible;
+      break;
 
-  case 1:
-    menu[part - 1].bool = &gg.invisible;
-    break;
+    case 2:
+      menu[part - 1].bool = &gg.textinvisible;
+      break;
 
-  case 2:
-    menu[part - 1].bool = &gg.textinvisible;
-    break;
+    case 3:
+      menu[part - 1].bool = &gg.markers;
+      break;
 
-  case 3:
-    menu[part - 1].bool = &gg.markers;
-    break;
+    case 4:
+      menu[part - 1].bool = &vlsi;
+      break;
 
-  case 4:
-    menu[part - 1].bool = &vlsi;
-    break;
+    case 5:
+      menu[part - 1].bool = &popup_grid;
+      break;
 
-  case 5:
-    menu[part - 1].bool = &popup_grid;
-    break;
+    case 6:
+      menu[part - 1].bool = &gg.probemode;
+      break;
 
-  case 6:
-    menu[part - 1].bool = &gg.probemode;
-    break;
+    case 7:
+      menu[part - 1].bool = &gg.glowmode;
+      break;
 
-  case 7:
-    menu[part - 1].bool = &gg.glowmode;
-    break;
+    case 8:
+      menu[part - 1].bool = &snapflag;
+      break;
 
-  case 8:
-    menu[part - 1].bool = &snapflag;
-    break;
+    case 9:
+      menu[part - 1].bool = &gg.pwrflag;
+      break;
 
-  case 9:
-    menu[part - 1].bool = &gg.pwrflag;
-    break;
-
-  default:
-    menu[part - 1].bool = NULL;
-    break;
+    default:
+      menu[part - 1].bool = NULL;
+      break;
   }
 }
 
-
 typedef Char cnamearray[16][8];
 
-
 Const cnamearray cnames = {
-  "GRAY", "RED", "GREEN", "YELLOW", "MRED", "ORANGE", "CYAN", "WHITE",
-  "BLACK", "PINK", "DYELLOW", "XGREEN", "DCYAN", "DRED", "LGRAY", "CRED"
-};
-
+    "GRAY",  "RED",  "GREEN",   "YELLOW", "MRED",  "ORANGE", "CYAN",  "WHITE",
+    "BLACK", "PINK", "DYELLOW", "XGREEN", "DCYAN", "DRED",   "LGRAY", "CRED"};
 
 Local long getcolorname(w_)
 Char *w_;
@@ -20347,31 +18285,24 @@ Char *w_;
   strcpy(STR1, strltrim(strrtrim(strupper(STR2, w))));
   strcpy(w, STR1);
   i = 15;
-  while (i >= 0 && strcmp(cnames[i], w))
-    i--;
-  if (i >= 0)
-    return i;
+  while (i >= 0 && strcmp(cnames[i], w)) i--;
+  if (i >= 0) return i;
   TRY(try29);
-    i = getint(w, -1L);
-    if ((unsigned)i > 15)
-      Result = -1;
-    else
-      Result = i;
+  i = getint(w, -1L);
+  if ((unsigned)i > 15)
+    Result = -1;
+  else
+    Result = i;
   RECOVER(try29);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    else
-      return -1;
+  if (P_escapecode == -20)
+    _Escape(P_escapecode);
+  else
+    return -1;
   ENDTRY(try29);
   return Result;
 }
 
-
-
-
-
-Static Void docnffunction()
-{
+Static Void docnffunction() {
   Char arg[256];
   long i, j, k;
   Char ch;
@@ -20381,26 +18312,25 @@ Static Void docnffunction()
   librstrrec *lsp, **lspp;
   Char STR2[256];
 
-  if (*gg.func == '\0')
-    return;
+  if (*gg.func == '\0') return;
   if (!strcmp(gg.func, "COLOR")) {
     getword(gg.funcarg, arg);
     k = getcolorname(arg);
     if (k >= 0) {
       flag = true;
       for (i = 1; i <= 3; i++) {
-	j = getint(gg.funcarg, -1L);
-	if ((unsigned long)j > 255)
-	  flag = false;
-	else
-	  clrarr[i - 1] = j;
+        j = getint(gg.funcarg, -1L);
+        if ((unsigned long)j > 255)
+          flag = false;
+        else
+          clrarr[i - 1] = j;
       }
       if (flag) {
-	k = reducecolor8((int)k);
-	rcolormap[k] = clrarr[0];
-	gcolormap[k] = clrarr[1];
-	bcolormap[k] = clrarr[2];
-	m_vsetcolors(k, 1L, &rcolormap[k], &gcolormap[k], &bcolormap[k]);
+        k = reducecolor8((int)k);
+        rcolormap[k] = clrarr[0];
+        gcolormap[k] = clrarr[1];
+        bcolormap[k] = clrarr[2];
+        m_vsetcolors(k, 1L, &rcolormap[k], &gcolormap[k], &bcolormap[k]);
       }
       clearfunc();
       return;
@@ -20417,8 +18347,7 @@ Static Void docnffunction()
     }
     if (gg.initdone) {
       initcolors();
-      if (gg.showpage > 0)
-	refrscreen();
+      if (gg.showpage > 0) refrscreen();
     }
     clearfunc();
     return;
@@ -20427,27 +18356,26 @@ Static Void docnffunction()
     strwordx(gg.funcarg, arg);
     if (*arg != '\0') {
       if (strlen(arg) > 1) {
-	if (strcicmp(arg, "sp") == 0)
-	  ch = ' ';
-	else if (strcicmp(arg, "bs") == 0)
-	  ch = '\007';
-	else if (strcicmp(arg, "tab") == 0)
-	  ch = '\t';
-	else if (strcicmp(arg, "cr") == 0)
-	  ch = '\015';
-	else if (strlen(arg) == 2 && arg[0] == '^')
-	  ch = (arg[1] & 31) + 167;
-	else
-	  ch = (Char)getint(arg, 32L);
+        if (strcicmp(arg, "sp") == 0)
+          ch = ' ';
+        else if (strcicmp(arg, "bs") == 0)
+          ch = '\007';
+        else if (strcicmp(arg, "tab") == 0)
+          ch = '\t';
+        else if (strcicmp(arg, "cr") == 0)
+          ch = '\015';
+        else if (strlen(arg) == 2 && arg[0] == '^')
+          ch = (arg[1] & 31) + 167;
+        else
+          ch = (Char)getint(arg, 32L);
       } else
-	ch = arg[0];
+        ch = arg[0];
       if (*gg.funcarg == '\0')
-	echomacro(ch);
+        echomacro(ch);
       else
-	definemacro(ch, gg.funcarg);
+        definemacro(ch, gg.funcarg);
     } else {
-      if (gg.initdone)
-	statusdisplay("MACRO");
+      if (gg.initdone) statusdisplay("MACRO");
     }
     clearfunc();
     return;
@@ -20459,9 +18387,9 @@ Static Void docnffunction()
       k = getint(gg.funcarg, 0L);
       getword(gg.funcarg, arg);
       if (*arg != '\0')
-	definemenu((int)i, (int)j, gg.funcarg, arg, (int)k);
+        definemenu((int)i, (int)j, gg.funcarg, arg, (int)k);
       else
-	definemenu((int)i, (int)j, "", "", 0);
+        definemenu((int)i, (int)j, "", "", 0);
     }
     clearfunc();
     return;
@@ -20470,17 +18398,16 @@ Static Void docnffunction()
     i = getint(gg.funcarg, 0L);
     if ((unsigned long)i <= 8) {
       if (*gg.funcarg == '\0')
-	curlistgroup = i;
+        curlistgroup = i;
       else {
-	getword(gg.funcarg, arg);
-	strchange(&librgroupnames[i], arg);
+        getword(gg.funcarg, arg);
+        strchange(&librgroupnames[i], arg);
       }
     }
     clearfunc();
     return;
   }
-  if (strcmp(gg.func, "LIBRSTR"))
-    return;
+  if (strcmp(gg.func, "LIBRSTR")) return;
   /*   else if gg.func = 'VLSI' then
         begin
            getbool(gg.funcarg^, vlsi);
@@ -20492,9 +18419,9 @@ Static Void docnffunction()
     lspp = &librstrs;
     while (*lspp != NULL && strcmp((*lspp)->name, arg)) {
       if (strcmp(arg, (*lspp)->name) < 0)
-	lspp = &(*lspp)->left;
+        lspp = &(*lspp)->left;
       else
-	lspp = &(*lspp)->right;
+        lspp = &(*lspp)->right;
     }
     if (*lspp == NULL) {
       lsp = (librstrrec *)Malloc(sizeof(librstrrec));
@@ -20510,10 +18437,7 @@ Static Void docnffunction()
   clearfunc();
 }
 
-
-
-Static Void dofunction()
-{
+Static Void dofunction() {
   log_tool *tp;
   Char cmd[17];
   short i;
@@ -20523,254 +18447,245 @@ Static Void dofunction()
   unsigned char TEMP;
 
   TRY(try30);
-    remcursor();
-    doimmedfunction();
-    if (*gg.func != '\0') {
-      strcpy(cmd, gg.func);
-      tp = gg.toolbase;
-      while (tp != NULL && !strcmp(gg.func, cmd)) {
-	if (tp->ready)
-	  calltool(tp, act_func);
-	tp = tp->next;
+  remcursor();
+  doimmedfunction();
+  if (*gg.func != '\0') {
+    strcpy(cmd, gg.func);
+    tp = gg.toolbase;
+    while (tp != NULL && !strcmp(gg.func, cmd)) {
+      if (tp->ready) calltool(tp, act_func);
+      tp = tp->next;
+    }
+  }
+  docnffunction();
+  if (*gg.func != '\0') {
+    if (!strcmp(gg.func, "DEL"))
+      delcommand();
+    else if (!strcmp(gg.func, "COPY"))
+      copycommand();
+    else if (!strcmp(gg.func, "CLEAR")) {
+      clearfunc();
+      deleverything();
+      histdelsignals();
+    } else if (!strcmp(gg.func, "PASTE"))
+      pastecommand(0L);
+    else if (!strcmp(gg.func, "EXTRACT"))
+      extract();
+    else if (!strcmp(gg.func, "MOVE"))
+      movecommand(strcmp(gg.funcarg, "*") != 0);
+    else if (!strcmp(gg.func, "OPENH"))
+      openhoriz();
+    else if (!strcmp(gg.func, "OPENV"))
+      openvert();
+    else if (!strcmp(gg.func, "CLOSEH"))
+      closehoriz();
+    else if (!strcmp(gg.func, "CLOSEV"))
+      closevert();
+    else if (!strcmp(gg.func, "CENTER"))
+      centercommand();
+    else if (!strcmp(gg.func, "YARDSTICK"))
+      yardstickcommand();
+    else if (!strcmp(gg.func, "DEFINE"))
+      gatedefinitioncommand();
+    else if (!strcmp(gg.func, "TOOL")) {
+      toolcommand();
+      clearfunc();
+    } else if (!strcmp(gg.func, "LABEL")) {
+      clearfunc();
+      if (!gg.textinvisible) {
+        if (*gg.funcarg == '\0')
+          editlabel(NULL);
+        else
+          addlabel(&gg.nearlabel, gg.funcarg);
       }
-    }
-    docnffunction();
-    if (*gg.func != '\0') {
-      if (!strcmp(gg.func, "DEL"))
-	delcommand();
-      else if (!strcmp(gg.func, "COPY"))
-	copycommand();
-      else if (!strcmp(gg.func, "CLEAR")) {
-	clearfunc();
-	deleverything();
-	histdelsignals();
-      } else if (!strcmp(gg.func, "PASTE"))
-	pastecommand(0L);
-      else if (!strcmp(gg.func, "EXTRACT"))
-	extract();
-      else if (!strcmp(gg.func, "MOVE"))
-	movecommand(strcmp(gg.funcarg, "*") != 0);
-      else if (!strcmp(gg.func, "OPENH"))
-	openhoriz();
-      else if (!strcmp(gg.func, "OPENV"))
-	openvert();
-      else if (!strcmp(gg.func, "CLOSEH"))
-	closehoriz();
-      else if (!strcmp(gg.func, "CLOSEV"))
-	closevert();
-      else if (!strcmp(gg.func, "CENTER"))
-	centercommand();
-      else if (!strcmp(gg.func, "YARDSTICK"))
-	yardstickcommand();
-      else if (!strcmp(gg.func, "DEFINE"))
-	gatedefinitioncommand();
-      else if (!strcmp(gg.func, "TOOL")) {
-	toolcommand();
-	clearfunc();
-      } else if (!strcmp(gg.func, "LABEL")) {
-	clearfunc();
-	if (!gg.textinvisible) {
-	  if (*gg.funcarg == '\0')
-	    editlabel(NULL);
-	  else
-	    addlabel(&gg.nearlabel, gg.funcarg);
-	}
-      } else if (!strcmp(gg.func, "BOX")) {
-	if (!gg.textinvisible)
-	  addbox();
-	else
-	  clearfunc();
-      } else if (!strcmp(gg.func, "VLSI")) {
-	clearfunc();
-	if (gg.gbase[gg.curpage - 1] != NULL ||
-	    gg.hwbase[gg.curpage - 1] != NULL ||
-	    gg.vwbase[gg.curpage - 1] != NULL)
-	  warning();
-	else
-	  setvlsimode(!vlsi);
-      } else if (!strcmp(gg.func, "FAST")) {
-	clearfunc();
-	message("FAST mode enabled.");
-	gg.fastspeed = gg.fastmax;
-      } else if (!strcmp(gg.func, "SCOPE")) {
-	clearfunc();
-	historycommand();
-      } else if (!strcmp(gg.func, "DUMPSCOPE")) {
-	clearfunc();
-	dumphistory();
-      } else if (!strcmp(gg.func, "STEP")) {
-	singlestep();
-	clearfunc();
-      } else if (!strcmp(gg.func, "TAPMODE")) {
-	clearfunc();
-	if (cureditmode == maxeditmodes)
-	  cureditmode = 1;
-	else
-	  cureditmode++;
-	refreditmode();
-      } else if (!strcmp(gg.func, "ROT")) {
-	clearfunc();
-	cureditmode = 1;
-	refreditmode();
-      } else if (!strcmp(gg.func, "MIRX")) {
-	clearfunc();
-	cureditmode = 2;
-	refreditmode();
-      } else if (!strcmp(gg.func, "MIRY")) {
-	clearfunc();
-	cureditmode = 3;
-	refreditmode();
-      } else if (!strcmp(gg.func, "CNFG")) {
-	clearfunc();
-	cureditmode = 4;
-	refreditmode();
-      } else if (!strcmp(gg.func, "CAT"))
-	gatecatalog(false);
-      else if (!strcmp(gg.func, "LIBRARY"))
-	gatecatalog(true);
-      else if (!strcmp(gg.func, "MAKE"))
-	makegatecmd();
-      else if (!strcmp(gg.func, "GET"))
-	getgatecmd();
-      else if (!strcmp(gg.func, "NAME"))
-	namecommand();
-      else if (!strcmp(gg.func, "SAVE"))
-	savecommand();
-      else if (!strcmp(gg.func, "LOAD"))
-	loadcommand();
-      else if (!strcmp(gg.func, "READ"))
-	readcommand();
-      else if (!strcmp(gg.func, "MESSAGE")) {
-	message(gg.funcarg);
-	clearfunc();
-      } else if (!strcmp(gg.func, "VMESSAGE")) {
-	vmessage(gg.funcarg);
-	clearfunc();
-      } else if (!strcmp(gg.func, "DUMPCONFLICTS")) {
-	dumpconflicts();
-	clearfunc();
-      } else if (!strcmp(gg.func, "TRAIN")) {
-	/*  training := not training;
-	  if training and firsttraining then
-	     begin
-	        gethelp('[Tutorial]');
-	        firsttraining := false;
-	     end;
-	  if not training then
-	     m_graphics_on;
-	  clearalpha;  */
-	clearfunc();
-      } else if (!strcmp(gg.func, "STATUS")) {
-	statusdisplay(gg.funcarg);
-	clearfunc();
-      } else if (!strcmp(gg.func, "MARKER")) {
-	oflag = gg.markers;
-	getbool(gg.funcarg, &gg.markers);
-	if (gg.markers != oflag) {
-	  if (gg.markers) {
-	    gg.markerx1 = (gg.xoff + 30) / gg.scale;
-	    gg.markery1 = (gg.yoff + 30) / gg.scale;
-	    gg.markerx2 = (gg.xoff + across - 30) / gg.scale;
-	    gg.markery2 = (gg.yoff + baseline - 30) / gg.scale;
-	    drawmarkersc(gg.color.marker);
-	  } else
-	    drawmarkersc(gg.color.backgr);
-	  stamp(&gg.markerstamp);
-	}
-	vmessageflag("Markers are ", gg.markers);
-	clearfunc();
-      } else if (!strcmp(gg.func, "TRAIN+")) {
-	if (training) {
-	  help_show(helpptr, "+Q");
-/* p2c: log.text, line 19437:
- * Warning: Symbol 'HELP_SHOW' is not defined [221] */
-	}
-	clearfunc();
-      } else if (!strcmp(gg.func, "TRAIN-")) {
-	if (training) {
-	  help_show(helpptr, "-Q");
-/* p2c: log.text, line 19443:
- * Warning: Symbol 'HELP_SHOW' is not defined [221] */
-	}
-	clearfunc();
-      } else if (!strcmp(gg.func, "REFRESH")) {
-	clearfunc();
-	refrscreen();
-      } else if (!strcmp(gg.func, "RESIZE")) {
-	clearfunc();
-	resize_screen();
-      } else if (!strcmp(gg.func, "REFR"))
-	scroll();
-      else if (!strcmp(gg.func, "SHELL")) {
-	doshellescape(gg.funcarg);
-	clearfunc();
-      } else if (*gg.func == '!') {
-	sprintf(STR2, "%s %s", gg.func, gg.funcarg);
-	doshellescape(STR2);
-	clearfunc();
-      } else if (!strcmp(gg.func, "EXIT")) {
-	if (strcmp(gg.funcarg, "*") && !anychanged()) {
-	  P_escapecode = 20;
-	  goto _Ltry30;
-	}
-	clearshowalpha();
-	putchar('\n');
-	if (anychanged()) {
-	  printf("The following page(s) have not been saved: ");
-	  FORLIM = gg.numpages;
-	  for (i = 1; i <= FORLIM; i++) {
-	    if (pagechanged(i))
-	      printf("%d ", i);
-	  }
-	  putchar('\n');
-	}
-	m_alpha_on();
-	m_graphics_off();
-	nk_gotoxy(31, 10);
-	printf("%c%cExit from program? %c", chryellow, chrplain, chrgreen);
-	do
-	  TEMP = nk_getkey();
-	while ((TEMP == 250)||(TEMP == 251));
-	if (TEMP == 'y' || TEMP == 'Y') {
-	  P_escapecode = 20;
-	  goto _Ltry30;
-	}
-	m_graphics_on();
-	clearalpha();
-	clearfunc();
-      } else if (!strcmp(gg.func, "ABORT")) {
-	remcursor();
-	if (cursortype == grid)
-	  cursortype = normal;
-	gg.probemode = false;
-	clearfunc();
-      } else if (!strcmp(gg.func, "X"))
-	clearfunc();
-    }
-  RECOVER2(try30,_Ltry30);
-    if (excpline == -1)
-      excpline = EXCP_LINE;
-    if (P_escapecode != 5)
-      _Escape(P_escapecode);
-    remcursor();
-    gg.startpoint = false;
-    log_setmode("");
-    /* refreshsoon; */
-    if (gg.t.dn && !gg.incircuit) {
-      gg.t.dn = false;
-      gg.t.depressed = false;
-    }
-    cursortype = normal;
+    } else if (!strcmp(gg.func, "BOX")) {
+      if (!gg.textinvisible)
+        addbox();
+      else
+        clearfunc();
+    } else if (!strcmp(gg.func, "VLSI")) {
+      clearfunc();
+      if (gg.gbase[gg.curpage - 1] != NULL ||
+          gg.hwbase[gg.curpage - 1] != NULL ||
+          gg.vwbase[gg.curpage - 1] != NULL)
+        warning();
+      else
+        setvlsimode(!vlsi);
+    } else if (!strcmp(gg.func, "FAST")) {
+      clearfunc();
+      message("FAST mode enabled.");
+      gg.fastspeed = gg.fastmax;
+    } else if (!strcmp(gg.func, "SCOPE")) {
+      clearfunc();
+      historycommand();
+    } else if (!strcmp(gg.func, "DUMPSCOPE")) {
+      clearfunc();
+      dumphistory();
+    } else if (!strcmp(gg.func, "STEP")) {
+      singlestep();
+      clearfunc();
+    } else if (!strcmp(gg.func, "TAPMODE")) {
+      clearfunc();
+      if (cureditmode == maxeditmodes)
+        cureditmode = 1;
+      else
+        cureditmode++;
+      refreditmode();
+    } else if (!strcmp(gg.func, "ROT")) {
+      clearfunc();
+      cureditmode = 1;
+      refreditmode();
+    } else if (!strcmp(gg.func, "MIRX")) {
+      clearfunc();
+      cureditmode = 2;
+      refreditmode();
+    } else if (!strcmp(gg.func, "MIRY")) {
+      clearfunc();
+      cureditmode = 3;
+      refreditmode();
+    } else if (!strcmp(gg.func, "CNFG")) {
+      clearfunc();
+      cureditmode = 4;
+      refreditmode();
+    } else if (!strcmp(gg.func, "CAT"))
+      gatecatalog(false);
+    else if (!strcmp(gg.func, "LIBRARY"))
+      gatecatalog(true);
+    else if (!strcmp(gg.func, "MAKE"))
+      makegatecmd();
+    else if (!strcmp(gg.func, "GET"))
+      getgatecmd();
+    else if (!strcmp(gg.func, "NAME"))
+      namecommand();
+    else if (!strcmp(gg.func, "SAVE"))
+      savecommand();
+    else if (!strcmp(gg.func, "LOAD"))
+      loadcommand();
+    else if (!strcmp(gg.func, "READ"))
+      readcommand();
+    else if (!strcmp(gg.func, "MESSAGE")) {
+      message(gg.funcarg);
+      clearfunc();
+    } else if (!strcmp(gg.func, "VMESSAGE")) {
+      vmessage(gg.funcarg);
+      clearfunc();
+    } else if (!strcmp(gg.func, "DUMPCONFLICTS")) {
+      dumpconflicts();
+      clearfunc();
+    } else if (!strcmp(gg.func, "TRAIN")) {
+      /*  training := not training;
+        if training and firsttraining then
+           begin
+              gethelp('[Tutorial]');
+              firsttraining := false;
+           end;
+        if not training then
+           m_graphics_on;
+        clearalpha;  */
+      clearfunc();
+    } else if (!strcmp(gg.func, "STATUS")) {
+      statusdisplay(gg.funcarg);
+      clearfunc();
+    } else if (!strcmp(gg.func, "MARKER")) {
+      oflag = gg.markers;
+      getbool(gg.funcarg, &gg.markers);
+      if (gg.markers != oflag) {
+        if (gg.markers) {
+          gg.markerx1 = (gg.xoff + 30) / gg.scale;
+          gg.markery1 = (gg.yoff + 30) / gg.scale;
+          gg.markerx2 = (gg.xoff + across - 30) / gg.scale;
+          gg.markery2 = (gg.yoff + baseline - 30) / gg.scale;
+          drawmarkersc(gg.color.marker);
+        } else
+          drawmarkersc(gg.color.backgr);
+        stamp(&gg.markerstamp);
+      }
+      vmessageflag("Markers are ", gg.markers);
+      clearfunc();
+    } else if (!strcmp(gg.func, "TRAIN+")) {
+      if (training) {
+        help_show(helpptr, "+Q");
+        /* p2c: log.text, line 19437:
+         * Warning: Symbol 'HELP_SHOW' is not defined [221] */
+      }
+      clearfunc();
+    } else if (!strcmp(gg.func, "TRAIN-")) {
+      if (training) {
+        help_show(helpptr, "-Q");
+        /* p2c: log.text, line 19443:
+         * Warning: Symbol 'HELP_SHOW' is not defined [221] */
+      }
+      clearfunc();
+    } else if (!strcmp(gg.func, "REFRESH")) {
+      clearfunc();
+      refrscreen();
+    } else if (!strcmp(gg.func, "RESIZE")) {
+      clearfunc();
+      resize_screen();
+    } else if (!strcmp(gg.func, "REFR"))
+      scroll();
+    else if (!strcmp(gg.func, "SHELL")) {
+      doshellescape(gg.funcarg);
+      clearfunc();
+    } else if (*gg.func == '!') {
+      sprintf(STR2, "%s %s", gg.func, gg.funcarg);
+      doshellescape(STR2);
+      clearfunc();
+    } else if (!strcmp(gg.func, "EXIT")) {
+      if (strcmp(gg.funcarg, "*") && !anychanged()) {
+        P_escapecode = 20;
+        goto _Ltry30;
+      }
+      clearshowalpha();
+      putchar('\n');
+      if (anychanged()) {
+        printf("The following page(s) have not been saved: ");
+        FORLIM = gg.numpages;
+        for (i = 1; i <= FORLIM; i++) {
+          if (pagechanged(i)) printf("%d ", i);
+        }
+        putchar('\n');
+      }
+      m_alpha_on();
+      m_graphics_off();
+      nk_gotoxy(31, 10);
+      printf("%c%cExit from program? %c", chryellow, chrplain, chrgreen);
+      do TEMP = nk_getkey();
+      while ((TEMP == 250) || (TEMP == 251));
+      if (TEMP == 'y' || TEMP == 'Y') {
+        P_escapecode = 20;
+        goto _Ltry30;
+      }
+      m_graphics_on();
+      clearalpha();
+      clearfunc();
+    } else if (!strcmp(gg.func, "ABORT")) {
+      remcursor();
+      if (cursortype == grid) cursortype = normal;
+      gg.probemode = false;
+      clearfunc();
+    } else if (!strcmp(gg.func, "X"))
+      clearfunc();
+  }
+  RECOVER2(try30, _Ltry30);
+  if (excpline == -1) excpline = EXCP_LINE;
+  if (P_escapecode != 5) _Escape(P_escapecode);
+  remcursor();
+  gg.startpoint = false;
+  log_setmode("");
+  /* refreshsoon; */
+  if (gg.t.dn && !gg.incircuit) {
+    gg.t.dn = false;
+    gg.t.depressed = false;
+  }
+  cursortype = normal;
   ENDTRY(try30);
 
   /*debugging*/
 }
 
-
-
-Static Void initmacros()
-{
-  definemacro(171, "EXIT *");   /*control-D*/
+Static Void initmacros() {
+  definemacro(171, "EXIT *"); /*control-D*/
   definemacro(':', "DO");
   definemacro(' ', "REFRESH");
   definemacro('!', "SHELL");
@@ -20827,12 +18742,11 @@ Static Void initmacros()
   definemacro('x', "EXAMINE");
   definemacro('y', "YARDSTICK");
   definemacro('Z', "EXIT *");
-/* p2c: log.text, line 19589: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 19589: Note: Character >= 128 encountered [281] */
   definemacro(250, "REFRESH");
-/* p2c: log.text, line 19590: Note: Character >= 128 encountered [281] */
+  /* p2c: log.text, line 19590: Note: Character >= 128 encountered [281] */
   definemacro(251, "RESIZE");
 }
-
 
 Local Void newmenu(menu)
 logmenurec **menu;
@@ -20840,18 +18754,13 @@ logmenurec **menu;
   short i;
 
   *menu = (logmenurec *)Malloc(sizeof(logmenutype));
-  for (i = 0; i <= 7; i++)
-    *(*menu)[i].name = '\0';
+  for (i = 0; i <= 7; i++) *(*menu)[i].name = '\0';
 }
 
-
-
-Static Void initmenus()
-{
+Static Void initmenus() {
   short i;
 
-  for (i = 0; i <= 3; i++)
-    newmenu(&popupmenus[i]);
+  for (i = 0; i <= 3; i++) newmenu(&popupmenus[i]);
   definemenu(1, 1, "Box", "BOX", 0);
   definemenu(1, 2, "Label", "LABEL", 0);
   definemenu(1, 3, "Invisible", "INVISIBLE", 1);
@@ -20884,10 +18793,7 @@ Static Void initmenus()
   definemenu(4, 8, "*Exit", "EXIT", 0);
 }
 
-
-
-Static Void inithooks()
-{
+Static Void inithooks() {
   gg.hook.hidecursor = hidecursor_hook;
   gg.hook.unhidecursor = unhidecursor_hook;
   gg.hook.hidecursorrect = hidecursorrect_hook;
@@ -21009,8 +18915,7 @@ Static Void inithooks()
   gg.hook2->showpinname = showpinname;
 }
 
-
-#define rtn             "INITIALIZE"
+#define rtn "INITIALIZE"
 
 #if 0
 /* Local variables for initialize: */
@@ -21025,8 +18930,7 @@ struct LOC_initialize {
 Local Void beginfatal(LINK)
 struct LOC_initialize *LINK;
 {
-  if (P_escapecode == -20)
-    _Escape(P_escapecode);
+  if (P_escapecode == -20) _Escape(P_escapecode);
   clearshowalpha();
   warning();
   printf("\n\n%c", chryellow);
@@ -21048,8 +18952,7 @@ struct LOC_initialize *LINK;
 
   strcpy(fn, fn_);
   newci_fixfname(fn, "gate", "");
-  if (!locatefile(fn, LINK))
-    *fn = '\0';
+  if (!locatefile(fn, LINK)) *fn = '\0';
   if (*fn != '\0' && strlist_find(gatefilenames, fn) == NULL)
     l1 = strlist_append(&gatefilenames, fn);
 }
@@ -21080,12 +18983,10 @@ Char *name;
 #ifdef OS2
   if (!cp) cp = strrchr(name, '\\');
 #endif
-  if (cp)
-     strcpy_overlap(name, cp + 1);
+  if (cp) strcpy_overlap(name, cp + 1);
 #ifdef OS2
   cp = strstr(name, ".exe");
-  if (cp)
-     *cp = '\0';
+  if (cp) *cp = '\0';
 #endif
 }
 
@@ -21116,244 +19017,215 @@ struct LOC_initialize *LINK;
     strcat(fn, ".cnf");
     if (!locatefile(fn, LINK)) {
       strcpy(fn, "log.cnf");
-      if (!locatefile(fn, LINK))
-	*fn = '\0';
+      if (!locatefile(fn, LINK)) *fn = '\0';
     }
   } else {
     newci_fixfname(fn, "cnf", "");
-    if (!locatefile(fn, LINK))
-      *fn = '\0';
+    if (!locatefile(fn, LINK)) *fn = '\0';
   }
   if (*fn != '\0') {
     TRY(try32);
-      if (tx != NULL)
-	tx = freopen(fn, "r", tx);
-      else
-	tx = fopen(fn, "r");
-      if (tx == NULL) {
-	P_escapecode = -10;
-	P_ioresult = FileNotFound;
-	goto _Ltry32;
-      }
-      flag = true;
-    RECOVER2(try32,_Ltry32);
-      if (P_escapecode == -20)
-	_Escape(P_escapecode);
+    if (tx != NULL)
+      tx = freopen(fn, "r", tx);
+    else
+      tx = fopen(fn, "r");
+    if (tx == NULL) {
+      P_escapecode = -10;
+      P_ioresult = FileNotFound;
+      goto _Ltry32;
+    }
+    flag = true;
+    RECOVER2(try32, _Ltry32);
+    if (P_escapecode == -20) _Escape(P_escapecode);
     ENDTRY(try32);
   }
   cnflin = 0;
   if (flag) {
     TRY(try33);
-      while (!P_eof(tx)) {
-	cnflin++;
-	fgets(txbuf, 256, tx);
-	TEMP = (char *)strchr(txbuf, '\n');
-	if (TEMP != NULL)
-	  *TEMP = 0;
-	strcomment(txbuf, "{}");
-	getword(txbuf, LINK->cmdbuf);
-	if (!strcmp(LINK->cmdbuf, "BOBCAT")) {
-	  if (nc_gType() != nc_g300)
-	    *txbuf = '\0';
-	  getword(txbuf, LINK->cmdbuf);
-	} else if (!strcmp(LINK->cmdbuf, "CHIPMUNK")) {
-	  if (nc_gType() == nc_g300)
-	    *txbuf = '\0';
-	  getword(txbuf, LINK->cmdbuf);
-	}
-	if (!strcmp(LINK->cmdbuf, "LOG:"))
-	  getword(txbuf, LINK->cmdbuf);
-	strcpy(gg.func, LINK->cmdbuf);
-	strcpy(gg.funcarg, txbuf);
-	if (*LINK->cmdbuf != '\0') {
-	  doimmedcnffunction();
-	  docnffunction();
-	}
-	if (*LINK->cmdbuf == '\0' || strcmp(gg.func, LINK->cmdbuf))
-	  continue;
-	if (strends(LINK->cmdbuf, ":") && strlen(LINK->cmdbuf) > 1) {
-	  if (*txbuf == '\0')
-	    continue;
-	  LINK->cmdbuf[strlen(LINK->cmdbuf) - 1] = '\0';
-/* p2c: log.text, line 19956:
- * Note: Suspicious mixture of sizes in NA_NEW [173] */
-	  cnfp = (cnfrec *)Malloc(sizeof(cnfrec));
-          cnfp->next = NULL;
-	  if (LINK->cnflast == NULL)
-	    cnfbase = cnfp;
-	  else
-	    LINK->cnflast->next = cnfp;
-	  cnfp->next = NULL;
-	  strcpy(cnfp->tool, LINK->cmdbuf);
-	  strcpy(cnfp->s, txbuf);
-	  LINK->cnflast = cnfp;
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "INCLUDE")) {
-	  do {
-	    strwordx(txbuf, txarg);
-	    if (*txarg != '\0')
-	      readcnf(txarg, LINK);
-	  } while (*txarg != '\0');
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "HOME")) {
-	  sethomedirname(txbuf, LINK);
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "GATES")) {
-	  strwordx(txbuf, txarg);
-	  if (!strcmp(txarg, "+"))
-	    strwordx(txbuf, txarg);
-	  else {
-	    if (erasegates)
-	      strlist_empty(&gatefilenames);
-	  }
-	  erasegates = false;
-	  while (*txarg != '\0') {
-	    addgatesfile(txarg, LINK);
-	    strwordx(txbuf, txarg);
-	  }
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "HELP")) {
-	  if (locatefile(txbuf, LINK))
-	    strcpy(loghelpname, txbuf);
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "NEWS")) {
-	  if (locatefile(txbuf, LINK))
-	    strcpy(lognewsname, txbuf);
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "TABLET")) {
-	  tabletaddr = getint(txbuf, tabletaddr);
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "MENU")) {
-	  getword(txbuf, txarg);
-	  if (!strcmp(txarg, "+"))
-	    getword(txbuf, txarg);
-	  else {
-	    if (erasemenu)
-	      strlist_empty(&LINK->logmenu);
-	  }
-	  erasemenu = false;
-	  while (*txarg != '\0') {
-	    l1 = strlist_append(&LINK->logmenu, txarg);
-	    getword(txbuf, txarg);
-	  }
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "GET") || !strcmp(LINK->cmdbuf, "LOAD")) {
-	  getword(txbuf, txarg);
-	  if (!strcmp(txarg, "+"))
-	    getword(txbuf, txarg);
-	  else {
-	    if (eraseload)
-	      strlist_empty(&LINK->loadgates);
-	  }
-	  eraseload = false;
-	  while (*txarg != '\0') {
-	    l1 = strlist_append(&LINK->loadgates, txarg);
-	    getword(txbuf, txarg);
-	  }
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "GETGROUP")) {
-	  getword(txbuf, txarg);
-	  if (!strcmp(txarg, "+"))
-	    getword(txbuf, txarg);
-	  else {
-	    if (eraseload)
-	      strlist_empty(&LINK->loadgates);
-	  }
-	  eraseload = false;
-	  l1 = strlist_append(&LINK->loadgates, "");
-	  l1->value = (na_long)NULL;
-	  while (*txarg != '\0') {
-	    l2 = strlist_append((na_strlistrec **)(&l1->value), txarg);
-	    getword(txbuf, txarg);
-	  }
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "TOOL")) {
-	  getword(txbuf, txarg);
-	  if (*txarg == '\0')
-	    continue;
-	  tp = gg.toolbase;
-	  while (tp != NULL && strcmp(tp->name, txarg))
-	    tp = tp->next;
-	  if (tp != NULL)
-	    continue;
-	  newtool(&tp, txarg);
-	  strwordx(txbuf, txarg);
-	  if (*txarg != '\0')
-	    strcpy(tp->comment, txarg);
-	  getword(txbuf, txarg);
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "COMMAND")) {
-	  getword(txbuf, txarg2);
-	  if (*txarg2 == '\0')
-	    continue;
-	  do {
-	    getword(txbuf, txarg);
-	    if (*txarg != '\0') {
-	      l1 = strlist_add(&commandlist, txarg);
-	      *(Char **)((Char **)(&l1->value)) = strdup(txarg2);
-	    }
-	  } while (*txarg != '\0');
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "SIGNALS") || !strcmp(LINK->cmdbuf, "NODES")) {
-	  LINK->j = getint(txbuf, 0L);
-	  if (LINK->j < 1) {
-	    P_escapecode = -1;
-	    goto _Ltry33;
-	  }
-	  gg.maxsignal = LINK->j;
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "DO")) {
-	  l2 = strlist_append(&thingstodo, gg.funcarg);
-	  continue;
-	}
-	if (!strcmp(LINK->cmdbuf, "UNDO"))
-	  strlist_empty(&thingstodo);
-	else if (strcmp(LINK->cmdbuf, "CTOLERANCE") &&
-		 strcmp(LINK->cmdbuf, "CLOCK") &&
-		 strcmp(LINK->cmdbuf, "SCOPE") &&
-		 strcmp(LINK->cmdbuf, "AUTO") &&
-		 strcmp(LINK->cmdbuf, "POST") &&
-		 strcmp(LINK->cmdbuf, "PRINTER") &&
-		 strcmp(LINK->cmdbuf, "HELPIX") &&
-		 strcmp(LINK->cmdbuf, "GATESIX") &&
-		 strcmp(LINK->cmdbuf, "PLOTTER") &&
-		 strcmp(LINK->cmdbuf, "SIMMODE")) {
-	  P_escapecode = -1;
-	  goto _Ltry33;
-	}
+    while (!P_eof(tx)) {
+      cnflin++;
+      fgets(txbuf, 256, tx);
+      TEMP = (char *)strchr(txbuf, '\n');
+      if (TEMP != NULL) *TEMP = 0;
+      strcomment(txbuf, "{}");
+      getword(txbuf, LINK->cmdbuf);
+      if (!strcmp(LINK->cmdbuf, "BOBCAT")) {
+        if (nc_gType() != nc_g300) *txbuf = '\0';
+        getword(txbuf, LINK->cmdbuf);
+      } else if (!strcmp(LINK->cmdbuf, "CHIPMUNK")) {
+        if (nc_gType() == nc_g300) *txbuf = '\0';
+        getword(txbuf, LINK->cmdbuf);
       }
-    RECOVER2(try33,_Ltry33);
-      if (P_escapecode == -20)
-	_Escape(P_escapecode);
-      if (P_escapecode != 0) {
-	beginfatal(LINK);
-	printf("Error in line %ld of configuration file \"%s\"\n", cnflin, fn);
-	endfatal(LINK);
+      if (!strcmp(LINK->cmdbuf, "LOG:")) getword(txbuf, LINK->cmdbuf);
+      strcpy(gg.func, LINK->cmdbuf);
+      strcpy(gg.funcarg, txbuf);
+      if (*LINK->cmdbuf != '\0') {
+        doimmedcnffunction();
+        docnffunction();
       }
+      if (*LINK->cmdbuf == '\0' || strcmp(gg.func, LINK->cmdbuf)) continue;
+      if (strends(LINK->cmdbuf, ":") && strlen(LINK->cmdbuf) > 1) {
+        if (*txbuf == '\0') continue;
+        LINK->cmdbuf[strlen(LINK->cmdbuf) - 1] = '\0';
+        /* p2c: log.text, line 19956:
+         * Note: Suspicious mixture of sizes in NA_NEW [173] */
+        cnfp = (cnfrec *)Malloc(sizeof(cnfrec));
+        cnfp->next = NULL;
+        if (LINK->cnflast == NULL)
+          cnfbase = cnfp;
+        else
+          LINK->cnflast->next = cnfp;
+        cnfp->next = NULL;
+        strcpy(cnfp->tool, LINK->cmdbuf);
+        strcpy(cnfp->s, txbuf);
+        LINK->cnflast = cnfp;
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "INCLUDE")) {
+        do {
+          strwordx(txbuf, txarg);
+          if (*txarg != '\0') readcnf(txarg, LINK);
+        } while (*txarg != '\0');
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "HOME")) {
+        sethomedirname(txbuf, LINK);
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "GATES")) {
+        strwordx(txbuf, txarg);
+        if (!strcmp(txarg, "+"))
+          strwordx(txbuf, txarg);
+        else {
+          if (erasegates) strlist_empty(&gatefilenames);
+        }
+        erasegates = false;
+        while (*txarg != '\0') {
+          addgatesfile(txarg, LINK);
+          strwordx(txbuf, txarg);
+        }
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "HELP")) {
+        if (locatefile(txbuf, LINK)) strcpy(loghelpname, txbuf);
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "NEWS")) {
+        if (locatefile(txbuf, LINK)) strcpy(lognewsname, txbuf);
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "TABLET")) {
+        tabletaddr = getint(txbuf, tabletaddr);
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "MENU")) {
+        getword(txbuf, txarg);
+        if (!strcmp(txarg, "+"))
+          getword(txbuf, txarg);
+        else {
+          if (erasemenu) strlist_empty(&LINK->logmenu);
+        }
+        erasemenu = false;
+        while (*txarg != '\0') {
+          l1 = strlist_append(&LINK->logmenu, txarg);
+          getword(txbuf, txarg);
+        }
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "GET") || !strcmp(LINK->cmdbuf, "LOAD")) {
+        getword(txbuf, txarg);
+        if (!strcmp(txarg, "+"))
+          getword(txbuf, txarg);
+        else {
+          if (eraseload) strlist_empty(&LINK->loadgates);
+        }
+        eraseload = false;
+        while (*txarg != '\0') {
+          l1 = strlist_append(&LINK->loadgates, txarg);
+          getword(txbuf, txarg);
+        }
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "GETGROUP")) {
+        getword(txbuf, txarg);
+        if (!strcmp(txarg, "+"))
+          getword(txbuf, txarg);
+        else {
+          if (eraseload) strlist_empty(&LINK->loadgates);
+        }
+        eraseload = false;
+        l1 = strlist_append(&LINK->loadgates, "");
+        l1->value = (na_long)NULL;
+        while (*txarg != '\0') {
+          l2 = strlist_append((na_strlistrec **)(&l1->value), txarg);
+          getword(txbuf, txarg);
+        }
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "TOOL")) {
+        getword(txbuf, txarg);
+        if (*txarg == '\0') continue;
+        tp = gg.toolbase;
+        while (tp != NULL && strcmp(tp->name, txarg)) tp = tp->next;
+        if (tp != NULL) continue;
+        newtool(&tp, txarg);
+        strwordx(txbuf, txarg);
+        if (*txarg != '\0') strcpy(tp->comment, txarg);
+        getword(txbuf, txarg);
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "COMMAND")) {
+        getword(txbuf, txarg2);
+        if (*txarg2 == '\0') continue;
+        do {
+          getword(txbuf, txarg);
+          if (*txarg != '\0') {
+            l1 = strlist_add(&commandlist, txarg);
+            *(Char **)((Char **)(&l1->value)) = strdup(txarg2);
+          }
+        } while (*txarg != '\0');
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "SIGNALS") || !strcmp(LINK->cmdbuf, "NODES")) {
+        LINK->j = getint(txbuf, 0L);
+        if (LINK->j < 1) {
+          P_escapecode = -1;
+          goto _Ltry33;
+        }
+        gg.maxsignal = LINK->j;
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "DO")) {
+        l2 = strlist_append(&thingstodo, gg.funcarg);
+        continue;
+      }
+      if (!strcmp(LINK->cmdbuf, "UNDO"))
+        strlist_empty(&thingstodo);
+      else if (strcmp(LINK->cmdbuf, "CTOLERANCE") &&
+               strcmp(LINK->cmdbuf, "CLOCK") && strcmp(LINK->cmdbuf, "SCOPE") &&
+               strcmp(LINK->cmdbuf, "AUTO") && strcmp(LINK->cmdbuf, "POST") &&
+               strcmp(LINK->cmdbuf, "PRINTER") &&
+               strcmp(LINK->cmdbuf, "HELPIX") &&
+               strcmp(LINK->cmdbuf, "GATESIX") &&
+               strcmp(LINK->cmdbuf, "PLOTTER") &&
+               strcmp(LINK->cmdbuf, "SIMMODE")) {
+        P_escapecode = -1;
+        goto _Ltry33;
+      }
+    }
+    RECOVER2(try33, _Ltry33);
+    if (P_escapecode == -20) _Escape(P_escapecode);
+    if (P_escapecode != 0) {
+      beginfatal(LINK);
+      printf("Error in line %ld of configuration file \"%s\"\n", cnflin, fn);
+      endfatal(LINK);
+    }
     ENDTRY(try33);
   }
-  if (tx != NULL)
-    fclose(tx);
+  if (tx != NULL) fclose(tx);
 
   /*obsolete*/
 }
-
-
-
-
 
 /*==================  INITIALIZE  ================*/
 /*=                                              =*/
@@ -21363,8 +19235,7 @@ struct LOC_initialize *LINK;
 /*=                                              =*/
 /*================================================*/
 
-Static Void initialize()
-{
+Static Void initialize() {
   struct LOC_initialize V;
   newci_parserec swtab[10];
   short i, k, curgate;
@@ -21381,46 +19252,45 @@ Static Void initialize()
   log_sigrec *WITH1;
 
 #ifdef OS2
-//  _control87(EM_UNDERFLOW, EM_UNDERFLOW);  /* Turn off underflow exception. */
+//  _control87(EM_UNDERFLOW, EM_UNDERFLOW);  /* Turn off underflow exception.
+//  */
 #endif
-  strcpy(swtab[0].switch_, "cC");   /* CNF file name */
+  strcpy(swtab[0].switch_, "cC"); /* CNF file name */
   swtab[0].kind = 'M';
-  strcpy(swtab[1].switch_, "vV");   /* Vanilla LOG (no CNF) */
+  strcpy(swtab[1].switch_, "vV"); /* Vanilla LOG (no CNF) */
   swtab[1].kind = 'B';
-  strcpy(swtab[2].switch_, "zZ");   /* Trace mode initially on */
+  strcpy(swtab[2].switch_, "zZ"); /* Trace mode initially on */
   swtab[2].kind = 'S';
-  strcpy(swtab[3].switch_, "dD");   /* Dump file name */
+  strcpy(swtab[3].switch_, "dD"); /* Dump file name */
   swtab[3].kind = 'S';
-  strcpy(swtab[4].switch_, "tT");   /* Trace file name */
+  strcpy(swtab[4].switch_, "tT"); /* Trace file name */
   swtab[4].kind = 'S';
-  strcpy(swtab[5].switch_, "hH");   /* Home directory name */
+  strcpy(swtab[5].switch_, "hH"); /* Home directory name */
   swtab[5].kind = 'S';
-  strcpy(swtab[6].switch_, "rR");   /* Tool to run */
+  strcpy(swtab[6].switch_, "rR"); /* Tool to run */
   swtab[6].kind = 'M';
 
   /* Added X display support.  stafford 7/17/91 */
 
-  strcpy(swtab[7].switch_, "xX");   /* XDisplay name */
+  strcpy(swtab[7].switch_, "xX"); /* XDisplay name */
   swtab[7].kind = 'M';
 
   newci_parseswitch(swtab, 8L, V.cmdbuf);
 
-
   if (*V.cmdbuf != '\0') {
-    if (*V.cmdbuf != '\0')
-      printf("Unrecognized option:  -%s\n", V.cmdbuf);
-      printf(
-      "\nUsage:  LOG [ -v ] [ -c cnffile ] [ -x X_display_name ] [ file ]\n");
+    if (*V.cmdbuf != '\0') printf("Unrecognized option:  -%s\n", V.cmdbuf);
+    printf(
+        "\nUsage:  LOG [ -v ] [ -c cnffile ] [ -x X_display_name ] [ "
+        "file ]\n");
     _Escape(0);
   }
 
-   /* Added X display support.  stafford 7/17/91 */
-   /* grab the display name off the parsed switches */
+  /* Added X display support.  stafford 7/17/91 */
+  /* grab the display name off the parsed switches */
 
-  if (swtab[7].used > 0)
-    {
-       m_set_display_name(swtab[7].UU.s);
-    }
+  if (swtab[7].used > 0) {
+    m_set_display_name(swtab[7].UU.s);
+  }
 
   tabletaddr = 0;
   gg.curstamp = 0;
@@ -21466,12 +19336,12 @@ Static Void initialize()
   l2 = strlist_append(&histlbl, "Scope mode");
   l2 = strlist_append(&histlbl, "");
   l2 = strlist_append(&histlbl,
-      "VContinuous,On Reset,Triggered,Manual:Type of trigger:");
+                      "VContinuous,On Reset,Triggered,Manual:Type of trigger:");
   l2 = strlist_append(&histlbl, "Triggered;C(none):Trigger signal:");
   l2 = strlist_append(&histlbl, "On Reset;OUs:Time to start trigger:");
   l2 = strlist_append(&histlbl, "On Reset;OUs:Time to stop trigger:");
   l2 = strlist_append(&histlbl,
-		      "VTrigger off,Simulation off:Action when memory full:");
+                      "VTrigger off,Simulation off:Action when memory full:");
   l2 = strlist_append(&histlbl, "");
   l2 = strlist_append(&histlbl, "Us:Minimum timestep:");
   l2 = strlist_append(&histlbl, "Us:Maximum timestep:");
@@ -21498,17 +19368,14 @@ Static Void initialize()
   gg.tracefile = &tracefile;
   tracefname = (Char *)Malloc(256);
   *tracefname = '\0';
-  if (swtab[3].used > 0)
-    strcpy(dumpfname, swtab[3].UU.s);
+  if (swtab[3].used > 0) strcpy(dumpfname, swtab[3].UU.s);
   if (swtab[4].used > 0)
     strcpy(tracefname, swtab[4].UU.s);
   else if (swtab[2].used > 0)
     strcpy(tracefname, swtab[2].UU.s);
-  if (*tracefname != '\0')
-    newci_fixfname(tracefname, "text", "");
+  if (*tracefname != '\0') newci_fixfname(tracefname, "text", "");
   gg.traceflag = (swtab[2].used > 0);
-  if (gg.traceflag)
-    tracemessage("Trace mode ON");
+  if (gg.traceflag) tracemessage("Trace mode ON");
   gg.homedirname = (Char *)Malloc(256);
   if (swtab[5].used > 0) {
     if (*swtab[5].UU.s == '\0')
@@ -21527,10 +19394,8 @@ Static Void initialize()
   gg.rndseed = timers_sysclock();
   gg.simstate = simst_null;
   gg.simstatetool = NULL;
-  for (i = 0; i < maxgatesfiles; i++)
-    gatesname[i] = NULL;
-  for (i = 0; i <= 8; i++)
-    librgroupnames[i] = NULL;
+  for (i = 0; i < maxgatesfiles; i++) gatesname[i] = NULL;
+  for (i = 0; i <= 8; i++) librgroupnames[i] = NULL;
   loghelpname = (Char *)Malloc(256);
   strcpy(loghelpname, "loghelp");
   lognewsname = (Char *)Malloc(256);
@@ -21565,12 +19430,9 @@ Static Void initialize()
   messages = NULL;
   *cnfname = '\0';
   flag = false;
-  if (swtab[0].used > 0)
-    strcpy(cnfname, swtab[0].UU.s);
-  if (*cnfname == '\0' && swtab[1].used == 0)
-    strcpy(cnfname, "*");
-  if (*cnfname != '\0')
-    readcnf(cnfname, &V);
+  if (swtab[0].used > 0) strcpy(cnfname, swtab[0].UU.s);
+  if (*cnfname == '\0' && swtab[1].used == 0) strcpy(cnfname, "*");
+  if (*cnfname != '\0') readcnf(cnfname, &V);
   initcolors();
   gg.color.curbaseline = gg.color.baseline;
   gg.baselinecolor = gg.color.baseline;
@@ -21597,113 +19459,106 @@ Static Void initialize()
   } else
     justonecommand = false;
   TRY(try34);
-    m_init_pen(tabletaddr);
+  m_init_pen(tabletaddr);
   RECOVER(try34);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-    beginfatal(&V);
-    printf("Can't find graphics tablet!\n");
-    endfatal(&V);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  beginfatal(&V);
+  printf("Can't find graphics tablet!\n");
+  endfatal(&V);
   ENDTRY(try34);
-  if (gatefilenames == NULL)
-    addgatesfile("log", &V);
+  if (gatefilenames == NULL) addgatesfile("log", &V);
   idxsize = 0;
   for (k = 0; k < maxgatesfiles; k++) {
     *gname[k] = '\0';
     if (gatefilenames != NULL) {
       TRY(try35);
-	gatesname[k] = (Char *)Malloc(256);
-	strcpy(gatesname[k], gatefilenames->s);
-	gatefilenames = gatefilenames->next;
-	libf1[k] = (filerecfilerec *)Malloc(sizeof(filerecfilerec));
-	libf1[k]->f = NULL;
-	newci_fixfname(gatesname[k], "gate", "");
-	flag = false;
-	TRY(try36);
-	  if (libf1[k]->f != NULL)
+      gatesname[k] = (Char *)Malloc(256);
+      strcpy(gatesname[k], gatefilenames->s);
+      gatefilenames = gatefilenames->next;
+      libf1[k] = (filerecfilerec *)Malloc(sizeof(filerecfilerec));
+      libf1[k]->f = NULL;
+      newci_fixfname(gatesname[k], "gate", "");
+      flag = false;
+      TRY(try36);
+      if (libf1[k]->f != NULL)
 #ifndef OS2
-  	    libf1[k]->f = freopen(gatesname[k], "r", libf1[k]->f);
+        libf1[k]->f = freopen(gatesname[k], "r", libf1[k]->f);
 #else
- 	    libf1[k]->f = freopen(gatesname[k], "rb", libf1[k]->f);
+        libf1[k]->f = freopen(gatesname[k], "rb", libf1[k]->f);
 #endif
-	  else
+      else
 #ifndef OS2
-  	    libf1[k]->f = fopen(gatesname[k], "r");
+        libf1[k]->f = fopen(gatesname[k], "r");
 #else
- 	    libf1[k]->f = fopen(gatesname[k], "rb");
-#endif	    
-	  if (libf1[k]->f == NULL) {
-	    P_escapecode = -10;
-	    P_ioresult = FileNotFound;
-	    goto _Ltry36;
-	  }
-	  RESETBUF(libf1[k]->f, filerec);
-	  flag = true;
-	RECOVER2(try36,_Ltry36);
-	  if (P_escapecode == -20)
-	    goto _Ltry35;
-	  TRY(try37);
-	    if (libf1[k]->f != NULL) {
-	      sprintf(STR2, "%s/%s", GetChipmunkPath("LOGLIB", LOGLIB),
-		      gatesname[k]);
-#ifndef OS2
-  	      libf1[k]->f = freopen(STR2, "r", libf1[k]->f);
-#else
- 	      libf1[k]->f = freopen(STR2, "rb", libf1[k]->f);
+        libf1[k]->f = fopen(gatesname[k], "rb");
 #endif
-	    } else {
-	      sprintf(STR2, "%s/%s", GetChipmunkPath("LOGLIB", LOGLIB),
-		      gatesname[k]);
+      if (libf1[k]->f == NULL) {
+        P_escapecode = -10;
+        P_ioresult = FileNotFound;
+        goto _Ltry36;
+      }
+      RESETBUF(libf1[k]->f, filerec);
+      flag = true;
+      RECOVER2(try36, _Ltry36);
+      if (P_escapecode == -20) goto _Ltry35;
+      TRY(try37);
+      if (libf1[k]->f != NULL) {
+        sprintf(STR2, "%s/%s", GetChipmunkPath("LOGLIB", LOGLIB), gatesname[k]);
 #ifndef OS2
-  	      libf1[k]->f = fopen(STR2, "r");
+        libf1[k]->f = freopen(STR2, "r", libf1[k]->f);
 #else
- 	      libf1[k]->f = fopen(STR2, "rb");
+        libf1[k]->f = freopen(STR2, "rb", libf1[k]->f);
 #endif
-	    }
-	    if (libf1[k]->f == NULL) {
-	      P_escapecode = -10;
-	      P_ioresult = FileNotFound;
-	      goto _Ltry37;
-	    }
-	    RESETBUF(libf1[k]->f, filerec);
-	    sprintf(STR2, "%s/%s", GetChipmunkPath("LOGLIB", LOGLIB),
-		    gatesname[k]);
-	    strcpy(gatesname[k], STR2);
-	    flag = true;
-	  RECOVER2(try37,_Ltry37);
-	    if (P_escapecode == -20)
-	      goto _Ltry35;
-	  ENDTRY(try37);
-	ENDTRY(try36);
-	if (flag) {
-	  if (libf1[k]->f != NULL)
-	    rewind(libf1[k]->f);
-	  else
-	    libf1[k]->f = tmpfile();
-	  if (libf1[k]->f == NULL) {
-	    P_escapecode = -10;
-	    P_ioresult = FileNotFound;
-	    goto _Ltry35;
-	  }
-	  SETUPBUF(libf1[k]->f, filerec);
-	  fseek(libf1[k]->f, 0L, 0);
-	  SETUPBUF(libf1[k]->f, filerec);
-	  GET(libf1[k]->f, filerec);
-	  gsize[k] = getshortsw((char *)(&GETFBUF(libf1[k]->f, filerec).b[4]));
-	  idxsize += gsize[k];
-	  libfstart[k] = GETFBUF(libf1[k]->f, filerec).b[6] + 1;
-	  gptr[k] = 0;
-	} else {
-	  Free(libf1[k]);
-	  gatesname[k] = NULL;
-	}
-      RECOVER2(try35,_Ltry35);
-/* p2c: log.text, line 20361: Note: OPEN does not specify a name [181] */
-	if (P_escapecode == -20)
-	  _Escape(P_escapecode);
-	beginfatal(&V);
-	printf("Can't open gates file \"%s\"\n", gatesname[k]);
-	endfatal(&V);
+      } else {
+        sprintf(STR2, "%s/%s", GetChipmunkPath("LOGLIB", LOGLIB), gatesname[k]);
+#ifndef OS2
+        libf1[k]->f = fopen(STR2, "r");
+#else
+        libf1[k]->f = fopen(STR2, "rb");
+#endif
+      }
+      if (libf1[k]->f == NULL) {
+        P_escapecode = -10;
+        P_ioresult = FileNotFound;
+        goto _Ltry37;
+      }
+      RESETBUF(libf1[k]->f, filerec);
+      sprintf(STR2, "%s/%s", GetChipmunkPath("LOGLIB", LOGLIB), gatesname[k]);
+      strcpy(gatesname[k], STR2);
+      flag = true;
+      RECOVER2(try37, _Ltry37);
+      if (P_escapecode == -20) goto _Ltry35;
+      ENDTRY(try37);
+      ENDTRY(try36);
+      if (flag) {
+        if (libf1[k]->f != NULL)
+          rewind(libf1[k]->f);
+        else
+          libf1[k]->f = tmpfile();
+        if (libf1[k]->f == NULL) {
+          P_escapecode = -10;
+          P_ioresult = FileNotFound;
+          goto _Ltry35;
+        }
+        SETUPBUF(libf1[k]->f, filerec);
+        fseek(libf1[k]->f, 0L, 0);
+        SETUPBUF(libf1[k]->f, filerec);
+        GET(libf1[k]->f, filerec);
+        gsize[k] = getshortsw((char *)(&GETFBUF(libf1[k]->f, filerec).b[4]));
+        idxsize += gsize[k];
+        libfstart[k] = GETFBUF(libf1[k]->f, filerec).b[6] + 1;
+        gptr[k] = 0;
+      } else {
+        Free(libf1[k]);
+        gatesname[k] = NULL;
+      }
+      RECOVER2(try35, _Ltry35);
+      /* p2c: log.text, line 20361: Note: OPEN does not specify a name
+       * [181] */
+      if (P_escapecode == -20) _Escape(P_escapecode);
+      beginfatal(&V);
+      printf("Can't open gates file \"%s\"\n", gatesname[k]);
+      endfatal(&V);
       ENDTRY(try35);
     }
   }
@@ -21713,48 +19568,46 @@ Static Void initialize()
     endfatal(&V);
   }
   index_ = (Char(*)[9])Malloc(idxsize * 10L);
-/* p2c: log.text, line 20391: Note: Can't interpret size in NA_NEW [174] */
+  /* p2c: log.text, line 20391: Note: Can't interpret size in NA_NEW [174] */
   indexfile = (uchar *)Malloc(idxsize);
   indexoffset = (short *)Malloc(idxsize * sizeof(short));
-/* p2c: log.text, line 20393: Note: Can't interpret size in NA_NEW [174] */
+  /* p2c: log.text, line 20393: Note: Can't interpret size in NA_NEW [174] */
   indexgroup = (uchar *)Malloc(idxsize);
-/* p2c: log.text, line 20394: Note: Can't interpret size in NA_NEW [174] */
+  /* p2c: log.text, line 20394: Note: Can't interpret size in NA_NEW [174] */
   loadedgates = (uchar *)Malloc((idxsize + 9L) / 8);
   FORLIM = idxsize;
-  for (i = 0; i < FORLIM; i++)
-    P_clrbits_B(loadedgates, i, 0, 3);
+  for (i = 0; i < FORLIM; i++) P_clrbits_B(loadedgates, i, 0, 3);
   curgate = 1;
   do {
     k = 0;
     strcpy(s, "\177");
     for (i = 0; i < maxgatesfiles; i++) {
       if (gatesname[i] != NULL && *gname[i] == '\0' && gptr[i] < gsize[i]) {
-	TRY(try38);
-	  gptr[i]++;
-	  if ((gptr[i] & 31) == 0)
-	    GET(libf1[i]->f, filerec);
-	  strcpy(gname[i], "        ");
-	  strmove(8, GETFBUF(libf1[i]->f, filerec).ix[gptr[i] & 31], 1,
-		  gname[i], 1);
-	  ggroup[i] = 0;
-	  for (V.j = 1; V.j <= 8; V.j++) {
-	    if ((gname[i][V.j - 1] & (~127)) != 0) {
-/* p2c: log.text, line 20412: Note: Character >= 128 encountered [281] */
-	      ggroup[i] = V.j;
-	      gname[i][V.j - 1] = (Char)((uchar)gname[i][V.j - 1] - 128);
-	    }
-	  }
-	RECOVER(try38);
-	  if (P_escapecode == -20)
-	    _Escape(P_escapecode);
-	  beginfatal(&V);
-	  printf("Can't read gates file \"%s\"\n", gatesname[i]);
-	  endfatal(&V);
-	ENDTRY(try38);
+        TRY(try38);
+        gptr[i]++;
+        if ((gptr[i] & 31) == 0) GET(libf1[i]->f, filerec);
+        strcpy(gname[i], "        ");
+        strmove(8, GETFBUF(libf1[i]->f, filerec).ix[gptr[i] & 31], 1, gname[i],
+                1);
+        ggroup[i] = 0;
+        for (V.j = 1; V.j <= 8; V.j++) {
+          if ((gname[i][V.j - 1] & (~127)) != 0) {
+            /* p2c: log.text, line 20412: Note: Character >= 128
+             * encountered [281] */
+            ggroup[i] = V.j;
+            gname[i][V.j - 1] = (Char)((uchar)gname[i][V.j - 1] - 128);
+          }
+        }
+        RECOVER(try38);
+        if (P_escapecode == -20) _Escape(P_escapecode);
+        beginfatal(&V);
+        printf("Can't read gates file \"%s\"\n", gatesname[i]);
+        endfatal(&V);
+        ENDTRY(try38);
       }
       if (strcmp(gname[i], s) < 0 && *gname[i] != '\0') {
-	strcpy(s, gname[i]);
-	k = i + 1;
+        strcpy(s, gname[i]);
+        k = i + 1;
       }
     }
     indexfile[curgate - 1] = k;
@@ -21763,9 +19616,8 @@ Static Void initialize()
     strcpy(index_[curgate - 1], strrtrim(strcpy(STR3, s)));
     for (i = 1; i <= maxgatesfiles; i++) {
       if (!strcmp(gname[i - 1], s)) {
-	*gname[i - 1] = '\0';
-	if (i != k)
-	  idxsize--;
+        *gname[i - 1] = '\0';
+        if (i != k) idxsize--;
       }
     }
     curgate++;
@@ -21779,8 +19631,7 @@ Static Void initialize()
   }
   catboxes = NULL;
   FORLIM = maxkinds;
-  for (i = 0; i < FORLIM; i++)
-    kind[i] = NULL;
+  for (i = 0; i < FORLIM; i++) kind[i] = NULL;
   m_graphics_on();
   clearalpha();
   gg.curpage = 1;
@@ -21795,26 +19646,25 @@ Static Void initialize()
   nk_settransarray(nk_ktsupplied, &curkeytrans);
   WITH = curkeytrans;
   for (i = 25; i <= 125; i++) {
-    if (WITH->matrix[i - nk_keylow][-nk_keymodlow].c == 154)   /*del chr*/
+    if (WITH->matrix[i - nk_keylow][-nk_keymodlow].c == 154) /*del chr*/
       WITH->matrix[i - nk_keylow][-nk_keymodlow].c = 24;
     else if (islower(WITH->matrix[i - nk_keylow][-nk_keymodlow].c)) {
       WITH->matrix[i - nk_keylow][2 - nk_keymodlow].c =
-	WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 71;
+          WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 71;
       WITH->matrix[i - nk_keylow][3 - nk_keymodlow].c =
-	WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 117;
+          WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 117;
       WITH->matrix[i - nk_keylow][2 - nk_keymodlow].k = nk_kknormal;
       WITH->matrix[i - nk_keylow][3 - nk_keymodlow].k = nk_kknormal;
     } else if (isdigit(WITH->matrix[i - nk_keylow][-nk_keymodlow].c)) {
       WITH->matrix[i - nk_keylow][2 - nk_keymodlow].c =
-	WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 192;
+          WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 192;
       WITH->matrix[i - nk_keylow][3 - nk_keymodlow].c =
-	WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 192;
+          WITH->matrix[i - nk_keylow][-nk_keymodlow].c + 192;
       WITH->matrix[i - nk_keylow][2 - nk_keymodlow].k = nk_kknormal;
       WITH->matrix[i - nk_keylow][3 - nk_keymodlow].k = nk_kknormal;
     }
-    if (WITH->matrix[i - nk_keylow][1 - nk_keymodlow].c == 157)
-	  /*shift-left*/
-	    WITH->matrix[i - nk_keylow][1 - nk_keymodlow].c = 25;
+    if (WITH->matrix[i - nk_keylow][1 - nk_keymodlow].c == 157) /*shift-left*/
+      WITH->matrix[i - nk_keylow][1 - nk_keymodlow].c = 25;
     else if (WITH->matrix[i - nk_keylow][1 - nk_keymodlow].c == 158)
       WITH->matrix[i - nk_keylow][1 - nk_keymodlow].c = 26;
   }
@@ -21898,11 +19748,9 @@ Static Void initialize()
   reportnowait = false;
   gg.startpoint = false;
   simtype_ignore = findtool("0");
-  if (!simtype_ignore->ready)
-    report(10, rtn);
+  if (!simtype_ignore->ready) report(10, rtn);
   simtype_common = findtool("1");
-  if (!simtype_common->ready)
-    report(11, rtn);
+  if (!simtype_common->ready) report(11, rtn);
   i = 1;
   l1 = V.loadgates;
   while (l1 != NULL && i != 0) {
@@ -21933,44 +19781,35 @@ Static Void initialize()
 
 #undef rtn
 
-
-
-Static Void shownews()
-{
+Static Void shownews() {
   FILE *f;
   Char s[256];
   Char *TEMP;
 
   f = NULL;
   TRY(try39);
-    if (f != NULL)
-      f = freopen(lognewsname, "r", f);
-    else
-      f = fopen(lognewsname, "r");
-    if (f == NULL) {
-      P_escapecode = -10;
-      P_ioresult = FileNotFound;
-      goto _Ltry39;
-    }
-    clearalpha();
-    while (fgets(s, 256, f) != NULL) {
-      TEMP = (char *)strchr(s, '\n');
-      if (TEMP != NULL)
-	*TEMP = 0;
-      puts(s);
-    }
-    m_alpha_on();
-    noblink();
-  RECOVER2(try39,_Ltry39);
-    if (P_escapecode == -20)
-      _Escape(P_escapecode);
-  ENDTRY(try39);
   if (f != NULL)
-    fclose(f);
+    f = freopen(lognewsname, "r", f);
+  else
+    f = fopen(lognewsname, "r");
+  if (f == NULL) {
+    P_escapecode = -10;
+    P_ioresult = FileNotFound;
+    goto _Ltry39;
+  }
+  clearalpha();
+  while (fgets(s, 256, f) != NULL) {
+    TEMP = (char *)strchr(s, '\n');
+    if (TEMP != NULL) *TEMP = 0;
+    puts(s);
+  }
+  m_alpha_on();
+  noblink();
+  RECOVER2(try39, _Ltry39);
+  if (P_escapecode == -20) _Escape(P_escapecode);
+  ENDTRY(try39);
+  if (f != NULL) fclose(f);
 }
-
-
-
 
 /*================  MAIN PROGRAM  ================*/
 /*=                                              =*/
@@ -21982,16 +19821,14 @@ Static Void shownews()
 /*=                                              =*/
 /*================================================*/
 
-
-int main(int argc, Char * argv[])
-{
+int main(int argc, Char *argv[]) {
   long FORLIM;
   Char STR1[81];
-  nc_text_in_window = 1;  
+  nc_text_in_window = 1;
   PASCAL_MAIN(argc, argv);
   tracefile = NULL;
   dumpfile = NULL;
-  newci_markprogram(&programmark);   /*NEWCI*/
+  newci_markprogram(&programmark); /*NEWCI*/
   gg.initdone = false;
   entrycapslock = nk_capslock;
   nk_settransarray(nk_ktcurrent, &curkeytrans);
@@ -21999,422 +19836,416 @@ int main(int argc, Char * argv[])
   gg.dumpopen = false;
   gg.runstamp = timers_sysclock();
   excpline = -1;
-  for (temp1 = 1; temp1 <= maxgatesfiles; temp1++)
-    libf1[temp1 - 1] = NULL;
+  for (temp1 = 1; temp1 <= maxgatesfiles; temp1++) libf1[temp1 - 1] = NULL;
   TRY(try40);
-    initialize();
+  initialize();
 #ifdef __EMSCRIPTEN__
   initload();
 #endif
 #define HCL_KLUDGE
 #ifdef HCL_KLUDGE
-    printf("\210\f Starting\201\210 LOG\f\200");
-#endif  /* HCL_KLUDGE */
+  printf("\210\f Starting\201\210 LOG\f\200");
+#endif /* HCL_KLUDGE */
+  do {
+    gg.initdone = true;
+    gg.fastspeed = gg.fastmin;
+    TRY(try41);
     do {
-      gg.initdone = true;
-      gg.fastspeed = gg.fastmin;
-      TRY(try41);
-	do {
-	  excpline = -1;
-	  tempverbose = false;
-	  suppressdots = false;
-	  if (justonecommand && thingstodo == NULL) {
-	    P_escapecode = 20;
-	    goto _Ltry41;
-	  }
-	  if (gg.showpage <= 0)
-	    refrscreen();
-	  m_graphics_on();
-	  nc_cursor_off();
-	  while (messages != NULL) {
-	    switch ((long)messages->value) {
+      excpline = -1;
+      tempverbose = false;
+      suppressdots = false;
+      if (justonecommand && thingstodo == NULL) {
+        P_escapecode = 20;
+        goto _Ltry41;
+      }
+      if (gg.showpage <= 0) refrscreen();
+      m_graphics_on();
+      nc_cursor_off();
+      while (messages != NULL) {
+        switch ((long)messages->value) {
+          case 0:
+            message(messages->s);
+            break;
 
-	    case 0:
-	      message(messages->s);
-	      break;
+          case 1:
+            vmessage(messages->s);
+            break;
+        }
+        strlist_delete(&messages, messages);
+      }
+      if (gg.startpoint)
+        crosshair(gg.posx, gg.posy);
+      else
+        nocrosshair();
+      gg.stillnear = true;
+      rabtime = timers_sysclock();
+      if (displaynews) shownews();
 
-	    case 1:
-	      vmessage(messages->s);
-	      break;
-	    }
-	    strlist_delete(&messages, messages);
-	  }
-	  if (gg.startpoint)
-	    crosshair(gg.posx, gg.posy);
-	  else
-	    nocrosshair();
-	  gg.stillnear = true;
-	  rabtime = timers_sysclock();
-	  if (displaynews)
-	    shownews();
-    
-	  if (*gg.func == '\0') {
-	    do {
-	      if (refrtimer == 0 && !gg.startpoint) {
-		refresh();
-		gg.refrflag = true;
-	      }
-	      if (refrtimer > 0) {
-		if (gg.t.moving)
-		  refrtimer = refrtimer0;
-		else
-		  refrtimer--;
-	      }
-	      pass();
-	      trykbdscroll();
-	      pen();
-	      if (!gg.stillnear) {
-		gg.startpoint = false;
-		gg.stillnear = true;
-		nocrosshair();
-	      }
-	      if (gg.t.near_) {
-		if (rabflag)
-		  norabbits();
-		rabtime = timers_sysclock();
-	      }
-	      if (timers_sysclock() - rabtime > rabdelay && !avoidrabbits)
-		addrabbit();
-	    } while (!(gg.t.dn || *gg.func != '\0'));
-	  }
-	  if (displaynews) {
-	    clearalpha();
-	    displaynews = false;
-	  }
-	  if (rabflag)
-	    norabbits();
-	  nocrosshair();
-	  clipoff();
-	  if (*gg.func != '\0') {
-	    commandfound = false;
-	    dofunction();
-	    if (!commandfound) {
-	      beginerror();
-	      printf("Can't understand function %s\n", gg.func);
-	      enderror();
-	      clearfunc();
-	    }
-	  } else if (gg.incircuit) {
-	    pass();
-	    clipoff();
-	    gg.oldx = gg.posx;
-	    gg.oldy = gg.posy;
-	    ospointflag = gg.startpoint;
-	    gg.posx = gg.gridx;
-	    gg.posy = gg.gridy;
-	    gg.startpoint = true;
-	    if (!ospointflag && !justtap() && !gg.invisible && !gg.showconflicts) {
-	      if (gg.probemode)
-		yardstick();
-	      else {
-		moveobject();
-		gg.movinghw = NULL;
-		gg.movingvw = NULL;
-	      }
-	    } else {
-	      closergate(gg.posx, gg.posy);
-	      if (gg.nearlabel != NULL && !gg.invisible && !gg.textinvisible) {
-		editlabel(gg.nearlabel);
-		gg.startpoint = false;
-	      } else if (!ospointflag && gg.neargate != NULL) {
-		if (gg.probemode) {
-		  configgate(gg.neargate);
-		  gg.startpoint = false;
-		} else {
-		  touchgate(gg.neargate);
-		  gg.startpoint = false;
-		}
-	      } else if (!ospointflag) {
-		closerwire(gg.posx, gg.posy);
-		if (gg.probemode) {
-		  if (gg.nearhw != NULL)
-		    confignode(gg.nearhw->node, "(Node)");
-		  else if (gg.nearvw != NULL)
-		    confignode(gg.nearvw->node, "(Node)");
-		  gg.startpoint = false;
-		} else if (gg.nearhw != NULL && gg.nearvw != NULL &&
-			   gg.nearhw->x1 != gg.posx &&
-			   gg.nearhw->x2 != gg.posx &&
-			   gg.nearvw->y1 != gg.posy &&
-			   gg.nearvw->y2 != gg.posy) {
-		  if (findsolder(gg.posx, gg.posy) != NULL) {
-		    unsoldernear();
-		    pen();   /* Restore cursor */
-		    gg.startpoint = false;
-		  } else if (!vlsi || gg.nearhw->wcolr == log_wcol_blue ||
-			     gg.nearvw->wcolr == log_wcol_blue) {
-		    soldernear();
-		    gg.startpoint = false;
-		  }
-		}
-	      } else {
-		if (hvline(gg.oldx, gg.oldy, &gg.posx, &gg.posy)) {
-		  if (gg.posx != gg.oldx)
-		    addhwire(gg.posx, gg.oldx, gg.posy, curwcolor);
-		  if (gg.posy != gg.oldy)
-		    addvwire(gg.posx, gg.oldy, gg.posy, curwcolor);
-		}
-	      }
-	      if (gg.invisible || gg.probemode || gg.showconflicts)
-		gg.startpoint = false;
-	    }
-	  } else if (inbox((int)(menux1 - 4), line1 - 5, 34, 20))
-	    popupmenu(1);
-	  else if (inbox((int)(menux1 - 4), line2 - 5, 34, 20))
-	    assertfunc("HELP");
-	  else if (inbox((int)(menux2 - 4), line1 - 5, 34, 20))
-	    popupmenu(2);
-	  else if (inbox((int)(menux2 - 4), line2 - 5, 34, 20))
-	    assertfunc("CAT");
-	  else if (inbox((int)(across + menux3 - 4), line1 - 5, 34, 20))
-	    popupmenu(3);
-	  else if (inbox((int)(across + menux4 - 4), line1 - 5, 34, 20))
-	    popupmenu(4);
-	  else if (inbox((int)(across + menux4 - 4), line2 - 5, 34, 20))
-	    assertfunc("TAPMODE");
-	  else {
-	    if (kindgroupleft <= gg.t.x && gg.t.x < kindgroupright &&
-		gg.t.y < down) {
-	      temp1 = (gg.t.x - kindgroupleft) / kindgroupspacing + 1;
-	      if (gg.probemode)
-		configkind((int)temp1);
-	      else if (justtap())
-		flipkind();
-	      else if (!gg.invisible && !gg.probemode && !gg.showconflicts) {
-		if (addgate(kindgroup[temp1 - 1], kindsig[temp1 - 1],
-			    kindattr[temp1 - 1]))
-		  nextkindsig((int)temp1);
-	      }
-	    }
-	    gg.startpoint = false;
-	  }
-/*        sleep(2);zfprintf(stdout, "z"); fflush(stdout);  **MDG** test */
-	} while (!pigsfly);
-      RECOVER2(try41,_Ltry41);
-	gg.curpage = realcurpage;
-	*gg.func = '\0';
-	if (excpline == -1)
-	  excpline = EXCP_LINE;
-	if (P_escapecode == 20) {
-	  working();
-	  P_escapecode = -20;
-	  goto _Ltry40;
-	}
-	if (P_escapecode != -20)
-	  goto _Ltry40;
-	clearshowalpha();
-	printf(
-	  "\n\n%c%cPress CLR I/O again to exit, any other key to continue.%c\n\n",
-	  chryellow, chrplain, chrgreen);
-	nk_keybufclear();
-	waitforkey();
-	m_graphics_on();
-	clearalpha();
-      ENDTRY(try41);
-      refrscreen();
+      if (*gg.func == '\0') {
+        do {
+          if (refrtimer == 0 && !gg.startpoint) {
+            refresh();
+            gg.refrflag = true;
+          }
+          if (refrtimer > 0) {
+            if (gg.t.moving)
+              refrtimer = refrtimer0;
+            else
+              refrtimer--;
+          }
+          pass();
+          trykbdscroll();
+          pen();
+          if (!gg.stillnear) {
+            gg.startpoint = false;
+            gg.stillnear = true;
+            nocrosshair();
+          }
+          if (gg.t.near_) {
+            if (rabflag) norabbits();
+            rabtime = timers_sysclock();
+          }
+          if (timers_sysclock() - rabtime > rabdelay && !avoidrabbits)
+            addrabbit();
+        } while (!(gg.t.dn || *gg.func != '\0'));
+      }
+      if (displaynews) {
+        clearalpha();
+        displaynews = false;
+      }
+      if (rabflag) norabbits();
+      nocrosshair();
+      clipoff();
+      if (*gg.func != '\0') {
+        commandfound = false;
+        dofunction();
+        if (!commandfound) {
+          beginerror();
+          printf("Can't understand function %s\n", gg.func);
+          enderror();
+          clearfunc();
+        }
+      } else if (gg.incircuit) {
+        pass();
+        clipoff();
+        gg.oldx = gg.posx;
+        gg.oldy = gg.posy;
+        ospointflag = gg.startpoint;
+        gg.posx = gg.gridx;
+        gg.posy = gg.gridy;
+        gg.startpoint = true;
+        if (!ospointflag && !justtap() && !gg.invisible && !gg.showconflicts) {
+          if (gg.probemode)
+            yardstick();
+          else {
+            moveobject();
+            gg.movinghw = NULL;
+            gg.movingvw = NULL;
+          }
+        } else {
+          closergate(gg.posx, gg.posy);
+          if (gg.nearlabel != NULL && !gg.invisible && !gg.textinvisible) {
+            editlabel(gg.nearlabel);
+            gg.startpoint = false;
+          } else if (!ospointflag && gg.neargate != NULL) {
+            if (gg.probemode) {
+              configgate(gg.neargate);
+              gg.startpoint = false;
+            } else {
+              touchgate(gg.neargate);
+              gg.startpoint = false;
+            }
+          } else if (!ospointflag) {
+            closerwire(gg.posx, gg.posy);
+            if (gg.probemode) {
+              if (gg.nearhw != NULL)
+                confignode(gg.nearhw->node, "(Node)");
+              else if (gg.nearvw != NULL)
+                confignode(gg.nearvw->node, "(Node)");
+              gg.startpoint = false;
+            } else if (gg.nearhw != NULL && gg.nearvw != NULL &&
+                       gg.nearhw->x1 != gg.posx && gg.nearhw->x2 != gg.posx &&
+                       gg.nearvw->y1 != gg.posy && gg.nearvw->y2 != gg.posy) {
+              if (findsolder(gg.posx, gg.posy) != NULL) {
+                unsoldernear();
+                pen(); /* Restore cursor */
+                gg.startpoint = false;
+              } else if (!vlsi || gg.nearhw->wcolr == log_wcol_blue ||
+                         gg.nearvw->wcolr == log_wcol_blue) {
+                soldernear();
+                gg.startpoint = false;
+              }
+            }
+          } else {
+            if (hvline(gg.oldx, gg.oldy, &gg.posx, &gg.posy)) {
+              if (gg.posx != gg.oldx)
+                addhwire(gg.posx, gg.oldx, gg.posy, curwcolor);
+              if (gg.posy != gg.oldy)
+                addvwire(gg.posx, gg.oldy, gg.posy, curwcolor);
+            }
+          }
+          if (gg.invisible || gg.probemode || gg.showconflicts)
+            gg.startpoint = false;
+        }
+      } else if (inbox((int)(menux1 - 4), line1 - 5, 34, 20))
+        popupmenu(1);
+      else if (inbox((int)(menux1 - 4), line2 - 5, 34, 20))
+        assertfunc("HELP");
+      else if (inbox((int)(menux2 - 4), line1 - 5, 34, 20))
+        popupmenu(2);
+      else if (inbox((int)(menux2 - 4), line2 - 5, 34, 20))
+        assertfunc("CAT");
+      else if (inbox((int)(across + menux3 - 4), line1 - 5, 34, 20))
+        popupmenu(3);
+      else if (inbox((int)(across + menux4 - 4), line1 - 5, 34, 20))
+        popupmenu(4);
+      else if (inbox((int)(across + menux4 - 4), line2 - 5, 34, 20))
+        assertfunc("TAPMODE");
+      else {
+        if (kindgroupleft <= gg.t.x && gg.t.x < kindgroupright &&
+            gg.t.y < down) {
+          temp1 = (gg.t.x - kindgroupleft) / kindgroupspacing + 1;
+          if (gg.probemode)
+            configkind((int)temp1);
+          else if (justtap())
+            flipkind();
+          else if (!gg.invisible && !gg.probemode && !gg.showconflicts) {
+            if (addgate(kindgroup[temp1 - 1], kindsig[temp1 - 1],
+                        kindattr[temp1 - 1]))
+              nextkindsig((int)temp1);
+          }
+        }
+        gg.startpoint = false;
+      }
+      /*        sleep(2);zfprintf(stdout, "z"); fflush(stdout);  **MDG**
+       * test */
     } while (!pigsfly);
-  RECOVER2(try40,_Ltry40);
-    TRY(try42);
-      temp1 = P_ioresult;
-      temp2 = P_escapecode;
-      if (excpline == -1)
-	excpline = EXCP_LINE;
-      for (temp4 = 1; temp4 <= maxgatesfiles; temp4++) {
-	if (libf1[temp4 - 1] != NULL) {
-	  if (libf1[temp4 - 1]->f != NULL)
-	    fclose(libf1[temp4 - 1]->f);
-	  libf1[temp4 - 1]->f = NULL;
-	}
+    RECOVER2(try41, _Ltry41);
+    gg.curpage = realcurpage;
+    *gg.func = '\0';
+    if (excpline == -1) excpline = EXCP_LINE;
+    if (P_escapecode == 20) {
+      working();
+      P_escapecode = -20;
+      goto _Ltry40;
+    }
+    if (P_escapecode != -20) goto _Ltry40;
+    clearshowalpha();
+    printf(
+        "\n\n%c%cPress CLR I/O again to exit, any other key to "
+        "continue.%c\n\n",
+        chryellow, chrplain, chrgreen);
+    nk_keybufclear();
+    waitforkey();
+    m_graphics_on();
+    clearalpha();
+    ENDTRY(try41);
+    refrscreen();
+  } while (!pigsfly);
+  RECOVER2(try40, _Ltry40);
+  TRY(try42);
+  temp1 = P_ioresult;
+  temp2 = P_escapecode;
+  if (excpline == -1) excpline = EXCP_LINE;
+  for (temp4 = 1; temp4 <= maxgatesfiles; temp4++) {
+    if (libf1[temp4 - 1] != NULL) {
+      if (libf1[temp4 - 1]->f != NULL) fclose(libf1[temp4 - 1]->f);
+      libf1[temp4 - 1]->f = NULL;
+    }
+  }
+  nk_setcapslock(entrycapslock);
+  if (temp2 == 0)
+    showalpha();
+  else if (temp2 == -20 && timers_sysclock() < watchdog + watchdogtime) {
+    clearshowalpha();
+    printf("%c%c\n\n", chrgreen, chrplain);
+  } else {
+    clearshowalpha();
+    printf("\n\n%c%cUnexpected runtime error%c%c\n\n", chryellow, chrunderl,
+           chrplain, chrgreen);
+    printf("    Escapecode =  %ld\n", temp2);
+    if (temp2 == -10)
+      printf("    Ioresult   =  %ld = %s\n", temp1,
+             ioresult_message(STR1, temp1));
+    if (excpline != -1) printf("    Line num   =  %ld\n", excpline);
+    printf("\n Probable cause:  ");
+    switch (-temp2) {
+      case 2:
+        printf("Not enough memory\n");
+        break;
+
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+      case 15:
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+        printf("Arithmetic overflow\n");
+        break;
+
+      case 20:
+        printf("Unexpected user termination\n");
+        break;
+
+      case 10:
+        printf("I/O problem\n");
+        break;
+
+      case 26:
+        printf("Low-level I/O\n");
+        break;
+
+      default:
+        putchar('\n');
+        misc_printerror(temp2, temp1);
+        break;
+    }
+    putchar('\n');
+    warning();
+    nk_keybufclear();
+    if (gg.initdone) {
+      printf("Want debugging printout? ");
+      do {
+        tempch = nk_getkey();
+      } while (tempch != 'n' && tempch != 'N' && tempch != 'y' &&
+               tempch != 'Y');
+      printf("%c\n", tempch);
+      if (tempch == 'y' || tempch == 'Y') {
+        TRY(try43);
+        gg.traceflag = true;
+        tracemessage("");
+        fprintf(tracefile, "ESCAPECODE %ld\n", temp2);
+        fprintf(tracefile, "IORESULT   %ld\n", temp1);
+        fprintf(tracefile, "LINE       %ld\n\n", excpline);
+        fprintf(tracefile, "Current page: %ld\n", gg.curpage);
+        dumpnodes();
+        RECOVER(try43);
+        printf("Debugging printout failed.\n");
+        ENDTRY(try43);
       }
-      nk_setcapslock(entrycapslock);
-      if (temp2 == 0)
-	showalpha();
-      else if (temp2 == -20 && timers_sysclock() < watchdog + watchdogtime) {
-	clearshowalpha();
-	printf("%c%c\n\n", chrgreen, chrplain);
-      } else {
-	clearshowalpha();
-	printf("\n\n%c%cUnexpected runtime error%c%c\n\n",
-	       chryellow, chrunderl, chrplain, chrgreen);
-	printf("    Escapecode =  %ld\n", temp2);
-	if (temp2 == -10)
-	  printf("    Ioresult   =  %ld = %s\n",
-		 temp1, ioresult_message(STR1, temp1));
-	if (excpline != -1)
-	  printf("    Line num   =  %ld\n", excpline);
-	printf("\n Probable cause:  ");
-	switch (-temp2) {
-
-	case 2:
-	  printf("Not enough memory\n");
-	  break;
-
-	case 4:
-	case 5:
-	case 6:
-	case 7:
-	case 15:
-	case 16:
-	case 17:
-	case 18:
-	case 19:
-	  printf("Arithmetic overflow\n");
-	  break;
-
-	case 20:
-	  printf("Unexpected user termination\n");
-	  break;
-
-	case 10:
-	  printf("I/O problem\n");
-	  break;
-
-	case 26:
-	  printf("Low-level I/O\n");
-	  break;
-
-	default:
-	  putchar('\n');
-	  misc_printerror(temp2, temp1);
-	  break;
-	}
-	putchar('\n');
-	warning();
-	nk_keybufclear();
-	if (gg.initdone) {
-	  printf("Want debugging printout? ");
-	  do {
-	    tempch = nk_getkey();
-	  } while (tempch != 'n' && tempch != 'N' && tempch != 'y' &&
-		   tempch != 'Y');
-	  printf("%c\n", tempch);
-	  if (tempch == 'y' || tempch == 'Y') {
-	    TRY(try43);
-	      gg.traceflag = true;
-	      tracemessage("");
-	      fprintf(tracefile, "ESCAPECODE %ld\n", temp2);
-	      fprintf(tracefile, "IORESULT   %ld\n", temp1);
-	      fprintf(tracefile, "LINE       %ld\n\n", excpline);
-	      fprintf(tracefile, "Current page: %ld\n", gg.curpage);
-	      dumpnodes();
-	    RECOVER(try43);
-	      printf("Debugging printout failed.\n");
-	    ENDTRY(try43);
-	  }
-	  putchar('\n');
-	}
-	FORLIM = gg.numpages;
-	for (temp1 = 1; temp1 <= FORLIM; temp1++) {
-	  printf("Try to save page %ld? ", temp1);
-	  do {
-	    tempch = nk_getkey();
-	  } while (tempch != 'n' && tempch != 'N' && tempch != 'y' &&
-		   tempch != 'Y');
-	  printf("%c\n", tempch);
-	  if (tempch == 'y' || tempch == 'Y')
-	    emergencysave((int)temp1);
-	}
-      }
-    RECOVER(try42);
-      printf("Error %d in outer TRY-RECOVER\n", P_escapecode);
-    ENDTRY(try42);
+      putchar('\n');
+    }
+    FORLIM = gg.numpages;
+    for (temp1 = 1; temp1 <= FORLIM; temp1++) {
+      printf("Try to save page %ld? ", temp1);
+      do {
+        tempch = nk_getkey();
+      } while (tempch != 'n' && tempch != 'N' && tempch != 'y' &&
+               tempch != 'Y');
+      printf("%c\n", tempch);
+      if (tempch == 'y' || tempch == 'Y') emergencysave((int)temp1);
+    }
+  }
+  RECOVER(try42);
+  printf("Error %d in outer TRY-RECOVER\n", P_escapecode);
+  ENDTRY(try42);
   ENDTRY(try40);
   TRY(try44);
-    closetools();
+  closetools();
   RECOVER(try44);
-    ;
+  ;
   ENDTRY(try44);
   closedumpfiles();
-  newci_releaseprogram(&programmark);   /*NEWCI*/
+  newci_releaseprogram(&programmark); /*NEWCI*/
   nk_setcapslock(entrycapslock);
   nk_settransarray(nk_ktstandard, &curkeytrans);
   showalpha();
-  if (dumpfile != NULL)
-    fclose(dumpfile);
-  if (tracefile != NULL)
-    fclose(tracefile);
+  if (dumpfile != NULL) fclose(dumpfile);
+  if (tracefile != NULL) fclose(tracefile);
   exit(0);
 }
 
-void WinMain(void * hinstance, void *hp, char *args, int cmd) {
-  int argc=2;
-  
-  Char * argv[]={"log.exe",args};
-  if(strcmp(args,"")==0) argc=1;
-  main(argc, argv); 
+void WinMain(void *hinstance, void *hp, char *args, int cmd) {
+  int argc = 2;
+
+  Char *argv[] = {"log.exe", args};
+  if (strcmp(args, "") == 0) argc = 1;
+  main(argc, argv);
 }
-
-
-
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
-EMSCRIPTEN_KEEPALIVE int upload_file_return(char const *filename, char *buffer, size_t buffer_size) {
-  /// Load a file - this function is called from javascript when the file upload is activated
-  //printf("Load File %x %x\n",buffer,buffer_size);
-  FILE *fout=fopen("tmp.lgf","wb");
-  fwrite(buffer,1,buffer_size,fout);
+EMSCRIPTEN_KEEPALIVE int upload_file_return(char const *filename, char *buffer,
+                                            size_t buffer_size) {
+  /// Load a file - this function is called from javascript when the file
+  /// upload is activated
+  // printf("Load File %x %x\n",buffer,buffer_size);
+  FILE *fout = fopen("tmp.lgf", "wb");
+  fwrite(buffer, 1, buffer_size, fout);
   fclose(fout);
   char err[256];
-  loadpage("tmp.lgf",err);
+  loadpage("tmp.lgf", err);
   strcpy(curfilename[gg.curpage - 1], filename);
-  strcpy(gg.func,"REFRESH");
+  strcpy(gg.func, "REFRESH");
   return 1;
-} 
-
-
+}
 
 EM_JS(void, startjsload, (), {
-    globalThis["open_file"] = function(e) {
-      const file_reader = new FileReader();
-      file_reader.onload = (event) => {
-        const uint8Arr = new Uint8Array(event.target.result);
-        const data_ptr = _malloc(uint8Arr.length);
-        const data_on_heap = new Uint8Array(Module["HEAPU8"].buffer, data_ptr, uint8Arr.length);
-        data_on_heap.set(uint8Arr);
-        Module.ccall('upload_file_return', 'number', [ 'string', 'number', 'number'], [event.target.filename, data_on_heap.byteOffset, uint8Arr.length]);
-        _free(data_ptr);
-      };
-      file_reader.filename = e.target.files[0].name;
-      file_reader.mime_type = e.target.files[0].type;
-      file_reader.readAsArrayBuffer(e.target.files[0]);
+  globalThis["open_file"] = function(e) {
+    const file_reader = new FileReader();
+    file_reader.onload = (event) => {
+      const uint8Arr = new Uint8Array(event.target.result);
+      const data_ptr = _malloc(uint8Arr.length);
+      const data_on_heap =
+          new Uint8Array(Module["HEAPU8"].buffer, data_ptr, uint8Arr.length);
+      data_on_heap.set(uint8Arr);
+      Module.ccall(
+          'upload_file_return', 'number', [ 'string', 'number', 'number' ],
+          [ event.target.filename, data_on_heap.byteOffset, uint8Arr.length ]);
+      _free(data_ptr);
     };
+    file_reader.filename = e.target.files[0].name;
+    file_reader.mime_type = e.target.files[0].type;
+    file_reader.readAsArrayBuffer(e.target.files[0]);
+  };
 
-    var file_selector = document.createElement('input');
-    file_selector.setAttribute('type', 'file'); 
-    file_selector.setAttribute('onchange', 'globalThis["open_file"](event)');
-    file_selector.setAttribute('accept', '.lgf');
-    file_selector.click();
-  });
-
-EM_JS(void, jssave, (char const *filename, char const *mime_type, void const *buffer, size_t buffer_size), {
-  /// Offer a buffer in memory as a file to download, specifying download filename and mime type
-  var a = document.createElement('a');
-  a.download = UTF8ToString(filename);
-  a.href = URL.createObjectURL(new Blob([new Uint8Array(Module["HEAPU8"].buffer, buffer, buffer_size)], {type: UTF8ToString(mime_type)}));
-  a.click();
+  var file_selector = document.createElement('input');
+  file_selector.setAttribute('type', 'file');
+  file_selector.setAttribute('onchange', 'globalThis["open_file"](event)');
+  file_selector.setAttribute('accept', '.lgf');
+  file_selector.click();
 });
 
+EM_JS(void, jssave,
+      (char const *filename, char const *mime_type, void const *buffer,
+       size_t buffer_size),
+      {
+        /// Offer a buffer in memory as a file to download, specifying
+        /// download filename and mime type
+        var a = document.createElement('a');
+        a.download = UTF8ToString(filename);
+        a.href = URL.createObjectURL(new Blob(
+            [new Uint8Array(Module["HEAPU8"].buffer, buffer, buffer_size)], {
+              type:
+                UTF8ToString(mime_type)
+            }));
+        a.click();
+      });
+
 EM_JS(void, loadfromurl, (), {
-  const splits=window.location.href.split("?");
-  if(splits.length==2) {
-    const filename=splits[1];
-    fetch(filename, {
-            credentials: "same-origin"
-        }).then(res=>res.arrayBuffer()).then(response => {
+  const splits = window.location.href.split("?");
+  if (splits.length == 2) {
+    const filename = splits[1];
+    fetch(filename, {credentials : "same-origin"})
+        .then(res => res.arrayBuffer())
+        .then(response => {
           const uint8Arr = new Uint8Array(response);
           const data_ptr = _malloc(uint8Arr.length);
-          const data_on_heap = new Uint8Array(Module["HEAPU8"].buffer, data_ptr, uint8Arr.length);
+          const data_on_heap = new Uint8Array(Module["HEAPU8"].buffer, data_ptr,
+                                              uint8Arr.length);
           data_on_heap.set(uint8Arr);
-          Module.ccall('upload_file_return', 'number', [ 'string', 'number', 'number'], [filename, data_on_heap.byteOffset, uint8Arr.length]);
+          Module.ccall('upload_file_return', 'number',
+                       [ 'string', 'number', 'number' ],
+                       [ filename, data_on_heap.byteOffset, uint8Arr.length ]);
           _free(data_ptr);
         });
   }
 });
 
-void initload() {
-  loadfromurl();
-}
+void initload() { loadfromurl(); }
 
 #endif
 
