@@ -448,9 +448,15 @@ void WindowInitialize()
   //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,31);
   for(int i=0;i<5;i++)
      cursors[i]=SDL_CreateCursor((const unsigned char *)curzero,(const unsigned char *)(curxor[i]),32,32,curpos[i],curpos[i]);
-
+  #ifdef __EMSCRIPTEN__
+  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,0);
+  #else
   m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,SDL_WINDOW_SHOWN|  SDL_WINDOW_RESIZABLE);
+  #endif
   m_renderer=SDL_CreateRenderer(m_window,-1,SDL_RENDERER_ACCELERATED);
+
+//SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, 0, &m_window, &m_renderer);
+
 //   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
 //    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
 //  SDL_RendererInfo info;
@@ -2702,6 +2708,7 @@ void handle_events() {
     if (time - lastpolltime >= 18) {
         lastpolltime = time;
         while (SDL_PollEvent(&event)) {
+       //   fprintf(stderr,"SDL_EVENT %d \n",event.type);
             switch (event.type) {
                 relx = 0;
                 rely = 0;
@@ -2766,18 +2773,19 @@ void handle_events() {
                     addkey(k);
                     break;
                 case SDL_WINDOWEVENT:
-                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) {
                         WindowWidth = event.window.data1;
                         WindowHeight = event.window.data2;
-                        if (m_initialized) {
+                        if (m_initialized && WindowWidth>0 && WindowHeight>0) {
                             SDL_DestroyTexture(buffer);
                             buffer = SDL_CreateTexture(
-                                m_renderer, SDL_PIXELFORMAT_RGB888,
+                                m_renderer, SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_TARGET, WindowWidth,
                                 WindowHeight);
                             SDL_SetRenderTarget(m_renderer, buffer);
                             resize_screen();
                         }
+                      }
                     }
                     break;
                 default:
