@@ -2774,17 +2774,16 @@ void handle_events() {
                     break;
                 case SDL_WINDOWEVENT:
                     if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) {
-                        WindowWidth = event.window.data1;
-                        WindowHeight = event.window.data2;
-                        if (m_initialized && WindowWidth>0 && WindowHeight>0) {
-                            SDL_DestroyTexture(buffer);
-                            buffer = SDL_CreateTexture(
-                                m_renderer, SDL_PIXELFORMAT_ARGB8888,
-                                SDL_TEXTUREACCESS_TARGET, WindowWidth,
-                                WindowHeight);
-                            SDL_SetRenderTarget(m_renderer, buffer);
-                            resize_screen();
-                        }
+                      WindowWidth = event.window.data1;
+                      WindowHeight = event.window.data2;
+                      if (m_initialized && WindowWidth>0 && WindowHeight>0) {
+                          SDL_DestroyTexture(buffer);
+                          buffer = SDL_CreateTexture(
+                              m_renderer, SDL_PIXELFORMAT_ARGB8888,
+                              SDL_TEXTUREACCESS_TARGET, WindowWidth,
+                              WindowHeight);
+                          SDL_SetRenderTarget(m_renderer, buffer);
+                          resize_screen();
                       }
                     }
                     break;
