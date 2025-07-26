@@ -402,6 +402,9 @@ void WindowInitialize() {
     //  SDL_GetRendererInfo(m_renderer,&info);
     //  printf("Renderer %x\n",info.flags);
     // #ifdef __EMSCRIPTEN__
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+	SDL_SetHint(SDL_HINT_RENDER_BATCHING,"1");
+//    SDL_SetHint(SDL_HINT_EVENT_LOGGING,"1");
     buffer =
         SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888,
                           SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight);

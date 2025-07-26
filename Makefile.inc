@@ -20,7 +20,7 @@ endif
 ifdef LINUX
 CHIPMUNKCC = clang -O3
 #CHIPMUNKCC = x86_64-w64-mingw32-gcc  -Os -L../../SDL2-2.28.1/x86_64-w64-mingw32/lib -fomit-frame-pointer -DF_OK=0 -DLACK_GETPWNAM -D__GCC__ -I../../SDL2-2.28.1/x86_64-w64-mingw32/include/
-CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0
+CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0 -Wno-deprecated-non-prototype
 LIBX11 =  -lSDL2 
 AR=llvm-ar
 RANLIB=llvm-ranlib
