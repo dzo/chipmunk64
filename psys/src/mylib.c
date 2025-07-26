@@ -382,34 +382,33 @@ void WindowInitialize() {
     // SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight,
     // SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL, &m_window, &m_renderer);
 
-    // buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
-    //                                       SDL_TEXTUREACCESS_TARGET,
-    //                                       WindowWidth, WindowHeight);
-    //  SDL_SetRenderTarget(m_renderer, buffer);
-    // SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,31);
-    for (int i = 0; i < 5; i++)
-        cursors[i] = SDL_CreateCursor((const unsigned char *)curzero,
-                                      (const unsigned char *)(curxor[i]), 32,
-                                      32, curpos[i], curpos[i]);
+ // buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
+ //                                       SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
+ //  SDL_SetRenderTarget(m_renderer, buffer);                                      
+  //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,31);
+  for(int i=0;i<5;i++)
+     cursors[i]=SDL_CreateCursor((const unsigned char *)curzero,(const unsigned char *)(curxor[i]),32,32,curpos[i],curpos[i]);
+  #ifdef __EMSCRIPTEN__
+  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,0);
+  #else
+  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,SDL_WINDOW_SHOWN|  SDL_WINDOW_RESIZABLE);
+  #endif
+  m_renderer=SDL_CreateRenderer(m_window,-1,SDL_RENDERER_ACCELERATED);
 
-    m_window = SDL_CreateWindow("log", 200, 200, WindowWidth, WindowHeight,
-                                SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
-    //   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
-    //    printf ("glGetString (GL_VERSION) returns %s\n", glGetString
-    //    (GL_VERSION));
-    //  SDL_RendererInfo info;
-    //  SDL_GetRendererInfo(m_renderer,&info);
-    //  printf("Renderer %x\n",info.flags);
-    // #ifdef __EMSCRIPTEN__
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-	SDL_SetHint(SDL_HINT_RENDER_BATCHING,"1");
-//    SDL_SetHint(SDL_HINT_EVENT_LOGGING,"1");
-    buffer =
-        SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888,
-                          SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight);
-    SDL_SetRenderTarget(m_renderer, buffer);
-    // #endif
+//SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, 0, &m_window, &m_renderer);
+
+//   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
+//    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
+//  SDL_RendererInfo info;
+//  SDL_GetRendererInfo(m_renderer,&info);
+//  printf("Renderer %x\n",info.flags);
+  //#ifdef __EMSCRIPTEN__
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+  SDL_SetHint(SDL_HINT_RENDER_BATCHING,"1");
+  buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888,
+                                        SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
+  SDL_SetRenderTarget(m_renderer, buffer);
+  //#endif
 }
 
 #define LINESTIPPLELENGTH 4
@@ -2431,6 +2430,7 @@ void handle_events() {
     if (time - lastpolltime >= 18) {
         lastpolltime = time;
         while (SDL_PollEvent(&event)) {
+       //   fprintf(stderr,"SDL_EVENT %d \n",event.type);
             switch (event.type) {
                 relx = 0;
                 rely = 0;
@@ -2495,18 +2495,18 @@ void handle_events() {
                     addkey(k);
                     break;
                 case SDL_WINDOWEVENT:
-                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                        WindowWidth = event.window.data1;
-                        WindowHeight = event.window.data2;
-                        if (m_initialized) {
-                            SDL_DestroyTexture(buffer);
-                            buffer = SDL_CreateTexture(
-                                m_renderer, SDL_PIXELFORMAT_RGB888,
-                                SDL_TEXTUREACCESS_TARGET, WindowWidth,
-                                WindowHeight);
-                            SDL_SetRenderTarget(m_renderer, buffer);
-                            resize_screen();
-                        }
+                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) {
+                      WindowWidth = event.window.data1;
+                      WindowHeight = event.window.data2;
+                      if (m_initialized && WindowWidth>0 && WindowHeight>0) {
+                          SDL_DestroyTexture(buffer);
+                          buffer = SDL_CreateTexture(
+                              m_renderer, SDL_PIXELFORMAT_ARGB8888,
+                              SDL_TEXTUREACCESS_TARGET, WindowWidth,
+                              WindowHeight);
+                          SDL_SetRenderTarget(m_renderer, buffer);
+                          resize_screen();
+                      }
                     }
                     break;
                 default:
