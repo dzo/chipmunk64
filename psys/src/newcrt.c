@@ -25,7 +25,7 @@ static long bgc=0;
 #endif
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
-#include <SDL2/SDL2_gfxPrimitives.h> 
+#include "SDL2_gfxPrimitives.h" 
 //#include <X11/X.h>
 #ifdef OS2
 //#include <X11/Xlib.h>

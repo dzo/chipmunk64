@@ -1,6 +1,6 @@
 ifdef WIN32
 CHIPMUNKCC = clang -O3
-CHIPMUNKCC = x86_64-w64-mingw32-gcc -Os -L../../SDL2-2.28.1/x86_64-w64-mingw32/lib -fomit-frame-pointer -DLACK_GETPWNAM -D__GCC__ -I../../SDL2-2.28.1/x86_64-w64-mingw32/include/
+CHIPMUNKCC = x86_64-w64-mingw32-gcc -Os -L../../SDL2-2.32.8/x86_64-w64-mingw32/lib -fomit-frame-pointer -DLACK_GETPWNAM -D__GCC__ -I../../SDL2-2.32.8/x86_64-w64-mingw32/include/
 CHIPMUNKFLAGS =  -DOS2
 AR=llvm-ar
 RANLIB=llvm-ranlib

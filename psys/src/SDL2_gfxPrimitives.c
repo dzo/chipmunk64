@@ -3448,9 +3448,9 @@ int characterRGBA(SDL_Renderer *renderer, Sint16 x, Sint16 y, char c, Uint8 r, U
 		/* Maybe rotate and replace cached image */
 		if (charRotation>0)
 		{
-			rotatedCharacter = rotateSurface90Degrees(character, charRotation);
-			SDL_FreeSurface(character);
-			character = rotatedCharacter;
+//			rotatedCharacter = rotateSurface90Degrees(character, charRotation);
+//			SDL_FreeSurface(character);
+//			character = rotatedCharacter;
 		}
 
 		/* Convert temp surface into texture */

@@ -1,6 +1,6 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
+#include "SDL2_gfxPrimitives.h"
 // #include <GL/gl.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>

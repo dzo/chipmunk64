@@ -118,9 +118,9 @@ OBJS = sysdevs.o \
        p2clib.o \
        font6x10.o \
        font8x13.o \
-       SDL2_rotozoom.o \
-       SDL2_gfxPrimitives.o \
-       loc.p2clib.o
+       loc.p2clib.o \
+       SDL2_gfxPrimitives.o
+#       SDL2_rotozoom.o \
 
 LIBSTUFF = texstuff.ps untilstuff.ps plot.font
 
