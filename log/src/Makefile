@@ -223,7 +223,7 @@ install: all
 	cp fixfet7 $(BINDIR)/fixfet7
 
 clean:
-	-rm -f *.o ana/*.o ana/logdef.h log loged
+	-rm -f *.o ana/*.o ana/logdef.h log loged diglog diglog.html diglog.js diglog.wasm log.exe munch.temp opt.wasm
 
 all:  main
 
