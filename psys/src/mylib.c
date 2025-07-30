@@ -372,6 +372,7 @@ void WindowInitialize() {
     // SDL_Init(SDL_INIT_VIDEO);
     // SDL_SetHint(SDL_HINT_EMSCRIPTEN_ASYNCIFY, "1");
     //...
+    Xfprintf(stderr, "SDL_Init\n");
     SDL_Init(SDL_INIT_VIDEO);
     // SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK,
     // SDL_GL_CONTEXT_PROFILE_CORE); //OpenGL core profile SDL_GL_SetAttribute
@@ -388,13 +389,18 @@ void WindowInitialize() {
   //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,31);
   for(int i=0;i<5;i++)
      cursors[i]=SDL_CreateCursor((const unsigned char *)curzero,(const unsigned char *)(curxor[i]),32,32,curpos[i],curpos[i]);
+  Xfprintf(stderr, "SDL_CreateWindow\n");
+
   #ifdef __EMSCRIPTEN__
   m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,0);
   #else
-  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,SDL_WINDOW_SHOWN|  SDL_WINDOW_RESIZABLE);
+  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,SDL_WINDOW_SHOWN|  SDL_WINDOW_RESIZABLE );
   #endif
+  Xfprintf(stderr, "SDL_CreateRenderer\n");
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+  SDL_SetHint(SDL_HINT_RENDER_BATCHING,"1");
   m_renderer=SDL_CreateRenderer(m_window,-1,SDL_RENDERER_ACCELERATED);
-
+//  m_renderer=SDL_CreateRenderer(m_window,-1,0);
 //SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, 0, &m_window, &m_renderer);
 
 //   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
@@ -403,10 +409,10 @@ void WindowInitialize() {
 //  SDL_GetRendererInfo(m_renderer,&info);
 //  printf("Renderer %x\n",info.flags);
   //#ifdef __EMSCRIPTEN__
-  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-  SDL_SetHint(SDL_HINT_RENDER_BATCHING,"1");
+  Xfprintf(stderr, "SDL_CreateTexture\n");
   buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888,
                                         SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
+  Xfprintf(stderr, "SDL_SetRenderTarget\n");
   SDL_SetRenderTarget(m_renderer, buffer);
   //#endif
 }

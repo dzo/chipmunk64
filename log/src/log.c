@@ -20190,7 +20190,7 @@ EM_JS(void, startjsload, (), {
       const uint8Arr = new Uint8Array(event.target.result);
       const data_ptr = _malloc(uint8Arr.length);
       const data_on_heap =
-          new Uint8Array(Module["HEAPU8"].buffer, data_ptr, uint8Arr.length);
+          new Uint8Array(HEAPU8.buffer, data_ptr, uint8Arr.length);
       data_on_heap.set(uint8Arr);
       Module.ccall(
           'upload_file_return', 'number', [ 'string', 'number', 'number' ],
@@ -20218,7 +20218,7 @@ EM_JS(void, jssave,
         var a = document.createElement('a');
         a.download = UTF8ToString(filename);
         a.href = URL.createObjectURL(new Blob(
-            [new Uint8Array(Module["HEAPU8"].buffer, buffer, buffer_size)], {
+            [new Uint8Array(HEAPU8.buffer, buffer, buffer_size)], {
               type:
                 UTF8ToString(mime_type)
             }));
@@ -20234,7 +20234,7 @@ EM_JS(void, loadfromurl, (), {
         .then(response => {
           const uint8Arr = new Uint8Array(response);
           const data_ptr = _malloc(uint8Arr.length);
-          const data_on_heap = new Uint8Array(Module["HEAPU8"].buffer, data_ptr,
+          const data_on_heap = new Uint8Array(HEAPU8.buffer, data_ptr,
                                               uint8Arr.length);
           data_on_heap.set(uint8Arr);
           Module.ccall('upload_file_return', 'number',

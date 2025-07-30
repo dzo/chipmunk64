@@ -3412,9 +3412,12 @@ int characterRGBA(SDL_Renderer *renderer, Sint16 x, Sint16 y, char c, Uint8 r, U
 		/*
 		* Redraw character into surface
 		*/
-		character =	SDL_CreateRGBSurface(SDL_SWSURFACE,
-			charWidth, charHeight, 32,
-			0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+		/*
+		character =     SDL_CreateRGBSurface(SDL_SWSURFACE,
+                       charWidth, charHeight, 32,
+                       0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+*/
+		character = SDL_CreateRGBSurfaceWithFormat(0,charWidth, charHeight, 32, SDL_PIXELFORMAT_ARGB32);
 		if (character == NULL) {
 			return (-1);
 		}
@@ -3461,6 +3464,7 @@ int characterRGBA(SDL_Renderer *renderer, Sint16 x, Sint16 y, char c, Uint8 r, U
 		* Check pointer 
 		*/
 		if (gfxPrimitivesFont[ci] == NULL) {
+			printf("font=null %s\n",SDL_GetError());
 			return (-1);
 		}
 	}

@@ -9,7 +9,7 @@ endif
 ifdef WASM
 CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 -Wno-deprecated-non-prototype -Oz
 #-O1 -g
-CHIPMUNKCC = emcc 
+CHIPMUNKCC = emcc -sUSE_SDL=2
 AR=emar
 RANLIB=emranlib
 LIBX11 =  -lSDL2 -lGL -sEXPORTED_RUNTIME_METHODS=ccall -sUSE_SDL=2 -sASYNCIFY -s ASYNCIFY_STACK_SIZE=51200 -s ALLOW_MEMORY_GROWTH=1
