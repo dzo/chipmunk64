@@ -1,2 +1,2 @@
 CHIPMUNKCC = clang -Os
-CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0
+CHIPMUNKFLAGS = -std=gnu89 -DBSD -Dlinux -D__alpha__ -DF_OK=0

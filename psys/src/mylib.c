@@ -879,6 +879,19 @@ fprintf(stderr, "plane_mask %x, notAllPlanes %x\n", plane_mask, notAllPlanes);
 #define wol_down_arrow "\n"
 #define wol_up_arrow "\037"
 
+int m_lookupkey(XKeyEvent *xkey, char *buf, int bufsize, KeySym *sym) {
+  int len = XLookupString(xkey, buf, bufsize, sym, NULL);
+  if (len == 0) {
+    switch (*sym) {
+      case XK_Up:    buf[0] = '\037'; len = 1; break;
+      case XK_Down:  buf[0] = '\n';   len = 1; break;
+      case XK_Left:  buf[0] = '\b';   len = 1; break;
+      case XK_Right: buf[0] = '\034'; len = 1; break;
+    }
+  }
+  return len;
+}
+
 void mapkey()
 {
   Xfprintf(stderr, "several XRebindKeysym()'s\n");
@@ -4924,7 +4937,7 @@ boolean m_pollkbd()
                  /* but may be too drastic (MDG)                          */
     switch (event.type) {
     case KeyPress: 
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL)) {
+      if (m_lookupkey((XKeyEvent *)&event, buf, 10, &sym)) {
 	Xfprintf(stderr, "XPutBackEvent()  (m_pollkbd() Key event)\n");
 	XPutBackEvent(m_display, &event);
 	return(1);
@@ -4994,7 +5007,7 @@ uchar m_inkey()
                           StructureNotifyMask, &event);
     nc_cursor_off();
     if (event.type == KeyPress) {
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL))
+      if (m_lookupkey((XKeyEvent *)&event, buf, 10, &sym))
 	return(buf[0]);
     } else if ((event.type == Expose) && (event.xexpose.window == m_window) &&
 	       (event.xexpose.count == 0)) {
@@ -5040,7 +5053,7 @@ uchar m_inkeyn()
       return(0);
     else {
       if (event.type == KeyPress) {
-	if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL)) {
+	if (m_lookupkey((XKeyEvent *)&event, buf, 10, &sym)) {
 	  Xfprintf(stderr, "XPutBackEvent()  (m_inkeyn() Key event)\n");
 	  XPutBackEvent(m_display, &event);
 	  return(buf[0]);
@@ -5083,7 +5096,7 @@ uchar m_testkey()
                                      StructureNotifyMask, &event))
       return(0);
     if (event.type == KeyPress) {
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL)) {
+      if (m_lookupkey((XKeyEvent *)&event, buf, 10, &sym)) {
 	Xfprintf(stderr, "XPutBackEvent()  (m_testkey() key event)\n");
 	XPutBackEvent(m_display, &event);
 	return(buf[0]);
@@ -5199,7 +5212,7 @@ Char *prompt;
         fprintf(stderr, " in popup window\n");
       else
 	fprintf(stderr, " in window %d\n", event.xany.window);   */
-      if (XLookupString((XKeyEvent *)&event, buf, 10, &sym, NULL))
+      if (m_lookupkey((XKeyEvent *)&event, buf, 10, &sym))
 	{
 	  if ((buf[0] == 'y') || (buf[0] == 'Y')) 
 	    {
