@@ -1,0 +1,6 @@
+*.o
+*.a
+log/src/log
+log/src/loged
+log/lib/diglog
+munch.temp
