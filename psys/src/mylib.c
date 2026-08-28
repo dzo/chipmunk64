@@ -1,6 +1,5 @@
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
-#include "SDL2_gfxPrimitives.h"
+#include <SDL3/SDL.h>
+#include "SDL3_gfx/include/SDL3_gfx/SDL3_gfxPrimitives.h"
 // #include <GL/gl.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -10,7 +9,7 @@
 
 #define ENABLE_DEBUGGING 1
 typedef struct {
-    int x;
+    int x; 
     int y;
 } XPoint;
 
@@ -240,6 +239,17 @@ int currentmode = 0;
 static int currentfont;
 static int fontasc;
 
+/* Internal colors are stored as 0xAABBGGRR for the SDL renderer.
+ * SDL3_gfx expects 0xRRGGBBAA. */
+static Uint32 gfx_color(Uint32 c) {
+    return c;
+/*    return ((c & 0x000000ffu) << 24) |
+           ((c & 0x0000ff00u) << 8) |
+           ((c & 0x00ff0000u) >> 8) |
+           ((c & 0xff000000u) >> 24);
+           */
+}
+
 static int RealWinDepth = WinDepth;
 // static Colormap colormap;
 static unsigned long plane_masks[1 << WinDepth];
@@ -392,15 +402,13 @@ void WindowInitialize() {
   Xfprintf(stderr, "SDL_CreateWindow\n");
 
   #ifdef __EMSCRIPTEN__
-  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,0);
+  m_window=SDL_CreateWindow("log", WindowWidth, WindowHeight, 0);
   #else
-  m_window=SDL_CreateWindow("log",200,200,WindowWidth,WindowHeight,SDL_WINDOW_SHOWN|  SDL_WINDOW_RESIZABLE );
+  m_window=SDL_CreateWindow("log", WindowWidth, WindowHeight, SDL_WINDOW_RESIZABLE);
   #endif
   Xfprintf(stderr, "SDL_CreateRenderer\n");
-  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-  SDL_SetHint(SDL_HINT_RENDER_BATCHING,"1");
-  m_renderer=SDL_CreateRenderer(m_window,-1,SDL_RENDERER_ACCELERATED);
-//  m_renderer=SDL_CreateRenderer(m_window,-1,0);
+      m_renderer=SDL_CreateRenderer(m_window, NULL);
+//  m_renderer=SDL_CreateRenderer(m_window, NULL);
 //SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, 0, &m_window, &m_renderer);
 
 //   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
@@ -414,6 +422,7 @@ void WindowInitialize() {
                                         SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
   Xfprintf(stderr, "SDL_SetRenderTarget\n");
   SDL_SetRenderTarget(m_renderer, buffer);
+  SDL_StartTextInput(m_window);
   //#endif
 }
 
@@ -558,13 +567,14 @@ void m_modern(flag) int flag;
 
 #define BUF_SIZE 1024
 
-static SDL_Point pointbuf[16][BUF_SIZE];
+static SDL_FPoint pointbuf[16][BUF_SIZE];
 static int pointbuf_size[16];
 
 void set_color(int color) {
-    SDL_SetRenderDrawColor(m_renderer, cols[color] & 255,
-                           (cols[color] >> 8) & 255, (cols[color] >> 16) & 255,
-                           SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(m_renderer,
+                           cols[color] & 255,
+                           (cols[color] >> 8) & 255,
+                           (cols[color] >> 16) & 255, SDL_ALPHA_OPAQUE);
 }
 static void buffer_point(color, x, y) int color, x, y;
 {
@@ -572,7 +582,7 @@ static void buffer_point(color, x, y) int color, x, y;
     pointbuf[color][pointbuf_size[color]].y = y;
     if (++pointbuf_size[color] == BUF_SIZE) {
         set_color(color);
-        SDL_RenderDrawPoints(m_renderer, pointbuf[color], BUF_SIZE);
+        SDL_RenderPoints(m_renderer, pointbuf[color], BUF_SIZE);
         //    XDrawPoints(m_display, m_window, gc[color],
         //		pointbuf[color], BUF_SIZE, CoordModeOrigin);
         pointbuf_size[color] = 0;
@@ -585,7 +595,7 @@ static void flush_points() {
     for (color = 0; color < 16; color++) {
         if (pointbuf_size[color]) {
             set_color(color);
-            SDL_RenderDrawPoints(m_renderer, pointbuf[color],
+            SDL_RenderPoints(m_renderer, pointbuf[color],
                                  pointbuf_size[color]);
             //  XDrawPoints(m_display, m_window, gc[color],
             //  pointbuf[color], pointbuf_size[color], CoordModeOrigin);
@@ -594,7 +604,7 @@ static void flush_points() {
     }
 }
 
-static SDL_Point linebuf[16][BUF_SIZE][2];
+static SDL_FPoint linebuf[16][BUF_SIZE][2];
 static int linebuf_size[16];
 
 static void buffer_line(color, x1, y1, x2, y2) int color, x1, y1, x2, y2;
@@ -606,7 +616,7 @@ static void buffer_line(color, x1, y1, x2, y2) int color, x1, y1, x2, y2;
     if (++linebuf_size[color] == BUF_SIZE) {
         set_color(color);
         for (int i = 0; i < BUF_SIZE; i++)
-            SDL_RenderDrawLine(m_renderer, linebuf[color][i][0].x,
+            SDL_RenderLine(m_renderer, linebuf[color][i][0].x,
                                linebuf[color][i][0].y, linebuf[color][i][1].x,
                                linebuf[color][i][1].y);
         // XDrawSegments(m_display, m_window, gc[color], linebuf[color],
@@ -626,7 +636,7 @@ static void flush_lines() {
               */
             set_color(color);
             for (int i = 0; i < linebuf_size[color]; i++)
-                SDL_RenderDrawLine(
+                SDL_RenderLine(
                     m_renderer, linebuf[color][i][0].x, linebuf[color][i][0].y,
                     linebuf[color][i][1].x, linebuf[color][i][1].y);
 
@@ -635,7 +645,7 @@ static void flush_lines() {
     }
 }
 
-static SDL_Rect rectbuf[16][BUF_SIZE];
+static SDL_FRect rectbuf[16][BUF_SIZE];
 static int rectbuf_size[16];
 
 static void buffer_rect(color, x, y, width, height) int color, x, y, width,
@@ -647,7 +657,7 @@ static void buffer_rect(color, x, y, width, height) int color, x, y, width,
     rectbuf[color][rectbuf_size[color]].h = height;
     if (++rectbuf_size[color] == BUF_SIZE) {
         set_color(color);
-        SDL_RenderDrawRects(m_renderer, rectbuf[color], BUF_SIZE);
+        SDL_RenderRects(m_renderer, rectbuf[color], BUF_SIZE);
         //  XDrawRectangles(m_display, m_window, gc[color], rectbuf[color],
         //  BUF_SIZE);
         rectbuf_size[color] = 0;
@@ -660,7 +670,7 @@ static void flush_rects() {
     for (color = 0; color < 16; color++) {
         if (rectbuf_size[color]) {
             set_color(color);
-            SDL_RenderDrawRects(m_renderer, rectbuf[color],
+            SDL_RenderRects(m_renderer, rectbuf[color],
                                 rectbuf_size[color]);
             // XDrawRectangles(m_display, m_window, gc[color],
             //     rectbuf[color], rectbuf_size[color]);
@@ -669,7 +679,7 @@ static void flush_rects() {
     }
 }
 
-static SDL_Rect fillrectbuf[16][BUF_SIZE];
+static SDL_FRect fillrectbuf[16][BUF_SIZE];
 static int fillrectbuf_size[16];
 
 static void buffer_fillrect(color, x, y, width, height) int color, x, y, width,
@@ -681,7 +691,7 @@ static void buffer_fillrect(color, x, y, width, height) int color, x, y, width,
     fillrectbuf[color][fillrectbuf_size[color]].h = height;
     if (++fillrectbuf_size[color] == BUF_SIZE) {
         set_color(color);
-        SDL_RenderFillRects(m_renderer, rectbuf[color], BUF_SIZE);
+        SDL_RenderFillRects(m_renderer, fillrectbuf[color], BUF_SIZE);
         fillrectbuf_size[color] = 0;
     }
 }
@@ -692,7 +702,7 @@ static void flush_fillrects() {
     for (color = 0; color < 16; color++) {
         if (fillrectbuf_size[color]) {
             set_color(color);
-            SDL_RenderFillRects(m_renderer, rectbuf[color],
+            SDL_RenderFillRects(m_renderer, fillrectbuf[color],
                                 fillrectbuf_size[color]);
             fillrectbuf_size[color] = 0;
         }
@@ -761,7 +771,7 @@ void m_clip(x1, y1, x2, y2) int x1, y1, x2, y2;
         rect.w = x2 - x1;
         rect.h = y2 - y1;
 
-        SDL_RenderSetClipRect(m_renderer, &rect);
+        SDL_SetRenderClipRect(m_renderer, &rect);
         m_clip_x1 = x1;
         m_clip_y1 = y1;
         m_clip_x2 = x2;
@@ -780,7 +790,7 @@ void m_noclip() {
         flush_buffers();
 #endif /* EXTRA_BUFFERING */
 
-        SDL_RenderSetClipRect(m_renderer, NULL);
+        SDL_SetRenderClipRect(m_renderer, NULL);
         m_clip_x1 = 0;
         m_clip_y1 = 0;
         m_clip_x2 = 32767;
@@ -923,7 +933,7 @@ void m_choosecursor(n) int n;
         //  XFlush(m_display);
     }
     SDL_SetCursor(cursors[n]);
-    SDL_ShowCursor(1);
+    SDL_ShowCursor();
 }
 
 void m_colormode(c) int c;
@@ -949,7 +959,7 @@ SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR,SDL_BLENDOPERATION_ADD);
             // #ifndef __EMSCRIPTEN__
             // glEnable (GL_COLOR_LOGIC_OP) ;
             // glLogicOp(GL_XOR);
-            SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+            SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
             // glEnable (GL_BLEND) ;
             // glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO );
             // #else
@@ -996,12 +1006,14 @@ void m_color(newcolor) int newcolor;
     else
         currentcolor = (currentcolor & 0xff000000) | cols[newcolor];
     currentcolorindex = newcolor;
+
     // colindex=newcolor;
     // if(newcolor<16) {
     //  SelectObject(hdc,pens[newcolor]);
-    SDL_SetRenderDrawColor(m_renderer, (currentcolor) & 255,
+    SDL_SetRenderDrawColor(m_renderer,
+                           (currentcolor) & 255,
                            (currentcolor >> 8) & 255,
-                           (currentcolor >> 16) & 255, 255);
+                           (currentcolor >> 16) & 255, SDL_ALPHA_OPAQUE);
 }
 
 long m_curcolor() {
@@ -1256,7 +1268,7 @@ void m_draw(x, y) int x, y;
     Xfprintf(stderr, "XDrawLine()\n");
     // XDrawLine(m_display, m_window, gc[currentcolor], curx, cury, x, y);
     // set_color(currentcolorindex);
-    SDL_RenderDrawLine(m_renderer, curx, cury, x, y);
+    SDL_RenderLine(m_renderer, curx, cury, x, y);
 #endif /* EXTRA_BUFFERING */
     curx = x;
     cury = y;
@@ -1295,7 +1307,7 @@ void m_drawrel(dx, dy) int dx, dy;
     // XDrawLine(m_display, m_window, gc[currentcolor], curx, cury, curx+dx,
     // cury+dy);
     // set_color(currentcolor);
-    SDL_RenderDrawLine(m_renderer, curx, cury, curx + dx, cury + dy);
+    SDL_RenderLine(m_renderer, curx, cury, curx + dx, cury + dy);
 #endif /* EXTRA_BUFFERING */
     curx += dx;
     cury += dy;
@@ -1371,11 +1383,11 @@ void m_drawline(x1, y1, x2, y2) int x1, y1, x2, y2;
     // set_color(currentcolor);
     if ((x1 == x2) && (y1 == y2))
         //    XDrawPoint(m_display, m_window, gc[currentcolor], x1, y1);
-        SDL_RenderDrawPoint(m_renderer, x1, y1);
+        SDL_RenderPoint(m_renderer, x1, y1);
 
     else
         //    XDrawLine(m_display, m_window, gc[currentcolor], x1, y1, x2, y2);
-        SDL_RenderDrawLine(m_renderer, x1, y1, x2, y2);
+        SDL_RenderLine(m_renderer, x1, y1, x2, y2);
 #endif /* EXTRA_BUFFERING */
 
 #ifdef SAVECURSOR
@@ -1439,18 +1451,18 @@ void m_drawrect(x1, y1, x2, y2) int x1, y1, x2, y2;
     // set_color(currentcolor);
     if (x1 == x2)
         if (y1 == y2)
-            SDL_RenderDrawPoint(m_renderer, x1, y1);
+            SDL_RenderPoint(m_renderer, x1, y1);
         else
-            SDL_RenderDrawLine(m_renderer, x1, y1, x1, y2);
+            SDL_RenderLine(m_renderer, x1, y1, x1, y2);
     else if (y1 == y2)
-        SDL_RenderDrawLine(m_renderer, x1, y1, x2, y1);
+        SDL_RenderLine(m_renderer, x1, y1, x2, y1);
     else {
-        SDL_Rect r;
-        r.x = x;
+        SDL_FRect r;
+        r.x = (float)x;
         r.y = y;
         r.w = x1 + x2 - x - x;
         r.h = y1 + y2 - y - y;
-        SDL_RenderDrawRect(m_renderer, &r);
+        SDL_RenderRect(m_renderer, &r);
     }
 #endif /* EXTRA_BUFFERING */
 
@@ -1510,14 +1522,14 @@ void m_fillrect(x1, y1, x2, y2) int x1, y1, x2, y2;
     //  set_color(currentcolor);
     if (x1 == x2)
         if (y1 == y2)
-            SDL_RenderDrawPoint(m_renderer, x1, y1);
+            SDL_RenderPoint(m_renderer, x1, y1);
         else
-            SDL_RenderDrawLine(m_renderer, x1, y1, x1, y2);
+            SDL_RenderLine(m_renderer, x1, y1, x1, y2);
     else if (y1 == y2)
-        SDL_RenderDrawLine(m_renderer, x1, y1, x2, y1);
+        SDL_RenderLine(m_renderer, x1, y1, x2, y1);
     else {
-        SDL_Rect r;
-        r.x = x;
+        SDL_FRect r;
+        r.x = (float)x;
         r.y = y;
         r.w = x1 + x2 - x - x + 1;
         r.h = y1 + y2 - y - y + 1;
@@ -1548,7 +1560,7 @@ void m_grid(x1, y1, x2, y2, dx, dy, ax, ay) int x1, y1, x2, y2, dx, dy, ax, ay;
     TRNSFRM(ax, ay);
     for (i = x1; i < x2; i += dx)
         for (j = y1; j < y2; j += dy) {
-            SDL_RenderDrawLine(m_renderer, i, j, i + 1, j + 1);
+            SDL_RenderLine(m_renderer, i, j, i + 1, j + 1);
         }
 }
 
@@ -1579,7 +1591,7 @@ void m_drawpoint(x, y) int x, y;
 #else
     Xfprintf(stderr, "XDrawPoint()\n");
     // set_color(currentcolor);
-    SDL_RenderDrawPoint(m_renderer, x, y);
+    SDL_RenderPoint(m_renderer, x, y);
 #endif /* EXTRA_BUFFERING */
 
 #ifdef SAVECURSOR
@@ -1675,7 +1687,7 @@ void m_circle(x, y, r) int x, y, r;
 #endif
 
     Xfprintf(stderr, "XDrawArc()\n");
-    circleColor(m_renderer, x, y, r, currentcolor);
+    circleColor(m_renderer, (Sint16)x, (Sint16)y, (Sint16)r, gfx_color((Uint32)currentcolor));
 
 #ifdef SAVECURSOR
     if (cursor_is_on) turncursoron();
@@ -1714,7 +1726,7 @@ void m_ellipse(x, y, rx, ry, c) int x, y, rx, ry, c;
 
     // if (c != m_trans) {
     //   Xfprintf(stderr, "XDrawArc()\n");
-    ellipseColor(m_renderer, x, y, rx, ry, currentcolor);
+    ellipseColor(m_renderer, (Sint16)x, (Sint16)y, (Sint16)rx, (Sint16)ry, gfx_color((Uint32)currentcolor));
     // }
 
 #ifdef SAVECURSOR
@@ -1972,7 +1984,7 @@ void m_roundrect2(x1, y1, x2, y2, rx, ry, c1, c2) int x1, y1, x2, y2, rx, ry,
     c1, c2;
 {}
 
-static SDL_Point bezbuf[2048];
+static SDL_FPoint bezbuf[2048];
 static int bezbufp;
 static int bezthresh;
 
@@ -2030,7 +2042,7 @@ void dobezier(x1, y1, x2, y2, x3, y3, x4, y4, fx, fy) int x1, y1, x2, y2, x3,
             //  XDrawLines(m_display, m_window, gc[currentcolor], bezbuf,
             //  bezbufp, CoordModeOrigin);
             // set_color(currentcolor);
-            SDL_RenderDrawLines(m_renderer, bezbuf, bezbufp);
+            SDL_RenderLines(m_renderer, bezbuf, bezbufp);
         }
     } else {
         dobezier(x1, y1, (x1 + x2) >> 1, (y1 + y2) >> 1,
@@ -2304,8 +2316,19 @@ void m_fillpoly(n, x, y) int n, x[], y[];
 #endif
 
     Xfprintf(stderr, "XFillPolygon()\n");
-    // XFillPolygon(m_display, m_window, gc[currentcolor], pointlist, n,
-    // Complex, CoordModeOrigin);
+    {
+        float *vx = (float *)malloc((size_t)n * sizeof(float));
+        float *vy = (float *)malloc((size_t)n * sizeof(float));
+        if (vx && vy) {
+            for (i = 0; i < n; ++i) {
+                vx[i] = (float)pointlist[i].x;
+                vy[i] = (float)pointlist[i].y;
+            }
+            filledPolygonColor(m_renderer, vx, vy, n, gfx_color((Uint32)currentcolor));
+        }
+        free(vx);
+        free(vy);
+    }
     free(pointlist);
 
 #ifdef SAVECURSOR
@@ -2349,7 +2372,8 @@ char *f, *str;
     // XDrawString(m_display, m_window, gc[currentcolor], x, y+fontasc-1, str,
     // len);
     gfxPrimitivesSetFont(&font6x10, 6, 10);
-    stringColor(m_renderer, x, y, str, currentcolor);
+
+    stringColor(m_renderer, (Sint16)x, (Sint16)y, str, gfx_color((Uint32)currentcolor));
 
 #ifdef SAVECURSOR
     if (cursor_is_on) turncursoron();
@@ -2400,7 +2424,7 @@ void addkey(int n) {
     if (keyfirst != (keynext + 1)) keybuf[keynext++] = n;
 }
 
-uint64_t time_ms() { return SDL_GetTicks64(); }
+uint64_t time_ms() { return SDL_GetTicks(); }
 void resize_screen();
 uint64_t lasttime = 0;
 uint64_t lastpolltime = 0;
@@ -2424,13 +2448,13 @@ void handle_events() {
     uint64_t time = time_ms();
     if (time - lasttime >= 18) {
         SDL_Rect r;
-        SDL_RenderGetClipRect(m_renderer, &r);
+        SDL_GetRenderClipRect(m_renderer, &r);
         SDL_SetRenderTarget(m_renderer, NULL);
-        SDL_RenderCopy(m_renderer, buffer, NULL, NULL);
+        SDL_RenderTexture(m_renderer, buffer, NULL, NULL);
         lasttime = time_ms();  // time;
         SDL_RenderPresent(m_renderer);
         SDL_SetRenderTarget(m_renderer, buffer);
-        if (r.w != 0) SDL_RenderSetClipRect(m_renderer, &r);
+        if (r.w != 0) SDL_SetRenderClipRect(m_renderer, &r);
     }
     int k, sc;
     if (time - lastpolltime >= 18) {
@@ -2440,7 +2464,7 @@ void handle_events() {
             switch (event.type) {
                 relx = 0;
                 rely = 0;
-                case SDL_MOUSEBUTTONDOWN:
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
                     if (event.button.button == SDL_BUTTON_LEFT) {
                         thebuttons |= 2;
                         theflags = 2;
@@ -2453,7 +2477,7 @@ void handle_events() {
                         thebuttons |= 4;
                     }
                     break;
-                case SDL_MOUSEBUTTONUP:
+                case SDL_EVENT_MOUSE_BUTTON_UP:
                     if (event.button.button == SDL_BUTTON_LEFT) {
                         thebuttons &= ~2;
                         theflags = 8;
@@ -2466,20 +2490,20 @@ void handle_events() {
                         thebuttons &= ~4;
                     }
                     break;
-                case SDL_MOUSEMOTION:
+                case SDL_EVENT_MOUSE_MOTION:
                     theflags |= 16;
-                    thex = event.motion.x;
-                    they = event.motion.y;
-                    relx = event.motion.xrel;
-                    rely = event.motion.yrel;
+                    thex = (int)event.motion.x;
+                    they = (int)event.motion.y;
+                    relx = (int)event.motion.xrel;
+                    rely = (int)event.motion.yrel;
                     break;
-                case SDL_MOUSEWHEEL:
+                case SDL_EVENT_MOUSE_WHEEL:
                     if (event.wheel.y > 0) addkey('<');
                     if (event.wheel.y < 0) addkey('>');
                     break;
-                case SDL_KEYDOWN:
+                case SDL_EVENT_KEY_DOWN:
                     if (event.key.repeat != 0) break;
-                    sc = event.key.keysym.scancode;
+                    sc = event.key.scancode;
                     if (sc == SDL_SCANCODE_LEFT || sc == SDL_SCANCODE_RIGHT ||
                         sc == SDL_SCANCODE_UP || sc == SDL_SCANCODE_DOWN ||
                         sc == SDL_SCANCODE_RETURN) {
@@ -2488,31 +2512,29 @@ void handle_events() {
                     }
                     addsc(sc);
                     break;
-                case SDL_KEYUP:
+                case SDL_EVENT_KEY_UP:
                     keydown = 0;
                     keyrepeattime = time + 3300000;
                     break;
-                case SDL_QUIT:
+                case SDL_EVENT_QUIT:
                     exit(0);
                     break;
-                case SDL_TEXTINPUT:
+                case SDL_EVENT_TEXT_INPUT:
                     k = event.text.text[0];
                     if (k == 8) k = 7;
                     addkey(k);
                     break;
-                case SDL_WINDOWEVENT:
-                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) {
-                      WindowWidth = event.window.data1;
-                      WindowHeight = event.window.data2;
-                      if (m_initialized && WindowWidth>0 && WindowHeight>0) {
-                          SDL_DestroyTexture(buffer);
-                          buffer = SDL_CreateTexture(
-                              m_renderer, SDL_PIXELFORMAT_ARGB8888,
-                              SDL_TEXTUREACCESS_TARGET, WindowWidth,
-                              WindowHeight);
-                          SDL_SetRenderTarget(m_renderer, buffer);
-                          resize_screen();
-                      }
+                case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+                    WindowWidth = event.window.data1;
+                    WindowHeight = event.window.data2;
+                    if (m_initialized && WindowWidth > 0 && WindowHeight > 0) {
+                        SDL_DestroyTexture(buffer);
+                        buffer = SDL_CreateTexture(
+                            m_renderer, SDL_PIXELFORMAT_ARGB8888,
+                            SDL_TEXTUREACCESS_TARGET, WindowWidth,
+                            WindowHeight);
+                        SDL_SetRenderTarget(m_renderer, buffer);
+                        resize_screen();
                     }
                     break;
                 default:

@@ -6828,6 +6828,10 @@ Static Void commandline()
   readfile(filename, s);
 }
 
+Void resize_screen() {
+  initscreen();
+  refresh();
+}
 
 int main(int argc, Char * argv[])
 

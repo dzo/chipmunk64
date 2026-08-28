@@ -113,8 +113,6 @@ LIBP2C = ../../psys/src/libp2c.a
 ## LIBX11= -lX11 -s
 ##
 
-#LIBX11 =  -lSDL2 -lSDL2_gfx -lGL
-
 ##
 ## (2) Library additions
 ## ---------------------
@@ -216,7 +214,8 @@ TOOLOBJ = $(SIMOBJ) lplot.o logspc.o logntk.o
 ##
 
 install: all
-	cp log $(BINDIR)/diglog
+	-cp log $(BINDIR)/diglog
+	-cp log.exe $(BINDIR)/diglog.exe
 	-rm -f $(BINDIR)/analog
 	-(cd $(BINDIR); ln -s diglog analog)
 #	cp loged $(BINDIR)/loged

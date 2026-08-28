@@ -328,7 +328,7 @@ typedef uchar igrouparray[log_million];
 typedef struct logmenurec {
   Char name[17];
   Char cmd[33];
-  boolean *bool;
+  boolean *lbool;
 } logmenurec; /* Pop-up menu options */
 
 typedef logmenurec logmenutype[8];
@@ -17915,7 +17915,7 @@ short num;
     y = line1 + 2;
     for (j = i * 2 - 2; j < i * 2; j++) {
       if (*menu[j].name != '\0') {
-        if (menu[j].bool != NULL && *menu[j].bool)
+        if (menu[j].lbool != NULL && *menu[j].lbool)
           m_color((long)gg.color.selword);
         else if (menu[j].name[0] == '*')
           m_color((long)gg.color.redword);
@@ -18214,54 +18214,54 @@ Char *name;
   strcpy(mp3->name, name);
 }
 
-Static Void definemenu(num, part, name, cmd, bool) short num, part;
+Static Void definemenu(num, part, name, cmd, lbool) short num, part;
 Char *name, *cmd;
-short bool;
+short lbool;
 {
   logmenurec *menu;
 
   menu = popupmenus[num - 1];
   strcpy(menu[part - 1].name, name);
   strcpy(menu[part - 1].cmd, cmd);
-  switch (bool) {
+  switch (lbool) {
     case 1:
-      menu[part - 1].bool = &gg.invisible;
+      menu[part - 1].lbool = &gg.invisible;
       break;
 
     case 2:
-      menu[part - 1].bool = &gg.textinvisible;
+      menu[part - 1].lbool = &gg.textinvisible;
       break;
 
     case 3:
-      menu[part - 1].bool = &gg.markers;
+      menu[part - 1].lbool = &gg.markers;
       break;
 
     case 4:
-      menu[part - 1].bool = &vlsi;
+      menu[part - 1].lbool = &vlsi;
       break;
 
     case 5:
-      menu[part - 1].bool = &popup_grid;
+      menu[part - 1].lbool = &popup_grid;
       break;
 
     case 6:
-      menu[part - 1].bool = &gg.probemode;
+      menu[part - 1].lbool = &gg.probemode;
       break;
 
     case 7:
-      menu[part - 1].bool = &gg.glowmode;
+      menu[part - 1].lbool = &gg.glowmode;
       break;
 
     case 8:
-      menu[part - 1].bool = &snapflag;
+      menu[part - 1].lbool = &snapflag;
       break;
 
     case 9:
-      menu[part - 1].bool = &gg.pwrflag;
+      menu[part - 1].lbool = &gg.pwrflag;
       break;
 
     default:
-      menu[part - 1].bool = NULL;
+      menu[part - 1].lbool = NULL;
       break;
   }
 }

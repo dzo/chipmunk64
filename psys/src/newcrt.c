@@ -6,6 +6,7 @@ extern long cols[256];
 static long bgc=0;
 
 #include <stdio.h>
+#include <stdbool.h>
 #ifdef VARARGS
 #include <varargs.h>
 #else
@@ -23,9 +24,10 @@ static long bgc=0;
 #ifndef SYSDEVS_H
 #include <p2c/sysdevs.h>
 #endif
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
-#include "SDL2_gfxPrimitives.h" 
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
+//#include <SDL3/SDL_video.h>
+#include "SDL3_gfx/include/SDL3_gfx/SDL3_gfxPrimitives.h"
 //#include <X11/X.h>
 #ifdef OS2
 //#include <X11/Xlib.h>
@@ -234,7 +236,7 @@ char *cp;
 		     cp, 255,255,255,255);
 
     if (nc_highlight & nc_under) {
-      SDL_RenderDrawLine(m_renderer,
+      SDL_RenderLine(m_renderer,
 		nc_curWindow->gleft+x*nc_fontwidth, 
 		nc_curWindow->top+y*nc_fontheight + ascent + 1, 
 		nc_curWindow->gleft+x*nc_fontwidth + len*nc_fontwidth - 1, 
@@ -269,7 +271,7 @@ int x1, y1, x2, y2;
 			 i * nc_fontwidth,
 			 j * nc_fontheight + ascent, linebuf, 255,255,255,255);
 	if (nc_highlight & nc_under) {
-	  SDL_RenderDrawLine(m_renderer,
+	  SDL_RenderLine(m_renderer,
 		    i*nc_fontwidth,
 		    j*nc_fontheight + ascent + 1, 
 		    i*nc_fontwidth + len*nc_fontwidth - 1, 
@@ -325,7 +327,7 @@ void nc_putStr(x, y, str)
 int x, y;
 Char *str;
 {
-  SDL_Rect r={x*nc_fontwidth,y*nc_fontheight,strlen(str)*nc_fontwidth,nc_fontheight};
+  SDL_FRect r={(float)(x*nc_fontwidth),(float)(y*nc_fontheight),(float)(strlen(str)*nc_fontwidth),(float)nc_fontheight};
   SDL_SetRenderDrawColor(m_renderer,(bgc)&255,(bgc>>8)&255,(bgc>>16)&255,255);
   SDL_RenderFillRect(m_renderer,&r);
   gfxPrimitivesSetFont(&font8x13,8,13);
@@ -480,7 +482,7 @@ Char *str_;
 		  //     (char *)str, currentcolor);
          
       if (nc_highlight & nc_under) {
-  	SDL_RenderDrawLine(m_renderer,
+  	SDL_RenderLine(m_renderer,
 		  nc_curWindow->gleft+XPOS*nc_fontwidth, 
 		  nc_curWindow->top+YPOS*nc_fontheight + ascent + 1, 
 		  nc_curWindow->gleft+XPOS*nc_fontwidth + len*nc_fontwidth-1, 
@@ -523,9 +525,9 @@ int x, y, dx, dy;
 /*    fprintf(stdout, "nc_clearXY(%d, %d, %d, %d)\n", x, y, dx, dy);  
     getchar();    */
     if ((dx > 0) && (dy > 0)) {
-      SDL_Rect r={nc_curWindow->gleft+nc_fontwidth*x,
-		                       nc_curWindow->gtop+nc_fontheight*y,
-                                       nc_fontwidth*dx, nc_fontheight*dy};
+      SDL_FRect r={(float)(nc_curWindow->gleft+nc_fontwidth*x),
+                              (float)(nc_curWindow->gtop+nc_fontheight*y),
+                              (float)(nc_fontwidth*dx), (float)(nc_fontheight*dy)};
       SDL_SetRenderDrawColor(m_renderer,0,0,0,255);                        
       SDL_RenderFillRect(m_renderer, &r);
       for (j = y; j < y + dy; j++)

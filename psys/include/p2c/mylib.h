@@ -3,7 +3,7 @@
 #define MYLIB_H
 
 //#include <X11/Xlib.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #define False 0
 #define True 1
 #ifdef MYLIB_G

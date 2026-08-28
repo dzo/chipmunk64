@@ -1309,7 +1309,7 @@ long a, b;
 
 
 /* Quick-sort */
-
+/*
 static int (*userqsortfunc)();
 static Anyptr userqsortlink;
 
@@ -1350,7 +1350,7 @@ _PROCEDURE comp;
 	 
        }
   }
-
+*/
 
 
 

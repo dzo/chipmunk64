@@ -119,14 +119,13 @@ OBJS = sysdevs.o \
        font6x10.o \
        font8x13.o \
        loc.p2clib.o \
-       SDL2_gfxPrimitives.o
+       SDL3_gfxPrimitives.o
 #       SDL2_rotozoom.o \
 
 LIBSTUFF = texstuff.ps untilstuff.ps plot.font
 
 
 CC = $(CHIPMUNKCC)
-
 
 ##
 ## (2) The "cd" problem
@@ -232,6 +231,9 @@ install: setup all
 	$(RANLIB) $(CHIPMUNKRANFLAGS) -t $(LIB)
 	cp $(LIBSTUFF) $(LIBDIR)
 	-if [ ! -d $(BINDIR) ] ; then mkdir $(BINDIR) ; fi
+
+##SDL3_gfx/src/SDL3_gfxPrimitives.o: SDL3_gfx/src/SDL3_gfxPrimitives.c
+##	$(CC) -c SDL3_gfx/src/SDL3_gfxPrimitives.c -o SDL3_gfx/src/SDL3_gfxPrimitives.o -I SDL3_gfx/include/SDL3_gfx
 
 libp2c.a: $(OBJS)
 	-rm -f libp2c.a
