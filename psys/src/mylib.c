@@ -1,5 +1,5 @@
 #include <SDL3/SDL.h>
-#include "SDL3_gfx/include/SDL3_gfx/SDL3_gfxPrimitives.h"
+#include "SDL3_gfxPrimitives.h"
 // #include <GL/gl.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>

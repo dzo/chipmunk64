@@ -27,7 +27,7 @@ static long bgc=0;
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
 //#include <SDL3/SDL_video.h>
-#include "SDL3_gfx/include/SDL3_gfx/SDL3_gfxPrimitives.h"
+#include "SDL3_gfxPrimitives.h"
 //#include <X11/X.h>
 #ifdef OS2
 //#include <X11/Xlib.h>

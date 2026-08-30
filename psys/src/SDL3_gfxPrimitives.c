@@ -33,7 +33,7 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 #include <string.h>
 
 #include "SDL3_gfxPrimitives.h"
-#include "SDL3_rotozoom.h"
+//#include "SDL3_rotozoom.h"
 #include "SDL3_gfxPrimitives_font.h"
 
 /* ---- Pixel */

@@ -14,8 +14,8 @@ LIBX11 =  -lSDL3 -lGL -sEXPORTED_RUNTIME_METHODS=ccall -sUSE_SDL=3 -sASYNCIFY -s
 endif
 ifdef LINUX
 CHIPMUNKCC = clang -O3
-CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0 -Wno-deprecated-non-prototype
-LIBX11 =  -lSDL3 -Wl,-rpath,.
+CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0 -Wno-deprecated-non-prototype -I../../SDL3/include/
+LIBX11 =  -lSDL3 -Wl,-rpath,. -L../../lib/
 AR=llvm-ar
 RANLIB=llvm-ranlib
 endif
