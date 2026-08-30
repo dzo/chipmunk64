@@ -16,7 +16,7 @@
 
 typedef uchar m_colorarray[17];
 
-typedef uchar m_vcolorarray[1000001L];
+typedef uchar m_vcolorarray[16];
 
 typedef long m_pointarray[10];
 
