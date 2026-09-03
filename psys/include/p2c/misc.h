@@ -13,7 +13,7 @@
 #include <p2c/asm.h>
 #endif
 
-
+#include <unistd.h>
 
 #ifdef MISC_G
 # define vextern
@@ -22,6 +22,18 @@
 #endif
 
 
+#ifdef OS2
+extern int fork(void);
+extern int getuid(void);
+extern int getgid(void);
+extern char *cuserid(char *s);
+extern long lrand48(void);
+extern void srand48(long seedv);
+extern int _cfree(char *ptr);
+extern int link(char *path1, char *path2);
+extern int wait(int *status);
+
+#endif
 
 #define misc_null       0
 

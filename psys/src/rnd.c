@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <p2c/rnd.h>
 
+extern long lrand48(void);
+extern void srand48(long seedv);
 
 void P_random(seed)
 long *seed;

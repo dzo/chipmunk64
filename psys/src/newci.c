@@ -30,6 +30,7 @@
 #include <p2c/newci.h>
 #include <p2c/newcrt.h>
 #include <p2c/newasm.h>
+# include <p2c/misc.h>
 
 
 boolean newci_findprocedure(name, start)
@@ -255,7 +256,7 @@ long timers_sysclock()
 {
 
 #ifdef OS2
-  struct timeb tm;
+  struct __timeb64 tm;
 
   _ftime(&tm);
 

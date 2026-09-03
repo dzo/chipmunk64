@@ -1,9 +1,10 @@
 ifdef WIN32
-CHIPMUNKCC = x86_64-w64-mingw32-gcc -std=gnu99 -Os -L../../bin -fomit-frame-pointer -DLACK_GETPWNAM -D__GCC__ -I../../SDL3/include/
-CHIPMUNKFLAGS =  -DOS2
+CHIPMUNKCC = x86_64-w64-mingw32-gcc -std=gnu99 -Os
+CHIPMUNKFLAGS =  -DOS2 -fomit-frame-pointer -DLACK_GETPWNAM -D__GCC__ -I../../SDL3/include/
+# -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 AR=llvm-ar
 RANLIB=llvm-ranlib
-LIBX11 =  -lSDL3 -mwindows
+LIBX11 =  -lSDL3 -mwindows -L../../bin
 endif
 ifdef WASM
 CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 -Wno-deprecated-non-prototype -Oz -Wno-strict-prototypes -Wno-old-style-definition -std=gnu99 -I ../../SDL3/include

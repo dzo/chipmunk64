@@ -2919,10 +2919,10 @@ struct LOC_Log_lplot_proc *LINK;
 #ifdef OS2
 /* In the string below, : is not allowed. So, cannot set the drive letter. */
     l1 = strlist_append(&lplotlbl,
- 		    "PostScript;C/tcpip/tmp/*.ps | lpr  *:Output file name:");
+ 		    "PostScript;Cop.ps:Output file name:");
 #else
   l1 = strlist_append(&lplotlbl,
-		    "PostScript;C/tmp/*.ps | lpr  *:Output file name:");
+		    "PostScript;Cop.ps:Output file name:");
 #endif
   l1 = strlist_append(&lplotlbl, "HPGL;Clplot.hpgl:Output file name:");
   l1 = strlist_append(&lplotlbl, "FF;Clplot.ff:Output file name:");

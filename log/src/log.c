@@ -146,6 +146,10 @@ char *str, **ptr;
 #include <p2c/newcrt.h>
 #endif
 
+#ifdef OS2
+//#define long int64_t
+#endif
+
 extern char *GetChipmunkPath();
 char *my_strdup();
 #undef strdup

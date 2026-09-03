@@ -158,7 +158,7 @@ extern int nc_initialized;
 #endif
 
 #ifdef OS2
-static struct timeb first, second, lapsed;
+static struct __timeb64 first, second, lapsed;
 #else
 static struct timeval first, second, lapsed;
 static struct timezone tzp;
@@ -2462,8 +2462,8 @@ void handle_events() {
         while (SDL_PollEvent(&event)) {
        //   fprintf(stderr,"SDL_EVENT %d \n",event.type);
             switch (event.type) {
-                relx = 0;
-                rely = 0;
+//                relx = 0;
+//                rely = 0;
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                     if (event.button.button == SDL_BUTTON_LEFT) {
                         thebuttons |= 2;

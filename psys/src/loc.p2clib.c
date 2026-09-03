@@ -11,7 +11,7 @@
 
 #include <p2c/citinfomod.h>
 
-
+#include <p2c/misc.h>
 
 P_citinforec *P_citinfo;
 long P_citSystem;

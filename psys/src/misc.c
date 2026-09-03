@@ -89,7 +89,7 @@ int fork()
    return 0;
 }
 
-int wait()
+int wait(int *status)
 {
    printf("Call to wait.\n");
    return 0;

@@ -18,6 +18,7 @@
 
 #include <p2c/p2c.h>
 #include <libgen.h>
+#include <unistd.h>
 
 #define Isspace(c)  isspace(c)      /* or "((c) == ' ')" if preferred */
 
@@ -980,14 +981,15 @@ char ChipmunkPath[256];
 char *GetChipmunkPath(ev, deft)
 char *ev, *deft;
 {
-    #ifdef OS2
+#ifdef OS2
     return deft;
-    #endif
+#else
     int r=readlink("/proc/self/exe", ChipmunkPath, 256);
  //   printf("Path %s %s\n",ChipmunkPath,dirname(ChipmunkPath));
     
    if(r<=0) return deft;
    return dirname(ChipmunkPath);
+#endif
 
 //    if ((s= getenv(ev)) != (char *) NULL)
 //        return(s);
@@ -1015,30 +1017,6 @@ long usec;                     /* delay in microseconds */
 
 usleep(usec);
 return 0;
-    static struct              /* `timeval' */
-      {
-         long  tv_sec;         /* seconds */
-         long  tv_usec;        /* microsecs */
-                   
-      }   delay;               /* _select() timeout */
-
-    delay.tv_sec = usec / 1000000L;
-    delay.tv_usec = usec % 1000000L;
-
-#ifdef __EMSCRIPTEN__
-return select( 0, (int *)0, (int *)0, (int *)0, (struct timeval *)&delay );
-#else
-#if defined( linux ) || defined( __osf__ )
-    return select( 0, (fd_set *)0, (fd_set *)0, (fd_set *)0, (struct timeval *)&delay );
-#else
-#if defined(OS2) 
-_sleep(usec/1000);
-return 0;
-#else
-    return select( 0, (int *)0, (int *)0, (int *)0, (struct timeval *)&delay );
-#endif
-#endif
-#endif
 }
 
 #endif

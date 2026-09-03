@@ -86,6 +86,8 @@ extern char *strdup(const char *);
 #include <unistd.h>
 #endif
 
+#include <stdint.h>
+
 #if (!defined(BSD) && !defined(__sgi) && !defined(__alpha__)) 
 //# define log1p(X) log(1+(X))
 #endif
@@ -396,9 +398,9 @@ typedef struct {
 /* Memory allocation */
 #ifdef __GCC__
 #ifdef __alpha__
-# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(long long)_OutMem())
+# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(int64_t)_OutMem())
 #else
-# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(long long)_OutMem())
+# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(int64_t)_OutMem())
 #endif
 #else
 extern Anyptr __MallocTemp__;

@@ -38,7 +38,7 @@
 long sysclock()
 {
 
-  struct timeb tm;
+  struct __timeb64 tm;
 
   _ftime(&tm);
 
@@ -80,9 +80,9 @@ void systime(thetime)
      timerec *thetime;
 {
   
-  struct timeb time;
+  struct __timeb64 time;
   struct tm *t;
-  long temp; /* G. Liu + */
+  long long temp; /* G. Liu + */
   
   _ftime(&time);
   temp = time.time;

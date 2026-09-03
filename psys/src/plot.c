@@ -250,6 +250,8 @@ Char *s;
 {
   Char STR1[256];
 
+//  fprintf(stderr,"plot_out %s\n",s);
+
   if (outf == NULL) {
     if (outmode == out_hpgl)
       P_writestring(plotter + 700L, s);
@@ -637,8 +639,11 @@ struct LOC_ps_proc *LINK;
 {
   struct LOC_showstring V;
 
+  fprintf(stderr,"showstring %s\n",msg_);
+
   V.LINK = LINK;
   strcpy(V.msg, msg_);
+  fprintf(stderr,"showstring1\n");
   dostroke(LINK);
   V.hassubscr = (!strcmp(prefchar, "$") && strlen(ctrlchars) >= 7 &&
 		 ctrlchars[0] == 'X' && ctrlchars[5] == 'B' &&
@@ -806,7 +811,7 @@ plot_devrec *rec;
   case plot_act_text:
     if (rec->y2 < 14) {
       showstring(rec->q1.U16.sp1, rec->x1, rec->y1, rec->x2, rec->y2,
-		 rec->q3.U1.i1, rec->q3.U1.i2, rec->q1.U1.i2, rec->q2.r, &V);
+		 rec->q3.U1.i1, rec->q3.U1.i2, /*rec->q1.U1.i2*/1, rec->q2.r, &V);
       rec->q1.U1.i1 = 0;
     }
     break;
@@ -2540,7 +2545,7 @@ Void plot_initfonts()
   ix = NULL;
   plot_fontbase = NULL;
   plot_namebase = NULL;
-  sprintf(STR1,"%s/%s",GetChipmunkPath("",""),"plot.font");
+  sprintf(STR1,"%s/%s",GetChipmunkPath("","."),"plot.font");
   strcpy(fontfn, STR1);
   P_expset(loadft, 0L);
 }
@@ -2566,6 +2571,7 @@ Static Void warning(msg)
 Char *msg;
 {
   puts(msg);
+  fprintf(stderr,msg);
   printf("\007Press return to continue.\n");
   char b[256];
   nc_gets(b);
@@ -2659,6 +2665,7 @@ long *which_;
   all = (*which == 0L);
   P_setdiff(which, which, loadft);
   strcpy(fn, fontfn);
+  fprintf(stderr,"plot_loadfonts %s\n",fn);
   while (*fn != '\0' && (all || *which != 0L)) {
     strword(fn, fn2);
     newci_fixfname(fn2, "font", "");
@@ -2907,6 +2914,7 @@ Void plot_morefontset(fn, which)
 Char *fn;
 long *which;
 {
+  fprintf(stderr,"plot_morefontset %s\n",fn);
   plot_fontfile(fn);
   plot_loadfonts(which);
 }
@@ -2955,6 +2963,7 @@ Char *pref, *chrs_;
 Void plot_selfont(num)
 long num;
 {
+  fprintf(stderr,"plot_selfont %d\n",num);
   if(num==0) num=2;
   plot_fontrec *ft;
   long SET[257];
@@ -3107,6 +3116,8 @@ long *x, *y, num;
   short FORLIM;
   point *WITH1;
 
+  fprintf(stderr,"plotchar\n");
+
   defpen();
   x3 = -1000;
   y3 = -1000;
@@ -3140,6 +3151,7 @@ long *x, *y, num;
   }
   *x += WITH->width * csnxx;
   *y += WITH->width * csnxy;
+  fprintf(stderr,"plotchar done\n");
 }
 
 
@@ -3377,6 +3389,7 @@ long x, y;
 Char *s;
 long mode;
 {
+  fprintf(stderr,"candotext %s\n",s);
   defpen();
   rec.act = plot_act_text;
   plot_xform(x, y, &rec.x1, &rec.y1);
@@ -3392,7 +3405,7 @@ long mode;
   else
     rec.y2 = curft->num;
   rec.q1.U16.sp1 = s;
-  rec.q1.U1.i2 = cscsc * scale_ / cssc;
+  //rec.q1.U1.i2 = cscsc * scale_ / cssc;
   rec.q3.U1.i1 = csnum * sc;
   rec.q3.U1.i2 = csden * scale_;
   if (proc.link != NULL)
