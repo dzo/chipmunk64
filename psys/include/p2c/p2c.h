@@ -88,9 +88,6 @@ extern char *strdup(const char *);
 
 #include <stdint.h>
 
-#if (!defined(BSD) && !defined(__sgi) && !defined(__alpha__)) 
-//# define log1p(X) log(1+(X))
-#endif
 
 #if defined(rs6000) || defined(ultrix)
 extern char *strdup();
@@ -396,16 +393,8 @@ typedef struct {
 } _TEXT;
 
 /* Memory allocation */
-#ifdef __GCC__
-#ifdef __alpha__
-# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(int64_t)_OutMem())
-#else
-# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(int64_t)_OutMem())
-#endif
-#else
-extern Anyptr __MallocTemp__;
-# define Malloc(n)  ((__MallocTemp__ = malloc((n) ? (n) : 1)) ? __MallocTemp__ : (Anyptr)(int64_t)_OutMem())
-#endif
+# define Malloc(n)  (malloc((n) ? (n) : 1) ?: (Anyptr)(intptr_t)_OutMem())
+
 #define FreeR(p)    (free((Anyptr)(p)))    /* used if arg is an rvalue */
 #define Free(p)     (free((Anyptr)(p)), (p)=NULL)
 

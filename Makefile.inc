@@ -1,7 +1,7 @@
 ifdef WIN32
 CHIPMUNKCC = x86_64-w64-mingw32-gcc -std=gnu99 -Os
-CHIPMUNKFLAGS =  -DOS2 -fomit-frame-pointer -DLACK_GETPWNAM -D__GCC__ -I../../SDL3/include/ -D__alpha__
-# -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
+CHIPMUNKFLAGS =  -DOS2 -fomit-frame-pointer -DLACK_GETPWNAM -D__GCC__ -I../../SDL3/include/
+# -D__alpha__ -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 AR=llvm-ar
 RANLIB=llvm-ranlib
 LIBX11 =  -lSDL3 -mwindows -L../../bin
@@ -16,7 +16,7 @@ endif
 ifdef LINUX
 CHIPMUNKCC = clang -O3 -std=gnu99
 #  -fsanitize=address -g
-CHIPMUNKFLAGS = -DBSD -Dlinux -D__alpha__ -DF_OK=0 -Wno-deprecated-non-prototype -I../../SDL3/include/
+CHIPMUNKFLAGS = -DBSD -Dlinux -DF_OK=0 -Wno-deprecated-non-prototype -I../../SDL3/include/
 LIBX11 =  -lSDL3 -Wl,-rpath,. -L../../lib/
 AR=llvm-ar
 RANLIB=llvm-ranlib

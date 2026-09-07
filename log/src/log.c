@@ -268,11 +268,7 @@ extern boolean findprocedure PP((Char * name, Void (**start)()));
 #define NAMEGAP (3 * gg.scale) /* signallabel horizontal offset */
 
 typedef struct descrec {
-#ifdef __alpha__
   int ptr;
-#else
-  intptr_t ptr;
-#endif
   uchar numvects, numpins, numpnums, lblsize, simtype, procsize;
   /* log_kflags */ short flag;
   schar xx1, yy1, xx2, yy2;
@@ -287,11 +283,7 @@ typedef union filerec {
   schar sb[256];
   Char c[256];
   short sh[128];
-#ifdef __alpha__
   int i[64];
-#else
-  long i[64];
-#endif
   log_pac8 ix[32];
   ovectorrec vec[64];
   log_pinrec pin[64];
@@ -4786,16 +4778,9 @@ Static Void pass() {
           }
           /* p2c: log.text, line 5010:
            * Note: Suspicious mixture of sizes in NA_NEW [173] */
-
-#ifdef __alpha__
-          ht = (log_htrec *)Malloc(sizeof(log_htrec) -
-                                   log_million * sizeof(Anyptr) +
-                                   hncount * sizeof(Anyptr) * 2);
-#else
           ht = (log_htrec *)Malloc(sizeof(log_htrec) -
                                    log_million * sizeof(Anyptr) +
                                    hncount * sizeof(Anyptr));
-#endif
 
           ht->next = NULL;
           ht->time = gg.time;
