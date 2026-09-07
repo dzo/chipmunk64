@@ -146,9 +146,6 @@ char *str, **ptr;
 #include <p2c/newcrt.h>
 #endif
 
-#ifdef OS2
-//#define long int64_t
-#endif
 
 extern char *GetChipmunkPath();
 char *my_strdup();
@@ -274,7 +271,7 @@ typedef struct descrec {
 #ifdef __alpha__
   int ptr;
 #else
-  long ptr;
+  intptr_t ptr;
 #endif
   uchar numvects, numpins, numpnums, lblsize, simtype, procsize;
   /* log_kflags */ short flag;
@@ -1894,7 +1891,7 @@ log_kattrrec **attr;
         j2 = strposc(l1->s, ']', 1L);
         if (j2 < 3) continue;
         l2 = strlist_append(&attrnames, strpart(STR1, l1->s, 2, j2 - 1));
-        l2->value = (na_long)((long)j);
+        l2->value = (na_long)((intptr_t)j);
         strcpy_overlap(l1->s, l1->s + j2);
         strcpy(STR1, strltrim(l1->s));
         strcpy(l1->s, STR1);
@@ -1909,7 +1906,7 @@ log_kattrrec **attr;
             l2 = (*attr)[j3 - 1].UU.U86.v;
             while (l2 != NULL && strcicmp(l2->s, buf) != 0) l2 = l2->next;
             if (l2 != NULL) {
-              WITH->vr = (long)l2->value;
+              WITH->vr = (intptr_t)l2->value;
               WITH->vra = j3;
             }
           }
@@ -2044,7 +2041,7 @@ log_kattrrec **attr;
           if (l1->s[0] == ',') strcpy_overlap(l1->s, l1->s + 1);
           l3 = strlist_append(
               &l2, strcpy(STR1, strltrim(strrtrim(strcpy(STR2, buf)))));
-          l3->value = (na_long)((long)WITH->UU.U86.nv);
+          l3->value = (na_long)((intptr_t)WITH->UU.U86.nv);
           WITH->UU.U86.nv++;
           strcpy(STR1, strltrim(l1->s));
           strcpy(l1->s, STR1);
@@ -5037,7 +5034,7 @@ log_hwrec **hw;
 {
   log_hwrec *hw1;
 
-  if (gg.traceflag) fprintf(tracefile, "Dispose hwire %ld\n", (long)(*hw));
+  if (gg.traceflag) fprintf(tracefile, "Dispose hwire %ld\n", (intptr_t)(*hw));
   if (*hw == NULL) return;
   hw1 = gg.hwbase[gg.curpage - 1];
   if (*hw == hw1)
@@ -5083,7 +5080,7 @@ log_vwrec **vw;
 {
   log_vwrec *vw1;
 
-  if (gg.traceflag) fprintf(tracefile, "Dispose vwire %ld\n", (long)(*vw));
+  if (gg.traceflag) fprintf(tracefile, "Dispose vwire %ld\n", (intptr_t)(*vw));
   if (*vw == NULL) return;
   vw1 = gg.vwbase[gg.curpage - 1];
   if (*vw == vw1)
@@ -5133,7 +5130,7 @@ log_srec **s;
 {
   log_srec *s1;
 
-  if (gg.traceflag) fprintf(tracefile, "Dispose solder %ld\n", (long)(*s));
+  if (gg.traceflag) fprintf(tracefile, "Dispose solder %ld\n", (intptr_t)(*s));
   if (*s == NULL) return;
   s1 = gg.sbase[gg.curpage - 1];
   if (*s == s1)
@@ -5541,7 +5538,7 @@ uchar st;
   sprintf(simname, "%d", st);
   stp = findtool(simname);
   if (gg.traceflag)
-    fprintf(tracefile, "Findsimtype of %d gets %ld\n", st, (long)stp);
+    fprintf(tracefile, "Findsimtype of %d gets %ld\n", st, (intptr_t)stp);
   if (!stp->ready || !stp->simulator) {
     rdy = stp->ready;
     if (rdy) calltool(stp, act_exit);
@@ -5606,7 +5603,7 @@ uchar st;
   calltoolnode(*n, act_newnode);
   (*n)->next = gg.nbase;
   gg.nbase = *n;
-  if (gg.traceflag) fprintf(tracefile, "Make node %ld\n", (long)(*n));
+  if (gg.traceflag) fprintf(tracefile, "Make node %ld\n", (intptr_t)(*n));
 }
 
 Static Void dumpconflicts() {
@@ -5620,13 +5617,13 @@ Static Void dumpconflicts() {
   if (n != NULL || g != NULL) {
     printf("Conflicts:\n");
     while (n != NULL) {
-      printf("   Conflict node %ld  c=%c  delay=%d  oc=%c\n", (long)n,
+      printf("   Conflict node %ld  c=%c  delay=%d  oc=%c\n", (intptr_t)n,
              n->conflict ? 'T' : 'F', 3 - n->conflict - n->conflict2 * 2,
              n->oconflict ? 'T' : 'F');
       n = n->confnext;
     }
     while (g != NULL) {
-      printf("   Conflict gate %ld  c=%c  delay=%d  oc=%c\n", (long)g,
+      printf("   Conflict gate %ld  c=%c  delay=%d  oc=%c\n", (intptr_t)g,
              g->conflict ? 'T' : 'F', 3 - g->conflict - g->conflict2 * 2,
              g->oconflict ? 'T' : 'F');
       g = g->confnext;
@@ -5659,7 +5656,7 @@ log_nrec *old, **n;
     nodeconflictbase = *n;
   }
   if (gg.traceflag)
-    fprintf(tracefile, "Copy node %ld from %ld\n", (long)(*n), (long)old);
+    fprintf(tracefile, "Copy node %ld from %ld\n", (intptr_t)(*n), (intptr_t)old);
 }
 
 /*===================  DISPNODE  =================*/
@@ -5682,7 +5679,7 @@ log_nrec **n;
 {
   log_nrec *n1, *n2;
 
-  if (gg.traceflag) fprintf(tracefile, "Dispose node %ld\n", (long)(*n));
+  if (gg.traceflag) fprintf(tracefile, "Dispose node %ld\n", (intptr_t)(*n));
   if (*n == NULL) return;
   if ((*n)->conflict || (*n)->oconflict) {
     n1 = nodeconflictbase;
@@ -5742,7 +5739,7 @@ log_nrec *n;
   if (n == NULL) return n;
   n->ref++;
   if (gg.traceflag)
-    fprintf(tracefile, "Reference node %ld -> %d\n", (long)n, n->ref);
+    fprintf(tracefile, "Reference node %ld -> %d\n", (intptr_t)n, n->ref);
   return n;
 }
 
@@ -5754,7 +5751,7 @@ log_nrec **n;
   if (*n == NULL) return;
   (*n)->ref--;
   if (gg.traceflag)
-    fprintf(tracefile, "Unref node %ld -> %d\n", (long)(*n), (*n)->ref);
+    fprintf(tracefile, "Unref node %ld -> %d\n", (intptr_t)(*n), (*n)->ref);
   if ((*n)->ref > 0) return;
   if ((*n)->ref < 0)
     report(10, rtn);
@@ -6109,7 +6106,7 @@ Static Void dumpnodes() {
   TRY(try6);
   while (j == i && n != NULL) {
     i++;
-    fprintf(tracefile, "%12ld  T:%s  Ref:%d", (long)n, n->simtype->name,
+    fprintf(tracefile, "%12ld  T:%s  Ref:%d", (intptr_t)n, n->simtype->name,
             n->ref);
     FORLIM = gg.lastsignal;
     for (j = 0; j < FORLIM; j++) {
@@ -6143,8 +6140,8 @@ Static Void dumpnodes() {
   fprintf(tracefile, "HWIRES\n");
   TRY(try8);
   while (hw != NULL) {
-    fprintf(tracefile, "%12ld  X1:%4d X2:%4d  Y:%4d  N:%ld  C:%s\n", (long)hw,
-            hw->x1, hw->x2, hw->y, (long)hw->node, colorname(STR3, hw->wcolr));
+    fprintf(tracefile, "%12ld  X1:%4d X2:%4d  Y:%4d  N:%ld  C:%s\n",  (intptr_t)hw,
+            hw->x1, hw->x2, hw->y,  (intptr_t)hw->node, colorname(STR3, hw->wcolr));
     hw = hw->next;
   }
   RECOVER(try8);
@@ -6156,8 +6153,8 @@ Static Void dumpnodes() {
   fprintf(tracefile, "VWIRES\n");
   TRY(try9);
   while (vw != NULL) {
-    fprintf(tracefile, "%12ld   X:%4d Y1:%4d Y2:%4d  N:%ld  C:%s\n", (long)vw,
-            vw->x, vw->y1, vw->y2, (long)vw->node, colorname(STR3, vw->wcolr));
+    fprintf(tracefile, "%12ld   X:%4d Y1:%4d Y2:%4d  N:%ld  C:%s\n",  (intptr_t)vw,
+            vw->x, vw->y1, vw->y2,  (intptr_t)vw->node, colorname(STR3, vw->wcolr));
     vw = vw->next;
   }
   RECOVER(try9);
@@ -6169,10 +6166,10 @@ Static Void dumpnodes() {
   fprintf(tracefile, "SOLDER\n");
   TRY(try10);
   while (s != NULL) {
-    fprintf(tracefile, "%12ld   X:%4d  Y:%4d    HW: %ld,%ld", (long)s, s->x,
-            s->y, (long)s->hwire, (long)s->hwire2);
+    fprintf(tracefile, "%12ld   X:%4d  Y:%4d    HW: %ld,%ld",  (intptr_t)s, s->x,
+            s->y,  (intptr_t)s->hwire,  (intptr_t)s->hwire2);
     if (s->hwire == NULL) fprintf(tracefile, "      ");
-    fprintf(tracefile, "    VW: %ld,%ld\n", (long)s->vwire, (long)s->vwire2);
+    fprintf(tracefile, "    VW: %ld,%ld\n",  (intptr_t)s->vwire,  (intptr_t)s->vwire2);
     s = s->next;
   }
   RECOVER(try10);
@@ -6185,12 +6182,12 @@ Static Void dumpnodes() {
   TRY(try11);
   while (g != NULL) {
     fprintf(tracefile, "%12ld  G:%3d    X:%4d  Y:%4d  T:%s        %s\n",
-            (long)g, g->g, g->x, g->y, g->kind->simtype->name, g->kind->name);
+             (intptr_t)g, g->g, g->x, g->y, g->kind->simtype->name, g->kind->name);
     WITH = g->kind;
     FORLIM = WITH->numpins;
     for (i = 0; i < FORLIM; i++) {
       fprintf(tracefile, "              Pin %2d   X:%4d  Y:%4d  N:%ld", i + 1,
-              g->pinpos[i].x, g->pinpos[i].y, (long)g->pin[i]);
+              g->pinpos[i].x, g->pinpos[i].y,  (intptr_t)g->pin[i]);
       TRY(try12);
       fprintf(tracefile, " [%d]", g->pin[i]->ref);
       RECOVER(try12);
@@ -6962,7 +6959,7 @@ log_vwrec *vw, *vw2;
     else
       report(4, rtn);
   }
-  if (gg.traceflag) fprintf(tracefile, "Add solder %ld\n", (long)s);
+  if (gg.traceflag) fprintf(tracefile, "Add solder %ld\n",  (intptr_t)s);
 }
 
 #undef rtn
@@ -7031,7 +7028,7 @@ log_nrec *oldnode, *n;
   short i, px, FORLIM;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Change hwire %ld to node %ld\n", (long)hw, (long)n);
+    fprintf(tracefile, "Change hwire %ld to node %ld\n",  (intptr_t)hw,  (intptr_t)n);
   switchnode(&hw->node, n);
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
@@ -7090,7 +7087,7 @@ log_nrec *oldnode, *n;
   short i, py, FORLIM;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Change vwire %ld to node %ld\n", (long)vw, (long)n);
+    fprintf(tracefile, "Change vwire %ld to node %ld\n", (intptr_t)vw,  (intptr_t)n);
   switchnode(&vw->node, n);
   g = gg.gbase[gg.curpage - 1];
   while (g != NULL) {
@@ -7147,8 +7144,8 @@ log_nrec *oldnode, *n;
   short j, k, savepg, pg, x, y, FORLIM;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Change gate %ld pin %d to node %ld\n", (long)g, i,
-            (long)n);
+    fprintf(tracefile, "Change gate %ld pin %d to node %ld\n",  (intptr_t)g, i,
+             (intptr_t)n);
   j = i;
   do {
     if (g->pin[j - 1] == oldnode) {
@@ -7281,7 +7278,7 @@ log_hwrec *hw;
   log_grec *g;
   short i, x, y, FORLIM;
 
-  if (gg.traceflag) fprintf(tracefile, "Delete hwire %ld\n", (long)hw);
+  if (gg.traceflag) fprintf(tracefile, "Delete hwire %ld\n", (intptr_t)hw);
   working();
   clipon();
   m_color((long)gg.color.backgr);
@@ -7301,7 +7298,7 @@ log_hwrec *hw;
         dispsolder(&s);
       } else {
         if (gg.traceflag)
-          fprintf(tracefile, "DELHW keeping solder %ld\n", (long)s);
+          fprintf(tracefile, "DELHW keeping solder %ld\n",  (intptr_t)s);
       }
     }
     s = s1;
@@ -7357,7 +7354,7 @@ log_vwrec *vw;
   log_grec *g;
   short i, x, y, FORLIM;
 
-  if (gg.traceflag) fprintf(tracefile, "Delete vwire %ld\n", (long)vw);
+  if (gg.traceflag) fprintf(tracefile, "Delete vwire %ld\n",  (intptr_t)vw);
   working();
   clipon();
   m_color((long)gg.color.backgr);
@@ -7377,7 +7374,7 @@ log_vwrec *vw;
         dispsolder(&s);
       } else {
         if (gg.traceflag)
-          fprintf(tracefile, "DELVW keeping solder %ld\n", (long)s);
+          fprintf(tracefile, "DELVW keeping solder %ld\n",  (intptr_t)s);
       }
     }
     s = s1;
@@ -7436,8 +7433,8 @@ log_nrec **oldnode, **savenode;
   short j, x, y, FORLIM;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Change gate %ld pin %d from node %ld\n", (long)g, i,
-            (long)(*oldnode));
+    fprintf(tracefile, "Change gate %ld pin %d from node %ld\n",  (intptr_t)g, i,
+             (intptr_t)(*oldnode));
   x = g->pinpos[i - 1].x;
   y = g->pinpos[i - 1].y;
   hw = gg.hwbase[gg.curpage - 1];
@@ -7483,7 +7480,7 @@ log_grec *g;
   short FORLIM;
   long SET[9];
 
-  if (gg.traceflag) fprintf(tracefile, "Disconnect gate %ld\n", (long)g);
+  if (gg.traceflag) fprintf(tracefile, "Disconnect gate %ld\n", (intptr_t)g);
   stamp(&g->kind->simtype->netstamp);
   calltoolgate(g, act_disconnectgate);
   oldnode = (log_nrec **)Malloc(g->kind->numpins * sizeof(log_nrec *));
@@ -7531,7 +7528,7 @@ log_nrec *n;
   log_hnrec *hn;
   short FORLIM, FORLIM1;
 
-  if (gg.traceflag) fprintf(tracefile, "Confirm simtype of %ld\n", (long)n);
+  if (gg.traceflag) fprintf(tracefile, "Confirm simtype of %ld\n",  (intptr_t)n);
   if (n == NULL || n->simtype->simtype < 8) return;
   found = false;
   FORLIM = gg.numpages;
@@ -7548,7 +7545,7 @@ log_nrec *n;
     }
   }
   if (found) return;
-  if (gg.traceflag) fprintf(tracefile, "Deleting simtype of %ld\n", (long)n);
+  if (gg.traceflag) fprintf(tracefile, "Deleting simtype of %ld\n",  (intptr_t)n);
   calltoolnode(n, act_disposenode);
   disposeattrs(&n->attr, n->simtype->nnumattrs, n->simtype->nattr);
   hn = gg.hnbase;
@@ -7583,7 +7580,7 @@ cnrec *cnbase;
   short i, pg, FORLIM, FORLIM1;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Combine node %ld into %ld\n", (long)(*n1), (long)(*n2));
+    fprintf(tracefile, "Combine node %ld into %ld\n",  (intptr_t)(*n1),  (intptr_t)(*n2));
   working();
   if (*n2 == NULL) switchnode(n2, *n1);
   nn1 = *n1; /*VAR params may change out from under us*/
@@ -7676,8 +7673,8 @@ log_nrec **n, **n2;
   cnrec *cn;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Queue-combine,  n = %ld,  np -> %ld\n", (long)(*n),
-            (long)(*n2));
+    fprintf(tracefile, "Queue-combine,  n = %ld,  np -> %ld\n",  (intptr_t)(*n),
+             (intptr_t)(*n2));
   if (*n == NULL) return;
   cn = (cnrec *)Malloc(sizeof(cnrec));
   cn->next = *cnbase;
@@ -8070,7 +8067,7 @@ short x1, x2, y, colr;
   gg.nearhw = hw;
   clipoff();
   refreshsoon();
-  if (gg.traceflag) fprintf(tracefile, "Added hwire %ld\n", (long)hw);
+  if (gg.traceflag) fprintf(tracefile, "Added hwire %ld\n",  (intptr_t)hw);
 _L1:
   dispblobs(&blbase);
 
@@ -8197,7 +8194,7 @@ short x, y1, y2, colr;
   gg.nearvw = vw;
   clipoff();
   refreshsoon();
-  if (gg.traceflag) fprintf(tracefile, "Added vwire %ld\n", (long)vw);
+  if (gg.traceflag) fprintf(tracefile, "Added vwire %ld\n",  (intptr_t)vw);
 _L1:
   dispblobs(&blbase);
 
@@ -8252,7 +8249,7 @@ log_grec *g;
   short FORLIM, FORLIM1;
 
   if (gg.traceflag)
-    fprintf(tracefile, "Connect gate %ld, type %s\n", (long)g, g->kind->name);
+    fprintf(tracefile, "Connect gate %ld, type %s\n",  (intptr_t)g, g->kind->name);
   linkgate(&g);
   working();
   initpinpos(g);
@@ -11304,7 +11301,7 @@ boolean loadit;
                       if (j0 <= WITH->numpins) {
                         sprintf(STR1, "%.*s", j00 - 1, buf);
                         l2 = strlist_append(&WITH->pinnames[j0 - 1], STR1);
-                        l2->value = (na_long)((long)j0);
+                        l2->value = (na_long)( (intptr_t)j0);
                       }
                     }
                     strcpy_overlap(buf, buf + j00 - 1);
@@ -12381,7 +12378,7 @@ struct LOC_editattrs *LINK;
 
       case 'V':
         l1 = WITH->UU.U86.v;
-        while (l1 != NULL && (long)l1->value != LINK->gattr[i - 1].UU.nv)
+        while (l1 != NULL && (intptr_t)l1->value != LINK->gattr[i - 1].UU.nv)
           l1 = l1->next;
         if (l1 != NULL)
           fputs(l1->s, stdout);
@@ -12977,7 +12974,7 @@ long *attrstamp;
             strcpy(buf, STR1);
             l1 = V.kattr[V.p - 1].UU.U86.v;
             while (l1 != NULL && strcicmp(l1->s, buf) != 0) l1 = l1->next;
-            if (l1 != NULL) WITH->UU.nv = (long)l1->value;
+            if (l1 != NULL) WITH->UU.nv = (intptr_t)l1->value;
             if (tryconfig(&V)) {
               maskvalues(&V);
               touched = true;
@@ -13286,7 +13283,7 @@ Char *buf;
       strcpy(buf, STR1);
       l1 = V.kattr[V.p - 1].UU.U86.v;
       while (l1 != NULL && strcicmp(l1->s, buf) != 0) l1 = l1->next;
-      if (l1 != NULL) WITH->UU.nv = (long)l1->value;
+      if (l1 != NULL) WITH->UU.nv = (intptr_t)l1->value;
       if (tryconfig_(&V))
         touched = true;
       else
@@ -13644,7 +13641,7 @@ short *num;
     while (l1 != NULL && l1->kind != '\001') l1 = l1->next;
     if (l1 != NULL) l1 = strlist_find((na_strlist *)l1->value, name);
     if (l1 != NULL)
-      *num = (long)l1->value;
+      *num = (intptr_t)l1->value;
     else
       *num = 0;
   }
@@ -13676,7 +13673,7 @@ Char *name;
   while (l1 != NULL && l1->kind != '\001') l1 = l1->next;
   if (l1 != NULL) {
     l1 = (na_strlist *)l1->value;
-    while (l1 != NULL && (long)l1->value != num) l1 = l1->next;
+    while (l1 != NULL && (intptr_t)l1->value != num) l1 = l1->next;
   }
   if (l1 != NULL)
     strcpy(name, l1->s);
@@ -14220,7 +14217,7 @@ short sig, y;
   tool = gg.signaltab[sig - 1].np->simtype;
   newattrs(&(*hn)->attr, tool->hnumattrs, tool->hattr);
   if (gg.traceflag)
-    fprintf(tracefile, "Histaddsignal: %ld, %d\n", (long)(*hn)->attr,
+    fprintf(tracefile, "Histaddsignal: %ld, %d\n", (intptr_t)(*hn)->attr,
             tool->hnumattrs);
   (*hn)->next = gg.hnbase;
   gg.hnbase = *hn;
@@ -15275,7 +15272,7 @@ Static Void historycommand() {
                 } while (gg.t.depressed);
                 if (!flag) {
                   if (gg.traceflag)
-                    fprintf(tracefile, "Delete trace %ld\n", (long)hn);
+                    fprintf(tracefile, "Delete trace %ld\n", (intptr_t)hn);
                   if (hn == histgridhn) {
                     histgridwhich = 0;
                     histgridhn = NULL;
@@ -15513,7 +15510,7 @@ struct LOC_savepage *LINK;
     i++;
     hw1 = (log_hwrec *)hw1->temp;
   }
-  if (hw1 == NULL) printf("\007Unable to find hwire %ld\n", (long)hw);
+  if (hw1 == NULL) printf("\007Unable to find hwire %ld\n", (intptr_t)hw);
   return i;
 }
 
@@ -15530,7 +15527,7 @@ struct LOC_savepage *LINK;
     i++;
     vw1 = (log_vwrec *)vw1->temp;
   }
-  if (vw1 == NULL) printf("\007Unable to find vwire %ld\n", (long)vw);
+  if (vw1 == NULL) printf("\007Unable to find vwire %ld\n", (intptr_t)vw);
   return (i + LINK->numhw);
 }
 
@@ -15583,7 +15580,7 @@ struct LOC_savepage *LINK;
   while (l1 != NULL && l1->kind != '\001') l1 = l1->next;
   if (l1 == NULL) return l1;
   l1 = (na_strlist *)l1->value;
-  while (l1 != NULL && (long)l1->value != i) l1 = l1->next;
+  while (l1 != NULL && (intptr_t)l1->value != i) l1 = l1->next;
   return l1;
 }
 
@@ -15894,7 +15891,7 @@ Char *filename_;
         }
       }
       fprintf(f, "%d %d %d ", g->x, g->y, g->rot);
-      fprintf(f, "%d %ld %d ", g->gc, (long)g->vars, i);
+      fprintf(f, "%d %ld %d ", g->gc, (intptr_t)g->vars, i);
       fprintf(f, "%d\n", countattrs(g->attr, k->numattrs, k->attr, k->lbl, &V));
       FORLIM = k->numpins;
       for (i = 1; i <= FORLIM; i++) {
@@ -16268,7 +16265,7 @@ short count;
       if (!P_eoln(*f)) {
         l1 = names;
         while (l1 != NULL && strcmp(buf, l1->s)) l1 = l1->next;
-        if (l1 != NULL) jj = (long)l1->value;
+        if (l1 != NULL) jj = (intptr_t)l1->value;
         do {
           ch = getc(*f);
           if (ch == '\n') ch = ' ';
@@ -16756,7 +16753,7 @@ Char *reason_;
           g->x = x;
           g->y = y;
           g->gc = y1;
-          g->vars = (na_long)ii;
+          g->vars = (na_long)((intptr_t)ii);
           if (x2 == 0)
             g->sig = 0;
           else
@@ -17140,7 +17137,7 @@ Char *reason_;
             if (gg.neargate != NULL) {
               g = gg.neargate;
               g->gc = y2;
-              g->vars = (na_long)ii;
+              g->vars = (na_long)((intptr_t)ii);
               if (m != 0) settofrom(&g, gg.signaltab[V.ip[m - 1] - 1].name);
               fscanf(*V.f, "%*[^\n]"); /*ignore pins*/
               getc(*V.f);
@@ -18064,7 +18061,7 @@ short *val, def;
   strupper(name, strcpy(STR2, strltrim(strrtrim(strcpy(STR3, name)))));
   cp = strlist_find(colorbase, name);
   if (cp != NULL)
-    *val = (long)cp->value;
+    *val = (intptr_t)cp->value;
   else
     *val = reducecolor8(def);
 }
@@ -18343,7 +18340,7 @@ Static Void docnffunction() {
     strlist_remove(&colorbase, arg);
     if (k >= 0) {
       cp = strlist_add(&colorbase, arg);
-      cp->value = (na_long)k;
+      cp->value = (na_long)((intptr_t)k);
     } else if (gg.initdone) {
       beginerror();
       printf("No such color as \"%s\"\n", gg.funcarg);
@@ -19866,7 +19863,7 @@ int main(int argc, Char *argv[]) {
       m_graphics_on();
       nc_cursor_off();
       while (messages != NULL) {
-        switch ((long)messages->value) {
+        switch ((intptr_t)messages->value) {
           case 0:
             message(messages->s);
             break;

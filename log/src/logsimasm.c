@@ -99,7 +99,7 @@ boolean *stable;
       nip = (nodeinfo *)n->info;
       if ((nip->truev = newv = nip->v0) == log_none)
 	newv = nip->defv;
-      if (TRACE_COPY) printf("Setting node %lx to %d\n", (unsigned long)nip, newv);
+      if (TRACE_COPY) printf("Setting node %lx to %d\n", (uintptr_t)nip, newv);
       if (newv != (nip->v00 = nip->v)) {
 	nip->v = newv;
 	st = false;
@@ -349,7 +349,7 @@ static log_16_value g_expr()
     
   case 0xb0:  /* high pin */
     nip = g_pins[*g_proc++]->info;
-    if (TRACE_VAL) printf(" Value of %x is %d\n", (unsigned long)nip, (int)nip->v - 1);
+    if (TRACE_VAL) printf(" Value of %x is %d\n", (uintptr_t)nip, (int)nip->v - 1);
     return nip->v;
 
   case 0xb1:  /* STRONG */
@@ -359,7 +359,7 @@ static log_16_value g_expr()
   case16(0xc0):  /* pin */
   case16(0xd0):
     nip = g_pins[ch & 0x1f]->info;
-    if (TRACE_VAL) printf(" Value of %x is %d\n", (unsigned long)nip, (int)nip->v - 1);
+    if (TRACE_VAL) printf(" Value of %x is %d\n", (uintptr_t)nip, (int)nip->v - 1);
     return nip->v;
 
   case16(0xe0):  /* var */
@@ -471,10 +471,10 @@ Static Void g_stmts()
       goto oc_out_node;
 
     case 0x12:	/* CALL */
-      g_gate->vars = (na_long)g_vars;
+      g_gate->vars = (na_long)(intptr_t)g_vars;
       logsima_action.lact->actgate = g_gate;
       processcall(act_16_sim);
-      g_vars = (long)g_gate->vars;
+      g_vars = (intptr_t)g_gate->vars;
       break;
 
     case 0x16:	/* Comment */
@@ -555,7 +555,7 @@ Static Void g_stmts()
 
       case log_zero:
 	nip = np->info;
-	if (TRACE_VAL) printf(" Output 0 to %x (was %d)\n", (unsigned long)nip, nip->v0);
+	if (TRACE_VAL) printf(" Output 0 to %x (was %d)\n", (uintptr_t)nip, nip->v0);
 	if (nip->v0 == log_one)
 	  record_conflict(np);
 	else
@@ -564,7 +564,7 @@ Static Void g_stmts()
 
       case log_one:
 	nip = np->info;
-	if (TRACE_VAL) printf(" Output 1 to %x (was %d)\n", (unsigned long)nip, nip->v0);
+	if (TRACE_VAL) printf(" Output 1 to %x (was %d)\n", (uintptr_t)nip, nip->v0);
 	if (nip->v0 == log_zero)
 	  record_conflict(np);
 	else
@@ -583,7 +583,7 @@ Static Void g_stmts()
     oc_out_node:
       if (g_expr() == log_zero) {
 	nip = np->info;
-	if (TRACE_VAL) printf(" Output 0 to %x (was %d)\n", (unsigned long)nip, nip->v0);
+	if (TRACE_VAL) printf(" Output 0 to %x (was %d)\n", (uintptr_t)nip, nip->v0);
 	if (nip->v0 == log_one)
 	  record_conflict(np);
 	else
@@ -642,9 +642,9 @@ na_long *vars;
   g_proc = pr;
   g_pins = pins;
   g_info = ginfo;
-  g_vars = (long)(*vars);
+  g_vars = (intptr_t)(*vars);
   g_stmts();
-  *vars = (na_long)g_vars;
+  *vars = (na_long)(intptr_t)g_vars;
 
   g_proc = s_proc;
   g_pins = s_pins;
@@ -675,9 +675,9 @@ register log_grec *g;
       g_pins = g->pin;
       g_gate = g;
       g_info = g->info;
-      g_vars = (long)g->vars;
+      g_vars = (intptr_t)g->vars;
       g_stmts();
-      g->vars = (na_long)g_vars;
+      g->vars = (na_long)(intptr_t)g_vars;
     }
     g = g->next;
   }

@@ -270,11 +270,11 @@ log_16_action *act;
     break;
 
   case act_16_draw:
-    if (WITH->refrflag || P_getbits_US((unsigned long)WITH1->vars, 0, 1) !=
-			  P_getbits_US((unsigned long)WITH1->vars, 1, 1)) {
+    if (WITH->refrflag || P_getbits_US((uintptr_t)WITH1->vars, 0, 1) !=
+			  P_getbits_US((uintptr_t)WITH1->vars, 1, 1)) {
       log_16_led(act->lact, 0, 0,
-		 log_16_iv[P_getbits_US((unsigned long)WITH1->vars, 0, 1)]);
-      TEMP = P_getbits_US((unsigned long)WITH1->vars, 0, 1);
+		 log_16_iv[P_getbits_US((uintptr_t)WITH1->vars, 0, 1)]);
+      TEMP = P_getbits_US((uintptr_t)WITH1->vars, 0, 1);
       P_clrbits_S(*(unsigned long *)&(WITH1->vars), 1, 1);
       P_putbits_US(*(unsigned long *)&(WITH1->vars), 1, TEMP, 1);
     }
@@ -289,7 +289,7 @@ log_16_action *act;
       WITH->actflag = true;
     else if (!strcmp(WITH->genfunc, "PLOT"))
       log_16_plotled(act->lact, 0, 0,
-	log_16_iv[P_getbits_US((unsigned long)WITH1->vars, 0, 1)]);
+	log_16_iv[P_getbits_US((uintptr_t)WITH1->vars, 0, 1)]);
     break;
 
   default:
@@ -314,38 +314,38 @@ log_16_action *act;
   switch (act->action) {
 
   case act_16_sim:
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 1)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 1)));
     FORLIM = WITH1->kind->numpins;
     for (i = 0; i < FORLIM; i++) {
       pin1 = (nodeinfo *)WITH1->pin[i]->info;
       switch (pin1->v) {
 
       case log_zero:
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (1L << 0));
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (1L << 0));
 	break;
 
       case log_one:
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (1L << 1));
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (1L << 1));
 	break;
 
       default:
 	break;
       }
     }
-    if ((((unsigned long)WITH1->vars) & (1L << 0)) != 0 &&
-	(((unsigned long)WITH1->vars) & (1L << 1)) != 0) {
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 1)));
+    if ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0 &&
+	(((uintptr_t)WITH1->vars) & (1L << 1)) != 0) {
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 1)));
     }
     break;
 
   case act_16_draw:
-    if (WITH->refrflag || P_getbits_US((unsigned long)WITH1->vars, 0, 1) !=
-			  P_getbits_US((unsigned long)WITH1->vars, 1, 1)) {
+    if (WITH->refrflag || P_getbits_US((uintptr_t)WITH1->vars, 0, 1) !=
+			  P_getbits_US((uintptr_t)WITH1->vars, 1, 1)) {
       log_16_led(act->lact, 0, 0,
-		 log_16_iv[P_getbits_US((unsigned long)WITH1->vars, 0, 1)]);
-      TEMP = P_getbits_US((unsigned long)WITH1->vars, 0, 1);
+		 log_16_iv[P_getbits_US((uintptr_t)WITH1->vars, 0, 1)]);
+      TEMP = P_getbits_US((uintptr_t)WITH1->vars, 0, 1);
       P_clrbits_S(*(unsigned long *)&(WITH1->vars), 1, 1);
       P_putbits_US(*(unsigned long *)&(WITH1->vars), 1, TEMP, 1);
     }
@@ -360,7 +360,7 @@ log_16_action *act;
       WITH->actflag = true;
     else if (!strcmp(WITH->genfunc, "PLOT"))
       log_16_plotled(act->lact, 0, 0,
-	log_16_iv[P_getbits_US((unsigned long)WITH1->vars, 0, 1)]);
+	log_16_iv[P_getbits_US((uintptr_t)WITH1->vars, 0, 1)]);
     break;
 
   default:
@@ -385,65 +385,65 @@ log_16_action *act;
   case act_16_sim:
     if (resetcounter > 0)
       WITH1->info = (na_long)0;
-    if ((isstable || WITH1->attr[0].UU.nv != 2) && (long)WITH1->info < 1) {
+    if ((isstable || WITH1->attr[0].UU.nv != 2) && (intptr_t)WITH1->info < 1) {
       switch (WITH1->attr[0].UU.nv) {
 
       case 0:
 	if (WITH1->attr[1].UU.U73.i1 == 0)
 	  WITH1->info = (na_long)0;
 	else
-	  WITH1->info = (na_long)(100 / WITH1->attr[1].UU.U73.i1);
+	  WITH1->info = (na_long)(uintptr_t)(100 / WITH1->attr[1].UU.U73.i1);
 	break;
 
       case 1:
-	WITH1->info = (na_long)WITH1->attr[2].UU.U73.i1;
+	WITH1->info = (na_long)(uintptr_t)WITH1->attr[2].UU.U73.i1;
 	break;
 
       case 2:
-	WITH1->info = (na_long)WITH1->attr[3].UU.U73.i1;
+	WITH1->info = (na_long)(uintptr_t)WITH1->attr[3].UU.U73.i1;
 	break;
       }
       if (resetcounter > 0) {
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (1L << 2));
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (1L << 2));
 	P_clrbits_S(*(unsigned long *)&(WITH1->vars), 2, 1);
       } else {
 	switch (WITH1->attr[4].UU.nv) {
 
 	case 0:
-	  TEMP = ((((unsigned long)WITH1->vars) & (1L << 0)) == 0);
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
+	  TEMP = ((((uintptr_t)WITH1->vars) & (1L << 0)) == 0);
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
 	  WITH1->vars = (na_long)
-			(((unsigned long)WITH1->vars) | (((long)TEMP) << 0));
-	  TEMP = ((((unsigned long)WITH1->vars) & (1L << 0)) == 0);
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 2)));
+			(((uintptr_t)WITH1->vars) | (((intptr_t)TEMP) << 0));
+	  TEMP = ((((uintptr_t)WITH1->vars) & (1L << 0)) == 0);
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 2)));
 	  WITH1->vars = (na_long)
-			(((unsigned long)WITH1->vars) | (((long)TEMP) << 2));
-	  if ((((unsigned long)WITH1->vars) & (1L << 0)) != 0)
-	    WITH1->info = (na_long)((long)WITH1->info / 2);
+			(((uintptr_t)WITH1->vars) | (((intptr_t)TEMP) << 2));
+	  if ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0)
+	    WITH1->info = (na_long)((intptr_t)WITH1->info / 2);
 	  else
-	    WITH1->info = (na_long)((long)WITH1->info - (long)WITH1->info / 2);
+	    WITH1->info = (na_long)((intptr_t)WITH1->info - (uintptr_t)WITH1->info / 2);
 	  break;
 
 	case 1:
-	  TEMP1 = (P_getbits_US((unsigned long)WITH1->vars, 2, 1) + 1) & 3;
+	  TEMP1 = (P_getbits_US((uintptr_t)WITH1->vars, 2, 1) + 1) & 3;
 	  P_clrbits_S(*(unsigned long *)&(WITH1->vars), 2, 1);
 	  P_putbits_US(*(unsigned long *)&(WITH1->vars), 2, TEMP1, 1);
-	  TEMP = ((((unsigned long)WITH1->vars) & (1L << 4)) != 0 &&
-		  (((unsigned long)WITH1->vars) & (1L << 5)) != 0);
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
+	  TEMP = ((((uintptr_t)WITH1->vars) & (1L << 4)) != 0 &&
+		  (((uintptr_t)WITH1->vars) & (1L << 5)) != 0);
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
 	  WITH1->vars = (na_long)
-			(((unsigned long)WITH1->vars) | (((long)TEMP) << 0));
-	  TEMP = ((((unsigned long)WITH1->vars) & (1L << 4)) == 0 &&
-		  (((unsigned long)WITH1->vars) & (1L << 5)) != 0);
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 2)));
+			(((uintptr_t)WITH1->vars) | (((long)TEMP) << 0));
+	  TEMP = ((((uintptr_t)WITH1->vars) & (1L << 4)) == 0 &&
+		  (((uintptr_t)WITH1->vars) & (1L << 5)) != 0);
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 2)));
 	  WITH1->vars = (na_long)
-			(((unsigned long)WITH1->vars) | (((long)TEMP) << 2));
-	  if (P_getbits_US((unsigned long)WITH1->vars, 2, 1) > 0 ||
-	      (long)WITH1->info < 4)
-	    WITH1->info = (na_long)((long)WITH1->info / 4);
+			(((uintptr_t)WITH1->vars) | (((long)TEMP) << 2));
+	  if (P_getbits_US((uintptr_t)WITH1->vars, 2, 1) > 0 ||
+	      (intptr_t)WITH1->info < 4)
+	    WITH1->info = (na_long)((uintptr_t)WITH1->info / 4);
 	  else
-	    WITH1->info = (na_long)((long)WITH1->info - (long)WITH1->info / 4 * 3);
+	    WITH1->info = (na_long)((intptr_t)WITH1->info - (intptr_t)WITH1->info / 4 * 3);
 	  break;
 	}
       }
@@ -452,32 +452,32 @@ log_16_action *act;
 
     case 0:
       if (newsystime > oldsystime && newsystime < oldsystime + 10000)
-	WITH1->info = (na_long)((long)WITH1->info + oldsystime - newsystime);
+	WITH1->info = (na_long)((intptr_t)WITH1->info + oldsystime - newsystime);
       break;
 
     case 1:
     case 2:
-      WITH1->info = (na_long)((long)WITH1->info - 1);
+      WITH1->info = (na_long)((intptr_t)WITH1->info - 1);
       break;
     }
     break;
 
   case act_16_draw:
-    if (WITH->refrflag || ((((unsigned long)WITH1->vars) & (1L << 1)) != 0) !=
-			  ((((unsigned long)WITH1->vars) & (1L << 0)) != 0)) {
+    if (WITH->refrflag || ((((uintptr_t)WITH1->vars) & (1L << 1)) != 0) !=
+			  ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0)) {
       log_16_led(act->lact, 5, -5,
-	log_16_bv[((((unsigned long)WITH1->vars) & (1L << 0)) != 0) - false]);
-      TEMP = ((((unsigned long)WITH1->vars) & (1L << 0)) != 0);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 1)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 1));
+	log_16_bv[((((uintptr_t)WITH1->vars) & (1L << 0)) != 0) - false]);
+      TEMP = ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0);
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 1)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 1));
     }
-    if (WITH->refrflag || ((((unsigned long)WITH1->vars) & (1L << 3)) != 0) !=
-			  ((((unsigned long)WITH1->vars) & (1L << 2)) != 0)) {
+    if (WITH->refrflag || ((((uintptr_t)WITH1->vars) & (1L << 3)) != 0) !=
+			  ((((uintptr_t)WITH1->vars) & (1L << 2)) != 0)) {
       log_16_led(act->lact, 5, 5,
-	log_16_bv[((((unsigned long)WITH1->vars) & (1L << 2)) != 0) - false]);
-      TEMP = ((((unsigned long)WITH1->vars) & (1L << 2)) != 0);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 3)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 3));
+	log_16_bv[((((uintptr_t)WITH1->vars) & (1L << 2)) != 0) - false]);
+      TEMP = ((((uintptr_t)WITH1->vars) & (1L << 2)) != 0);
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 3)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 3));
     }
     break;
 
@@ -545,14 +545,14 @@ log_16_action *act;
   switch (act->action) {
 
   case act_16_draw:
-    if (WITH->refrflag || ((((unsigned long)WITH1->vars) & (1L << 1)) != 0) !=
-			  ((((unsigned long)WITH1->vars) & (1L << 0)) != 0)) {
+    if (WITH->refrflag || ((((uintptr_t)WITH1->vars) & (1L << 1)) != 0) !=
+			  ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0)) {
       getpointmark(1, 0, 0, &xx, &yy);
       log_16_led(act->lact, xx, yy,
-	log_16_bv[((((unsigned long)WITH1->vars) & (1L << 0)) != 0) - false]);
-      TEMP = ((((unsigned long)WITH1->vars) & (1L << 0)) != 0);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 1)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 1));
+	log_16_bv[((((uintptr_t)WITH1->vars) & (1L << 0)) != 0) - false]);
+      TEMP = ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0);
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 1)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 1));
     }
     break;
 
@@ -562,9 +562,9 @@ log_16_action *act;
     break;
 
   case act_16_touch:
-    TEMP = ((((unsigned long)WITH1->vars) & (1L << 0)) == 0);
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 0));
+    TEMP = ((((uintptr_t)WITH1->vars) & (1L << 0)) == 0);
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 0));
     WITH->actflag = true;
     break;
 
@@ -575,9 +575,9 @@ log_16_action *act;
     } else if (!strcmp(WITH->genfunc, "PLOT")) {
       getpointmark(1, 0, 0, &xx, &yy);
       log_16_plotled(act->lact, xx, yy,
-	log_16_bv[((((unsigned long)WITH1->vars) & (1L << 0)) != 0) - false]);
+	log_16_bv[((((uintptr_t)WITH1->vars) & (1L << 0)) != 0) - false]);
     } else if (!strcmp(WITH->genfunc, "CONSTPINS"))
-      makeconstpin(act, 1L, (((unsigned long)WITH1->vars) & (1L << 0)) != 0);
+      makeconstpin(act, 1L, (((uintptr_t)WITH1->vars) & (1L << 0)) != 0);
     break;
 
   default:
@@ -597,14 +597,14 @@ log_16_action *act;
   WITH1 = WITH->actgate;
   if (act->action != act_16_sim)
     return;
-  if ((long)WITH1->info <= 0) {
-    if ((((unsigned long)WITH1->vars) & (1L << 0)) != 0)
+  if ((intptr_t)WITH1->info <= 0) {
+    if ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0)
       WITH1->info = (na_long)6;
     return;
   }
-  WITH1->info = (na_long)((long)WITH1->info - 1);
-  if ((long)WITH1->info <= 0)
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
+  WITH1->info = (na_long)((intptr_t)WITH1->info - 1);
+  if ((intptr_t)WITH1->info <= 0)
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
 }
 
 
@@ -620,7 +620,7 @@ log_16_action *act;
   switch (act->action) {
 
   case act_16_sim:
-    if ((((unsigned long)WITH1->vars) & (1L << 0)) != 0) {
+    if ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0) {
       WITH->pwrflag = false;
       (*WITH->hook.vmessage)("Simulation is OFF (triggered BREAK gate)");
     }
@@ -657,52 +657,52 @@ log_16_action *act;
       pin1 = (nodeinfo *)WITH1->pin[0]->info;
       pin2 = (nodeinfo *)WITH1->pin[1]->info;
       flag = (pin1->v == log_one);
-      if ((((unsigned long)WITH1->vars) & (1L << 14)) == 0 || isstable) {
-	TEMP = ((((unsigned long)WITH1->vars) & (1L << 8)) == 0);
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 8)));
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 8));
+      if ((((uintptr_t)WITH1->vars) & (1L << 14)) == 0 || isstable) {
+	TEMP = ((((uintptr_t)WITH1->vars) & (1L << 8)) == 0);
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 8)));
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 8));
 	/*need to look at gate attributes*/
-	if ((((unsigned long)WITH1->vars) & (1L << 8)) == 0) {
-	  TEMP = ((((unsigned long)WITH1->vars) & (1L << 9)) == 0);
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 9)));
+	if ((((uintptr_t)WITH1->vars) & (1L << 8)) == 0) {
+	  TEMP = ((((uintptr_t)WITH1->vars) & (1L << 9)) == 0);
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 9)));
 	  WITH1->vars = (na_long)
-			(((unsigned long)WITH1->vars) | (((long)TEMP) << 9));
-	  if ((((unsigned long)WITH1->vars) & (1L << 9)) == 0) {
-	    TEMP = ((((unsigned long)WITH1->vars) & (1L << 10)) == 0);
-	    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 10)));
+			(((uintptr_t)WITH1->vars) | (((long)TEMP) << 9));
+	  if ((((uintptr_t)WITH1->vars) & (1L << 9)) == 0) {
+	    TEMP = ((((uintptr_t)WITH1->vars) & (1L << 10)) == 0);
+	    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 10)));
 	    WITH1->vars =
-	      (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 10));
+	      (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 10));
 	  }
 	}
-	if (pin2->v == log_one && (((unsigned long)WITH1->vars) & (1L << 2)) == 0) {
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 10)));
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 9)));
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 8)));
+	if (pin2->v == log_one && (((uintptr_t)WITH1->vars) & (1L << 2)) == 0) {
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 10)));
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 9)));
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 8)));
 	}
-	TEMP = ((((unsigned long)WITH1->vars) & (1L << 0)) != 0 ||
-		((((unsigned long)WITH1->vars) & (1L << 1)) != 0) != flag);
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 0));
-	if (((((unsigned long)WITH1->vars) & (1L << 11)) == 0 ||
-	     (((unsigned long)WITH1->vars) & (1L << 8)) == 0) &&
-	    ((((unsigned long)WITH1->vars) & (1L << 12)) == 0 ||
-	     (((unsigned long)WITH1->vars) & (1L << 9)) == 0) &&
-	    ((((unsigned long)WITH1->vars) & (1L << 13)) == 0 ||
-	     (((unsigned long)WITH1->vars) & (1L << 10)) == 0) &&
-	    ((long)WITH1->info > 0 ||
+	TEMP = ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0 ||
+		((((uintptr_t)WITH1->vars) & (1L << 1)) != 0) != flag);
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 0));
+	if (((((uintptr_t)WITH1->vars) & (1L << 11)) == 0 ||
+	     (((uintptr_t)WITH1->vars) & (1L << 8)) == 0) &&
+	    ((((uintptr_t)WITH1->vars) & (1L << 12)) == 0 ||
+	     (((uintptr_t)WITH1->vars) & (1L << 9)) == 0) &&
+	    ((((uintptr_t)WITH1->vars) & (1L << 13)) == 0 ||
+	     (((uintptr_t)WITH1->vars) & (1L << 10)) == 0) &&
+	    ((uintptr_t)WITH1->info > 0 ||
 	     (pin2->v != log_zero &&
-	      (((unsigned long)WITH1->vars) & (1L << 2)) == 0))) {
+	      (((uintptr_t)WITH1->vars) & (1L << 2)) == 0))) {
 /* p2c: logsim.text, line 599: 
  * Note: Line breaker spent 2.0 seconds, 5000 tries on line 650 [251] */
 	  tx = 0;
 	  ty = 0;
 	  (*WITH->hook.xform)(WITH->actgate, &tx, &ty);
-	  tx += (long)WITH1->info * 2 - 7;
+	  tx += (intptr_t)WITH1->info * 2 - 7;
 	  (*WITH->hook.hidecursor)();
 	  m_color((long)WITH->color.backgr);
 	  m_drawline((long)tx, ty - 7L, (long)tx, ty + 6L);
 	  m_drawline(tx + 1L, ty - 7L, tx + 1L, ty + 4L);
-	  if ((((unsigned long)WITH1->vars) & (1L << 0)) != 0)
+	  if ((((uintptr_t)WITH1->vars) & (1L << 0)) != 0)
 	    m_color((long)scopecolor);
 	  else
 	    m_color((long)WITH->color.backgr);
@@ -717,24 +717,24 @@ log_16_action *act;
 	  else
 	    m_color((long)scopecolor);
 	  m_drawline((long)tx, ty + 4L, tx + 2L, ty + 4L);
-	  WITH1->info = (na_long)(((long)WITH1->info + 1) % 13);
+	  WITH1->info = (na_long)(((intptr_t)WITH1->info + 1) % 13);
 /* p2c: logsim.text, line 566:
  * Note: Using % for possibly-negative arguments [317] */
 	  tx = 0;
 	  ty = 0;
 	  (*WITH->hook.xform)(WITH->actgate, &tx, &ty);
-	  tx += (long)WITH1->info * 2 - 7;
+	  tx += (intptr_t)WITH1->info * 2 - 7;
 	  m_color((long)scopescancolor);
 	  m_drawline((long)tx, ty + 5L, (long)tx, ty + 6L);
 	  (*WITH->hook.unhidecursor)();
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
 	}
       }
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 1)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) |
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 1)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) |
 			      (((long)(pin1->v == log_one)) << 1));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 2)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) |
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 2)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) |
 			      (((long)(pin2->v == log_one)) << 2));
     }
     break;
@@ -795,34 +795,34 @@ log_16_action *act_;
   switch (V.act->action) {
 
   case act_16_sim:
-    if (((((unsigned long)WITH1->vars) & (1L << 2)) != 0) !=
-	((((unsigned long)WITH1->vars) & (1L << 6)) != 0) ||
-	((((unsigned long)WITH1->vars) & (1L << 3)) != 0) !=
-	((((unsigned long)WITH1->vars) & (1L << 7)) != 0) ||
-	((((unsigned long)WITH1->vars) & (1L << 4)) != 0) !=
-	((((unsigned long)WITH1->vars) & (1L << 8)) != 0) ||
-	((((unsigned long)WITH1->vars) & (1L << 5)) != 0) !=
-	((((unsigned long)WITH1->vars) & (1L << 9)) != 0)) {
+    if (((((uintptr_t)WITH1->vars) & (1L << 2)) != 0) !=
+	((((uintptr_t)WITH1->vars) & (1L << 6)) != 0) ||
+	((((uintptr_t)WITH1->vars) & (1L << 3)) != 0) !=
+	((((uintptr_t)WITH1->vars) & (1L << 7)) != 0) ||
+	((((uintptr_t)WITH1->vars) & (1L << 4)) != 0) !=
+	((((uintptr_t)WITH1->vars) & (1L << 8)) != 0) ||
+	((((uintptr_t)WITH1->vars) & (1L << 5)) != 0) !=
+	((((uintptr_t)WITH1->vars) & (1L << 9)) != 0)) {
 /* p2c: logsim.text, line 694: 
  * Note: Line breaker spent 3.0 seconds, 5000 tries on line 758 [251] */
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (1L << 0));
-      TEMP = ((((unsigned long)WITH1->vars) & (1L << 2)) != 0);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 6)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 6));
-      TEMP = ((((unsigned long)WITH1->vars) & (1L << 3)) != 0);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 7)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 7));
-      TEMP = ((((unsigned long)WITH1->vars) & (1L << 4)) != 0);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 8)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 8));
-      TEMP = ((((unsigned long)WITH1->vars) & (1L << 5)) != 0);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 9)));
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((long)TEMP) << 9));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (1L << 0));
+      TEMP = ((((uintptr_t)WITH1->vars) & (1L << 2)) != 0);
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 6)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 6));
+      TEMP = ((((uintptr_t)WITH1->vars) & (1L << 3)) != 0);
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 7)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 7));
+      TEMP = ((((uintptr_t)WITH1->vars) & (1L << 4)) != 0);
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 8)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 8));
+      TEMP = ((((uintptr_t)WITH1->vars) & (1L << 5)) != 0);
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 9)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((long)TEMP) << 9));
     }
     break;
 
   case act_16_draw:
-    if (WITH->refrflag || (((unsigned long)WITH1->vars) & (1L << 0)) != 0) {
+    if (WITH->refrflag || (((uintptr_t)WITH1->vars) & (1L << 0)) != 0) {
       (*WITH->hook.hidecursor)();
       tx = 0;
       ty = 0;
@@ -834,10 +834,10 @@ log_16_action *act_;
       m_drawline(tx - 5L, ty - 10L, tx - 5L, ty + 10L);
       m_drawline(tx + 5L, ty - 10L, tx + 5L, ty + 10L);
       m_color((long)ledoncolor);
-      t1 = ((((unsigned long)WITH1->vars) & (1L << 6)) != 0) * 8 +
-	   ((((unsigned long)WITH1->vars) & (1L << 7)) != 0) * 4 +
-	   ((((unsigned long)WITH1->vars) & (1L << 8)) != 0) * 2 +
-	   ((((unsigned long)WITH1->vars) & (1L << 9)) != 0);
+      t1 = ((((uintptr_t)WITH1->vars) & (1L << 6)) != 0) * 8 +
+	   ((((uintptr_t)WITH1->vars) & (1L << 7)) != 0) * 4 +
+	   ((((uintptr_t)WITH1->vars) & (1L << 8)) != 0) * 2 +
+	   ((((uintptr_t)WITH1->vars) & (1L << 9)) != 0);
       if ((unsigned)t1 >= 32 || ((1L << t1) & 0x2812) == 0)
 	m_drawline(tx - 5L, ty - 10L, tx + 5L, ty - 10L);
       if ((unsigned)t1 >= 32 || ((1L << t1) & 0x1083) == 0)
@@ -852,7 +852,7 @@ log_16_action *act_;
 	m_drawline(tx + 5L, ty - 10L, tx + 5L, (long)ty);
       if ((unsigned)t1 >= 32 || ((1L << t1) & 0xd004L) == 0)
 	m_drawline(tx + 5L, (long)ty, tx + 5L, ty + 10L);
-      WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
+      WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
       (*WITH->hook.unhidecursor)();
     }
     break;
@@ -877,10 +877,10 @@ log_16_action *act_;
       tx = 0;
       ty = 0;
       (*WITH->hook2->plainxform)(WITH->actgate, &tx, &ty);
-      t1 = ((((unsigned long)WITH1->vars) & (1L << 6)) != 0) * 8 +
-	   ((((unsigned long)WITH1->vars) & (1L << 7)) != 0) * 4 +
-	   ((((unsigned long)WITH1->vars) & (1L << 8)) != 0) * 2 +
-	   ((((unsigned long)WITH1->vars) & (1L << 9)) != 0);
+      t1 = ((((uintptr_t)WITH1->vars) & (1L << 6)) != 0) * 8 +
+	   ((((uintptr_t)WITH1->vars) & (1L << 7)) != 0) * 4 +
+	   ((((uintptr_t)WITH1->vars) & (1L << 8)) != 0) * 2 +
+	   ((((uintptr_t)WITH1->vars) & (1L << 9)) != 0);
       if ((unsigned)t1 >= 32 || ((1L << t1) & 0x2812) == 0)
 	plotline(tx - 5, ty - 10, tx + 5, ty - 10, &V);
       if ((unsigned)t1 >= 32 || ((1L << t1) & 0x1083) == 0)
@@ -989,15 +989,15 @@ log_16_action *act;
       n = 0;
       break;
     }
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 2)));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((n / 8L) & 1) << 2));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 3)));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((n / 4L) & 1) << 3));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 4)));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (((n / 2L) & 1) << 4));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 5)));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | ((n & 1L) << 5));
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (1L << 0));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 2)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((n / 8L) & 1) << 2));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 3)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((n / 4L) & 1) << 3));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 4)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (((n / 2L) & 1) << 4));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 5)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | ((n & 1L) << 5));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (1L << 0));
     WITH->actflag = true;
     break;
 
@@ -1006,11 +1006,11 @@ log_16_action *act;
       WITH->actflag = true;
       strcpy(WITH->actstr, "KLMNP");
     } else if (!strcmp(WITH->genfunc, "CONSTPINS")) {
-      makeconstpin(act, 1L, (((unsigned long)WITH1->vars) & (1L << 5)) != 0);
-      makeconstpin(act, 2L, (((unsigned long)WITH1->vars) & (1L << 4)) != 0);
-      makeconstpin(act, 3L, (((unsigned long)WITH1->vars) & (1L << 3)) != 0);
-      makeconstpin(act, 4L, (((unsigned long)WITH1->vars) & (1L << 2)) != 0);
-      makeconstpin(act, 5L, (((unsigned long)WITH1->vars) & (1L << 0)) != 0);
+      makeconstpin(act, 1L, (((uintptr_t)WITH1->vars) & (1L << 5)) != 0);
+      makeconstpin(act, 2L, (((uintptr_t)WITH1->vars) & (1L << 4)) != 0);
+      makeconstpin(act, 3L, (((uintptr_t)WITH1->vars) & (1L << 3)) != 0);
+      makeconstpin(act, 4L, (((uintptr_t)WITH1->vars) & (1L << 2)) != 0);
+      makeconstpin(act, 5L, (((uintptr_t)WITH1->vars) & (1L << 0)) != 0);
     }
     break;
 
@@ -1524,7 +1524,7 @@ log_action *lact;
   short FORLIM;
 
   logsima_action.lact = lact;
-  if (lact->traceflag && traceactions && ((unsigned long)lact->action >= 32 ||
+  if (lact->traceflag && traceactions && ((uintptr_t)lact->action >= 32 ||
 	((1L << ((long)lact->action)) &
 	 ((1L << ((long)act_pass)) | (1L << ((long)act_tstep)))) == 0)) {
     sprintf(STR2, "log_16 gets %s", actionname(STR1, lact->action));
@@ -1758,7 +1758,7 @@ log_action *lact;
     break;
 
   case act_histstr:
-    if ((unsigned long)WITH->acty < 32 && ((1L << WITH->acty) & 0x6) != 0 &&
+    if ((uintptr_t)WITH->acty < 32 && ((1L << WITH->acty) & 0x6) != 0 &&
 	WITH->actval > -1 && WITH->actval < 1) {
       if (WITH->actval > 0.2)
 	strcpy(WITH->actstr, "One");

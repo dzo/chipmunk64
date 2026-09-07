@@ -278,24 +278,24 @@ log_16_action *act_;
     break;
 
   case act_16_sim:
-    if ((((unsigned long)WITH2->vars) & (1L << 13)) == 0) {
+    if ((((uintptr_t)WITH2->vars) & (1L << 13)) == 0) {
       V.ram = (uchar *)WITH2->info;
       /*   addr := vars.u1 div 8;  */
-      addr = ((((unsigned long)WITH2->vars) & (1L << 0)) != 0) * 4096 +
-	     ((((unsigned long)WITH2->vars) & (1L << 1)) != 0) * 2048 +
-	     ((((unsigned long)WITH2->vars) & (1L << 2)) != 0) * 1024 +
-	     ((((unsigned long)WITH2->vars) & (1L << 3)) != 0) * 512 +
-	     ((((unsigned long)WITH2->vars) & (1L << 4)) != 0) * 256 +
-	     ((((unsigned long)WITH2->vars) & (1L << 5)) != 0) * 128;
-      addr += ((((unsigned long)WITH2->vars) & (1L << 6)) != 0) * 64 +
-	      ((((unsigned long)WITH2->vars) & (1L << 7)) != 0) * 32 +
-	      ((((unsigned long)WITH2->vars) & (1L << 8)) != 0) * 16 +
-	      ((((unsigned long)WITH2->vars) & (1L << 9)) != 0) * 8 +
-	      ((((unsigned long)WITH2->vars) & (1L << 10)) != 0) * 4 +
-	      ((((unsigned long)WITH2->vars) & (1L << 11)) != 0) * 2 +
-	      ((((unsigned long)WITH2->vars) & (1L << 12)) != 0);
-      if ((((unsigned long)WITH2->vars) & (1L << 14)) != 0 &&
-	  (((unsigned long)WITH2->vars) & (1L << 15)) == 0) {
+      addr = ((((uintptr_t)WITH2->vars) & (1L << 0)) != 0) * 4096 +
+	     ((((uintptr_t)WITH2->vars) & (1L << 1)) != 0) * 2048 +
+	     ((((uintptr_t)WITH2->vars) & (1L << 2)) != 0) * 1024 +
+	     ((((uintptr_t)WITH2->vars) & (1L << 3)) != 0) * 512 +
+	     ((((uintptr_t)WITH2->vars) & (1L << 4)) != 0) * 256 +
+	     ((((uintptr_t)WITH2->vars) & (1L << 5)) != 0) * 128;
+      addr += ((((uintptr_t)WITH2->vars) & (1L << 6)) != 0) * 64 +
+	      ((((uintptr_t)WITH2->vars) & (1L << 7)) != 0) * 32 +
+	      ((((uintptr_t)WITH2->vars) & (1L << 8)) != 0) * 16 +
+	      ((((uintptr_t)WITH2->vars) & (1L << 9)) != 0) * 8 +
+	      ((((uintptr_t)WITH2->vars) & (1L << 10)) != 0) * 4 +
+	      ((((uintptr_t)WITH2->vars) & (1L << 11)) != 0) * 2 +
+	      ((((uintptr_t)WITH2->vars) & (1L << 12)) != 0);
+      if ((((uintptr_t)WITH2->vars) & (1L << 14)) != 0 &&
+	  (((uintptr_t)WITH2->vars) & (1L << 15)) == 0) {
 	ramval = V.ram[addr];
 	(*WITH->hook_output)(WITH->lact, WITH2->pin[13],
 			     log_16_bv[((ramval / 128) & 1) - false]);
@@ -313,7 +313,7 @@ log_16_action *act_;
 			     log_16_bv[((ramval / 2) & 1) - false]);
 	(*WITH->hook_output)(WITH->lact, WITH2->pin[20],
 			     log_16_bv[(ramval & 1) - false]);
-      } else if ((((unsigned long)WITH2->vars) & (1L << 14)) == 0) {
+      } else if ((((uintptr_t)WITH2->vars) & (1L << 14)) == 0) {
 	(*WITH->hook_input)(WITH->lact, WITH2->pin[13], &v);
 	ramval = log_16_vb[(long)v - (long)log_none];
 	(*WITH->hook_input)(WITH->lact, WITH2->pin[14], &v);
@@ -673,13 +673,13 @@ log_16_action *act_;
 
   case act_16_sim:
     V.dip = (dispinfo *)WITH2->info;
-    if ((((unsigned long)WITH2->vars) & (1L << 6)) != 0) {
+    if ((((uintptr_t)WITH2->vars) & (1L << 6)) != 0) {
       if (!V.dip->saveclr)
 	cleardisp(&V);
-    } else if ((((unsigned long)WITH2->vars) & (1L << 7)) != 0 && !V.dip->savetrig)
-      drawchar((Char)byte_reverse(((long)WITH2->vars / 256L) & 255), &V);
-    V.dip->saveclr = ((((unsigned long)WITH2->vars) & (1L << 6)) != 0);
-    V.dip->savetrig = ((((unsigned long)WITH2->vars) & (1L << 7)) != 0);
+    } else if ((((uintptr_t)WITH2->vars) & (1L << 7)) != 0 && !V.dip->savetrig)
+      drawchar((Char)byte_reverse(((uintptr_t)WITH2->vars / 256L) & 255), &V);
+    V.dip->saveclr = ((((uintptr_t)WITH2->vars) & (1L << 6)) != 0);
+    V.dip->savetrig = ((((uintptr_t)WITH2->vars) & (1L << 7)) != 0);
     break;
 
   case act_16_draw:
@@ -732,13 +732,13 @@ log_16_action *act;
   switch (act->action) {
 
   case act_16_sim:
-    if ((long)WITH1->info <= 0) {
-      if ((((unsigned long)WITH1->vars) & (1L << 7)) != 0)
+    if ((uintptr_t)WITH1->info <= 0) {
+      if ((((uintptr_t)WITH1->vars) & (1L << 7)) != 0)
 	WITH1->info = (na_long)6;
     } else {
-      WITH1->info = (na_long)((long)WITH1->info - 1);
-      if ((long)WITH1->info <= 0)
-	WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 7)));
+      WITH1->info = (na_long)((uintptr_t)WITH1->info - 1);
+      if ((uintptr_t)WITH1->info <= 0)
+	WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 7)));
     }
     break;
 
@@ -746,35 +746,35 @@ log_16_action *act;
     if (P_ibetween(-11L, WITH->actx, 12L) && P_ibetween(-5L, WITH->acty, 4L)) {
       keyx = (WITH->actx + 11) / 2;
       keyy = (WITH->acty + 5) / 2;
-      if (keyy != 4 || ((unsigned long)keyx < 32 && ((1L << keyx) & 0x1f9) != 0)) {
+      if (keyy != 4 || ((uintptr_t)keyx < 32 && ((1L << keyx) & 0x1f9) != 0)) {
 	asciimode = (WITH1->attr[0].UU.nv == 0);
 	if (asciimode && keyy == 3 && keyx == 10) {
-	  TEMP = ((((unsigned long)WITH1->vars) & (1L << 6)) == 0);
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 6)));
+	  TEMP = ((((uintptr_t)WITH1->vars) & (1L << 6)) == 0);
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 6)));
 	  WITH1->vars = (na_long)
-			(((unsigned long)WITH1->vars) | (((long)TEMP) << 6));
+			(((uintptr_t)WITH1->vars) | (((long)TEMP) << 6));
 	  /*shift key*/
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 5)));
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 5)));
 	} else if (asciimode && keyy == 4 && keyx == 0) {
-	  TEMP = ((((unsigned long)WITH1->vars) & (1L << 5)) == 0);
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 5)));
+	  TEMP = ((((uintptr_t)WITH1->vars) & (1L << 5)) == 0);
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 5)));
 	  WITH1->vars = (na_long)
-			(((unsigned long)WITH1->vars) | (((long)TEMP) << 5));
+			(((uintptr_t)WITH1->vars) | (((long)TEMP) << 5));
 	  /*ctrl key*/
-	  WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 6)));
+	  WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 6)));
 	} else {
 	  if (keyy == 4 && keyx >= 3 && keyx <= 8)
 	    keyx = 3;
 	  if (asciimode) {
-	    if ((((unsigned long)WITH1->vars) & (1L << 5)) != 0)
+	    if ((((uintptr_t)WITH1->vars) & (1L << 5)) != 0)
 	      ch = map_c[keyy * 12 + keyx];
-	    else if ((((unsigned long)WITH1->vars) & (1L << 6)) != 0)
+	    else if ((((uintptr_t)WITH1->vars) & (1L << 6)) != 0)
 	      ch = map_s[keyy * 12 + keyx];
 	    else
 	      ch = map[keyy * 12 + keyx];
 	  } else
 	    ch = (Char)(keyy * 16 + keyx);
-	  WITH1->vars = (na_long)(byte_reverse((long)ch) * 256 + 128);
+	  WITH1->vars = (na_long)(intptr_t)(byte_reverse((uintptr_t)ch) * 256 + 128);
 	}
 	WITH->actflag = true;
       }

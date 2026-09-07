@@ -214,7 +214,7 @@ void nk_settransarray(mode, mat)
 int mode;
 nk_keytransinfo **mat;
 {
-  static int dummy;
+  static nk_keytransinfo dummy={0};
 
   if (mode == nk_ktsupplied) {
     /* ignore it for now! */

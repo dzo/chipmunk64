@@ -1651,7 +1651,7 @@ struct LOC_expr *LINK;
 
     case ne_kind_intconst:
       nex = make2(ne_ic, NULL, NULL);
-      nex->UU.i = (long)value;
+      nex->UU.i = (intptr_t)value;
       break;
 
     case ne_kind_intvalue:
@@ -1774,17 +1774,17 @@ struct LOC_expr *LINK;
 
     case ne_kind_intarg:
       nex = make2(ne_iarg, NULL, NULL);
-      nex->UU.i = (long)value;
+      nex->UU.i = (intptr_t)value;
       break;
 
     case ne_kind_realarg:
       nex = make2(ne_rarg, NULL, NULL);
-      nex->UU.i = (long)value;
+      nex->UU.i = (intptr_t)value;
       break;
 
     case ne_kind_strarg:
       nex = make2(ne_sarg, NULL, NULL);
-      nex->UU.i = (long)value;
+      nex->UU.i = (intptr_t)value;
       break;
 
     case ne_kind_nex:
@@ -3343,7 +3343,7 @@ na_strlist *sym;
 long i;
 {
   sym->kind = ne_kind_intconst;
-  sym->value = (na_long)i;
+  sym->value = (na_long)(intptr_t)i;
 }
 
 
@@ -3590,7 +3590,7 @@ na_strlist *sym;
 long i;
 {
   sym->kind = ne_kind_intarg;
-  sym->value = (na_long)i;
+  sym->value = (na_long)(intptr_t)i;
 }
 
 
@@ -3599,7 +3599,7 @@ na_strlist *sym;
 long i;
 {
   sym->kind = ne_kind_realarg;
-  sym->value = (na_long)i;
+  sym->value = (na_long)(intptr_t)i;
 }
 
 
@@ -3608,7 +3608,7 @@ na_strlist *sym;
 long i;
 {
   sym->kind = ne_kind_strarg;
-  sym->value = (na_long)i;
+  sym->value = (na_long)(intptr_t)i;
 }
 
 

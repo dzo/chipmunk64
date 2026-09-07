@@ -1655,7 +1655,7 @@ struct LOC_Log_logntk_proc *LINK;
     strlist_delete(&defndir, defndir);
   }
   while (arglist != NULL) {
-    if ((long)arglist->value == 0) {
+    if ((intptr_t)arglist->value == 0) {
       sprintf(STR1, "No nodes or gates called %s", arglist->s);
       message(STR1, LINK);
     }

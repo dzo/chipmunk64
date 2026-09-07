@@ -548,7 +548,7 @@ struct LOC_Log_lplot_proc *LINK;
     else
       return 1;
   } else
-    return ((long)l2->value);
+    return ((intptr_t)l2->value);
 }
 
 
@@ -1171,8 +1171,8 @@ struct LOC_doplotfile *LINK;
   initplotter(device, LINK->LINK);
   g = WITH->gbase[WITH->curpage - 1];
   while (g != NULL) {
-    g->temp = (na_long)(((unsigned long)g->temp) & (~(1L << 0)));
-    g->temp = (na_long)(((unsigned long)g->temp) |
+    g->temp = (na_long)(((uintptr_t)g->temp) & (~(1L << 0)));
+    g->temp = (na_long)(((uintptr_t)g->temp) |
 	  (((long)(strlist_find(noplotgates, g->kind->name) != NULL)) << 0));
     g = g->next;
   }
@@ -1188,7 +1188,7 @@ struct LOC_doplotfile *LINK;
     V.i = 0;
     n = WITH->nbase;
     while (n != NULL) {
-      n->temp = (na_long)V.i;
+      n->temp = (na_long)(intptr_t)V.i;
       V.i++;
       /*$if false$
                               i := strlen(name) + 1;
@@ -1207,7 +1207,7 @@ $end$*/
     }
     g = WITH->gbase[WITH->curpage - 1];
     while (g != NULL) {
-      if ((((unsigned long)g->temp) & (1L << 0)) == 0) {
+      if ((((uintptr_t)g->temp) & (1L << 0)) == 0) {
 	bound(g->x - g->kind->bbmax, g->y - g->kind->bbmax, &V);
 	bound(g->x + g->kind->bbmax, g->y + g->kind->bbmax, &V);
       }
@@ -1256,37 +1256,37 @@ $end$*/
 	      g->x - g->kind->bbmax > V.xx2 ||
 	      V.yy1 > g->y + g->kind->bbmax ||
 	      g->y - g->kind->bbmax > V.yy2 ||
-	      (((unsigned long)g->temp) & (1L << 0)) != 0);
-      g->temp = (na_long)(((unsigned long)g->temp) & (~(1L << 0)));
-      g->temp = (na_long)(((unsigned long)g->temp) | (((long)flag) << 0));
-      g->temp = (na_long)(((unsigned long)g->temp) & (~(1L << 1)));
-      g->temp = (na_long)(((unsigned long)g->temp) |
+	      (((uintptr_t)g->temp) & (1L << 0)) != 0);
+      g->temp = (na_long)(((uintptr_t)g->temp) & (~(1L << 0)));
+      g->temp = (na_long)(((uintptr_t)g->temp) | (((long)flag) << 0));
+      g->temp = (na_long)(((uintptr_t)g->temp) & (~(1L << 1)));
+      g->temp = (na_long)(((uintptr_t)g->temp) |
 			  (((long)(flag || !(g->kind->flag.U3.named &&
 					     g->sig != 0))) << 1));
-      g->temp = (na_long)(((unsigned long)g->temp) & (~(1L << 2)));
-      g->temp = (na_long)(((unsigned long)g->temp) | (((long)flag) << 2));
+      g->temp = (na_long)(((uintptr_t)g->temp) & (~(1L << 2)));
+      g->temp = (na_long)(((uintptr_t)g->temp) | (((long)flag) << 2));
       g = g->next;
     }
     hw = WITH->hwbase[WITH->curpage - 1];
     while (hw != NULL) {
-      hw->temp = (na_long)(((unsigned long)hw->temp) & (~(1L << 0)));
-      hw->temp = (na_long)(((unsigned long)hw->temp) |
+      hw->temp = (na_long)(((uintptr_t)hw->temp) & (~(1L << 0)));
+      hw->temp = (na_long)(((uintptr_t)hw->temp) |
 			   (((long)(V.xx1 > hw->x2 || hw->x1 > V.xx2 ||
 				    V.yy1 > hw->y || hw->y > V.yy2)) << 0));
       hw = hw->next;
     }
     vw = WITH->vwbase[WITH->curpage - 1];
     while (vw != NULL) {
-      vw->temp = (na_long)(((unsigned long)vw->temp) & (~(1L << 0)));
-      vw->temp = (na_long)(((unsigned long)vw->temp) |
+      vw->temp = (na_long)(((uintptr_t)vw->temp) & (~(1L << 0)));
+      vw->temp = (na_long)(((uintptr_t)vw->temp) |
 			   (((long)(V.xx1 > vw->x || vw->x > V.xx2 ||
 				    V.yy1 > vw->y2 || vw->y1 > V.yy2)) << 0));
       vw = vw->next;
     }
     s = WITH->sbase[WITH->curpage - 1];
     while (s != NULL) {
-      s->temp = (na_long)(((unsigned long)s->temp) & (~(1L << 0)));
-      s->temp = (na_long)(((unsigned long)s->temp) | (((long)(V.xx1 > s->x ||
+      s->temp = (na_long)(((uintptr_t)s->temp) & (~(1L << 0)));
+      s->temp = (na_long)(((uintptr_t)s->temp) | (((long)(V.xx1 > s->x ||
 							 s->x > V.xx2 ||
 							 V.yy1 > s->y ||
 							 s->y > V.yy2)) << 0));
@@ -1294,16 +1294,16 @@ $end$*/
     }
     b = WITH->bbase[WITH->curpage - 1];
     while (b != NULL) {
-      b->temp = (na_long)(((unsigned long)b->temp) & (~(1L << 0)));
-      b->temp = (na_long)(((unsigned long)b->temp) | (((long)(V.xx1 > b->x2 ||
+      b->temp = (na_long)(((uintptr_t)b->temp) & (~(1L << 0)));
+      b->temp = (na_long)(((uintptr_t)b->temp) | (((long)(V.xx1 > b->x2 ||
 				b->x1 > V.xx2 || V.yy1 > b->y2 ||
 				b->y1 > V.yy2)) << 0));
       b = b->next;
     }
     l = WITH->lbase[WITH->curpage - 1];
     while (l != NULL) {
-      l->temp = (na_long)(((unsigned long)l->temp) & (~(1L << 0)));
-      l->temp = (na_long)(((unsigned long)l->temp) |
+      l->temp = (na_long)(((uintptr_t)l->temp) & (~(1L << 0)));
+      l->temp = (na_long)(((uintptr_t)l->temp) |
 			  (((long)(V.xx1 > l->x + l->w * 2 || l->x > V.xx2 ||
 				   V.yy1 > l->y + 3 ||
 				   l->y - 1 > V.yy2)) << 0));
@@ -1317,7 +1317,7 @@ $end$*/
       V.g1 = NULL;
       g = WITH->gbase[WITH->curpage - 1];
       while (g != NULL) {
-	if ((((unsigned long)g->temp) & (1L << 0)) == 0) {
+	if ((((uintptr_t)g->temp) & (1L << 0)) == 0) {
 	  d1 = labs(g->x - x1) + labs(g->y - y1);
 	  if (d1 < d) {
 	    d = d1;
@@ -1584,7 +1584,7 @@ $end$*/
 	}
 	x1 = V.g1->x;
 	y1 = V.g1->y;
-	V.g1->temp = (na_long)(((unsigned long)V.g1->temp) | (1L << 0));
+	V.g1->temp = (na_long)(((uintptr_t)V.g1->temp) | (1L << 0));
       }
     } while (V.g1 != NULL);
     if (filegattr[shownums - 1].UU.b) {
@@ -1597,7 +1597,7 @@ $end$*/
 	V.g1 = NULL;
 	g = WITH->gbase[WITH->curpage - 1];
 	while (g != NULL) {
-	  if ((((unsigned long)g->temp) & (1L << 2)) == 0) {
+	  if ((((uintptr_t)g->temp) & (1L << 2)) == 0) {
 	    d1 = labs(g->x - x1) + labs(g->y - y1);
 	    if (d1 < d) {
 	      d = d1;
@@ -1612,10 +1612,10 @@ $end$*/
 	  for (V.i = 1; V.i <= FORLIM; V.i++)
 	    plot_rightstring(V.g1->pinpos[V.i - 1].x * sc_ - sc0 * 2L,
 	      -V.g1->pinpos[V.i - 1].y * sc_ - (sc_ + sc0) * 2L / 3,
-	      nodename(STR1, (long)V.g1->pin[V.i - 1]->temp, &V));
+	      nodename(STR1, (uintptr_t)V.g1->pin[V.i - 1]->temp, &V));
 	  x1 = V.g1->x;
 	  y1 = V.g1->y;
-	  V.g1->temp = (na_long)(((unsigned long)V.g1->temp) | (1L << 2));
+	  V.g1->temp = (na_long)(((uintptr_t)V.g1->temp) | (1L << 2));
 	}
       } while (V.g1 != NULL);
     }
@@ -1629,7 +1629,7 @@ $end$*/
 	V.g1 = NULL;
 	g = WITH->gbase[WITH->curpage - 1];
 	while (g != NULL) {
-	  if ((((unsigned long)g->temp) & (1L << 1)) == 0) {
+	  if ((((uintptr_t)g->temp) & (1L << 1)) == 0) {
 	    d1 = labs(g->x - x1) + labs(g->y - y1);
 	    if (d1 < d) {
 	      d = d1;
@@ -1647,7 +1647,7 @@ $end$*/
 	    plot_genstring(V.g1->x * sc_ + sig_ofs, -V.g1->y * sc_, "cr", name);
 	  x1 = V.g1->x;
 	  y1 = V.g1->y;
-	  V.g1->temp = (na_long)(((unsigned long)V.g1->temp) | (1L << 1));
+	  V.g1->temp = (na_long)(((uintptr_t)V.g1->temp) | (1L << 1));
 	}
       } while (V.g1 != NULL);
     }
@@ -1659,7 +1659,7 @@ $end$*/
       horiz = false;
       hw = WITH->hwbase[WITH->curpage - 1];
       while (hw != NULL) {
-	if ((((unsigned long)hw->temp) & (1L << 0)) == 0) {
+	if ((((uintptr_t)hw->temp) & (1L << 0)) == 0) {
 	  d1 = labs(hw->x1 - x1) + labs(hw->y - y1);
 	  if (d1 < d) {
 	    d = d1;
@@ -1679,7 +1679,7 @@ $end$*/
       }
       vw = WITH->vwbase[WITH->curpage - 1];
       while (vw != NULL) {
-	if ((((unsigned long)vw->temp) & (1L << 0)) == 0) {
+	if ((((uintptr_t)vw->temp) & (1L << 0)) == 0) {
 	  d1 = labs(vw->x - x1) + labs(vw->y1 - y1);
 	  if (d1 < d) {
 	    d = d1;
@@ -1708,7 +1708,7 @@ $end$*/
 	  x1 = hw1->x2;
 	}
 	y1 = hw1->y;
-	hw1->temp = (na_long)(((unsigned long)hw1->temp) | (1L << 0));
+	hw1->temp = (na_long)(((uintptr_t)hw1->temp) | (1L << 0));
       } else if (vw1 != NULL) {
 	if (swap) {
 	  plot_move(vw1->x * sc_, -vw1->y2 * sc_);
@@ -1721,7 +1721,7 @@ $end$*/
 	  y1 = vw1->y2;
 	}
 	x1 = vw1->x;
-	vw1->temp = (na_long)(((unsigned long)vw1->temp) | (1L << 0));
+	vw1->temp = (na_long)(((uintptr_t)vw1->temp) | (1L << 0));
       }
     } while (hw1 != NULL || vw1 != NULL);
     if (!filegattr[sdotsize - 1].blnk) {
@@ -1732,7 +1732,7 @@ $end$*/
 	s1 = NULL;
 	s = V.mysbase;
 	while (s != NULL) {
-	  if ((((unsigned long)s->temp) & (1L << 0)) == 0) {
+	  if ((((uintptr_t)s->temp) & (1L << 0)) == 0) {
 	    d1 = labs(s->x - x1) + labs(s->y - y1);
 	    if (d1 < d) {
 	      d = d1;
@@ -1750,7 +1750,7 @@ $end$*/
 			  0L);
 	  x1 = s1->x;
 	  y1 = s1->y;
-	  s1->temp = (na_long)(((unsigned long)s1->temp) | (1L << 0));
+	  s1->temp = (na_long)(((uintptr_t)s1->temp) | (1L << 0));
 	}
       } while (s1 != NULL);
     }
@@ -1766,7 +1766,7 @@ $end$*/
 	plot_draw(b->x1 * sc_, -b->y1 * sc_);
 	x1 = b->x1;
 	y1 = b->y1;
-	b->temp = (na_long)(((unsigned long)b->temp) | (1L << 0));
+	b->temp = (na_long)(((uintptr_t)b->temp) | (1L << 0));
 	b = b->next;
       }
       plot_linestyle(0L);
@@ -2701,7 +2701,7 @@ struct LOC_parsecommand *LINK;
       } else {
 	sprintf(STR1, "%ld", i);
 	LINK->l1 = strlist_add(&pencolors, STR1);
-	LINK->l1->value = (na_long)i;
+	LINK->l1->value = (na_long)(intptr_t)i;
 	return LINK->l1;
       }
     }
@@ -2746,7 +2746,7 @@ struct LOC_Log_lplot_proc *LINK;
       (*WITH->hook.getint)(V.args, &i, -1L);
       if (i != -1) {
 	V.l1 = strlist_add(&pencolors, buf);
-	V.l1->value = (na_long)i;
+	V.l1->value = (na_long)(intptr_t)i;
       }
     }
    } else if (!strcmp(cmd, "FILE")) {
@@ -2770,7 +2770,7 @@ struct LOC_Log_lplot_proc *LINK;
     V.l1 = pencolors;
     while (V.l1 != NULL) {
       if (!isdigit(V.l1->s[0])) {
-	sprintf(STR3, "Pen color %s = %ld", V.l1->s, (long)V.l1->value);
+	sprintf(STR3, "Pen color %s = %ld", V.l1->s, (intptr_t)V.l1->value);
 	(*WITH->hook.message)(STR3);
       }
       V.l1 = V.l1->next;

@@ -56,10 +56,10 @@ register long *d, w, n;
         memset(d, (int)w, (size_t)n);
         return;
     }
-    if ((long)d & 1) {
+    if ((intptr_t)d & 1) {
         VROL_L(w, 8);
         *((uchar *)d) = w;
-        d = (long *)(1 + (long)d);    /* yuck! */
+        d = (long *)(1 + (intptr_t)d);    /* yuck! */
         if (--n <= 0)
             return;
     }
@@ -67,10 +67,10 @@ register long *d, w, n;
         *((uchar *)d) = (w >> 24);
         return;
     }
-    if ((long)d & 2) {
+    if ((intptr_t)d & 2) {
         VROL_L(w, 16);
         *((short *)d) = w;
-        d = (long *)(2 + (long)d);
+        d = (long *)(2 + (intptr_t)d);
         n -= 2;
         if (n <= 0)
             return;
@@ -83,7 +83,7 @@ register long *d, w, n;
     if (n >= -2) {
         VROL_L(w, 16);
         *((short *)d) = w;
-        d = (long *)(2 + (long)d);
+        d = (long *)(2 + (intptr_t)d);
         n -= 2;
     }
     if (n >= -3)
@@ -125,7 +125,7 @@ register long size;
             }
 
         case 2:
-            if (!(((long)s | (long)d) & 1)) {
+            if (!(((intptr_t)s | (intptr_t)d) & 1)) {
                 register short t, *p1 = (short *)s, *p2 = (short *)d;
                 t = *p1;
                 *p1 = *p2;
@@ -135,7 +135,7 @@ register long size;
             break;
 
         case 4:
-            if (!(((long)s | (long)d) & 3)) {
+            if (!(((intptr_t)s | (intptr_t)d) & 3)) {
                 register long *p1 = s, *p2 = d;
                 size = *p1;
                 *p1 = *p2;
@@ -359,9 +359,9 @@ register long n, x;
 /* Size and offset may be any long integer values. */
 
 #define BFCHECK(v,offset) {                 \
-    if (((long)(v)) & 3) {                  \
-        (offset) += 8 * (((long)(v)) & 3);  \
-        (v) = (long *)(((long)(v)) & ~3);   \
+    if (((intptr_t)(v)) & 3) {                  \
+        (offset) += 8 * (((intptr_t)(v)) & 3);  \
+        (v) = (long *)(((intptr_t)(v)) & ~3);   \
     }                                       \
     v += ASR_L(offset, 5);                  \
     offset &= 31;                           \
@@ -2204,7 +2204,7 @@ register FILE *f;
 register na_strlist *base;
 {
     while (base) {
-        fprintf(f, "\"%s\" %d, %ld\n", base->s, base->kind, (long)base->value);
+        fprintf(f, "\"%s\" %d, %ld\n", base->s, base->kind, (intptr_t)base->value);
         base = base->next;
     }
 }

@@ -350,7 +350,7 @@ struct LOC_Log_7_time *LINK;
     return;
   g->attr[attr_watch - 1].UU.b = true;
   timechanged = true;
-  g->vars = (na_long)(((long)g->vars) | 1);
+  g->vars = (na_long)(((intptr_t)g->vars) | 1);
 }
 
 Local Void checkcolors(LINK)
@@ -493,7 +493,7 @@ log_action *act_;
       timeinfo = (_REC_timeinfoarr *)WITH->actgate->info;
       for (i = 0; i < timeattrs; i++)
 	timeinfo[i].y0 = timeinfo[i].y;
-      if (((long)WITH->actgate->vars) & 1) {
+      if (((intptr_t)WITH->actgate->vars) & 1) {
 	V.y = ystart;
 	for (i = 0; i < timeattrs; i++) {
 	  if (WITH->actgate->attr[i].UU.b) {
@@ -502,13 +502,13 @@ log_action *act_;
 	  } else
 	    timeinfo[i].y = -1;
 	}
-	WITH->actgate->vars = (na_long)(long)(V.y * 2);
+	WITH->actgate->vars = (na_long)(intptr_t)(V.y * 2);
       }
       V.x = 0;
       V.y = 0;
       (*V.act->hook.xform)(WITH->actgate, &V.x, &V.y);
       (*V.act->hook.hidecursorrect)(V.x - 50L, V.y - 3L, V.x + 50L,
-				    V.y + (long)WITH->actgate->vars / 2L);
+				    V.y + (intptr_t)WITH->actgate->vars / 2L);
       m_color((long)WITH->color.backgr);
       for (i = 0; i < timeattrs; i++) {
 	if ((refrtime || strcmp(timeattr[i].disp0, timeattr[i].disp)) &&
@@ -551,11 +551,11 @@ log_action *act_;
       timeinfo[i].y = -1;
     timeexists = true;
     timechanged = true;
-    WITH->actgate->vars = (na_long)(((long)WITH->actgate->vars) | 1);
+    WITH->actgate->vars = (na_long)(((intptr_t)WITH->actgate->vars) | 1);
     break;
 
   case act_readgate:  /*vars was read in since newgate*/
-    WITH->actgate->vars = (na_long)(((long)WITH->actgate->vars) | 1);
+    WITH->actgate->vars = (na_long)(((intptr_t)WITH->actgate->vars) | 1);
     break;
 
   case act_disposegate:
@@ -565,7 +565,7 @@ log_action *act_;
 
   case act_configchgate:
     timechanged = true;
-    WITH->actgate->vars = (na_long)(((long)WITH->actgate->vars) | 1);
+    WITH->actgate->vars = (na_long)(((intptr_t)WITH->actgate->vars) | 1);
     break;
 
   case act_touchgate:

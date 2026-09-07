@@ -182,8 +182,8 @@ short def;
   if (l1 != NULL)
     l1 = strlist_find((na_strlist *)l1->value, name);
   if (l1 != NULL &&
-      strposc(kinds, g->kind->attr[(long)l1->value - 1].dtype, 1L) != 0)
-    return ((long)l1->value);
+      strposc(kinds, g->kind->attr[(intptr_t)l1->value - 1].dtype, 1L) != 0)
+    return ((intptr_t)l1->value);
   else if (def >= 1 && def <= g->kind->numattrs &&
 	   strposc(kinds, g->kind->attr[def - 1].dtype, 1L) != 0)
     return def;
@@ -205,7 +205,7 @@ short i;
     l1 = l1->next;
   if (l1 != NULL) {
     l1 = (na_strlist *)l1->value;
-    while (l1 != NULL && (long)l1->value != i)
+    while (l1 != NULL && (intptr_t)l1->value != i)
       l1 = l1->next;
   }
   if (l1 != NULL)
@@ -913,7 +913,7 @@ Local long findpin(i, LINK)
 long i;
 struct LOC_parseterm *LINK;
 {
-  return ((long)LINK->LINK->gpins[i - 1]->temp);
+  return ((intptr_t)LINK->LINK->gpins[i - 1]->temp);
 }
 
 Local long findvar(i, LINK)
@@ -1082,7 +1082,7 @@ struct LOC_compilepage *LINK;
 		(*ipp)->opcode = op_vareq;
 		(*ipp)->ival = LINK->basepvar + i;
 		newinstr(&(*ipp)->UU.U1.arg1, LINK);
-		if ((((unsigned long)tempvars) & (1L << (15 - i))) != 0)
+		if ((((uintptr_t)tempvars) & (1L << (15 - i))) != 0)
 		  (*ipp)->UU.U1.arg1->opcode = op_one;
 		else
 		  (*ipp)->UU.U1.arg1->opcode = op_zero;
@@ -1474,8 +1474,8 @@ struct LOC_parsegates *LINK;
   LINK->LINK->n = WITH->nbase;
   while (LINK->LINK->n != NULL)
   {   /*save global "node^.temp.i" for reentrant code*/
-    if ((long)LINK->LINK->n->temp != LONG_MIN)
-      ports[-(long)LINK->LINK->n->temp - 1] = LINK->LINK->n;
+    if ((intptr_t)LINK->LINK->n->temp != LONG_MIN)
+      ports[-(intptr_t)LINK->LINK->n->temp - 1] = LINK->LINK->n;
     LINK->LINK->n = LINK->LINK->n->next;
   }
   updateinstance(g1);
@@ -1486,7 +1486,7 @@ struct LOC_parsegates *LINK;
   }
   FORLIM = LINK->LINK->numports;
   for (i = 1; i <= FORLIM; i++)
-    ports[i - 1]->temp = (na_long)(-i);
+    ports[i - 1]->temp = (na_long)((intptr_t)(-i));
 }
 
 
@@ -1590,8 +1590,8 @@ struct LOC_compilepage *LINK;
       WITH = &glist[i];
       FORLIM1 = WITH->numpins;
       for (j = 0; j < FORLIM1; j++) {
-	if ((long)WITH->pins[j]->temp == LONG_MIN) {
-	  WITH->pins[j]->temp = (na_long)LINK->curppin;
+	if ((intptr_t)WITH->pins[j]->temp == LONG_MIN) {
+	  WITH->pins[j]->temp = (na_long)((intptr_t)LINK->curppin);
 	  LINK->curppin++;
 	}
       }
@@ -1604,11 +1604,11 @@ struct LOC_compilepage *LINK;
     defs = (long *)Malloc(setsize);
     P_addsetr(P_expset(defs, 0L), 0, (int)(LINK->numports - 1));
     if (vddsig->np->simtype == logsima_tool_16 &&
-	(long)vddsig->np->temp != LONG_MIN)
-      P_addset(defs, (int)((long)vddsig->np->temp + LINK->numports));
+	(intptr_t)vddsig->np->temp != LONG_MIN)
+      P_addset(defs, (int)((intptr_t)vddsig->np->temp + LINK->numports));
     if (gndsig->np->simtype == logsima_tool_16 &&
-	(long)gndsig->np->temp != LONG_MIN)
-      P_addset(defs, (int)((long)gndsig->np->temp + LINK->numports));
+	(intptr_t)gndsig->np->temp != LONG_MIN)
+      P_addset(defs, (int)((intptr_t)gndsig->np->temp + LINK->numports));
     tdefs = (long *)Malloc(setsize);
     for (i = 0; i < numg; i++) {
       WITH = &glist[i];
@@ -1619,7 +1619,7 @@ struct LOC_compilepage *LINK;
       FORLIM = WITH->numpins;
       for (j = 0; j < FORLIM; j++) {
 	WITH1 = &WITH->pd[j];
-	num = (long)WITH->pins[j]->temp + LINK->numports;
+	num = (intptr_t)WITH->pins[j]->temp + LINK->numports;
 	if (num <= setmax) {
 	  if (WITH1->isinput)
 	    P_addset(WITH->ins, (int)num);
@@ -1703,23 +1703,23 @@ struct LOC_compilepage *LINK;
   if (!LINK->okay)
     return;
   if (vddsig->np->simtype == logsima_tool_16 &&
-      (long)vddsig->np->temp != LONG_MIN) {
+      (intptr_t)vddsig->np->temp != LONG_MIN) {
     newinstr(&ip, LINK);
     ip->UU.U1.next = LINK->ipbase;
     ip->opcode = op_pineq;
-    ip->ival = (long)vddsig->np->temp;
+    ip->ival = (intptr_t)vddsig->np->temp;
     newinstr(&ip->UU.U1.arg1, LINK);
     ip->UU.U1.arg1->opcode = op_one;
     LINK->ipbase = ip;
     LINK->oldinstrcount++;
   }
   if (gndsig->np->simtype != logsima_tool_16 ||
-      (long)gndsig->np->temp == LONG_MIN)
+      (intptr_t)gndsig->np->temp == LONG_MIN)
     return;
   newinstr(&ip, LINK);
   ip->UU.U1.next = LINK->ipbase;
   ip->opcode = op_pineq;
-  ip->ival = (long)gndsig->np->temp;
+  ip->ival = (intptr_t)gndsig->np->temp;
   newinstr(&ip->UU.U1.arg1, LINK);
   ip->UU.U1.arg1->opcode = op_zero;
   LINK->ipbase = ip;
@@ -4220,9 +4220,9 @@ hdefrec *hdef_;
 	      continue;
 	    i++;
 	    (*WITH->hook.getsig)(wrd, &sig);
-	    if ((long)sig->np->temp == LONG_MIN || (long)sig->np->temp == 0)
+	    if ((intptr_t)sig->np->temp == LONG_MIN || (intptr_t)sig->np->temp == 0)
 		  /*newly created*/
-		    sig->np->temp = (na_long)(-i);
+		    sig->np->temp = (na_long)((intptr_t)(-i));
 	    else {
 	      sprintf(STR3, "Node %s appears as more than one port", wrd);
 	      error(STR3, &V);
@@ -4255,8 +4255,8 @@ hdefrec *hdef_;
 	Free(pnumlist);
 	FORLIM = V.numports;
 	for (i = 1; i <= FORLIM; i++) {
-	  if ((long)templs[i - 1]->temp == LONG_MIN)
-	    templs[i - 1]->temp = (na_long)(-i);
+	  if ((intptr_t)templs[i - 1]->temp == LONG_MIN)
+	    templs[i - 1]->temp = (na_long)(intptr_t)(-i);
 	  else {
 	    sprintf(STR3, "Template \"%s\" pin %ld is shorted",V.hdef->name,i);
 	    error(STR3, &V);
@@ -4295,12 +4295,12 @@ hdefrec *hdef_;
     if (V.gcontrol != NULL) {
       cip = (controlinfo *)V.gcontrol->info;
       cip->hdef = V.hdef;   /*connect new one*/
-      if ((((unsigned long)V.gcontrol->vars) & (1L << 0)) != 0)
+      if ((((uintptr_t)V.gcontrol->vars) & (1L << 0)) != 0)
 	grabcontrolattrs(V.hdef, V.gcontrol);
       else
 	storecontrolattrs(V.hdef, V.gcontrol);
       V.gcontrol->vars = (na_long)
-			 (((unsigned long)V.gcontrol->vars) & (~(1L << 0)));
+			 (((uintptr_t)V.gcontrol->vars) & (~(1L << 0)));
       refrcontrol(V.gcontrol, 0);
     } else
       cip = NULL;
@@ -5223,11 +5223,11 @@ log_16_action *act;
     cip->olddumpcolor = -1;
     cip->olddumpmode = dump_none;
     cip->welcomeflag = true;
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) & (~(1L << 0)));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) & (~(1L << 0)));
     break;
 
   case act_16_read:
-    WITH1->vars = (na_long)(((unsigned long)WITH1->vars) | (1L << 0));
+    WITH1->vars = (na_long)(((uintptr_t)WITH1->vars) | (1L << 0));
     break;
 
   case act_16_dispose:
