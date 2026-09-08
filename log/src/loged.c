@@ -149,11 +149,11 @@ typedef Char gatename[8];
 typedef Char pac4[4];
 
 typedef struct descrec {
-#ifdef __alpha__
+//#ifdef __alpha__
   int ptr;
-#else
-  long ptr;
-#endif
+//#else
+//  long ptr;
+//#endif
   uchar numvects, numpins, numpnums, lblsize, simtype, procsize;
   /* log_kflags */ short flag;
   schar xx1, yy1, xx2, yy2;
@@ -197,11 +197,11 @@ typedef union filerec {
   schar sb[256];
   uchar c[256];
   short sh[128];
-#ifdef __alpha__
+//#ifdef __alpha__
   int i[64];
-#else
-  long i[64];
-#endif
+//#else
+//  long i[64];
+//#endif
   gatename ix[32];
   ovectorrec vec[64];
   pinrec pin[64];

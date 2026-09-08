@@ -1457,12 +1457,27 @@ void m_drawrect(x1, y1, x2, y2) int x1, y1, x2, y2;
     else if (y1 == y2)
         SDL_RenderLine(m_renderer, x1, y1, x2, y1);
     else {
-        SDL_FRect r;
-        r.x = (float)x;
-        r.y = y;
-        r.w = x1 + x2 - x - x;
-        r.h = y1 + y2 - y - y;
-        SDL_RenderRect(m_renderer, &r);
+        if(currentlinestyle) {
+            for(int i=x1;i<=x2;i+=8) {
+                int j=i+4;
+                if (j>x2) j=x2;
+                SDL_RenderLine(m_renderer,i,y1,j,y1);
+                SDL_RenderLine(m_renderer,i,y2,j,y2);
+            }
+            for(int i=y1;i<=y2;i+=8) {
+                int j=i+4;
+                if(j>y2) j=y2;
+                SDL_RenderLine(m_renderer,x1,i,x1,j);
+                SDL_RenderLine(m_renderer,x2,i,x2,j);
+            }
+        } else {
+            SDL_FRect r;
+            r.x = (float)x;
+            r.y = y;
+            r.w = x1 + x2 - x - x;
+            r.h = y1 + y2 - y - y;
+            SDL_RenderRect(m_renderer, &r);
+        }
     }
 #endif /* EXTRA_BUFFERING */
 
