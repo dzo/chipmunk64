@@ -213,13 +213,17 @@ TOOLOBJ = $(SIMOBJ) lplot.o logspc.o logntk.o
 ##  older operating systems -- if problems arise, use a hard link.
 ##
 
+ifdef WIN32
 install: all
-	-cp log $(BINDIR)/diglog
-	-cp log.exe $(BINDIR)/diglog.exe
+	cp log.exe $(BINDIR)/log.exe
+else
+install: all
+	cp log $(BINDIR)/diglog
 	-rm -f $(BINDIR)/analog
 	-(cd $(BINDIR); ln -s diglog analog)
+endif
 #	cp loged $(BINDIR)/loged
-	cp fixfet7 $(BINDIR)/fixfet7
+#	cp fixfet7 $(BINDIR)/fixfet7
 
 clean:
 	-rm -f *.o ana/*.o ana/logdef.h log loged diglog diglog.html diglog.js diglog.wasm log.exe munch.temp opt.wasm

@@ -936,11 +936,13 @@ void m_choosecursor(n) int n;
     SDL_ShowCursor();
 }
 
+static SDL_BlendMode invmode = 0;
+
 void m_colormode(c) int c;
 {
     int i;
 
-    SDL_BlendMode invmode = SDL_ComposeCustomBlendMode(
+    if (invmode==0) invmode = SDL_ComposeCustomBlendMode(
         SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR, SDL_BLENDFACTOR_ZERO,
         SDL_BLENDOPERATION_ADD, SDL_BLENDFACTOR_ZERO, SDL_BLENDFACTOR_DST_ALPHA,
         SDL_BLENDOPERATION_ADD);
