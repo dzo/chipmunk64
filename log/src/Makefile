@@ -215,9 +215,11 @@ TOOLOBJ = $(SIMOBJ) lplot.o logspc.o logntk.o
 
 ifdef WIN32
 install: all
+	strip log.exe
 	cp log.exe $(BINDIR)/log.exe
 else
 install: all
+	strip log
 	cp log $(BINDIR)/diglog
 	-rm -f $(BINDIR)/analog
 	-(cd $(BINDIR); ln -s diglog analog)

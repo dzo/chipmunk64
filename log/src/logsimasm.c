@@ -279,7 +279,7 @@ Static log_nrec *g_pinnum()
 }
 
 
-static log_16_value g_expr()
+static inline log_16_value g_expr()
 {
   register uchar ch;
   register nodeinfo *nip;
