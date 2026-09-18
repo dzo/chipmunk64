@@ -61,30 +61,6 @@ static long bgc=0;
 #define NC_SCREEN(i)  (nc_screen[i])
 #endif
 
-#if 0
-static long WindowEventMask = ExposureMask | KeyPressMask |
-                              ButtonPressMask | ButtonReleaseMask | 
-                              PointerMotionMask | StructureNotifyMask;
-static unsigned long WinAttrMask = CWBackPixel | CWBorderPixel | CWEventMask |
-                                   CWCursor;
-static XSetWindowAttributes WinAttr = {
-  None,				      /*  background_pixmap      */
-  0,				      /*  background_pixel       */
-  CopyFromParent,		      /*  border_pixmap		 */
-  0,				      /*  border_pixel		 */
-  ForgetGravity,		      /*  bit_gravity		 */
-  NorthWestGravity,		      /*  win_gravity		 */
-  NotUseful,			      /*  backing_store		 */
-  0,     			      /*  backing_planes	 */
-  0,				      /*  backing_pixel		 */
-  False,			      /*  save_under		 */
-  0,             		      /*  event_mask		 */
-  0,				      /*  do_not_propogate_mask  */
-  False,			      /*  override_redirect      */
-  CopyFromParent,		      /*  colormap               */
-  None,				      /*  cursor                 */
-};
-#endif
 static char *progname = "newcrt";
 
 static nc_windowRec __nc_curWindow = {
@@ -115,7 +91,6 @@ static int colortrans[8] = {
 };
 static int ascent;
 
-//static GC nc_cursorgc;
 static int cursor_flag;
 
 char *usrgeo, *defgeo = {"640x312+60+20"};
@@ -316,7 +291,7 @@ int newhighlight;
     
   } else {
       currentcolor=cols[colortrans[(newhighlight & colormask)/4096]];
-      bgc=0;
+      bgc=cols[0];
   }
 //  if (newhighlight==0)
 //  currentcolor=nc_green;
@@ -528,7 +503,7 @@ int x, y, dx, dy;
       SDL_FRect r={(float)(nc_curWindow->gleft+nc_fontwidth*x),
                               (float)(nc_curWindow->gtop+nc_fontheight*y),
                               (float)(nc_fontwidth*dx), (float)(nc_fontheight*dy)};
-      SDL_SetRenderDrawColor(m_renderer,0,0,0,255);                        
+      SDL_SetRenderDrawColor(m_renderer,(bgc)&255,(bgc>>8)&255,(bgc>>16)&255,255);                 
       SDL_RenderFillRect(m_renderer, &r);
       for (j = y; j < y + dy; j++)
 	for (i = x; i < x + dx; i++)

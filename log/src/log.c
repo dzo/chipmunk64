@@ -16866,7 +16866,6 @@ Static Void loadcommand() {
     if(i<maxdirmax && l>4 && strcmp(dir->d_name+l-4, ".lgf") == 0) {
       dirs[i]= Malloc(fidleng + 1);
       strcpy(dirs[i], dir->d_name);
-      fprintf(stderr, "Found file: %s %d\n", dir->d_name, dircol);
       nk_gotoxy((i%dircol) * colwidth + 2, (i/dircol) + 2);
       printf("%c%s", chrplain, dirs[i]);
       i++;
@@ -19895,8 +19894,9 @@ int main(int argc, Char *argv[]) {
         nocrosshair();
       gg.stillnear = true;
       rabtime = timers_sysclock();
+      pen();
       if (displaynews) shownews();
-
+      
       if (*gg.func == '\0') {
         do {
           if (refrtimer == 0 && !gg.startpoint) {
