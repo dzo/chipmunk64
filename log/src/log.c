@@ -146,6 +146,8 @@ char *str, **ptr;
 #include <p2c/newcrt.h>
 #endif
 
+#include <dirent.h>
+
 
 extern char *GetChipmunkPath();
 char *my_strdup();
@@ -16835,13 +16837,15 @@ Static Void loadcommand() {
   Char ch;
   Char name[fidleng + 1];
   misc_catentry *cat;
-  Char(*dirs[maxdircol + 1])[fidleng + 1];
+  Char *dirs[maxdirmax + 1];
   Char STR3[256];
+  int colwidth=30;
 
-  dircol = P_imin2((txacross - 14L) / 15, (long)maxdircol);
+  dircol = P_imin2((txacross) / colwidth, (long)maxdircol);
   dirmax = -1;
   cat = NULL;
-  for (i = 0; i <= dircol; i++) dirs[i] = NULL;
+  for (i = 0; i <= maxdirmax; i++) dirs[i] = NULL;
+  
   if (!strcmp(gg.funcarg, "*")) {
     beginbottom();
     printf("Name of file to load: ");
@@ -16853,7 +16857,23 @@ Static Void loadcommand() {
     clearfunc();
     return;
 #endif
-    clearshowalpha();
+    DIR *d = opendir(".");
+  i=0;
+  struct dirent *dir;
+  clearshowalpha();
+  while ((dir = readdir(d)) != NULL) {
+    int l=strlen(dir->d_name);
+    if(i<maxdirmax && l>4 && strcmp(dir->d_name+l-4, ".lgf") == 0) {
+      dirs[i]= Malloc(fidleng + 1);
+      strcpy(dirs[i], dir->d_name);
+      fprintf(stderr, "Found file: %s %d\n", dir->d_name, dircol);
+      nk_gotoxy((i%dircol) * colwidth + 2, (i/dircol) + 2);
+      printf("%c%s", chrplain, dirs[i]);
+      i++;
+    }
+  }
+  dirmax=i-1;
+  closedir(d);
     if (cat != NULL) Free(cat);
     nk_gotoxy(5, txdown - 1);
     printf("Press ENTER alone to abort command.\n");
@@ -16863,18 +16883,21 @@ Static Void loadcommand() {
     ch = '\015';
     do {
       do {
-        x = (gg.t.ax - 2) / 15;
+        x = (gg.t.ax - 2) / colwidth;
+        if(x<0) x = 0;
+        if(x>=dircol) x = dircol-1;
         y = gg.t.ay - 2;
+        if(y<0) y = 0;
         /*  x := (gg.t.x-22) div 90;
           y := (gg.t.y-46) div 15;
           if gg.t.x < 22 then x := 0;
           if gg.t.y < 46 then y := 0; */
-        if (x < 0 || (unsigned)y > dirmax || x > dircol || dirs[x] == NULL ||
-            *dirs[x][y] == '\0')
+        i = (unsigned)y * dircol + x;
+        if (i<0 || i>dirmax)
           x = -1;
         else {
-          nk_gotoxy(x * 15 + 2, y + 2);
-          printf("%c%s%c", chrinverse, dirs[x][y], chrplain);
+          nk_gotoxy(x * colwidth + 2, y + 2);
+          printf("%c%s%c", chrinverse, dirs[i], chrplain);
         }
         if (gg.t.near_ && gg.t.inalpha)
           nk_gotoxy(gg.t.ax, gg.t.ay);
@@ -16884,25 +16907,29 @@ Static Void loadcommand() {
         do {
           pass();
           pen();
-          x1 = (gg.t.ax - 2) / 15;
+          x1 = (gg.t.ax - 2) / colwidth;
+          if(x1<0) x1 = 0;
+          if(x1>=dircol) x1 = dircol-1;
           y1 = gg.t.ay - 2;
+          if(y1<0) y1 = 0;
           /* x1 := (gg.t.x-22) div 90;
            y1 := (gg.t.y-46) div 15;
            if gg.t.x < 22 then x1 := 0;
            if gg.t.y < 46 then y1 := 0; */
-          if (y1 < 0 || x1 < 0 || y1 > dirmax || x1 > dircol ||
-              dirs[x1] == NULL || *dirs[x1][y1] == '\0')
+          i = (unsigned)y1 * dircol + x1;
+          if (i<0 || i>dirmax)
             x1 = -1;
         } while (!(pollkbd2() || gg.t.dn || x != x1 || y != y1) && gg.t.near_);
         nc_cursor_off();
         remcursor();
         if (x != -1) {
-          nk_gotoxy(x * 15 + 2, y + 2);
-          fputs(dirs[x][y], stdout);
+          nk_gotoxy(x * colwidth + 2, y + 2);
+          i = (unsigned)y * dircol + x;
+          fputs(dirs[i], stdout);
         }
       } while (!(pollkbd2() || gg.t.dn));
       if (gg.t.dn && x != -1) {
-        strcpy(filename, dirs[x][y]);
+        strcpy(filename, dirs[i]);
         nk_gotoxy(24, txdown - 2);
         printf("%s\t", filename);
       }
@@ -16921,7 +16948,7 @@ Static Void loadcommand() {
         filename[strlen(filename) - 1] = ch;
       }
     } while ((uchar)ch >= 32 || ((1L << ch) & 0x2008) == 0);
-    for (i = 0; i <= dircol; i++) {
+    for (i = 0; i <= maxdirmax; i++) {
       if (dirs[i] != NULL) Free(dirs[i]);
     }
     sprintf(STR3, "%c", ch);
@@ -18317,6 +18344,8 @@ Static Void docnffunction() {
         gcolormap[k] = clrarr[1];
         bcolormap[k] = clrarr[2];
         m_vsetcolors(k, 1L, &rcolormap[k], &gcolormap[k], &bcolormap[k]);
+        m_setcolor(k, (long)clrarr[0], (long)clrarr[1], (long)clrarr[2]);
+        refrscreen();
       }
       clearfunc();
       return;
@@ -19264,10 +19293,11 @@ Static Void initialize() {
   newci_parseswitch(swtab, 8L, V.cmdbuf);
 
   if (*V.cmdbuf != '\0') {
-    if (*V.cmdbuf != '\0') printf("Unrecognized option:  -%s\n", V.cmdbuf);
-    printf(
+    if (*V.cmdbuf != '\0') fprintf(stderr,"Unrecognized option:  -%s\n", V.cmdbuf);
+    fprintf(stderr,
         "\nUsage:  LOG [ -v ] [ -c cnffile ] [ -x X_display_name ] [ "
         "file ]\n");
+        nk_getkey();
     _Escape(0);
   }
 

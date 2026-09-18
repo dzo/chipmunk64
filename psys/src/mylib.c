@@ -338,54 +338,35 @@ void WindowInitialize() {
     //...
     Xfprintf(stderr, "SDL_Init\n");
     SDL_Init(SDL_INIT_VIDEO);
-    // SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK,
-    // SDL_GL_CONTEXT_PROFILE_CORE); //OpenGL core profile SDL_GL_SetAttribute
-    // (SDL_GL_CONTEXT_MAJOR_VERSION, 3); //OpenGL 3+ SDL_GL_SetAttribute
-    // (SDL_GL_CONTEXT_MINOR_VERSION, 2); //OpenGL 3.3 SDL_SetHint
-   // SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") ;
-    //SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software") ;
+
+    // SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") ;
+    // SDL_SetHint(SDL_HINT_RENDER_DRIVER, "vulkan") ;
     //   SDL_SetHint (SDL_HINT_RENDER_VSYNC,"1");
-    // SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight,
-    // SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL, &m_window, &m_renderer);
+    
+    //SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "3");
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+    for(int i=0;i<5;i++)
+        cursors[i]=SDL_CreateCursor((const unsigned char *)curzero,(const unsigned char *)(curxor[i]),32,32,curpos[i],curpos[i]);
+    Xfprintf(stderr, "SDL_CreateWindow\n");
 
- // buffer = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGB888,
- //                                       SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
- //  SDL_SetRenderTarget(m_renderer, buffer);                                      
-  //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,31);
-  //SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "3");
-  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
-  for(int i=0;i<5;i++)
-     cursors[i]=SDL_CreateCursor((const unsigned char *)curzero,(const unsigned char *)(curxor[i]),32,32,curpos[i],curpos[i]);
-  Xfprintf(stderr, "SDL_CreateWindow\n");
-
-  #ifdef __EMSCRIPTEN__
-  m_window=SDL_CreateWindow("log", WindowWidth, WindowHeight, 0);
-  #else
-  m_window=SDL_CreateWindow("log", WindowWidth, WindowHeight, SDL_WINDOW_RESIZABLE);
-  #endif
-  Xfprintf(stderr, "SDL_CreateRenderer\n");
-      m_renderer=SDL_CreateRenderer(m_window, NULL);
-      m_pixel_format=SDL_GetWindowPixelFormat(m_window);
- //     SDL_SetRenderLogicalPresentation(m_renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-
-//  m_renderer=SDL_CreateRenderer(m_window, NULL);
-//SDL_CreateWindowAndRenderer(WindowWidth,WindowHeight, 0, &m_window, &m_renderer);
-
-//   SDL_GLContext openglContext = SDL_GL_CreateContext (m_window);
-//    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
+    #ifdef __EMSCRIPTEN__
+        m_window=SDL_CreateWindow("log", WindowWidth, WindowHeight, 0);
+    #else
+        m_window=SDL_CreateWindow("log", WindowWidth, WindowHeight, SDL_WINDOW_RESIZABLE);
+    #endif
+    Xfprintf(stderr, "SDL_CreateRenderer\n");
+    m_renderer=SDL_CreateRenderer(m_window, NULL);
+    m_pixel_format=SDL_GetWindowPixelFormat(m_window);
+    //     SDL_SetRenderLogicalPresentation(m_renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX);
     
     SDL_PropertiesID props = SDL_GetRendererProperties(m_renderer);
     const char *name=SDL_GetStringProperty(props,SDL_PROP_RENDERER_NAME_STRING, NULL);
     Xfprintf(stderr,"Renderer: %s\n", name);
-    
-  //#ifdef __EMSCRIPTEN__
-  Xfprintf(stderr, "SDL_CreateTexture\n");
-  buffer = SDL_CreateTexture(m_renderer, m_pixel_format,
+    buffer = SDL_CreateTexture(m_renderer, m_pixel_format,
                                         SDL_TEXTUREACCESS_TARGET, WindowWidth, WindowHeight); 
-  Xfprintf(stderr, "SDL_SetRenderTarget\n");
-  SDL_SetRenderTarget(m_renderer, buffer);
-  SDL_StartTextInput(m_window);
-  //#endif
+    Xfprintf(stderr, "SDL_SetRenderTarget\n");
+    SDL_SetRenderTarget(m_renderer, buffer);
+    SDL_StartTextInput(m_window);
 }
 
 #define LINESTIPPLELENGTH 4
