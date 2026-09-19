@@ -513,12 +513,17 @@ typedef struct wireundosrec {
   short x, y;
 } wireundosrec;
 
+typedef struct wireundogrec {
+  log_grec *gate;
+} wireundogrec;
+
 typedef struct wireundopagerec {
   short page;
-  long nhw, nvw, nsolder;
+  long nhw, nvw, nsolder, ngate;
   wireundohwrec *hw;
   wireundovwrec *vw;
   wireundosrec *solder;
+  wireundogrec *gate;
 } wireundopagerec;
 
 typedef struct wireundosnapshot {
@@ -9710,6 +9715,14 @@ wireundosnapshot *snap;
       Free(snap->page[i].hw);
       Free(snap->page[i].vw);
       Free(snap->page[i].solder);
+      if (snap->page[i].gate != NULL) {
+        long j;
+        for (j = 0; j < snap->page[i].ngate; j++) {
+          if (snap->page[i].gate[j].gate != NULL)
+            disposegate(&snap->page[i].gate[j].gate);
+        }
+      }
+      Free(snap->page[i].gate);
     }
     Free(snap->page);
   }
@@ -9738,7 +9751,7 @@ wireundosnapshot *snap;
   log_hwrec *hw;
   log_vwrec *vw;
   log_srec *sc;
-  long nhw, nvw, ns;
+  long nhw, nvw, ns, ng;
   long ih, iv, is;
 
   snap->npages = 0;
@@ -9755,9 +9768,11 @@ wireundosnapshot *snap;
     snap->page[pg].nhw = 0;
     snap->page[pg].nvw = 0;
     snap->page[pg].nsolder = 0;
+    snap->page[pg].ngate = 0;
     snap->page[pg].hw = NULL;
     snap->page[pg].vw = NULL;
     snap->page[pg].solder = NULL;
+    snap->page[pg].gate = NULL;
 
     nhw = 0;
     hw = gg.hwbase[pg];
@@ -9780,9 +9795,19 @@ wireundosnapshot *snap;
       sc = sc->next;
     }
 
+    ng = 0;
+    {
+      log_grec *g = gg.gbase[pg];
+      while (g != NULL) {
+        ng++;
+        g = g->next;
+      }
+    }
+
     snap->page[pg].nhw = nhw;
     snap->page[pg].nvw = nvw;
     snap->page[pg].nsolder = ns;
+    snap->page[pg].ngate = ng;
 
     if (nhw != 0)
       snap->page[pg].hw = (wireundohwrec *)Malloc(
@@ -9793,6 +9818,9 @@ wireundosnapshot *snap;
     if (ns != 0)
       snap->page[pg].solder = (wireundosrec *)Malloc(
           ns * sizeof(wireundosrec));
+    if (snap->page[pg].ngate != 0)
+      snap->page[pg].gate = (wireundogrec *)Malloc(
+          snap->page[pg].ngate * sizeof(wireundogrec));
 
     ih = 0;
     hw = gg.hwbase[pg];
@@ -9824,6 +9852,18 @@ wireundosnapshot *snap;
       is++;
       sc = sc->next;
     }
+
+    ng = 0;
+    {
+      log_grec *g;
+      g = gg.gbase[pg];
+      while (g != NULL) {
+        snap->page[pg].gate[ng].gate = NULL;
+        copygate(g, &snap->page[pg].gate[ng].gate);
+        ng++;
+        g = g->next;
+      }
+    }
   }
 
   return true;
@@ -9843,7 +9883,7 @@ wireundosnapshot *a, *b;
     wireundopagerec *pb = &b->page[pg];
 
     if (pa->nhw != pb->nhw || pa->nvw != pb->nvw ||
-        pa->nsolder != pb->nsolder)
+        pa->nsolder != pb->nsolder || pa->ngate != pb->ngate)
       return false;
 
     if (pa->nhw != 0)
@@ -9921,6 +9961,17 @@ wireundosnapshot *a, *b;
       }
     }
     Free(used);
+
+    for (i = 0; i < pa->ngate; i++) {
+      if (pa->gate[i].gate->x != pb->gate[i].gate->x ||
+          pa->gate[i].gate->y != pb->gate[i].gate->y ||
+          pa->gate[i].gate->rot != pb->gate[i].gate->rot ||
+          pa->gate[i].gate->g != pb->gate[i].gate->g ||
+          pa->gate[i].gate->sig != pb->gate[i].gate->sig ||
+          pa->gate[i].gate->gc != pb->gate[i].gate->gc ||
+          pa->gate[i].gate->vars != pb->gate[i].gate->vars)
+        return false;
+    }
   }
 
   return true;
@@ -9946,6 +9997,22 @@ wireundosnapshot *snap;
 
   for (pg = 0; pg < snap->npages; pg++) {
     gg.curpage = snap->page[pg].page;
+
+    /*
+     * Gates must be removed BEFORE their wires and nodes are destroyed.
+     * A gate contains pointers to its pin nodes, and removing the wires first
+     * can leave those pointers referring to nodes which are subsequently
+     * freed or recycled.  The old implementation did this in the opposite
+     * order, which made component undo/rotation unreliable.
+     */
+    {
+      log_grec *g = gg.gbase[gg.curpage - 1];
+      while (g != NULL) {
+        log_grec *next = g->next;
+        delgate(g);
+        g = next;
+      }
+    }
 
     /* Remove solder records first. */
     sc = gg.sbase[gg.curpage - 1];
@@ -10020,6 +10087,41 @@ wireundosnapshot *snap;
 
   }
 
+  /*
+   * Recreate gates from the saved scalar state.  Do NOT use copygate() here:
+   * the snapshot gate's pin pointers refer to the old live nodes and those
+   * nodes have now been rebuilt.  newgate2() creates fresh pins and attributes,
+   * and connectgate() then attaches them to the restored circuit.
+   */
+  for (pg = 0; pg < snap->npages; pg++) {
+    gg.curpage = snap->page[pg].page;
+
+    for (i = 0; i < snap->page[pg].ngate; i++) {
+      log_grec *savedg;
+      log_grec *g;
+
+      savedg = snap->page[pg].gate[i].gate;
+      g = NULL;
+      newgate2(&g, savedg->g, savedg->sig, savedg->attr);
+      g->x = savedg->x;
+      g->y = savedg->y;
+      g->rot = savedg->rot;
+      g->g = savedg->g;
+      g->gc = savedg->gc;
+      g->vars = savedg->vars;
+      initpinpos(g);
+
+      if (!connectgate(g)) {
+        frygate(g);
+        disposegate(&g);
+      } else {
+        clipon();
+        drawgatex(g);
+        clipoff();
+      }
+    }
+  }
+
   gg.curpage = savepg;
   gg.nearhw = NULL;
   gg.nearvw = NULL;
@@ -10049,7 +10151,6 @@ wireundosnapshot *before, *after;
 
 Static Void undowire() {
   wireundoentry *entry;
-  wireundosnapshot current;
   short savepg;
 
   if (wireundo_count == 0) {
@@ -10058,24 +10159,21 @@ Static Void undowire() {
     return;
   }
 
-  entry = &wireundo_stack[wireundo_count - 1];
-  current.page = NULL;
-  current.npages = 0;
-
   /*
-   * Refuse to restore an old snapshot if the wire state has changed outside
-   * this undo history.  This prevents an old entry from silently destroying
-   * later wire edits.
+   * Do not try to validate the current circuit against entry->after here.
+   * That sounded useful, but it is fundamentally unreliable for LOG: gate
+   * records contain pointers to dynamically allocated attributes/variables
+   * and reconnecting a circuit can legitimately change internal identities
+   * without changing what the user sees.  In particular, a gate move or
+   * rotation could therefore make a perfectly valid undo entry appear to be
+   * "invalid".
+   *
+   * Every operation which changes the editable circuit is responsible for
+   * pushing its own before/after snapshot (or explicitly clearing the stack
+   * for an operation which cannot be represented).  The undo stack is thus
+   * the authority; undo simply restores the previous snapshot.
    */
-  if (!wireundo_capture(&current) ||
-      !wireundo_samesnapshot(&current, &entry->after)) {
-    wireundo_freesnapshot(&current);
-    wireundo_clear();
-    message("Wire undo history is no longer valid.");
-    clearfunc();
-    return;
-  }
-  wireundo_freesnapshot(&current);
+  entry = &wireundo_stack[wireundo_count - 1];
 
   savepg = gg.curpage;
   remcursor();
@@ -10312,7 +10410,12 @@ Static Void moveobject() {
     return;
   }
   if (gg.neargate != NULL) {
-    wireundo_clear();
+    wireundosnapshot gatebefore, gateafter;
+    gatebefore.page = NULL;
+    gatebefore.npages = 0;
+    gateafter.page = NULL;
+    gateafter.npages = 0;
+    wireundo_capture(&gatebefore);
     gtype = gg.neargate->g;
     remcursor();
     clipon();
@@ -10355,6 +10458,14 @@ Static Void moveobject() {
       disposegate(&gg.neargate);
     } else
       disposegate(&gg.neargate);
+
+    if (wireundo_capture(&gateafter) &&
+        !wireundo_samesnapshot(&gatebefore, &gateafter))
+      wireundo_push(&gatebefore, &gateafter);
+    else {
+      wireundo_freesnapshot(&gatebefore);
+      wireundo_freesnapshot(&gateafter);
+    }
     refreshsoon();
     gg.startpoint = false;
     return;
@@ -13926,11 +14037,18 @@ log_grec *g;
 {
   short i;
   log_krec *WITH;
+  wireundosnapshot before, after;
+
+  before.page = NULL;
+  before.npages = 0;
+  after.page = NULL;
+  after.npages = 0;
 
   if (g->kind->flag.U3.noflip) {
     configgate(g);
     return;
   }
+  wireundo_capture(&before);
   WITH = g->kind;
   if (g->kind->flag.U3.toggle)
     i = 0;
@@ -13960,6 +14078,14 @@ log_grec *g;
     case 4:
       configgate(g);
       break;
+  }
+
+  if (wireundo_capture(&after) &&
+      !wireundo_samesnapshot(&before, &after))
+    wireundo_push(&before, &after);
+  else {
+    wireundo_freesnapshot(&before);
+    wireundo_freesnapshot(&after);
   }
 }
 
