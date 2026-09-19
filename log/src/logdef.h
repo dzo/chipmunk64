@@ -671,6 +671,7 @@ typedef struct log_tool {
   double deltatime;
 } log_tool;
 
+Static Void wireundo_clear();
 
 #undef vextern
 

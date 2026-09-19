@@ -488,7 +488,61 @@ Static long realcurpage;
 Static log_nrec *freenode; /* Node "free" list */
 Static log_grec *freegate; /* Gate "free" list */
 
+
 Static baseptrs copybuf; /* Del/Copy/Paste buffer */
+
+/*
+ * Undo history for wire moves.
+ *
+ * A wire move can merge with other wires at its destination.  Storing just
+ * the moved wire is therefore not sufficient for an exact undo.  Each undo
+ * entry contains a complete snapshot of the wire and solder state on every
+ * page.  Undoing an entry rebuilds that state from the snapshot.
+ */
+#define WIRE_UNDO_MAX 64
+
+typedef struct wireundohwrec {
+  short x1, x2, y, colr;
+} wireundohwrec;
+
+typedef struct wireundovwrec {
+  short x, y1, y2, colr;
+} wireundovwrec;
+
+typedef struct wireundosrec {
+  short x, y;
+} wireundosrec;
+
+typedef struct wireundopagerec {
+  short page;
+  long nhw, nvw, nsolder;
+  wireundohwrec *hw;
+  wireundovwrec *vw;
+  wireundosrec *solder;
+} wireundopagerec;
+
+typedef struct wireundosnapshot {
+  short npages;
+  wireundopagerec *page;
+} wireundosnapshot;
+
+typedef struct wireundoentry {
+  wireundosnapshot before;
+  wireundosnapshot after;
+} wireundoentry;
+
+Static wireundoentry wireundo_stack[WIRE_UNDO_MAX];
+Static short wireundo_count;
+Static boolean wireundo_transaction;
+
+/* Forward declarations: pastebuf() is defined before the undo implementation. */
+Static Void wireundo_freesnapshot();
+Static Void wireundo_clear();
+Static boolean wireundo_capture();
+Static boolean wireundo_samesnapshot();
+Static Void wireundo_push();
+Static Void wireundo_restore();
+Static Void undowire();
 
 Static long htcount;   /* Number of timesteps in list */
 Static short hncount;  /* Number of names in list */
@@ -8701,6 +8755,8 @@ Static Void delcommand() {
   short x1, y1, x2, y2;
   boolean flag;
 
+  wireundo_clear();
+
   log_setmode("DEL");
   clearfunc();
   cursortype = delete__;
@@ -9158,6 +9214,9 @@ Static Void pastebuf(bases, x, y)
 baseptrs *bases;
 short x, y;
 {
+
+  wireundosnapshot undobefore, undoafter;
+  boolean havebefore, haveafter;
   log_grec *g, *g1;
   log_hwrec *hw;
   log_vwrec *vw;
@@ -9165,6 +9224,17 @@ short x, y;
   log_lrec *l, *l1;
   log_brec *b, *b1;
 
+  undobefore.page = NULL;
+  undobefore.npages = 0;
+  undoafter.page = NULL;
+  undoafter.npages = 0;
+  havebefore = false;
+  if (!wireundo_transaction)
+    havebefore = wireundo_capture(&undobefore);
+
+  /* A paste is a complete undoable operation.  Do not clear the undo
+     stack here: ordinary COPY -> rectangle -> click-to-paste must preserve
+     the previous history. */
   clipon();
   g = bases->gcopy;
   while (g != NULL) {
@@ -9245,6 +9315,21 @@ short x, y;
     chpageplace((int)gg.curpage, b1->x1, b1->y1, b1->x2, b1->y2);
     stamp(&gg.boxstamp);
     b = b->next;
+  }
+
+  haveafter = false;
+  if (!wireundo_transaction)
+    haveafter = wireundo_capture(&undoafter);
+  if (havebefore && haveafter) {
+    if (!wireundo_samesnapshot(&undobefore, &undoafter))
+      wireundo_push(&undobefore, &undoafter);
+    else {
+      wireundo_freesnapshot(&undobefore);
+      wireundo_freesnapshot(&undoafter);
+    }
+  } else {
+    wireundo_freesnapshot(&undobefore);
+    wireundo_freesnapshot(&undoafter);
   }
 }
 
@@ -9347,6 +9432,20 @@ long movemode;
     if (movemode >= 1) {
       if (gg.posx != copybuf.x1copy || gg.posy != copybuf.y1copy ||
           gg.curpage != copybuf.pgnum) {
+        wireundosnapshot movebefore, moveafter;
+        boolean have_movebefore, have_moveafter;
+
+        movebefore.page = NULL;
+        movebefore.npages = 0;
+        moveafter.page = NULL;
+        moveafter.npages = 0;
+
+        /* A box MOVE is one logical operation: the cut and the paste must
+           be undone together.  Suppress pastebuf()'s normal paste-only
+           undo record while this transaction is active. */
+        have_movebefore = wireundo_capture(&movebefore);
+        wireundo_transaction = true;
+
         initbuf(&deleted);
         thepage = gg.curpage;
         if (thepage != copybuf.pgnum) {
@@ -9361,6 +9460,20 @@ long movemode;
         }
         clearbuf(&deleted);
         pastebuf(&copybuf, gg.posx, gg.posy);
+
+        wireundo_transaction = false;
+        have_moveafter = wireundo_capture(&moveafter);
+        if (have_movebefore && have_moveafter) {
+          if (!wireundo_samesnapshot(&movebefore, &moveafter))
+            wireundo_push(&movebefore, &moveafter);
+          else {
+            wireundo_freesnapshot(&movebefore);
+            wireundo_freesnapshot(&moveafter);
+          }
+        } else {
+          wireundo_freesnapshot(&movebefore);
+          wireundo_freesnapshot(&moveafter);
+        }
       }
       if (movemode == 2) movemode = 0;
     } else
@@ -9537,8 +9650,31 @@ Static Void OLDmovecommand() {
     m_color((long)gg.color.backgr);
     rect(buf.x1copy, buf.y1copy, buf.x2copy, buf.y2copy);
     clipoff();
-    if (gg.incircuit && gg.stillnear && *gg.func == '\0')
+    if (gg.incircuit && gg.stillnear && *gg.func == '\0') {
+      wireundosnapshot movebefore, moveafter;
+      boolean have_movebefore, have_moveafter;
+
+      movebefore.page = NULL;
+      movebefore.npages = 0;
+      moveafter.page = NULL;
+      moveafter.npages = 0;
+      have_movebefore = wireundo_capture(&movebefore);
+      wireundo_transaction = true;
       pastebuf(&buf, gg.posx, gg.posy);
+      wireundo_transaction = false;
+      have_moveafter = wireundo_capture(&moveafter);
+      if (have_movebefore && have_moveafter) {
+        if (!wireundo_samesnapshot(&movebefore, &moveafter))
+          wireundo_push(&movebefore, &moveafter);
+        else {
+          wireundo_freesnapshot(&movebefore);
+          wireundo_freesnapshot(&moveafter);
+        }
+      } else {
+        wireundo_freesnapshot(&movebefore);
+        wireundo_freesnapshot(&moveafter);
+      }
+    }
     clearbuf(&buf);
     refreshsoon();
   }
@@ -9561,9 +9697,405 @@ short x, y;
 /*=                                              =*/
 /*================================================*/
 
+/*================  WIRE UNDO SUPPORT  ================*/
+
+Static Void wireundo_freesnapshot(snap)
+wireundosnapshot *snap;
+{
+  short i;
+
+  if (snap == NULL) return;
+  if (snap->page != NULL) {
+    for (i = 0; i < snap->npages; i++) {
+      Free(snap->page[i].hw);
+      Free(snap->page[i].vw);
+      Free(snap->page[i].solder);
+    }
+    Free(snap->page);
+  }
+  snap->page = NULL;
+  snap->npages = 0;
+}
+
+Static Void wireundo_clear() {
+  short i;
+
+  for (i = 0; i < wireundo_count; i++) {
+    wireundo_freesnapshot(&wireundo_stack[i].before);
+    wireundo_freesnapshot(&wireundo_stack[i].after);
+  }
+  wireundo_count = 0;
+}
+
+/*
+ * Capture the complete wire/solder state.  Only geometry and colour are
+ * copied; node connectivity is deliberately rebuilt by addhwire/addvwire.
+ */
+Static boolean wireundo_capture(snap)
+wireundosnapshot *snap;
+{
+  short pg;
+  log_hwrec *hw;
+  log_vwrec *vw;
+  log_srec *sc;
+  long nhw, nvw, ns;
+  long ih, iv, is;
+
+  snap->npages = 0;
+  snap->page = NULL;
+
+  if (gg.numpages <= 0) return false;
+
+  snap->npages = gg.numpages;
+  snap->page = (wireundopagerec *)Malloc(
+      (long)gg.numpages * sizeof(wireundopagerec));
+
+  for (pg = 0; pg < gg.numpages; pg++) {
+    snap->page[pg].page = pg + 1;
+    snap->page[pg].nhw = 0;
+    snap->page[pg].nvw = 0;
+    snap->page[pg].nsolder = 0;
+    snap->page[pg].hw = NULL;
+    snap->page[pg].vw = NULL;
+    snap->page[pg].solder = NULL;
+
+    nhw = 0;
+    hw = gg.hwbase[pg];
+    while (hw != NULL) {
+      nhw++;
+      hw = hw->next;
+    }
+
+    nvw = 0;
+    vw = gg.vwbase[pg];
+    while (vw != NULL) {
+      nvw++;
+      vw = vw->next;
+    }
+
+    ns = 0;
+    sc = gg.sbase[pg];
+    while (sc != NULL) {
+      ns++;
+      sc = sc->next;
+    }
+
+    snap->page[pg].nhw = nhw;
+    snap->page[pg].nvw = nvw;
+    snap->page[pg].nsolder = ns;
+
+    if (nhw != 0)
+      snap->page[pg].hw = (wireundohwrec *)Malloc(
+          nhw * sizeof(wireundohwrec));
+    if (nvw != 0)
+      snap->page[pg].vw = (wireundovwrec *)Malloc(
+          nvw * sizeof(wireundovwrec));
+    if (ns != 0)
+      snap->page[pg].solder = (wireundosrec *)Malloc(
+          ns * sizeof(wireundosrec));
+
+    ih = 0;
+    hw = gg.hwbase[pg];
+    while (hw != NULL) {
+      snap->page[pg].hw[ih].x1 = hw->x1;
+      snap->page[pg].hw[ih].x2 = hw->x2;
+      snap->page[pg].hw[ih].y = hw->y;
+      snap->page[pg].hw[ih].colr = hw->wcolr;
+      ih++;
+      hw = hw->next;
+    }
+
+    iv = 0;
+    vw = gg.vwbase[pg];
+    while (vw != NULL) {
+      snap->page[pg].vw[iv].x = vw->x;
+      snap->page[pg].vw[iv].y1 = vw->y1;
+      snap->page[pg].vw[iv].y2 = vw->y2;
+      snap->page[pg].vw[iv].colr = vw->wcolr;
+      iv++;
+      vw = vw->next;
+    }
+
+    is = 0;
+    sc = gg.sbase[pg];
+    while (sc != NULL) {
+      snap->page[pg].solder[is].x = sc->x;
+      snap->page[pg].solder[is].y = sc->y;
+      is++;
+      sc = sc->next;
+    }
+  }
+
+  return true;
+}
+
+Static boolean wireundo_samesnapshot(a, b)
+wireundosnapshot *a, *b;
+{
+  short pg;
+  long i, j;
+  boolean *used;
+
+  if (a->npages != b->npages) return false;
+
+  for (pg = 0; pg < a->npages; pg++) {
+    wireundopagerec *pa = &a->page[pg];
+    wireundopagerec *pb = &b->page[pg];
+
+    if (pa->nhw != pb->nhw || pa->nvw != pb->nvw ||
+        pa->nsolder != pb->nsolder)
+      return false;
+
+    if (pa->nhw != 0)
+      used = (boolean *)Malloc(pa->nhw * sizeof(boolean));
+    else
+      used = NULL;
+    for (i = 0; i < pa->nhw; i++) used[i] = false;
+
+    for (i = 0; i < pa->nhw; i++) {
+      boolean found = false;
+      for (j = 0; j < pb->nhw; j++) {
+        if (!used[j] &&
+            pa->hw[i].x1 == pb->hw[j].x1 &&
+            pa->hw[i].x2 == pb->hw[j].x2 &&
+            pa->hw[i].y == pb->hw[j].y &&
+            pa->hw[i].colr == pb->hw[j].colr) {
+          used[j] = true;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        Free(used);
+        return false;
+      }
+    }
+    Free(used);
+
+    if (pa->nvw != 0)
+      used = (boolean *)Malloc(pa->nvw * sizeof(boolean));
+    else
+      used = NULL;
+    for (i = 0; i < pa->nvw; i++) used[i] = false;
+
+    for (i = 0; i < pa->nvw; i++) {
+      boolean found = false;
+      for (j = 0; j < pb->nvw; j++) {
+        if (!used[j] &&
+            pa->vw[i].x == pb->vw[j].x &&
+            pa->vw[i].y1 == pb->vw[j].y1 &&
+            pa->vw[i].y2 == pb->vw[j].y2 &&
+            pa->vw[i].colr == pb->vw[j].colr) {
+          used[j] = true;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        Free(used);
+        return false;
+      }
+    }
+    Free(used);
+
+    if (pa->nsolder != 0)
+      used = (boolean *)Malloc(pa->nsolder * sizeof(boolean));
+    else
+      used = NULL;
+    for (i = 0; i < pa->nsolder; i++) used[i] = false;
+
+    for (i = 0; i < pa->nsolder; i++) {
+      boolean found = false;
+      for (j = 0; j < pb->nsolder; j++) {
+        if (!used[j] &&
+            pa->solder[i].x == pb->solder[j].x &&
+            pa->solder[i].y == pb->solder[j].y) {
+          used[j] = true;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        Free(used);
+        return false;
+      }
+    }
+    Free(used);
+  }
+
+  return true;
+}
+
+/*
+ * Restore a complete snapshot.  The current wire/solder lists are discarded
+ * and recreated through the normal add/delete routines, which also rebuild
+ * node connectivity and gate connections.
+ */
+Static Void wireundo_restore(snap)
+wireundosnapshot *snap;
+{
+  short pg, savepg, i;
+  log_hwrec *hw;
+  log_vwrec *vw;
+  log_srec *sc, *scnext;
+  log_hwrec *hs[2];
+  log_vwrec *vs[2];
+  short nh, nv;
+
+  savepg = gg.curpage;
+
+  for (pg = 0; pg < snap->npages; pg++) {
+    gg.curpage = snap->page[pg].page;
+
+    /* Remove solder records first. */
+    sc = gg.sbase[gg.curpage - 1];
+    while (sc != NULL) {
+      scnext = sc->next;
+      dispsolder(&sc);
+      sc = scnext;
+    }
+
+    /* Remove all wires. */
+    hw = gg.hwbase[gg.curpage - 1];
+    while (hw != NULL) {
+      log_hwrec *next = hw->next;
+      delhwire(hw);
+      hw = next;
+    }
+
+    vw = gg.vwbase[gg.curpage - 1];
+    while (vw != NULL) {
+      log_vwrec *next = vw->next;
+      delvwire(vw);
+      vw = next;
+    }
+
+    /* Recreate horizontal and vertical wires. */
+    for (i = 0; i < snap->page[pg].nhw; i++) {
+      addhwire(snap->page[pg].hw[i].x1,
+               snap->page[pg].hw[i].x2,
+               snap->page[pg].hw[i].y,
+               snap->page[pg].hw[i].colr);
+    }
+
+    for (i = 0; i < snap->page[pg].nvw; i++) {
+      addvwire(snap->page[pg].vw[i].x,
+               snap->page[pg].vw[i].y1,
+               snap->page[pg].vw[i].y2,
+               snap->page[pg].vw[i].colr);
+    }
+
+    /*
+     * Recreate solder points.  addhwire/addvwire may already have created
+     * some of these automatically; addsolder() is idempotent with respect
+     * to the existing wire pointers.
+     */
+    for (i = 0; i < snap->page[pg].nsolder; i++) {
+      short x = snap->page[pg].solder[i].x;
+      short y = snap->page[pg].solder[i].y;
+
+      nh = 0;
+      nv = 0;
+
+      hw = gg.hwbase[gg.curpage - 1];
+      while (hw != NULL) {
+        if (hw->x1 <= x && x <= hw->x2 && hw->y == y) {
+          if (nh < 2) hs[nh++] = hw;
+        }
+        hw = hw->next;
+      }
+
+      vw = gg.vwbase[gg.curpage - 1];
+      while (vw != NULL) {
+        if (vw->y1 <= y && y <= vw->y2 && vw->x == x) {
+          if (nv < 2) vs[nv++] = vw;
+        }
+        vw = vw->next;
+      }
+
+      if (nh > 0 && nv > 0)
+        addsolder(x, y, hs[0], nh > 1 ? hs[1] : NULL,
+                  vs[0], nv > 1 ? vs[1] : NULL);
+    }
+
+  }
+
+  gg.curpage = savepg;
+  gg.nearhw = NULL;
+  gg.nearvw = NULL;
+}
+
+Static Void wireundo_push(before, after)
+wireundosnapshot *before, *after;
+{
+  short i;
+
+  if (wireundo_count == WIRE_UNDO_MAX) {
+    wireundo_freesnapshot(&wireundo_stack[0].before);
+    wireundo_freesnapshot(&wireundo_stack[0].after);
+    for (i = 1; i < WIRE_UNDO_MAX; i++)
+      wireundo_stack[i - 1] = wireundo_stack[i];
+    wireundo_count--;
+  }
+
+  wireundo_stack[wireundo_count].before = *before;
+  wireundo_stack[wireundo_count].after = *after;
+  before->page = NULL;
+  before->npages = 0;
+  after->page = NULL;
+  after->npages = 0;
+  wireundo_count++;
+}
+
+Static Void undowire() {
+  wireundoentry *entry;
+  wireundosnapshot current;
+  short savepg;
+
+  if (wireundo_count == 0) {
+    message("Nothing to undo.");
+    clearfunc();
+    return;
+  }
+
+  entry = &wireundo_stack[wireundo_count - 1];
+  current.page = NULL;
+  current.npages = 0;
+
+  /*
+   * Refuse to restore an old snapshot if the wire state has changed outside
+   * this undo history.  This prevents an old entry from silently destroying
+   * later wire edits.
+   */
+  if (!wireundo_capture(&current) ||
+      !wireundo_samesnapshot(&current, &entry->after)) {
+    wireundo_freesnapshot(&current);
+    wireundo_clear();
+    message("Wire undo history is no longer valid.");
+    clearfunc();
+    return;
+  }
+  wireundo_freesnapshot(&current);
+
+  savepg = gg.curpage;
+  remcursor();
+  working();
+  wireundo_restore(&entry->before);
+
+  wireundo_freesnapshot(&entry->before);
+  wireundo_freesnapshot(&entry->after);
+  wireundo_count--;
+
+  gg.curpage = savepg;
+  gg.refrflag = true;
+  refreshsoon();
+  clearfunc();
+}
+
 Static Void moveobject() {
   short gtype, x1, y1, yy, hx1, hx2, hy, vx, vy1, vy2, hc, vc, oldpg, newpg,
       oldx1, oldy1, oldx2, oldy2;
+  wireundosnapshot undobefore, undoafter;
   boolean fh1, fv1, fh2, fv2, oo;
   log_srec *s;
   log_hwrec *hw1;
@@ -9616,6 +10148,7 @@ Static Void moveobject() {
     return;
   }
   if (gg.nearlabel != NULL) {
+    wireundo_clear();
     remcursor();
     oldx1 = gg.nearlabel->x;
     oldy1 = gg.nearlabel->y;
@@ -9685,6 +10218,7 @@ Static Void moveobject() {
     return;
   }
   if (gg.nearbox != NULL) {
+    wireundo_clear();
     remcursor();
     oldx1 = gg.nearbox->x1;
     oldy1 = gg.nearbox->y1;
@@ -9778,6 +10312,7 @@ Static Void moveobject() {
     return;
   }
   if (gg.neargate != NULL) {
+    wireundo_clear();
     gtype = gg.neargate->g;
     remcursor();
     clipon();
@@ -9830,6 +10365,22 @@ Static Void moveobject() {
     assertfunc("MOVE *");
     return;
   }
+
+  /*
+   * Capture the complete wire state before the move.  We do not keep raw
+   * wire pointers because addhwire/addvwire can merge and free them.
+   */
+  undobefore.page = NULL;
+  undobefore.npages = 0;
+  undoafter.page = NULL;
+  undoafter.npages = 0;
+
+  if (!wireundo_capture(&undobefore)) {
+    gg.startpoint = false;
+    message("Cannot create wire undo record.");
+    return;
+  }
+
   remcursor();
   clipon();
   m_color((long)gg.color.backgr);
@@ -9987,8 +10538,22 @@ Static Void moveobject() {
     }
     if (hx1 != hx2) addhwire(hx1, hx2, hy, hc);
     if (vy1 != vy2) addvwire(vx, vy1, vy2, vc);
+
+    /*
+     * Commit the snapshot only if the wire state actually changed.
+     * This also makes clicking without moving a wire produce no undo step.
+     */
+    if (wireundo_capture(&undoafter) &&
+        !wireundo_samesnapshot(&undobefore, &undoafter))
+      wireundo_push(&undobefore, &undoafter);
+    else
+      wireundo_freesnapshot(&undobefore);
+
+    wireundo_freesnapshot(&undoafter);
     doblobs(blbase);
   }
+  wireundo_freesnapshot(&undobefore);
+  wireundo_freesnapshot(&undoafter);
   dispblobs(&blbase);
   refreshsoon();
   gg.startpoint = false;
@@ -10046,6 +10611,8 @@ Static Void openhoriz() {
   log_brec *b;
   short x1, y1;
   boolean flag;
+
+  wireundo_clear();
 
   log_setmode("OPNH");
   clearfunc();
@@ -10184,6 +10751,8 @@ Static Void openvert() {
   short x1, y1;
   boolean flag;
 
+  wireundo_clear();
+
   log_setmode("OPNV");
   clearfunc();
   cursortype = copy_;
@@ -10319,6 +10888,8 @@ Static Void closehoriz() {
   log_brec *b, *b1;
   short x1, y1;
   boolean flag;
+
+  wireundo_clear();
 
   log_setmode("CLSH");
   clearfunc();
@@ -10505,6 +11076,8 @@ Static Void closevert() {
   log_brec *b, *b1;
   short x1, y1;
   boolean flag;
+
+  wireundo_clear();
 
   log_setmode("CLSV");
   clearfunc();
@@ -16841,6 +17414,8 @@ Static Void loadcommand() {
   Char STR3[256];
   int colwidth=30;
 
+  wireundo_clear();
+
   dircol = P_imin2((txacross) / colwidth, (long)maxdircol);
   dirmax = -1;
   cat = NULL;
@@ -17256,6 +17831,7 @@ Char *reason_;
 Static Void readcommand() {
   Char filename[256], reason[256];
   long i, j;
+  wireundo_clear();
   if (*gg.funcarg == '\0' || !strcmp(gg.funcarg, "*")) {
     beginbottom();
     printf("Name of file to read: ");
@@ -18451,6 +19027,7 @@ Static Void docnffunction() {
   clearfunc();
 }
 
+
 Static Void dofunction() {
   log_tool *tp;
   Char cmd[17];
@@ -18478,6 +19055,7 @@ Static Void dofunction() {
     else if (!strcmp(gg.func, "COPY"))
       copycommand();
     else if (!strcmp(gg.func, "CLEAR")) {
+      wireundo_clear();
       clearfunc();
       deleverything();
       histdelsignals();
@@ -18487,6 +19065,8 @@ Static Void dofunction() {
       extract();
     else if (!strcmp(gg.func, "MOVE"))
       movecommand(strcmp(gg.funcarg, "*") != 0);
+    else if (!strcmp(gg.func, "UNDO"))
+      undowire();
     else if (!strcmp(gg.func, "OPENH"))
       openhoriz();
     else if (!strcmp(gg.func, "OPENV"))
@@ -18754,6 +19334,8 @@ Static Void initmacros() {
   definemacro('T', "TOOL");
   definemacro('v', "VERBOSE");
   definemacro('x', "EXAMINE");
+  definemacro('u', "UNDO");
+  definemacro(26, "UNDO"); /* Ctrl-Z */
   definemacro('y', "YARDSTICK");
   definemacro('Z', "EXIT *");
   /* p2c: log.text, line 19589: Note: Character >= 128 encountered [281] */
@@ -18794,6 +19376,7 @@ Static Void initmenus() {
   definemenu(3, 1, "Grid", "GRID", 5);
   definemenu(3, 2, "Probe", "PROBE", 6);
   definemenu(3, 3, "Glow", "GLOW", 7);
+  definemenu(3, 4, "Undo", "UNDO", 0);
   definemenu(3, 5, "Alt posn", "ALTPOSN", 0);
   definemenu(3, 6, "Home", "HOME", 0);
   definemenu(3, 8, "Refresh", "REFRESH", 0);
