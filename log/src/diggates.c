@@ -266,6 +266,7 @@ log_16_action *act_;
     break;
 
   case act_16_copy:
+  
     V.ram = (uchar *)Malloc(sizeof(ramarray));
     WITH2->info = (Anyptr)V.ram;
     ram2 = (uchar *)WITH1->actgate2->info;

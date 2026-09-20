@@ -10092,9 +10092,25 @@ wireundosnapshot *snap;
         vw = vw->next;
       }
 
-      if (nh > 0 && nv > 0)
-        addsolder(x, y, hs[0], nh > 1 ? hs[1] : NULL,
-                  vs[0], nv > 1 ? vs[1] : NULL);
+      if (nh > 0 && nv > 0) {
+        
+       // addsolder(x, y, hs[0], nh > 1 ? hs[1] : NULL,
+       //           vs[0], nv > 1 ? vs[1] : NULL);
+         hw = gg.hwbase[gg.curpage - 1];
+      while (hw != NULL && (hw->y != y || hw->x1 > x || hw->x2 < x))
+        hw = hw->next;
+      vw = gg.vwbase[gg.curpage - 1];
+      while (vw != NULL && (vw->x != x || vw->y1 > y || vw->y2 < y))
+        vw = vw->next;
+      if (hw != NULL && vw != NULL && hw->node != vw->node) {
+        if (trycombinenodes(&hw->node, &vw->node)) {
+          clipon();
+          addsolder(x, y, hw, NULL, vw, NULL);
+          clipoff();
+        }
+      }
+        trycombinenodes(&hw->node, &vw->node);
+      }
     }
 
   }
@@ -10121,6 +10137,8 @@ wireundosnapshot *snap;
       g->g = savedg->g;
       g->gc = savedg->gc;
       g->vars = savedg->vars;
+      if(strcmp(g->kind->name,"SRAM8K")==0)
+        memcpy(g->info , savedg->info, 8192);
       initpinpos(g);
 
       if (!connectgate(g)) {
