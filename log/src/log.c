@@ -538,6 +538,11 @@ typedef struct wireundoentry {
 
 Static wireundoentry wireundo_stack[WIRE_UNDO_MAX];
 Static short wireundo_count;
+
+/* Entries removed by UNDO are kept here so they can be restored by REDO. */
+Static wireundoentry wireredo_stack[WIRE_UNDO_MAX];
+Static short wireredo_count;
+Static boolean wireundo_replaying;
 Static boolean wireundo_transaction;
 
 /* Forward declarations: pastebuf() is defined before the undo implementation. */
@@ -548,6 +553,7 @@ Static boolean wireundo_samesnapshot();
 Static Void wireundo_push();
 Static Void wireundo_restore();
 Static Void undowire();
+Static Void redowire();
 
 Static long htcount;   /* Number of timesteps in list */
 Static short hncount;  /* Number of names in list */
@@ -9738,6 +9744,12 @@ Static Void wireundo_clear() {
     wireundo_freesnapshot(&wireundo_stack[i].after);
   }
   wireundo_count = 0;
+
+  for (i = 0; i < wireredo_count; i++) {
+    wireundo_freesnapshot(&wireredo_stack[i].before);
+    wireundo_freesnapshot(&wireredo_stack[i].after);
+  }
+  wireredo_count = 0;
 }
 
 /*
@@ -10132,6 +10144,16 @@ wireundosnapshot *before, *after;
 {
   short i;
 
+  /* A normal edit after UNDO starts a new history branch, so REDO is
+   * no longer valid.  Do not do this while replaying an undo/redo entry. */
+  if (!wireundo_replaying) {
+    for (i = 0; i < wireredo_count; i++) {
+      wireundo_freesnapshot(&wireredo_stack[i].before);
+      wireundo_freesnapshot(&wireredo_stack[i].after);
+    }
+    wireredo_count = 0;
+  }
+
   if (wireundo_count == WIRE_UNDO_MAX) {
     wireundo_freesnapshot(&wireundo_stack[0].before);
     wireundo_freesnapshot(&wireundo_stack[0].after);
@@ -10150,7 +10172,7 @@ wireundosnapshot *before, *after;
 }
 
 Static Void undowire() {
-  wireundoentry *entry;
+  wireundoentry entry;
   short savepg;
 
   if (wireundo_count == 0) {
@@ -10159,30 +10181,71 @@ Static Void undowire() {
     return;
   }
 
-  /*
-   * Do not try to validate the current circuit against entry->after here.
-   * That sounded useful, but it is fundamentally unreliable for LOG: gate
-   * records contain pointers to dynamically allocated attributes/variables
-   * and reconnecting a circuit can legitimately change internal identities
-   * without changing what the user sees.  In particular, a gate move or
-   * rotation could therefore make a perfectly valid undo entry appear to be
-   * "invalid".
-   *
-   * Every operation which changes the editable circuit is responsible for
-   * pushing its own before/after snapshot (or explicitly clearing the stack
-   * for an operation which cannot be represented).  The undo stack is thus
-   * the authority; undo simply restores the previous snapshot.
-   */
-  entry = &wireundo_stack[wireundo_count - 1];
+  /* Move the most recent edit to the REDO stack.  The entry owns both
+   * snapshots and remains intact until REDO (or the history is cleared). */
+  entry = wireundo_stack[wireundo_count - 1];
+  wireundo_count--;
 
   savepg = gg.curpage;
   remcursor();
   working();
-  wireundo_restore(&entry->before);
+  wireundo_replaying = true;
+  wireundo_restore(&entry.before);
+  wireundo_replaying = false;
 
-  wireundo_freesnapshot(&entry->before);
-  wireundo_freesnapshot(&entry->after);
-  wireundo_count--;
+  if (wireredo_count == WIRE_UNDO_MAX) {
+    short i;
+    wireundo_freesnapshot(&wireredo_stack[0].before);
+    wireundo_freesnapshot(&wireredo_stack[0].after);
+    for (i = 1; i < WIRE_UNDO_MAX; i++)
+      wireredo_stack[i - 1] = wireredo_stack[i];
+    wireredo_count--;
+  }
+  wireredo_stack[wireredo_count++] = entry;
+
+  gg.curpage = savepg;
+  gg.refrflag = true;
+  refreshsoon();
+  clearfunc();
+}
+
+/*==================  REDO WIRE  ==================*/
+/*=                                              =*/
+/*=  Reapply the most recently undone edit.      =*/
+/*=                                              =*/
+/*================================================*/
+
+Static Void redowire() {
+  wireundoentry entry;
+  short savepg;
+
+  if (wireredo_count == 0) {
+    message("Nothing to redo.");
+    clearfunc();
+    return;
+  }
+
+  entry = wireredo_stack[wireredo_count - 1];
+  wireredo_count--;
+
+  savepg = gg.curpage;
+  remcursor();
+  working();
+  wireundo_replaying = true;
+  wireundo_restore(&entry.after);
+  wireundo_replaying = false;
+
+  if (wireundo_count == WIRE_UNDO_MAX) {
+    wireundo_freesnapshot(&wireundo_stack[0].before);
+    wireundo_freesnapshot(&wireundo_stack[0].after);
+    {
+      short i;
+      for (i = 1; i < WIRE_UNDO_MAX; i++)
+        wireundo_stack[i - 1] = wireundo_stack[i];
+    }
+    wireundo_count--;
+  }
+  wireundo_stack[wireundo_count++] = entry;
 
   gg.curpage = savepg;
   gg.refrflag = true;
@@ -19193,6 +19256,8 @@ Static Void dofunction() {
       movecommand(strcmp(gg.funcarg, "*") != 0);
     else if (!strcmp(gg.func, "UNDO"))
       undowire();
+    else if (!strcmp(gg.func, "REDO"))
+      redowire();
     else if (!strcmp(gg.func, "OPENH"))
       openhoriz();
     else if (!strcmp(gg.func, "OPENV"))
@@ -19462,6 +19527,7 @@ Static Void initmacros() {
   definemacro('x', "EXAMINE");
   definemacro('u', "UNDO");
   definemacro(26, "UNDO"); /* Ctrl-Z */
+  definemacro('U', "REDO"); /* Shift-U */
   definemacro('y', "YARDSTICK");
   definemacro('Z', "EXIT *");
   /* p2c: log.text, line 19589: Note: Character >= 128 encountered [281] */
@@ -19503,8 +19569,9 @@ Static Void initmenus() {
   definemenu(3, 2, "Probe", "PROBE", 6);
   definemenu(3, 3, "Glow", "GLOW", 7);
   definemenu(3, 4, "Undo", "UNDO", 0);
-  definemenu(3, 5, "Alt posn", "ALTPOSN", 0);
-  definemenu(3, 6, "Home", "HOME", 0);
+  definemenu(3, 5, "Redo", "REDO", 0);
+  definemenu(3, 6, "Alt posn", "ALTPOSN", 0);
+  definemenu(3, 7, "Home", "HOME", 0);
   definemenu(3, 8, "Refresh", "REFRESH", 0);
   definemenu(4, 1, "Load page", "LOAD", 0);
   definemenu(4, 2, "Save page", "SAVE *", 0);
