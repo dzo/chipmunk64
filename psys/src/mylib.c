@@ -342,7 +342,6 @@ void WindowInitialize() {
     // SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") ;
     // SDL_SetHint(SDL_HINT_RENDER_DRIVER, "vulkan") ;
     //   SDL_SetHint (SDL_HINT_RENDER_VSYNC,"1");
-    
     //SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "3");
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
     for(int i=0;i<5;i++)
@@ -2473,6 +2472,12 @@ void handle_events() {
                         if (keydown == 0) keyrepeattime = time + 330;
                         keydown = sc;
                     }
+                    if (event.key.mod & SDL_KMOD_CTRL) {
+                        if (sc == SDL_SCANCODE_C) addkey(3);
+                        if (sc == SDL_SCANCODE_D) addkey(4);
+                        if (sc == SDL_SCANCODE_Z) addkey(26);
+                        if (sc == SDL_SCANCODE_Y) addkey(25);
+                    }
                     addsc(sc);
                     break;
                 case SDL_EVENT_KEY_UP:
@@ -2484,6 +2489,7 @@ void handle_events() {
                     break;
                 case SDL_EVENT_TEXT_INPUT:
                     k = event.text.text[0];
+                    Kfprintf(stderr, "SDL_EVENT_TEXT_INPUT %d\n", k);
                     if (k == 8) k = 7;
                     addkey(k);
                     break;

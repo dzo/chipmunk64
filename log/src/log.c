@@ -19488,7 +19488,7 @@ Static Void dofunction() {
 }
 
 Static Void initmacros() {
-  definemacro(171, "EXIT *"); /*control-D*/
+  definemacro(4, "EXIT *"); /*control-D*/
   definemacro(':', "DO");
   definemacro(' ', "REFRESH");
   definemacro('!', "SHELL");
@@ -19546,10 +19546,11 @@ Static Void initmacros() {
   definemacro('u', "UNDO");
   definemacro(26, "UNDO"); /* Ctrl-Z */
   definemacro('U', "REDO"); /* Shift-U */
+  definemacro(25, "REDO"); /* Ctrl-Y */
   definemacro('y', "YARDSTICK");
   definemacro('Z', "EXIT *");
   /* p2c: log.text, line 19589: Note: Character >= 128 encountered [281] */
-  definemacro(250, "REFRESH");
+  definemacro(3, "REFRESH");
   /* p2c: log.text, line 19590: Note: Character >= 128 encountered [281] */
   definemacro(251, "RESIZE");
 }
